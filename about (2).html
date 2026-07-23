@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>About | Halo Strategic</title>
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon-180x180.png">
+<link rel="manifest" href="/site.webmanifest">
+<meta name="theme-color" content="#101A30">
+<meta name="description" content="Meet Fabien Alexander, founder of Halo Strategic — a Commercial Growth Consultancy built from years of working inside founder-led businesses.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#1B2A4A; --navy-deep:#101A30; --bronze:#B08D57; --bronze-light:#D8BE8F;
+    --slate:#44546A; --ink:#1A1D24; --paper:#F6F6F3; --surface:#FFFFFF; --border:#E1E3DE;
+    --green:#4B6B4F; --green-bg:#E7EDE6; --amber:#8F6E28; --amber-bg:#F2EAD9; --red:#8C4438; --red-bg:#F2E2DE;
+    --radius-sm:6px; --radius-md:8px; --radius-lg:12px;
+    --ease: cubic-bezier(0.4,0,0.2,1);
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0; background:var(--paper); color:var(--ink);
+    font-family:'Inter',sans-serif; font-size:17px; line-height:1.65;
+    -webkit-font-smoothing:antialiased;
+  }
+  ::selection{ background:var(--bronze-light); color:var(--navy-deep); }
+  h1,h2,h3{ font-family:'Fraunces',serif; font-weight:500; color:var(--navy-deep); margin:0; letter-spacing:-0.01em; }
+  a{ color:inherit; }
+  .container{ max-width:1180px; margin:0 auto; padding:0 32px; }
+  .mono{ font-family:'IBM Plex Mono',monospace; }
+
+  /* NAV */
+  header{ position:sticky; top:0; z-index:100; background:rgba(246,246,243,0.92); backdrop-filter:blur(8px); border-bottom:1px solid var(--border); }
+  .navbar{ display:flex; align-items:center; justify-content:space-between; padding:18px 32px; max-width:1180px; margin:0 auto; }
+  .logo{ font-family:'Fraunces',serif; font-size:1.15rem; font-weight:600; color:var(--navy-deep); text-decoration:none; display:flex; align-items:center; gap:10px; letter-spacing:0.01em; white-space:nowrap; }
+  .logo-mark{ width:24px; height:24px; flex:none; }
+  .nav-links{ display:flex; gap:32px; list-style:none; margin:0; padding:0; }
+  .nav-links a{ text-decoration:none; font-size:0.95rem; color:var(--slate); font-weight:500; transition:color 160ms var(--ease); }
+  .nav-links a:hover{ color:var(--navy-deep); }
+  .nav-links a.active{ color:var(--navy-deep); }
+  .nav-right{ display:flex; align-items:center; gap:28px; }
+  .nav-toggle{ display:none; background:none; border:none; cursor:pointer; padding:8px; }
+  .nav-toggle span{ display:block; width:22px; height:2px; background:var(--navy-deep); margin:5px 0; }
+
+  /* BUTTONS */
+  .btn{
+    font-family:'Inter',sans-serif; font-size:0.95rem; font-weight:600; padding:13px 24px;
+    border-radius:var(--radius-md); cursor:pointer; border:1px solid transparent;
+    transition:background 160ms var(--ease), border-color 160ms var(--ease), color 160ms var(--ease);
+    text-decoration:none; display:inline-block;
+  }
+  .btn-primary{ background:var(--navy); color:#fff; }
+  .btn-primary:hover{ background:var(--navy-deep); }
+  .btn-primary:focus-visible{ outline:2px solid var(--bronze); outline-offset:2px; }
+  .btn-bronze{ background:var(--bronze); color:var(--navy-deep); }
+  .btn-bronze:hover{ background:var(--bronze-light); }
+  .btn-bronze:focus-visible{ outline:2px solid #fff; outline-offset:2px; }
+
+  /* SECTIONS */
+  section{ padding:96px 0; }
+  section.tight{ padding:64px 0; }
+  .eyebrow{ font-family:'IBM Plex Mono',monospace; font-size:0.78rem; color:var(--bronze); text-transform:uppercase; letter-spacing:0.12em; margin-bottom:16px; }
+  h2.section-title{ font-size:2.1rem; line-height:1.2; max-width:16em; margin-bottom:20px; }
+  p.lead{ font-size:1.2rem; color:var(--slate); max-width:38em; margin:0 0 16px; }
+  p{ max-width:42em; }
+
+  /* PULL / QUOTE */
+  .pull{ font-family:'Fraunces',serif; font-weight:500; font-size:1.6rem; line-height:1.4; color:var(--navy-deep); border-left:3px solid var(--bronze); padding:4px 0 4px 28px; margin:32px 0; max-width:34em; }
+
+  /* DARK BAND */
+  .band-dark{ background:var(--navy-deep); color:#EDEEF0; }
+  .band-dark h2.section-title{ color:#fff; }
+  .band-dark p{ color:#C7CBD4; }
+  .band-dark .pull{ color:#fff; border-left-color:var(--bronze-light); }
+
+  /* EVIDENCE */
+  .evidence{ background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-lg); padding:40px; margin-top:8px; }
+
+  /* FINAL CTA */
+  .final-cta{ text-align:left; background:var(--navy-deep); color:#fff; border-radius:var(--radius-lg); padding:56px; margin:0 32px; }
+  .final-cta h2{ color:#fff; font-size:2rem; margin-bottom:16px; }
+  .final-cta p{ color:#C7CBD4; margin-bottom:28px; max-width:38em; }
+
+  /* FOOTER */
+  footer{ border-top:1px solid var(--border); padding:56px 0 40px; margin-top:40px; }
+  .footer-grid{ display:grid; grid-template-columns:2fr 1fr 1fr; gap:32px; margin-bottom:40px; }
+  .footer-grid h4{ font-family:'IBM Plex Mono',monospace; font-size:0.72rem; text-transform:uppercase; letter-spacing:0.08em; color:var(--slate); margin-bottom:14px; }
+  .footer-grid ul{ list-style:none; padding:0; margin:0; }
+  .footer-grid li{ margin-bottom:10px; }
+  .footer-grid a{ text-decoration:none; color:var(--ink); font-size:0.92rem; }
+  .footer-grid a:hover{ color:var(--bronze); }
+  .footer-bottom{ font-size:0.82rem; color:var(--slate); border-top:1px solid var(--border); padding-top:24px; display:flex; justify-content:space-between; flex-wrap:wrap; gap:12px; }
+
+  /* ABOUT PAGE — HERO */
+  .about-hero{ padding:72px 0 96px; }
+  .about-hero .container{ display:grid; grid-template-columns:0.85fr 1.15fr; gap:64px; align-items:start; }
+  .portrait-frame{
+    width:100%; aspect-ratio:4/5; background:var(--surface); border:1px solid var(--border);
+    border-radius:var(--radius-lg); display:flex; align-items:center; justify-content:center;
+    overflow:hidden; position:sticky; top:96px;
+  }
+  .portrait-frame img{ width:100%; height:100%; object-fit:cover; object-position:22% 35%; display:block; }
+  .portrait-frame .placeholder-text{ font-family:'IBM Plex Mono',monospace; font-size:0.8rem; color:var(--slate); text-align:center; padding:24px; }
+  .about-intro h1{ font-size:2.6rem; line-height:1.15; margin-bottom:8px; }
+  .about-intro .role{ font-size:1.05rem; color:var(--slate); margin-bottom:20px; }
+  .about-intro .positioning{ font-family:'Fraunces',serif; font-weight:500; font-size:1.3rem; line-height:1.4; color:var(--navy-deep); margin-bottom:28px; max-width:30em; }
+  .about-intro p.lead{ margin-bottom:0; }
+
+  /* FOUNDER STORY */
+  .story{ max-width:42em; }
+  .story p{ font-size:1.05rem; color:var(--ink); margin:0 0 22px; max-width:none; }
+  .story p:last-child{ margin-bottom:0; }
+
+  /* EXPERIENCE PANEL */
+  .experience-panel{
+    background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-lg);
+    padding:8px 0; margin-top:8px;
+  }
+  .experience-panel ul{ list-style:none; margin:0; padding:0; }
+  .experience-panel li{
+    display:flex; align-items:baseline; gap:16px; padding:20px 32px;
+    border-bottom:1px solid var(--border); font-size:0.98rem; color:var(--ink);
+  }
+  .experience-panel li:last-child{ border-bottom:none; }
+  .experience-panel li::before{
+    content:''; flex:none; width:6px; height:6px; border-radius:50%;
+    background:var(--bronze); margin-top:8px;
+  }
+
+  /* WAY I WORK */
+  .way-block{ border-left:3px solid var(--border); padding-left:28px; margin:0 0 28px; max-width:42em; }
+  .way-block p{ font-size:1.05rem; color:var(--ink); margin:0 0 18px; max-width:none; }
+  .way-block p:last-child{ margin-bottom:0; }
+
+  /* SPEAKING PROOF */
+  .speaking-proof{ padding-top:0; }
+  .proof-frame{ width:100%; max-width:1180px; margin:0 auto; padding:0 32px; }
+  .proof-frame img{ width:100%; height:auto; display:block; border-radius:var(--radius-lg); }
+
+  /* SIGNATURE */
+  .signature{ margin:48px 0 0; }
+  .signature .sig-name{ font-family:'Fraunces',serif; font-size:1.3rem; font-style:italic; color:var(--navy-deep); margin-bottom:4px; }
+  .signature .sig-role{ font-size:0.9rem; color:var(--slate); }
+
+  @media (max-width:900px){
+    .nav-links{ display:none; }
+    .nav-toggle{ display:block; }
+    section{ padding:64px 0; }
+    .final-cta{ margin:0 20px; padding:36px 28px; }
+    .footer-grid{ grid-template-columns:1fr; gap:24px; }
+    .container{ padding:0 20px; }
+    .about-hero{ padding:48px 0 64px; }
+    .about-hero .container{ grid-template-columns:1fr; gap:36px; }
+    .portrait-frame{ position:static; max-width:320px; margin:0 auto; }
+    .about-intro h1{ font-size:2rem; }
+  }
+  @media (prefers-reduced-motion: reduce){
+    *{ transition:none !important; scroll-behavior:auto !important; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <nav class="navbar">
+    <a href="index.html" class="logo">
+      <svg class="logo-mark" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path d="M 26 15 A 19 19 0 0 0 26 49" fill="none" stroke="#101A30" stroke-width="4" stroke-linecap="round"/>
+        <path d="M 38 15 A 19 19 0 0 1 38 49" fill="none" stroke="#101A30" stroke-width="4" stroke-linecap="round"/>
+        <path d="M32 21 L37 49 L27 49 Z" fill="#B08D57"/>
+      </svg>
+      HALO STRATEGIC
+    </a>
+    <ul class="nav-links">
+      <li><a href="index.html#how-it-works">How Halo Works</a></li>
+      <li><a href="index.html#services">Services</a></li>
+      <li><a href="index.html#case-studies">Case Studies</a></li>
+      <li><a href="index.html#insights">Insights</a></li>
+      <li><a href="about.html" class="active">About</a></li>
+    </ul>
+    <div class="nav-right">
+      <a href="index.html#cta" class="btn btn-primary">Start with a Commercial Diagnostic</a>
+      <button class="nav-toggle" aria-label="Open menu"><span></span><span></span><span></span></button>
+    </div>
+  </nav>
+</header>
+
+<main>
+
+  <!-- ABOUT HERO -->
+  <section class="about-hero">
+    <div class="container">
+      <div class="portrait-frame">
+        <!-- Using the conference photo here temporarily. Swap for a dedicated black-and-white / editorial portrait when available: images/fabien-alexander-portrait.jpg -->
+        <img src="images/fabien-alexander.png" alt="Fabien Alexander, Founder of Halo Strategic">
+      </div>
+      <div class="about-intro">
+        <div class="eyebrow">About</div>
+        <h1>Meet Fabien Alexander</h1>
+        <p class="role">Founder, Halo Strategic</p>
+        <p class="positioning">A commercial growth strategist helping founder-led businesses build stronger, more predictable companies.</p>
+        <p class="lead">The idea behind Halo Strategic didn't come from a boardroom. It came from years of seeing the same commercial problems appear across different businesses, industries and leadership teams.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOUNDER STORY -->
+  <section class="tight" style="background:var(--surface); border-top:1px solid var(--border); border-bottom:1px solid var(--border);">
+    <div class="container">
+      <div class="story">
+        <p>Throughout my career, I've worked with founder-led businesses in a variety of roles — from building and running my own businesses, to leading marketing and business development functions, to supporting commercial growth and working alongside leadership teams responsible for scaling organisations.</p>
+        <p>I've founded a marketing agency, owned and operated a carpet and flooring business, served as Head of Marketing &amp; Business Development at Nordic Markets, and spent years working inside businesses where commercial performance mattered every single day.</p>
+        <p>Those experiences taught me something that continues to shape how I work today: most businesses don't have a marketing problem. They have a commercial problem.</p>
+        <p>Marketing, sales, operations and customer experience are often treated as separate disciplines, when in reality they're parts of the same commercial system. When those parts aren't aligned, growth becomes inconsistent, expensive and difficult to sustain.</p>
+        <p>Over time, I found myself asking different questions. Where does revenue leak? Why do good businesses fail to convert opportunities? What commercial systems are missing? How can leadership make better decisions with greater clarity?</p>
+        <p>Those questions eventually became the foundation of Halo Strategic.</p>
+        <p>Today, my role isn't simply to recommend marketing tactics. It's to help founder-led businesses step back, diagnose the commercial challenges that are limiting growth, and build practical systems that create stronger, more predictable businesses.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- WHY HALO EXISTS -->
+  <section class="tight" style="background:var(--surface); border-top:1px solid var(--border); border-bottom:1px solid var(--border);">
+    <div class="container">
+      <div class="eyebrow">Why Halo Exists</div>
+      <h2 class="section-title" style="font-size:1.7rem;">Halo exists to help businesses think more clearly, make better commercial decisions, and build systems that create sustainable growth.</h2>
+      <div class="story">
+        <p>Marketing, sales, operations and leadership can each be doing their job well, and a business can still underperform, because no one is responsible for how the parts fit together. Halo occupies that seat: the one asking whether it all actually adds up.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- WHAT HALO BELIEVES -->
+  <section class="tight">
+    <div class="container">
+      <div class="eyebrow">What Halo Believes</div>
+      <h2 class="section-title" style="font-size:1.7rem;">Four beliefs, held to consistently.</h2>
+      <div class="card-grid two">
+        <div class="card"><h3>Clarity creates confidence.</h3><p>If a client needs a follow-up question to understand what was meant, the sentence wasn't finished.</p></div>
+        <div class="card"><h3>Confidence creates action.</h3><p>A leadership team that no longer has to guess is a leadership team that can actually move.</p></div>
+        <div class="card"><h3>Action creates progress.</h3><p>A busy quarter that didn't move the business forward isn't a good quarter.</p></div>
+        <div class="card"><h3>Sustainable growth is designed, not accidental.</h3><p>Systems outperform isolated tactics, every time.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- WHAT HALO IS NOT -->
+  <section class="tight" style="background:var(--navy-deep);">
+    <div class="container">
+      <div class="eyebrow" style="color:var(--bronze-light);">What Halo Is Not</div>
+      <div class="card-grid" style="grid-template-columns:repeat(3,1fr); margin-top:24px;">
+        <div style="color:#fff; font-family:'Fraunces',serif; font-size:1.15rem;">Not a marketing agency.</div>
+        <div style="color:#fff; font-family:'Fraunces',serif; font-size:1.15rem;">Not another strategy deck.</div>
+        <div style="color:#fff; font-family:'Fraunces',serif; font-size:1.15rem;">Not generic business advice.</div>
+      </div>
+      <p style="color:#C7CBD4; margin-top:32px; max-width:44em;">Halo exists to help founder-led businesses make better commercial decisions through clarity, evidence and practical execution.</p>
+    </div>
+  </section>
+
+  <!-- EXPERIENCE AT A GLANCE -->
+  <section class="tight">
+    <div class="container">
+      <div class="eyebrow">Experience at a Glance</div>
+      <h2 class="section-title" style="font-size:1.7rem;">A career built inside founder-led businesses, not around them.</h2>
+      <div class="experience-panel">
+        <ul>
+          <li>Founder, Halo Strategic</li>
+          <li>Former Head of Marketing &amp; Business Development, Nordic Markets</li>
+          <li>Founder, Marketing Agency</li>
+          <li>Business Owner, Carpet &amp; Flooring</li>
+          <li>Commercial Growth Strategist</li>
+          <li>Experience supporting founder-led businesses across the UK &amp; US</li>
+          <li>Property Investment &amp; Investor Relations Experience</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- BEYOND THE CV -->
+  <section class="tight" style="background:var(--surface); border-top:1px solid var(--border); border-bottom:1px solid var(--border);">
+    <div class="container">
+      <div class="eyebrow">Beyond the CV</div>
+      <h2 class="section-title" style="font-size:1.7rem;">A few things that don't fit neatly on a list of roles.</h2>
+      <div class="story">
+        <p>I've started businesses that worked. I've started businesses that didn't.</p>
+        <p>I've worked inside fast-growing organisations, and inside smaller, founder-led companies where every decision was felt immediately.</p>
+        <p>Every one of those experiences shaped how I think about commercial growth today — not as a theory, but as something learned by doing it, getting parts of it wrong, and paying close attention to why.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- QUOTE -->
+  <section class="band-dark">
+    <div class="container">
+      <p class="pull" style="max-width:28em;">Most businesses don't have a marketing problem. They have a commercial problem.</p>
+    </div>
+  </section>
+
+  <!-- THE WAY I WORK -->
+  <section class="tight">
+    <div class="container">
+      <div class="eyebrow">The Way I Work</div>
+      <h2 class="section-title" style="font-size:1.7rem;">I don't believe in selling solutions before understanding the problem.</h2>
+      <div class="way-block">
+        <p>Every engagement starts with listening, challenging assumptions and identifying the issues that will make the biggest commercial difference.</p>
+        <p>Sometimes the answer is marketing. Sometimes it isn't. My responsibility is to tell clients what they need to hear, not what they expect to hear.</p>
+        <p>Halo Strategic exists because sustainable growth doesn't come from doing more. It comes from fixing the right things.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- SPEAKING PROOF -->
+  <section class="tight speaking-proof">
+    <div class="proof-frame">
+      <img src="images/fabien-alexander.png" alt="Fabien Alexander speaking on stage at The Growth Summit 2026">
+    </div>
+  </section>
+
+  <!-- SIGNATURE -->
+  <section class="tight" style="padding-bottom:0;">
+    <div class="container">
+      <div class="signature">
+        <div class="sig-name">Fabien Alexander</div>
+        <div class="sig-role">Founder<br>Halo Strategic</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section id="cta">
+    <div class="final-cta">
+      <div class="eyebrow" style="color:var(--bronze-light);">Start Here</div>
+      <h2>Let's Start with a Conversation.</h2>
+      <p>Whether you're preparing for your next stage of growth or simply want greater commercial clarity, I'd love to hear more about your business.</p>
+      <a href="index.html#cta" class="btn btn-bronze">Book a Commercial Diagnostic</a>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <div class="logo" style="margin-bottom:10px; color:#F6F6F3;">
+          <svg class="logo-mark" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <path d="M 26 15 A 19 19 0 0 0 26 49" fill="none" stroke="#F6F6F3" stroke-width="4" stroke-linecap="round"/>
+            <path d="M 38 15 A 19 19 0 0 1 38 49" fill="none" stroke="#F6F6F3" stroke-width="4" stroke-linecap="round"/>
+            <path d="M32 21 L37 49 L27 49 Z" fill="#D8BE8F"/>
+          </svg>
+          HALO STRATEGIC
+        </div>
+        <p style="font-size:0.92rem; color:var(--slate); max-width:26em;">A Commercial Growth Consultancy. Our job is to help leadership make better commercial decisions.</p>
+      </div>
+      <div>
+        <h4>Sitemap</h4>
+        <ul>
+          <li><a href="index.html#how-it-works">How Halo Works</a></li>
+          <li><a href="index.html#services">Services</a></li>
+          <li><a href="index.html#case-studies">Case Studies</a></li>
+          <li><a href="index.html#insights">Insights</a></li>
+          <li><a href="about.html">About</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Contact &amp; Legal</h4>
+        <ul>
+          <li><a href="index.html#contact-form">Contact</a></li>
+          <li><a href="#">Privacy</a></li>
+          <li><a href="#">Terms</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 Halo. All rights reserved.</span>
+      <span class="mono">halostrategic.com</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // Mobile nav toggle: progressive enhancement only, core content works without it
+  document.querySelector('.nav-toggle')?.addEventListener('click', function(){
+    var links = document.querySelector('.nav-links');
+    var visible = links.style.display === 'flex';
+    links.style.display = visible ? 'none' : 'flex';
+    links.style.flexDirection = 'column';
+    links.style.position = 'absolute';
+    links.style.top = '64px';
+    links.style.left = '0';
+    links.style.right = '0';
+    links.style.background = 'var(--paper)';
+    links.style.padding = '20px 32px';
+    links.style.borderBottom = '1px solid var(--border)';
+  });
+</script>
+
+</body>
+</html>
