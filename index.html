@@ -3,19 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Halo Strategic | Commercial Growth Consultancy</title>
-<meta name="description" content="Halo Strategic is a Commercial Growth Consultancy for businesses that need better decisions, not more dashboards. Start with a Commercial Diagnostic.">
-<meta property="og:title" content="Halo Strategic | See the full picture. Make better decisions.">
-<meta property="og:description" content="Commercial growth consultancy for ambitious businesses ready to scale with confidence.">
-<meta property="og:image" content="https://halostrategic.com/assets/og-default-1200x630.png">
-<meta property="og:image:width" content="1200">
-<meta property="og:image:height" content="630">
-<meta property="og:type" content="website">
-<meta property="og:url" content="https://halostrategic.com">
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Halo Strategic | See the full picture. Make better decisions.">
-<meta name="twitter:image" content="https://halostrategic.com/assets/og-default-1200x630.png">
-<link rel="canonical" href="https://halostrategic.com"><link rel="preconnect" href="https://fonts.googleapis.com">
+<title>Halo | Commercial Growth Consultancy</title>
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon-180x180.png">
+<link rel="manifest" href="/site.webmanifest">
+<meta name="theme-color" content="#101A30">
+<meta name="description" content="Halo is a Commercial Growth Consultancy for businesses that need better decisions, not more dashboards. Start with a Commercial Diagnostic.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
@@ -42,7 +38,8 @@
   /* NAV */
   header{ position:sticky; top:0; z-index:100; background:rgba(246,246,243,0.92); backdrop-filter:blur(8px); border-bottom:1px solid var(--border); }
   .navbar{ display:flex; align-items:center; justify-content:space-between; padding:18px 32px; max-width:1180px; margin:0 auto; }
-  .logo{ font-family:'Fraunces',serif; font-size:1.4rem; font-weight:600; color:var(--navy-deep); text-decoration:none; }
+  .logo{ font-family:'Fraunces',serif; font-size:1.4rem; font-weight:600; color:var(--navy-deep); text-decoration:none; display:flex; align-items:center; gap:10px; }
+  .logo-mark{ width:26px; height:26px; flex:none; }
   .nav-links{ display:flex; gap:32px; list-style:none; margin:0; padding:0; }
   .nav-links a{ text-decoration:none; font-size:0.95rem; color:var(--slate); font-weight:500; transition:color 160ms var(--ease); }
   .nav-links a:hover{ color:var(--navy-deep); }
@@ -142,7 +139,6 @@
     .hero-pattern{ display:none; }
     .card-grid, .card-grid.two{ grid-template-columns:1fr; }
     section{ padding:64px 0; }
-    .hero{ padding:80px 0 60px !important; }
     .final-cta{ margin:0 20px; padding:36px 28px; }
     .footer-grid{ grid-template-columns:1fr; gap:24px; }
     .container{ padding:0 20px; }
@@ -156,13 +152,20 @@
 
 <header>
   <nav class="navbar">
-    <a href="index.html" class="logo">HALO STRATEGIC</a>
+    <a href="#" class="logo">
+      <svg class="logo-mark" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path d="M 26 15 A 19 19 0 0 0 26 49" fill="none" stroke="#101A30" stroke-width="4" stroke-linecap="round"/>
+        <path d="M 38 15 A 19 19 0 0 1 38 49" fill="none" stroke="#101A30" stroke-width="4" stroke-linecap="round"/>
+        <path d="M32 21 L37 49 L27 49 Z" fill="#B08D57"/>
+      </svg>
+      HALO
+    </a>
     <ul class="nav-links">
       <li><a href="#how-it-works">How Halo Works</a></li>
       <li><a href="#services">Services</a></li>
-      <li><a href="commercial-audit.html">Commercial Audit</a></li>
-      <li><a href="#insights">Evidence</a></li>
-      <li><a href="about.html">About</a></li>
+      <li><a href="#case-studies">Case Studies</a></li>
+      <li><a href="#insights">Insights</a></li>
+      <li><a href="#about">About</a></li>
     </ul>
     <div class="nav-right">
       <a href="#cta" class="btn btn-primary">Start with a Commercial Diagnostic</a>
@@ -283,11 +286,13 @@
           <div class="k">Case Study</div>
           <h3>From Reacting to Leading</h3>
           <p>A client's agency relationship had become "launch campaigns, react to issues." The real constraint wasn't performance. It was broken tracking that made every number untrustworthy. Fixing the plumbing first moved the relationship from execution to genuine account leadership.</p>
+          <a href="#" class="readmore">Read the diagnosis →</a>
         </div>
         <div class="card">
           <div class="k">Case Study</div>
           <h3>The Data That Was Never Missing</h3>
           <p>A client believed they had no visibility into what happened after a lead converted. They did. It just hadn't been translated into anything usable. Reframing existing data justified holding spend exactly where a surface-level metric said to cut it.</p>
+          <a href="#" class="readmore">Read the diagnosis →</a>
         </div>
       </div>
     </div>
@@ -312,7 +317,7 @@
       <h2>Start with a Commercial Diagnostic.</h2>
       <p>A focused 45-minute conversation centred entirely on understanding your business, followed by a concise written summary outlining what Halo believes is happening, where the likely commercial leaks are, and what should be investigated first. If Halo isn't the right partner, we'll tell you.</p>
 
-      <form name="contact" method="POST" action="/thank-you.html" data-netlify="true" netlify-honeypot="bot-field" class="contact-form" id="contact-form">
+      <form name="contact" method="POST" data-netlify="true" netlify-honeypot="bot-field" class="contact-form" id="contact-form">
         <input type="hidden" name="form-name" value="contact">
         <p style="display:none;"><label>Don't fill this out if you're human: <input name="bot-field"></label></p>
 
@@ -346,7 +351,14 @@
   <div class="container">
     <div class="footer-grid">
       <div>
-        <div class="logo" style="margin-bottom:10px; display:block;">HALO STRATEGIC</div>
+        <div class="logo" style="margin-bottom:10px; color:#F6F6F3;">
+          <svg class="logo-mark" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <path d="M 26 15 A 19 19 0 0 0 26 49" fill="none" stroke="#F6F6F3" stroke-width="4" stroke-linecap="round"/>
+            <path d="M 38 15 A 19 19 0 0 1 38 49" fill="none" stroke="#F6F6F3" stroke-width="4" stroke-linecap="round"/>
+            <path d="M32 21 L37 49 L27 49 Z" fill="#D8BE8F"/>
+          </svg>
+          HALO
+        </div>
         <p style="font-size:0.92rem; color:var(--slate); max-width:26em;">A Commercial Growth Consultancy. Our job is to help leadership make better commercial decisions.</p>
       </div>
       <div>
@@ -354,59 +366,51 @@
         <ul>
           <li><a href="#how-it-works">How Halo Works</a></li>
           <li><a href="#services">Services</a></li>
-          <li><a href="commercial-diagnostic.html">Commercial Diagnostic</a></li>
-          <li><a href="commercial-audit.html">Commercial Audit</a></li>
           <li><a href="#case-studies">Case Studies</a></li>
-          <li><a href="about.html">About</a></li>
+          <li><a href="#insights">Insights</a></li>
+          <li><a href="#about">About</a></li>
         </ul>
       </div>
       <div>
         <h4>Contact &amp; Legal</h4>
         <ul>
-          <li><a href="contact.html">Contact</a></li>
-          <li><a href="https://www.linkedin.com/company/halo-strategicglobal/" target="_blank" rel="noopener">LinkedIn</a></li>
-          <li><a href="mailto:hello@halostrategic.com">hello@halostrategic.com</a></li>
-          <li><a href="privacy-policy.html">Privacy Policy</a></li>
-          <li><a href="cookie-policy.html">Cookie Policy</a></li>
-          <li><a href="terms-and-conditions.html">Terms &amp; Conditions</a></li>
+          <li><a href="#contact-form">Contact</a></li>
+          <li><a href="#">Privacy</a></li>
+          <li><a href="#">Terms</a></li>
         </ul>
       </div>
     </div>
     <div class="footer-bottom">
-      <span>© 2026 Halo Strategic. All rights reserved.</span>
+      <span>© 2026 Halo. All rights reserved.</span>
       <span class="mono">halostrategic.com</span>
     </div>
   </div>
 </footer>
 
 <script>
-  // Contact forms: submit via fetch so the page shows an inline success message
+  // Contact form: submit via fetch so the page shows an inline success message
   // instead of redirecting to Netlify's default success page. Falls back to a
-  // normal full-page form submission (landing on /thank-you.html) if JavaScript
-  // fails to run. Handles every form with class="contact-form" on any page,
-  // so the homepage form and the Contact page form share one implementation.
-  document.querySelectorAll('.contact-form').forEach(function(form){
-    form.addEventListener('submit', function(e){
+  // normal full-page form submission if JavaScript fails to run.
+  var contactForm = document.getElementById('contact-form');
+  if (contactForm) {
+    contactForm.addEventListener('submit', function(e){
       e.preventDefault();
-      var successEl = form.nextElementSibling;
-      var formData = new FormData(form);
+      var formData = new FormData(contactForm);
       fetch('/', {
         method: 'POST',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         body: new URLSearchParams(formData).toString()
       })
       .then(function(){
-        form.style.display = 'none';
-        if (successEl && successEl.classList.contains('form-success')) {
-          successEl.style.display = 'block';
-        }
+        contactForm.style.display = 'none';
+        document.getElementById('form-success').style.display = 'block';
       })
       .catch(function(){
         // If the fetch fails for any reason, let the form submit normally
-        form.submit();
+        contactForm.submit();
       });
     });
-  });
+  }
 
   // Mobile nav toggle: progressive enhancement only, core content works without it
   document.querySelector('.nav-toggle')?.addEventListener('click', function(){

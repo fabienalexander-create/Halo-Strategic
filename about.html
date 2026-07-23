@@ -4,6 +4,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>About | Halo Strategic</title>
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon-180x180.png">
+<link rel="manifest" href="/site.webmanifest">
+<meta name="theme-color" content="#101A30">
 <meta name="description" content="Meet Fabien Alexander, founder of Halo Strategic — a Commercial Growth Consultancy built from years of working inside founder-led businesses.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -32,7 +38,8 @@
   /* NAV */
   header{ position:sticky; top:0; z-index:100; background:rgba(246,246,243,0.92); backdrop-filter:blur(8px); border-bottom:1px solid var(--border); }
   .navbar{ display:flex; align-items:center; justify-content:space-between; padding:18px 32px; max-width:1180px; margin:0 auto; }
-  .logo{ font-family:'Fraunces',serif; font-size:1.4rem; font-weight:600; color:var(--navy-deep); text-decoration:none; }
+  .logo{ font-family:'Fraunces',serif; font-size:1.4rem; font-weight:600; color:var(--navy-deep); text-decoration:none; display:flex; align-items:center; gap:10px; }
+  .logo-mark{ width:26px; height:26px; flex:none; }
   .nav-links{ display:flex; gap:32px; list-style:none; margin:0; padding:0; }
   .nav-links a{ text-decoration:none; font-size:0.95rem; color:var(--slate); font-weight:500; transition:color 160ms var(--ease); }
   .nav-links a:hover{ color:var(--navy-deep); }
@@ -162,7 +169,14 @@
 
 <header>
   <nav class="navbar">
-    <a href="index.html" class="logo">HALO</a>
+    <a href="index.html" class="logo">
+      <svg class="logo-mark" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path d="M 26 15 A 19 19 0 0 0 26 49" fill="none" stroke="#101A30" stroke-width="4" stroke-linecap="round"/>
+        <path d="M 38 15 A 19 19 0 0 1 38 49" fill="none" stroke="#101A30" stroke-width="4" stroke-linecap="round"/>
+        <path d="M32 21 L37 49 L27 49 Z" fill="#B08D57"/>
+      </svg>
+      HALO
+    </a>
     <ul class="nav-links">
       <li><a href="index.html#how-it-works">How Halo Works</a></li>
       <li><a href="index.html#services">Services</a></li>
@@ -297,7 +311,14 @@
   <div class="container">
     <div class="footer-grid">
       <div>
-        <div class="logo" style="margin-bottom:10px; display:block;">HALO</div>
+        <div class="logo" style="margin-bottom:10px; color:#F6F6F3;">
+          <svg class="logo-mark" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <path d="M 26 15 A 19 19 0 0 0 26 49" fill="none" stroke="#F6F6F3" stroke-width="4" stroke-linecap="round"/>
+            <path d="M 38 15 A 19 19 0 0 1 38 49" fill="none" stroke="#F6F6F3" stroke-width="4" stroke-linecap="round"/>
+            <path d="M32 21 L37 49 L27 49 Z" fill="#D8BE8F"/>
+          </svg>
+          HALO
+        </div>
         <p style="font-size:0.92rem; color:var(--slate); max-width:26em;">A Commercial Growth Consultancy. Our job is to help leadership make better commercial decisions.</p>
       </div>
       <div>
