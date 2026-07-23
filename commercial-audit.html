@@ -3,19 +3,19 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Halo Strategic | Commercial Growth Consultancy</title>
-<meta name="description" content="Halo Strategic is a Commercial Growth Consultancy for businesses that need better decisions, not more dashboards. Start with a Commercial Diagnostic.">
-<meta property="og:title" content="Halo Strategic | See the full picture. Make better decisions.">
-<meta property="og:description" content="Commercial growth consultancy for ambitious businesses ready to scale with confidence.">
+<title>Commercial Audit | Halo Strategic</title>
+<meta name="description" content="Halo Strategic's flagship service: a fixed-fee, evidence-based diagnosis of the constraint limiting your profitable growth.">
+<meta property="og:title" content="Commercial Audit | Halo Strategic">
+<meta property="og:description" content="Halo Strategic's flagship service: a fixed-fee, evidence-based diagnosis of the constraint limiting your profitable growth.">
 <meta property="og:image" content="https://halostrategic.com/assets/og-default-1200x630.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:type" content="website">
-<meta property="og:url" content="https://halostrategic.com">
+<meta property="og:url" content="https://halostrategic.com/commercial-audit.html">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Halo Strategic | See the full picture. Make better decisions.">
+<meta name="twitter:title" content="Commercial Audit | Halo Strategic">
 <meta name="twitter:image" content="https://halostrategic.com/assets/og-default-1200x630.png">
-<link rel="canonical" href="https://halostrategic.com"><link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="canonical" href="https://halostrategic.com/commercial-audit.html"><link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
@@ -142,7 +142,6 @@
     .hero-pattern{ display:none; }
     .card-grid, .card-grid.two{ grid-template-columns:1fr; }
     section{ padding:64px 0; }
-    .hero{ padding:80px 0 60px !important; }
     .final-cta{ margin:0 20px; padding:36px 28px; }
     .footer-grid{ grid-template-columns:1fr; gap:24px; }
     .container{ padding:0 20px; }
@@ -150,6 +149,29 @@
   @media (prefers-reduced-motion: reduce){
     *{ transition:none !important; scroll-behavior:auto !important; }
   }
+  .btn-bronze{ background:var(--bronze); color:var(--navy-deep); font-weight:700; }
+  .btn-bronze:hover{ background:var(--bronze-light); }
+  .btn-bronze:focus-visible{ outline:2px solid #fff; outline-offset:2px; }
+
+  .page-table{ width:100%; border-collapse:collapse; margin:24px 0 40px; }
+  .page-table th{ background:var(--navy-deep); color:#fff; text-align:left; padding:12px 16px; font-size:0.82rem; text-transform:uppercase; letter-spacing:0.04em; }
+  .page-table td{ padding:12px 16px; border-bottom:1px solid var(--border); font-size:0.95rem; vertical-align:top; }
+  .page-table tr:nth-child(even) td{ background:var(--paper); }
+
+  .faq details{ border-bottom:1px solid var(--border); padding:20px 0; }
+  .faq summary{ font-family:'Fraunces',serif; font-size:1.1rem; font-weight:600; color:var(--navy-deep); cursor:pointer; list-style:none; display:flex; justify-content:space-between; align-items:center; }
+  .faq summary::-webkit-details-marker{ display:none; }
+  .faq summary::after{ content:'+'; font-family:'Inter',sans-serif; color:var(--bronze); font-size:1.4rem; font-weight:400; }
+  .faq details[open] summary::after{ content:'\2212'; }
+  .faq p{ margin-top:14px; color:var(--slate); max-width:42em; }
+
+  .step-row{ display:flex; gap:24px; margin:32px 0 48px; flex-wrap:wrap; }
+  .step-row .step{ flex:1; min-width:180px; }
+  .step-row .step .n{ font-family:'IBM Plex Mono',monospace; font-size:1.6rem; font-weight:600; color:var(--bronze-light); margin-bottom:6px; }
+  .step-row .step h4{ font-size:1rem; margin-bottom:6px; color:var(--navy-deep); }
+  .step-row .step p{ font-size:0.88rem; color:var(--slate); margin:0; }
+
+  @media (max-width:700px){ .step-row{ flex-direction:column; } }
 </style>
 </head>
 <body>
@@ -158,189 +180,112 @@
   <nav class="navbar">
     <a href="index.html" class="logo">HALO STRATEGIC</a>
     <ul class="nav-links">
-      <li><a href="#how-it-works">How Halo Works</a></li>
-      <li><a href="#services">Services</a></li>
+      <li><a href="index.html#how-it-works">How Halo Works</a></li>
+      <li><a href="index.html#services">Services</a></li>
       <li><a href="commercial-audit.html">Commercial Audit</a></li>
-      <li><a href="#insights">Evidence</a></li>
+      <li><a href="index.html#insights">Evidence</a></li>
       <li><a href="about.html">About</a></li>
     </ul>
     <div class="nav-right">
-      <a href="#cta" class="btn btn-primary">Start with a Commercial Diagnostic</a>
+      <a href="index.html#cta" class="btn btn-primary">Start with a Commercial Diagnostic</a>
       <button class="nav-toggle" aria-label="Open menu"><span></span><span></span><span></span></button>
     </div>
   </nav>
 </header>
 
-<main>
+<section class="hero">
+  <div class="container">
+    <div class="eyebrow" style="color:#D8BE8F;">Flagship Service</div>
+    <h1 style="font-size:2.6rem;">The Commercial Audit.</h1>
+    <p class="lead" style="max-width:38em;">A fixed-fee, evidence-based diagnosis of the one constraint currently limiting your business's profitable growth, not a marketing audit, and not a guess.</p>
+    <a href="contact.html" class="btn btn-bronze" style="text-decoration:none;">Start with a Commercial Diagnostic</a>
+  </div>
+</section>
 
-  <!-- HERO -->
-  <section class="hero">
-    <svg class="hero-pattern" viewBox="0 0 600 500" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
-      <g fill="none" stroke="#D8BE8F" stroke-width="1.5">
-        <line x1="60" y1="420" x2="180" y2="340"/>
-        <line x1="180" y1="340" x2="300" y2="380"/>
-        <line x1="300" y1="380" x2="420" y2="260"/>
-        <line x1="420" y1="260" x2="540" y2="160"/>
-      </g>
-      <g fill="#101A30" stroke="#D8BE8F" stroke-width="1.5">
-        <circle cx="60" cy="420" r="10"/>
-        <circle cx="180" cy="340" r="10"/>
-        <circle cx="300" cy="380" r="14"/>
-        <circle cx="420" cy="260" r="10"/>
-        <circle cx="540" cy="160" r="10"/>
-      </g>
-    </svg>
-    <div class="container">
-      <h1>Marketing tells you what happened. Halo tells you what to do about it.</h1>
-      <p class="lead">Most businesses aren't short on effort. They're short on clarity about what to do next: which decision actually moves the business, and which one just feels productive. Halo exists to close that gap.</p>
-      <a href="#cta" class="btn btn-bronze">Start with a Commercial Diagnostic</a>
+<section>
+  <div class="container" style="max-width:800px;">
+
+    <div class="eyebrow">What it is</div>
+    <h2 class="section-title">Not a report card. A search for the constraint.</h2>
+    <p style="font-size:1.05rem; margin-bottom:48px;">Most audits score everything evenly and hand you a long list. The Commercial Audit is built on a different premise: a business is limited by its weakest link, not the average of all its parts. Rather than scoring every function equally, the Audit is designed to find the one thing, usually one, sometimes two, that's actually setting the ceiling on your growth right now, and to rank every recommendation by how much it moves that specific constraint.</p>
+
+    <div class="eyebrow">Who it's for</div>
+    <h2 class="section-title">Businesses with real commercial complexity.</h2>
+    <p style="font-size:1.05rem; margin-bottom:48px;">More than one department whose decisions affect the others. Leadership teams who want an evidence-backed answer to what to do next, not a vendor asking for approval to keep running the same activity. If you've already decided the tactic and just want someone to build it, the Audit isn't the right starting point, an Implementation engagement might be.</p>
+
+    <div class="eyebrow">Commercial Leaks</div>
+    <h2 class="section-title">Where revenue actually goes missing.</h2>
+    <p style="font-size:1.05rem; margin-bottom:24px;">Most revenue doesn't disappear in one dramatic failure. It leaks through a dozen small, unowned handoffs between departments, a slow response to a new lead, a CRM nobody trusts enough to use properly, a reporting gap that means two departments are arguing over two different numbers. The Audit is built to find and name these specifically, not generically.</p>
+    <div class="card-grid two" style="margin-bottom:48px;">
+      <div class="card"><div class="k">Constraint area</div><h3>Commercial Strategy</h3><p>Is there one growth plan leadership agrees on, and do the unit economics actually support it?</p></div>
+      <div class="card"><div class="k">Constraint area</div><h3>Acquisition Systems</h3><p>Which channels produce customers, versus which produce leads that never convert?</p></div>
+      <div class="card"><div class="k">Constraint area</div><h3>Conversion &amp; Sales Systems</h3><p>How long between a lead arriving and a human actually engaging it?</p></div>
+      <div class="card"><div class="k">Constraint area</div><h3>Operations &amp; CRM Systems</h3><p>Does the CRM reflect what's actually happening, or is it a system nobody trusts?</p></div>
+      <div class="card"><div class="k">Constraint area</div><h3>Retention &amp; Client Experience</h3><p>What's the real churn rate, against what the business believes it is?</p></div>
+      <div class="card"><div class="k">Constraint area</div><h3>Decision &amp; Reporting Systems</h3><p>Does leadership have one trusted number per key metric, or six different versions of the same one?</p></div>
     </div>
-  </section>
 
-  <!-- THE REAL PROBLEM -->
-  <section class="tight">
-    <div class="container">
-      <div class="eyebrow">The Real Problem</div>
-      <h2 class="section-title">Every department can be doing its job well, and the business still underperforms.</h2>
-      <p>Marketing optimises for leads. Sales optimises for conversion. Operations optimises for delivery. Leadership wants profitable growth.</p>
-      <p>Every one of those can be working exactly as intended, and the business can still underperform, because no one is responsible for how they fit together. Not conflict. Just nobody watching the whole system.</p>
+    <div class="eyebrow">Deliverables</div>
+    <h2 class="section-title">What you actually walk away with.</h2>
+    <table class="page-table">
+      <tr><th>Deliverable</th><th>What it contains</th></tr>
+      <tr><td>Executive Summary</td><td>The constraint, the Halo Score, and the three highest-priority recommendations, readable on its own.</td></tr>
+      <tr><td>The Halo Score</td><td>Every commercial pillar scored on evidence quality, performance gap, and commercial leverage.</td></tr>
+      <tr><td>Commercial Audit Report</td><td>Every Commercial Leak found, in full, with the evidence behind it.</td></tr>
+      <tr><td>Priority Matrix</td><td>Every recommendation, sequenced by actual commercial impact.</td></tr>
+      <tr><td>90-Day Action Plan</td><td>The first moves, each with a named owner and a date.</td></tr>
+      <tr><td>Commercial Roadmap</td><td>What comes after the 90 days.</td></tr>
+      <tr><td>Implementation Proposal</td><td>Only if the evidence justifies it, how Halo would help fix what's found.</td></tr>
+    </table>
+
+    <div class="eyebrow">Process &amp; Timeline</div>
+    <h2 class="section-title">Four weeks, start to finish.</h2>
+    <div class="step-row">
+      <div class="step"><div class="n">01</div><h4>Discovery &amp; Collection</h4><p>Week 1. Access granted, stakeholder interviews run.</p></div>
+      <div class="step"><div class="n">02</div><h4>Analysis</h4><p>Weeks 2&ndash;3. Evidence reviewed against every pillar, Halo Score derived.</p></div>
+      <div class="step"><div class="n">03</div><h4>Presentation &amp; Decision</h4><p>Week 4. Findings presented, 90-day plan agreed.</p></div>
     </div>
-  </section>
 
-  <!-- LEADERSHIP SHOULDN'T HAVE TO GUESS -->
-  <section class="tight" style="background:var(--surface); border-top:1px solid var(--border); border-bottom:1px solid var(--border);">
-    <div class="container">
-      <div class="eyebrow">Leadership Shouldn't Have to Guess</div>
-      <p class="lead">Why isn't growth translating into profit? Why does every department tell a different story about the same quarter? Which numbers can actually be trusted? What should happen next?</p>
-      <p>These aren't unusual questions. They're the ones most leadership teams are quietly living with. Halo exists to replace competing opinions with evidence, so those questions have answers, not just more opinions in the room.</p>
+    <div class="eyebrow">Expected outcomes</div>
+    <h2 class="section-title">Clarity you can act on, not just a document.</h2>
+    <p style="font-size:1.05rem; margin-bottom:48px;">You'll know, specifically, what's limiting growth right now, what to do about it first, and what it's actually costing you to leave it unaddressed. If Halo isn't the right partner to help fix what's found, we'll tell you plainly, the Audit still stands on its own.</p>
+
+    <div class="eyebrow">FAQ</div>
+    <h2 class="section-title">What people ask before starting.</h2>
+    <div class="faq" style="margin-bottom:48px;">
+      <details>
+        <summary>How much does it cost?</summary>
+        <p>A fixed fee of £3,000 for the Commercial Audit. There's no obligation to proceed to implementation afterwards.</p>
+      </details>
+      <details>
+        <summary>What if the Audit doesn't find a major constraint?</summary>
+        <p>Then we tell you that. The Audit is built to follow the evidence, not to justify its own fee by inventing a problem.</p>
+      </details>
+      <details>
+        <summary>Is this confidential?</summary>
+        <p>Yes. Everything shared during the Audit is treated as confidential and is never disclosed without your permission.</p>
+      </details>
+      <details>
+        <summary>Can this be delivered remotely?</summary>
+        <p>Yes, the Audit is designed to run entirely remotely, including stakeholder interviews and the final presentation.</p>
+      </details>
+      <details>
+        <summary>What happens after the Audit?</summary>
+        <p>If the evidence justifies it, you'll receive a separate Implementation Proposal. If not, you keep the Audit and its recommendations either way.</p>
+      </details>
     </div>
-  </section>
 
-  <!-- THE GAP -->
-  <section class="tight">
-    <div class="container">
-      <div class="eyebrow">The Gap</div>
-      <h2 class="section-title">Most businesses receive detailed marketing reports every month. Very few receive clear, evidence-backed commercial recommendations.</h2>
-      <p>A report describes what a campaign did. It doesn't say whether to scale it, hold it, or walk away, and answering that question isn't anyone's job by default. That's the gap Halo exists to close.</p>
-    </div>
-  </section>
+  </div>
+</section>
 
-  <!-- WHAT HALO IS -->
-  <section class="tight" style="background:var(--surface); border-top:1px solid var(--border); border-bottom:1px solid var(--border);">
-    <div class="container" id="about">
-      <div class="eyebrow">What Halo Is</div>
-      <h2 class="section-title">Halo is a Commercial Growth Consultancy.</h2>
-      <p>In practice, that means acting as a commercial operating partner: where a vendor sees a campaign, Halo sees a customer journey. Where a vendor sees a department, Halo sees one commercial system that either works together or quietly doesn't.</p>
-      <p>The work isn't to run your marketing. It's to tell you, with evidence, what's actually happening in your business, and what to do about it.</p>
-    </div>
-  </section>
+<section class="final-cta">
+  <div class="container" style="text-align:center;">
+    <h2 class="section-title" style="margin:0 auto 20px; color:#fff;">Start with a Discovery Call.</h2>
+    <p style="margin:0 auto 24px; color:#C7CBD4;">Free, 45 minutes, no pitch deck. We'll tell you honestly whether a Commercial Audit makes sense.</p>
+    <a href="contact.html" class="btn btn-bronze" style="text-decoration:none;">Book a Discovery Call</a>
+  </div>
+</section>
 
-  <!-- HOW HALO WORKS -->
-  <section id="how-it-works">
-    <div class="container">
-      <div class="eyebrow">How Halo Works</div>
-      <h2 class="section-title">Every engagement starts inside your actual systems, not a template.</h2>
-      <p>Halo traces how a real customer moves through your business, end to end, before recommending anything.</p>
-      <p>From there, you get a clear signal on every part of the business that matters: scale this, hold that, fix this first, backed by evidence, on a cadence you can rely on.</p>
-      <p class="pull">The signal is not the decision. It's what makes the decision faster and better-informed.</p>
-      <p>The call is always made with judgement, by a person who knows your business, never handed off to a dashboard.</p>
-    </div>
-  </section>
-
-  <!-- WHY HALO IS DIFFERENT -->
-  <section class="band-dark">
-    <div class="container">
-      <div class="eyebrow" style="color:var(--bronze-light);">Why Halo Is Different</div>
-      <h2 class="section-title">Halo doesn't sell campaigns. Halo doesn't sell reporting. Halo doesn't even sell decisions.</h2>
-      <p>Halo sells commercial confidence: the difference between guessing and knowing, on the calls that actually matter: whether to scale, whether to hire, whether to stop, whether to change direction. Not by replacing judgement. By strengthening it with evidence a business can actually rely on.</p>
-    </div>
-  </section>
-
-  <!-- SERVICES -->
-  <section id="services">
-    <div class="container">
-      <div class="eyebrow">Services</div>
-      <h2 class="section-title">Organised by the commercial problem you're facing, not a menu of deliverables.</h2>
-      <div class="card-grid">
-        <div class="card"><div class="k">Diagnose</div><h3>Commercial Diagnostics</h3><p>A clear-eyed read on where your business is actually leaking revenue, and why.</p></div>
-        <div class="card"><div class="k">Plan</div><h3>Growth Strategy</h3><p>A sequenced plan tied to commercial outcomes, not a list of tactics.</p></div>
-        <div class="card"><div class="k">Fix</div><h3>Commercial Systems</h3><p>Fixing the plumbing that quietly undermines everything built on top of it.</p></div>
-        <div class="card"><div class="k">Automate</div><h3>AI &amp; Automation</h3><p>Automation that earns trust incrementally, with human judgement built into every stage that matters.</p></div>
-        <div class="card"><div class="k">Trust</div><h3>CRM Optimisation</h3><p>Making sure the system your revenue depends on actually tells you the truth.</p></div>
-        <div class="card"><div class="k">Decide</div><h3>Commercial Decision Support</h3><p>Ongoing, evidence-backed guidance on when to scale, hold, or change course.</p></div>
-        <div class="card"><div class="k">Lead</div><h3>Leadership Advisory</h3><p>For the moments when the hardest problem in the business is that no one owns the decision.</p></div>
-      </div>
-    </div>
-  </section>
-
-  <!-- CASE STUDIES -->
-  <section style="background:var(--surface); border-top:1px solid var(--border); border-bottom:1px solid var(--border);" id="case-studies">
-    <div class="container">
-      <div class="eyebrow">Case Studies</div>
-      <h2 class="section-title">Real diagnoses, real decisions, not testimonials.</h2>
-      <div class="card-grid two">
-        <div class="card">
-          <div class="k">Case Study</div>
-          <h3>From Reacting to Leading</h3>
-          <p>A client's agency relationship had become "launch campaigns, react to issues." The real constraint wasn't performance. It was broken tracking that made every number untrustworthy. Fixing the plumbing first moved the relationship from execution to genuine account leadership.</p>
-        </div>
-        <div class="card">
-          <div class="k">Case Study</div>
-          <h3>The Data That Was Never Missing</h3>
-          <p>A client believed they had no visibility into what happened after a lead converted. They did. It just hadn't been translated into anything usable. Reframing existing data justified holding spend exactly where a surface-level metric said to cut it.</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- EVIDENCE -->
-  <section class="tight" id="insights">
-    <div class="container">
-      <div class="eyebrow">Evidence</div>
-      <div class="evidence">
-        <h2 class="section-title" style="font-size:1.7rem;">Every recommendation is grounded in evidence.</h2>
-        <p>Halo's thinking wasn't developed in a workshop. It was refined through repeated commercial engagements across multiple industries, tested against real accounts before it was ever written down.</p>
-        <p style="margin-bottom:0;">The ideas behind Halo's approach exist because they solved the same commercial problem more than once, not because they looked good in a slide deck.</p>
-      </div>
-    </div>
-  </section>
-
-  <!-- FINAL CTA / CONTACT -->
-  <section id="cta">
-    <div class="final-cta">
-      <div class="eyebrow" style="color:var(--bronze-light);">Start Here</div>
-      <h2>Start with a Commercial Diagnostic.</h2>
-      <p>A focused 45-minute conversation centred entirely on understanding your business, followed by a concise written summary outlining what Halo believes is happening, where the likely commercial leaks are, and what should be investigated first. If Halo isn't the right partner, we'll tell you.</p>
-
-      <form name="contact" method="POST" action="/thank-you.html" data-netlify="true" netlify-honeypot="bot-field" class="contact-form" id="contact-form">
-        <input type="hidden" name="form-name" value="contact">
-        <p style="display:none;"><label>Don't fill this out if you're human: <input name="bot-field"></label></p>
-
-        <div class="form-row">
-          <label for="name">Name</label>
-          <input type="text" id="name" name="name" required>
-        </div>
-        <div class="form-row">
-          <label for="email">Email</label>
-          <input type="email" id="email" name="email" required>
-        </div>
-        <div class="form-row">
-          <label for="company">Company</label>
-          <input type="text" id="company" name="company" required>
-        </div>
-        <div class="form-row">
-          <label for="challenge">What's the main commercial challenge you're facing right now?</label>
-          <textarea id="challenge" name="challenge" required></textarea>
-        </div>
-        <button type="submit" class="btn btn-primary">Book your Commercial Diagnostic</button>
-        <p class="form-note">No pitch deck, no cost, no obligation. We'll reply within one business day.</p>
-      </form>
-
-      <div class="form-success" id="form-success">Thank you. Your message has been sent. We'll be in touch within one business day.</div>
-    </div>
-  </section>
-
-</main>
 
 <footer>
   <div class="container">
@@ -352,11 +297,11 @@
       <div>
         <h4>Sitemap</h4>
         <ul>
-          <li><a href="#how-it-works">How Halo Works</a></li>
-          <li><a href="#services">Services</a></li>
+          <li><a href="index.html#how-it-works">How Halo Works</a></li>
+          <li><a href="index.html#services">Services</a></li>
           <li><a href="commercial-diagnostic.html">Commercial Diagnostic</a></li>
           <li><a href="commercial-audit.html">Commercial Audit</a></li>
-          <li><a href="#case-studies">Case Studies</a></li>
+          <li><a href="index.html#case-studies">Case Studies</a></li>
           <li><a href="about.html">About</a></li>
         </ul>
       </div>
@@ -423,6 +368,7 @@
     links.style.borderBottom = '1px solid var(--border)';
   });
 </script>
+
 
 </body>
 </html>
