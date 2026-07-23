@@ -1,5 +1,5 @@
 <svg width="64" height="64" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Halo icon">
-  <path d="M 26 15 A 19 19 0 0 0 26 49" fill="none" stroke="#F6F6F3" stroke-width="4" stroke-linecap="round"/>
-  <path d="M 38 15 A 19 19 0 0 1 38 49" fill="none" stroke="#F6F6F3" stroke-width="4" stroke-linecap="round"/>
-  <path d="M32 21 L37 49 L27 49 Z" fill="#D8BE8F"/>
+  <path d="M 26 15 A 19 19 0 0 0 26 49" fill="none" stroke="#101A30" stroke-width="4" stroke-linecap="round"/>
+  <path d="M 38 15 A 19 19 0 0 1 38 49" fill="none" stroke="#101A30" stroke-width="4" stroke-linecap="round"/>
+  <path d="M32 21 L37 49 L27 49 Z" fill="#B08D57"/>
 </svg>
