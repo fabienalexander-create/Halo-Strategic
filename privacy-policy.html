@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Privacy Policy | Halo Strategic</title>
+<meta name="description" content="How Halo Strategic collects, uses, and protects information submitted through this site.">
+<meta property="og:title" content="Privacy Policy | Halo Strategic">
+<meta property="og:description" content="How Halo Strategic collects, uses, and protects information submitted through this site.">
+<meta property="og:image" content="https://halostrategic.com/assets/og-default-1200x630.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://halostrategic.com/privacy-policy.html">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Privacy Policy | Halo Strategic">
+<meta name="twitter:image" content="https://halostrategic.com/assets/og-default-1200x630.png">
+<link rel="canonical" href="https://halostrategic.com/privacy-policy.html"><link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#1B2A4A; --navy-deep:#101A30; --bronze:#B08D57; --bronze-light:#D8BE8F;
+    --slate:#44546A; --ink:#1A1D24; --paper:#F6F6F3; --surface:#FFFFFF; --border:#E1E3DE;
+    --green:#4B6B4F; --green-bg:#E7EDE6; --amber:#8F6E28; --amber-bg:#F2EAD9; --red:#8C4438; --red-bg:#F2E2DE;
+    --radius-sm:6px; --radius-md:8px; --radius-lg:12px;
+    --ease: cubic-bezier(0.4,0,0.2,1);
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0; background:var(--paper); color:var(--ink);
+    font-family:'Inter',sans-serif; font-size:17px; line-height:1.65;
+    -webkit-font-smoothing:antialiased;
+  }
+  ::selection{ background:var(--bronze-light); color:var(--navy-deep); }
+  h1,h2,h3{ font-family:'Fraunces',serif; font-weight:500; color:var(--navy-deep); margin:0; letter-spacing:-0.01em; }
+  a{ color:inherit; }
+  .container{ max-width:1180px; margin:0 auto; padding:0 32px; }
+  .mono{ font-family:'IBM Plex Mono',monospace; }
+
+  /* NAV */
+  header{ position:sticky; top:0; z-index:100; background:rgba(246,246,243,0.92); backdrop-filter:blur(8px); border-bottom:1px solid var(--border); }
+  .navbar{ display:flex; align-items:center; justify-content:space-between; padding:18px 32px; max-width:1180px; margin:0 auto; }
+  .logo{ font-family:'Fraunces',serif; font-size:1.4rem; font-weight:600; color:var(--navy-deep); text-decoration:none; }
+  .nav-links{ display:flex; gap:32px; list-style:none; margin:0; padding:0; }
+  .nav-links a{ text-decoration:none; font-size:0.95rem; color:var(--slate); font-weight:500; transition:color 160ms var(--ease); }
+  .nav-links a:hover{ color:var(--navy-deep); }
+  .nav-right{ display:flex; align-items:center; gap:28px; }
+  .nav-toggle{ display:none; background:none; border:none; cursor:pointer; padding:8px; }
+  .nav-toggle span{ display:block; width:22px; height:2px; background:var(--navy-deep); margin:5px 0; }
+
+  /* BUTTONS */
+  .btn{
+    font-family:'Inter',sans-serif; font-size:0.95rem; font-weight:600; padding:13px 24px;
+    border-radius:var(--radius-md); cursor:pointer; border:1px solid transparent;
+    transition:background 160ms var(--ease), border-color 160ms var(--ease), color 160ms var(--ease);
+    text-decoration:none; display:inline-block;
+  }
+  .btn-primary{ background:var(--navy); color:#fff; }
+  .btn-primary:hover{ background:var(--navy-deep); }
+  .btn-primary:focus-visible{ outline:2px solid var(--bronze); outline-offset:2px; }
+
+  /* SECTIONS */
+  section{ padding:96px 0; }
+  section.tight{ padding:64px 0; }
+  .eyebrow{ font-family:'IBM Plex Mono',monospace; font-size:0.78rem; color:var(--bronze); text-transform:uppercase; letter-spacing:0.12em; margin-bottom:16px; }
+  h2.section-title{ font-size:2.1rem; line-height:1.2; max-width:16em; margin-bottom:20px; }
+  p.lead{ font-size:1.2rem; color:var(--slate); max-width:38em; margin:0 0 16px; }
+  p{ max-width:42em; }
+
+  /* HERO */
+  .hero{
+    padding:130px 0 100px; background:var(--navy-deep); position:relative; overflow:hidden;
+  }
+  .hero .container{ position:relative; z-index:2; }
+  .hero h1{ font-size:3.1rem; line-height:1.15; max-width:16em; margin-bottom:28px; color:#fff; }
+  .hero p.lead{ margin-bottom:36px; color:#C7CBD4; }
+  .hero-pattern{
+    position:absolute; top:0; right:0; height:100%; width:60%; z-index:1;
+    opacity:0.16; pointer-events:none;
+  }
+  .btn-bronze{ background:var(--bronze); color:var(--navy-deep); }
+  .btn-bronze:hover{ background:var(--bronze-light); }
+  .btn-bronze:focus-visible{ outline:2px solid #fff; outline-offset:2px; }
+
+  /* CARDS */
+  .card-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:24px; margin-top:40px; }
+  .card-grid.two{ grid-template-columns:repeat(2,1fr); }
+  .card{ background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-lg); padding:28px; transition:box-shadow 200ms var(--ease); }
+  .card:hover{ box-shadow:0 4px 20px rgba(16,26,48,0.08); }
+  .card .k{ font-family:'IBM Plex Mono',monospace; font-size:0.72rem; color:var(--bronze); text-transform:uppercase; letter-spacing:0.08em; margin-bottom:10px; }
+  .card h3{ font-size:1.15rem; margin-bottom:10px; }
+  .card p{ font-size:0.95rem; color:var(--slate); margin:0; }
+  .card a.readmore{ display:inline-block; margin-top:14px; font-size:0.9rem; color:var(--bronze); text-decoration:underline; text-underline-offset:3px; font-weight:600; }
+
+  /* PULL / QUOTE */
+  .pull{ font-family:'Fraunces',serif; font-weight:500; font-size:1.6rem; line-height:1.4; color:var(--navy-deep); border-left:3px solid var(--bronze); padding:4px 0 4px 28px; margin:32px 0; max-width:34em; }
+
+  /* DARK BAND (Why Different) */
+  .band-dark{ background:var(--navy-deep); color:#EDEEF0; }
+  .band-dark h2.section-title{ color:#fff; }
+  .band-dark p{ color:#C7CBD4; }
+  .band-dark .pull{ color:#fff; border-left-color:var(--bronze-light); }
+
+  /* EVIDENCE */
+  .evidence{ background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-lg); padding:40px; margin-top:8px; }
+
+  /* FINAL CTA */
+  .final-cta{ text-align:left; background:var(--navy-deep); color:#fff; border-radius:var(--radius-lg); padding:56px; margin:0 32px; }
+  .final-cta h2{ color:#fff; font-size:2rem; margin-bottom:16px; }
+  .final-cta p{ color:#C7CBD4; margin-bottom:28px; max-width:38em; }
+
+  /* CONTACT FORM */
+  .contact-form{ max-width:560px; margin-top:8px; }
+  .form-row{ margin-bottom:18px; }
+  .form-row label{ display:block; font-size:0.85rem; font-weight:600; color:#C7CBD4; margin-bottom:6px; }
+  .form-row input, .form-row textarea{
+    width:100%; font-family:'Inter',sans-serif; font-size:0.95rem; color:var(--ink);
+    background:#fff; border:1px solid transparent; border-radius:var(--radius-md);
+    padding:12px 14px; transition:box-shadow 160ms var(--ease);
+  }
+  .form-row textarea{ min-height:90px; resize:vertical; }
+  .form-row input:focus, .form-row textarea:focus{ outline:2px solid var(--bronze); outline-offset:1px; }
+  .form-note{ font-size:0.82rem; color:#93969E; margin-top:14px; }
+  .form-success{ display:none; background:var(--green-bg,#E7EDE6); color:#2f4a33; border-radius:var(--radius-md); padding:16px 18px; font-size:0.95rem; }
+
+  /* FOOTER */
+  footer{ border-top:1px solid var(--border); padding:56px 0 40px; margin-top:40px; }
+  .footer-grid{ display:grid; grid-template-columns:2fr 1fr 1fr; gap:32px; margin-bottom:40px; }
+  .footer-grid h4{ font-family:'IBM Plex Mono',monospace; font-size:0.72rem; text-transform:uppercase; letter-spacing:0.08em; color:var(--slate); margin-bottom:14px; }
+  .footer-grid ul{ list-style:none; padding:0; margin:0; }
+  .footer-grid li{ margin-bottom:10px; }
+  .footer-grid a{ text-decoration:none; color:var(--ink); font-size:0.92rem; }
+  .footer-grid a:hover{ color:var(--bronze); }
+  .footer-bottom{ font-size:0.82rem; color:var(--slate); border-top:1px solid var(--border); padding-top:24px; display:flex; justify-content:space-between; flex-wrap:wrap; gap:12px; }
+
+  @media (max-width:900px){
+    .nav-links{ display:none; }
+    .nav-toggle{ display:block; }
+    .hero h1{ font-size:2.2rem; }
+    .hero-pattern{ display:none; }
+    .card-grid, .card-grid.two{ grid-template-columns:1fr; }
+    section{ padding:64px 0; }
+    .final-cta{ margin:0 20px; padding:36px 28px; }
+    .footer-grid{ grid-template-columns:1fr; gap:24px; }
+    .container{ padding:0 20px; }
+  }
+  @media (prefers-reduced-motion: reduce){
+    *{ transition:none !important; scroll-behavior:auto !important; }
+  }
+  .legal-page{ padding:110px 0 90px; }
+  .legal-page .container{ max-width:800px; }
+  .legal-page .eyebrow{ margin-bottom:16px; }
+  .legal-page h1{ font-size:2.4rem; line-height:1.2; margin-bottom:8px; }
+  .legal-page .updated{ font-family:'IBM Plex Mono',monospace; font-size:0.82rem; color:var(--slate); margin-bottom:48px; }
+  .legal-page h2{ font-family:'Fraunces',serif; font-size:1.3rem; font-weight:600; color:var(--navy-deep); margin:40px 0 14px; }
+  .legal-page p{ margin-bottom:16px; color:var(--ink); }
+  .legal-page ul{ margin:0 0 16px 22px; }
+  .legal-page li{ margin-bottom:8px; }
+  .legal-page a{ color:var(--bronze); }
+  .legal-page .notice{
+    background:var(--amber-bg); border:1px solid #E4D3A8; border-radius:8px;
+    padding:16px 20px; font-size:0.88rem; color:var(--ink); margin-bottom:40px;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <nav class="navbar">
+    <a href="index.html" class="logo">HALO STRATEGIC</a>
+    <ul class="nav-links">
+      <li><a href="index.html#how-it-works">How Halo Works</a></li>
+      <li><a href="index.html#services">Services</a></li>
+      <li><a href="commercial-audit.html">Commercial Audit</a></li>
+      <li><a href="index.html#insights">Evidence</a></li>
+      <li><a href="about.html">About</a></li>
+    </ul>
+    <div class="nav-right">
+      <a href="index.html#cta" class="btn btn-primary">Start with a Commercial Diagnostic</a>
+      <button class="nav-toggle" aria-label="Open menu"><span></span><span></span><span></span></button>
+    </div>
+  </nav>
+</header>
+
+<section class="legal-page">
+  <div class="container">
+    <div class="eyebrow">Legal</div>
+    <h1>Privacy Policy</h1>
+    <div class="updated">Last updated: 22 July 2026</div>
+
+    <div class="notice">This policy is written to be genuinely accurate about what Halo Strategic currently does, not a generic template. It will be updated if that changes, for example if analytics or additional tools are added.</div>
+
+    <h2>Who we are</h2>
+    <p>Halo Strategic ("Halo," "we," "us") is a commercial growth consultancy. This policy explains what information we collect through halostrategic.com, why, and what rights you have over it.</p>
+
+    <h2>What we collect</h2>
+    <p>The only personal information we collect directly is what you submit through our contact form: your name, email address, company name, and a description of your commercial challenge. We do not currently use analytics, tracking pixels, or advertising cookies on this site.</p>
+
+    <h2>How we use it</h2>
+    <p>Information submitted through the contact form is used solely to respond to your enquiry and, where relevant, to prepare for a Discovery Call or Commercial Diagnostic. We do not sell, rent, or share your information with third parties for marketing purposes.</p>
+
+    <h2>Where it's processed</h2>
+    <p>This site is hosted on Netlify, and our contact form is processed through Netlify Forms. Submitted form data passes through Netlify's infrastructure before reaching us. Netlify's own privacy practices are described at <a href="https://www.netlify.com/privacy/" target="_blank" rel="noopener">netlify.com/privacy</a>.</p>
+    <p>This site's typefaces are served by Google Fonts, which involves a request to Google's servers to load font files. Google's privacy practices are described at <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">policies.google.com/privacy</a>.</p>
+
+    <h2>How long we keep it</h2>
+    <p>Enquiry information is retained only as long as necessary to respond to you and, if an engagement proceeds, for the duration of that engagement plus a reasonable period for our own records. If you ask us to delete your information and no engagement is in progress, we will do so.</p>
+
+    <h2>Your rights</h2>
+    <p>You can ask us at any time to:</p>
+    <ul>
+      <li>Tell you what information we hold about you</li>
+      <li>Correct information that's inaccurate</li>
+      <li>Delete your information, where we're not required to keep it for a legitimate business or legal reason</li>
+      <li>Stop using your information for a particular purpose</li>
+    </ul>
+    <p>To exercise any of these rights, contact us at <a href="mailto:hello@halostrategic.com">hello@halostrategic.com</a>.</p>
+
+    <h2>Security</h2>
+    <p>We take reasonable technical and organisational measures to protect information submitted to us. No method of transmission over the internet is completely secure, and we can't guarantee absolute security.</p>
+
+    <h2>Changes to this policy</h2>
+    <p>If our practices change, for example if we introduce analytics, this policy will be updated and the date at the top will reflect that.</p>
+
+    <h2>Contact</h2>
+    <p>Questions about this policy: <a href="mailto:hello@halostrategic.com">hello@halostrategic.com</a>.</p>
+
+    <div class="notice">This policy has been drafted to be accurate and complete. It has not yet been reviewed by a qualified lawyer, which we'd recommend before relying on it for a specific regulatory context (for example, if you're based in a jurisdiction with specific requirements like the EU's GDPR or California's CCPA).</div>
+  </div>
+</section>
+
+
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <div class="logo" style="margin-bottom:10px; display:block;">HALO STRATEGIC</div>
+        <p style="font-size:0.92rem; color:var(--slate); max-width:26em;">A Commercial Growth Consultancy. Our job is to help leadership make better commercial decisions.</p>
+      </div>
+      <div>
+        <h4>Sitemap</h4>
+        <ul>
+          <li><a href="index.html#how-it-works">How Halo Works</a></li>
+          <li><a href="index.html#services">Services</a></li>
+          <li><a href="commercial-diagnostic.html">Commercial Diagnostic</a></li>
+          <li><a href="commercial-audit.html">Commercial Audit</a></li>
+          <li><a href="index.html#case-studies">Case Studies</a></li>
+          <li><a href="about.html">About</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Contact &amp; Legal</h4>
+        <ul>
+          <li><a href="contact.html">Contact</a></li>
+          <li><a href="https://www.linkedin.com/company/halo-strategicglobal/" target="_blank" rel="noopener">LinkedIn</a></li>
+          <li><a href="mailto:hello@halostrategic.com">hello@halostrategic.com</a></li>
+          <li><a href="privacy-policy.html">Privacy Policy</a></li>
+          <li><a href="cookie-policy.html">Cookie Policy</a></li>
+          <li><a href="terms-and-conditions.html">Terms &amp; Conditions</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 Halo Strategic. All rights reserved.</span>
+      <span class="mono">halostrategic.com</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // Contact form: submit via fetch so the page shows an inline success message
+  // instead of redirecting to Netlify's default success page. Falls back to a
+  // normal full-page form submission if JavaScript fails to run.
+  var contactForm = document.getElementById('contact-form');
+  if (contactForm) {
+    contactForm.addEventListener('submit', function(e){
+      e.preventDefault();
+      var formData = new FormData(contactForm);
+      fetch('/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams(formData).toString()
+      })
+      .then(function(){
+        contactForm.style.display = 'none';
+        document.getElementById('form-success').style.display = 'block';
+      })
+      .catch(function(){
+        // If the fetch fails for any reason, let the form submit normally
+        contactForm.submit();
+      });
+    });
+  }
+
+  // Mobile nav toggle: progressive enhancement only, core content works without it
+  document.querySelector('.nav-toggle')?.addEventListener('click', function(){
+    var links = document.querySelector('.nav-links');
+    var visible = links.style.display === 'flex';
+    links.style.display = visible ? 'none' : 'flex';
+    links.style.flexDirection = 'column';
+    links.style.position = 'absolute';
+    links.style.top = '64px';
+    links.style.left = '0';
+    links.style.right = '0';
+    links.style.background = 'var(--paper)';
+    links.style.padding = '20px 32px';
+    links.style.borderBottom = '1px solid var(--border)';
+  });
+</script>
+
+</body>
+</html>
