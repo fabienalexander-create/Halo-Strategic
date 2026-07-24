@@ -113,6 +113,15 @@
 
   /* EVIDENCE */
   .evidence{ background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-lg); padding:40px; margin-top:8px; }
+  .evidence-grid{ display:grid; grid-template-columns:repeat(2,1fr); gap:20px; margin-top:32px; }
+  .evidence-claim{ border-top:1px solid var(--border); padding-top:18px; }
+  .evidence-claim p.claim-title{ font-family:'Fraunces',serif; font-weight:500; font-size:1.05rem; color:var(--navy-deep); margin:0 0 8px; max-width:none; }
+  .evidence-claim p.claim-source{ font-size:0.88rem; color:var(--slate); margin:0; max-width:none; }
+  .evidence-more{ display:inline-block; margin-top:32px; font-size:0.9rem; color:var(--bronze); text-decoration:underline; text-underline-offset:3px; font-weight:600; }
+  .stat-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:20px; margin-top:16px; }
+  .stat{ background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-lg); padding:24px 20px; }
+  .stat .num{ font-family:'Fraunces',serif; font-weight:500; font-size:2rem; color:var(--bronze); line-height:1; margin-bottom:10px; }
+  .stat .desc{ font-size:0.88rem; color:var(--slate); max-width:none; }
 
   /* FINAL CTA */
   .final-cta{ text-align:left; background:var(--navy-deep); color:#fff; border-radius:var(--radius-lg); padding:56px; margin:0 32px; }
@@ -149,6 +158,8 @@
     .hero h1{ font-size:2.2rem; }
     .hero-pattern{ display:none; }
     .card-grid, .card-grid.two{ grid-template-columns:1fr; }
+    .evidence-grid{ grid-template-columns:1fr; }
+    .stat-grid{ grid-template-columns:repeat(2,1fr); }
     section{ padding:64px 0; }
     .final-cta{ margin:0 20px; padding:36px 28px; }
     .footer-grid{ grid-template-columns:1fr; gap:24px; }
@@ -174,6 +185,7 @@
     <ul class="nav-links">
       <li><a href="#how-it-works">How Halo Works</a></li>
       <li><a href="#services">Services</a></li>
+      <li><a href="selected-engagements.html">Selected Engagements</a></li>
       <li><a href="https://halostrategic.com/commercial-audit.html">Commercial Audit</a></li>
       <li><a href="#insights">Evidence</a></li>
       <li><a href="about.html">About</a></li>
@@ -295,15 +307,15 @@
       <div class="card-grid two">
         <div class="card">
           <div class="k">Case Study</div>
-          <h3>From Reacting to Leading</h3>
-          <p>A client's agency relationship had become "launch campaigns, react to issues." The real constraint wasn't performance. It was broken tracking that made every number untrustworthy. Fixing the plumbing first moved the relationship from execution to genuine account leadership.</p>
-          <a href="#" class="readmore">Read the diagnosis →</a>
+          <h3>Fixing Sales Follow-up Before Buying More Leads</h3>
+          <p>A custom ADU builder needed to lift booked site visits from three a week to six or eight to justify hiring their first salesperson. Fourteen leads were producing a single booked visit. Halo diagnosed the bottleneck as sales follow-up, not targeting or creative, and rebuilt the lead-to-booking funnel before touching the campaign.</p>
+          <a href="selected-engagements.html#sales-follow-up" class="readmore">Read the diagnosis →</a>
         </div>
         <div class="card">
           <div class="k">Case Study</div>
-          <h3>The Data That Was Never Missing</h3>
-          <p>A client believed they had no visibility into what happened after a lead converted. They did. It just hadn't been translated into anything usable. Reframing existing data justified holding spend exactly where a surface-level metric said to cut it.</p>
-          <a href="#" class="readmore">Read the diagnosis →</a>
+          <h3>Good Reporting Changes Decisions, Not Just Dashboards</h3>
+          <p>An international education client felt disconnected from their account and was ready to escalate, even though performance was sitting inside its guardrail the entire time. Halo reframed a performance complaint as a visibility problem, and rebuilt reporting around a plain-English summary and a real cadence.</p>
+          <a href="selected-engagements.html#reporting-not-dashboards" class="readmore">Read the diagnosis →</a>
         </div>
       </div>
     </div>
@@ -317,6 +329,34 @@
         <h2 class="section-title" style="font-size:1.7rem;">Every recommendation is grounded in evidence.</h2>
         <p>Halo's thinking wasn't developed in a workshop. It was refined through repeated commercial engagements across multiple industries, tested against real accounts before it was ever written down.</p>
         <p style="margin-bottom:0;">The ideas behind Halo's approach exist because they solved the same commercial problem more than once, not because they looked good in a slide deck.</p>
+
+        <div class="evidence-grid">
+          <div class="evidence-claim">
+            <p class="claim-title">A lead problem is often a follow-up problem in disguise.</p>
+            <p class="claim-source">Traced to: an ADU builder where fourteen leads produced a single booked visit, until the gap was diagnosed downstream of marketing entirely.</p>
+          </div>
+          <div class="evidence-claim">
+            <p class="claim-title">Good reporting changes decisions, not just dashboards.</p>
+            <p class="claim-source">Traced to: an account sitting inside its own performance guardrail the whole time, undone by invisible reporting, not underperformance.</p>
+          </div>
+          <div class="evidence-claim">
+            <p class="claim-title">Sometimes the market is the constraint, not the marketing.</p>
+            <p class="claim-source">Traced to: a specialist firm in a niche too small to spend its own ad budget, no amount of optimisation was going to fix that.</p>
+          </div>
+          <div class="evidence-claim">
+            <p class="claim-title">When a platform keeps breaking, the fix is the right channel, not another workaround.</p>
+            <p class="claim-source">Traced to: repeated account instability that turned out to be the signal to move channels, not a nuisance to patch around.</p>
+          </div>
+        </div>
+
+        <div class="stat-grid">
+          <div class="stat"><div class="num">14 → 1</div><div class="desc">leads it took to produce a single booked site visit, before the follow-up fix</div></div>
+          <div class="stat"><div class="num">43%</div><div class="desc">of those leads were outside the service area entirely</div></div>
+          <div class="stat"><div class="num">3 → 6–8</div><div class="desc">weekly site visits needed to justify the client's first sales hire</div></div>
+          <div class="stat"><div class="num">~25%</div><div class="desc">of one client's monthly ad budget their niche could actually absorb</div></div>
+        </div>
+
+        <a href="selected-engagements.html" class="evidence-more">See all engagements →</a>
       </div>
     </div>
   </section>
@@ -380,6 +420,7 @@
           <li><a href="https://halostrategic.com/commercial-diagnostic.html">Commercial Diagnostic</a></li>
           <li><a href="https://halostrategic.com/commercial-audit.html">Commercial Audit</a></li>
           <li><a href="#case-studies">Case Studies</a></li>
+          <li><a href="selected-engagements.html">Selected Engagements</a></li>
           <li><a href="about.html">About</a></li>
         </ul>
       </div>

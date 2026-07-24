@@ -55,7 +55,7 @@
   @media (min-width:1024px){main{padding-left:80px;padding-right:80px;}}
   .main-inner{max-width:1280px;margin:0 auto;}
 
-  .story{background:var(--white);border:1px solid var(--rule);border-radius:12px;padding:var(--space-6);margin-bottom:var(--space-8);}
+  .story{background:var(--white);border:1px solid var(--rule);border-radius:12px;padding:var(--space-6);margin-bottom:var(--space-8);scroll-margin-top:100px;}
   @media (min-width:1024px){.story{padding:var(--space-7);}}
 
   .story-meta{display:flex;gap:var(--space-6);font-family:var(--font-mono);font-size:13px;letter-spacing:0.06em;text-transform:uppercase;color:var(--slate);margin-bottom:var(--space-5);}
@@ -109,7 +109,7 @@
 <main>
 <div class="main-inner">
 
-  <article class="story">
+  <article class="story" id="market-too-small">
     <div class="story-meta">
       <span>Industry<b>Architecture</b></span>
       <span>Client<b>Specialist Architecture Firm</b></span>
@@ -140,7 +140,7 @@
     <div class="insight">"Sometimes the market is the constraint, not the marketing."</div>
   </article>
 
-  <article class="story">
+  <article class="story" id="sales-follow-up">
     <div class="story-meta">
       <span>Industry<b>Construction / Home Improvement</b></span>
       <span>Client<b>Regional ADU Builder</b></span>
@@ -172,7 +172,7 @@
     <div class="insight">"Fix the sales process before buying more leads."</div>
   </article>
 
-  <article class="story">
+  <article class="story" id="reporting-not-dashboards">
     <div class="story-meta">
       <span>Industry<b>Education / International Exchange</b></span>
       <span>Client<b>International Education Provider</b></span>
@@ -204,7 +204,7 @@
     <div class="insight">"Good reporting changes decisions, not just dashboards."</div>
   </article>
 
-  <article class="story">
+  <article class="story" id="platform-instability">
     <div class="story-meta">
       <span>Industry<b>Healthcare</b></span>
       <span>Client<b>Interventional Radiology / Vascular Practice</b></span>
