@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Selected Engagements | Halo Strategic</title>
+<meta name="description" content="Real consulting engagements, anonymised where appropriate. Outcomes and quotations are only included where verified.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy-deep:#101A30;
+    --navy:#1B2A4A;
+    --slate:#44546A;
+    --bronze:#B08D57;
+    --bronze-light:#D8BE8F;
+    --paper:#F6F6F3;
+    --white:#FFFFFF;
+    --ink:#15171B; /* inferred: Design Bible names "Ink on Paper, 13.1:1" but doesn't give this hex explicitly, see note */
+    --rule:rgba(68,84,106,0.18); /* hairline, derived from Slate at low opacity */
+    --font-display:'Fraunces', serif;
+    --font-body:'Inter', sans-serif;
+    --font-mono:'IBM Plex Mono', monospace;
+    --space-4:16px; --space-5:24px; --space-6:32px; --space-7:48px; --space-8:64px; --space-9:96px;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--font-body);line-height:1.6;font-size:16px;}
+  a{color:inherit;}
+  a:focus-visible, button:focus-visible{outline:2px solid var(--bronze);outline-offset:2px;}
+
+  .wrap{max-width:1280px;margin:0 auto;padding:0 24px;}
+  @media (min-width:768px){.wrap{padding:0 48px;}}
+  @media (min-width:1024px){.wrap{padding:0 80px;}}
+  @media (min-width:1440px){.wrap{padding:0;}}
+
+  header.site{background:var(--navy-deep);padding:var(--space-5) 0;}
+  header.site .wrap{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:var(--space-4);}
+  .logo{font-family:var(--font-mono);letter-spacing:0.14em;font-size:13px;text-transform:uppercase;color:var(--paper);text-decoration:none;}
+  nav.primary{display:flex;gap:var(--space-6);flex-wrap:wrap;font-size:14px;}
+  nav.primary a{text-decoration:none;color:rgba(246,246,243,0.7);transition:color 150ms ease-out;}
+  nav.primary a:hover{color:var(--bronze-light);}
+  nav.primary a.active{color:var(--bronze);}
+
+  .page-head{padding:var(--space-9) 24px var(--space-6);}
+  @media (min-width:768px){.page-head{padding-left:48px;padding-right:48px;}}
+  @media (min-width:1024px){.page-head{padding-left:80px;padding-right:80px;}}
+  .page-head-inner{max-width:1280px;margin:0 auto;}
+  .eyebrow{font-family:var(--font-mono);font-weight:500;font-size:13px;letter-spacing:0.14em;text-transform:uppercase;color:var(--bronze);}
+  h1.page-title{font-family:var(--font-display);font-weight:500;font-size:36px;line-height:1.15;margin:var(--space-4) 0 var(--space-5);color:var(--navy-deep);}
+  @media (min-width:1024px){h1.page-title{font-size:44px;}}
+  .intro{font-size:18px;line-height:1.6;color:var(--slate);max-width:640px;}
+
+  main{padding:0 24px var(--space-9);}
+  @media (min-width:768px){main{padding-left:48px;padding-right:48px;}}
+  @media (min-width:1024px){main{padding-left:80px;padding-right:80px;}}
+  .main-inner{max-width:1280px;margin:0 auto;}
+
+  .story{background:var(--white);border:1px solid var(--rule);border-radius:12px;padding:var(--space-6);margin-bottom:var(--space-8);}
+  @media (min-width:1024px){.story{padding:var(--space-7);}}
+
+  .story-meta{display:flex;gap:var(--space-6);font-family:var(--font-mono);font-size:13px;letter-spacing:0.06em;text-transform:uppercase;color:var(--slate);margin-bottom:var(--space-5);}
+  .story-meta span b{display:block;font-weight:500;color:var(--navy-deep);font-size:13px;text-transform:none;letter-spacing:0;margin-top:2px;}
+
+  h2.story-title{font-family:var(--font-display);font-weight:500;font-size:24px;line-height:1.25;color:var(--navy-deep);margin:0 0 var(--space-6);}
+
+  .story h3{font-family:var(--font-body);font-weight:600;font-size:13px;letter-spacing:0.08em;text-transform:uppercase;color:var(--bronze);margin:var(--space-6) 0 var(--space-3);}
+  .story h3:first-of-type{margin-top:0;}
+  .story p{margin:0 0 var(--space-4);color:var(--ink);}
+  .story ul{margin:0 0 var(--space-4);padding-left:20px;}
+  .story li{margin-bottom:var(--space-3);color:var(--ink);}
+
+  .insight{margin-top:var(--space-6);padding-left:var(--space-5);border-left:3px solid var(--bronze);font-family:var(--font-display);font-size:19px;font-weight:500;font-style:italic;color:var(--navy-deep);}
+
+  footer.site{background:var(--navy-deep);padding:var(--space-8) 0 var(--space-6);}
+  footer.site .cols{display:flex;gap:var(--space-9);flex-wrap:wrap;font-size:14px;}
+  footer.site h4{font-family:var(--font-mono);font-weight:500;font-size:13px;letter-spacing:0.1em;text-transform:uppercase;color:var(--bronze-light);margin:0 0 var(--space-4);}
+  footer.site ul{list-style:none;margin:0;padding:0;}
+  footer.site li{margin-bottom:var(--space-3);}
+  footer.site a{text-decoration:none;color:rgba(246,246,243,0.7);}
+  footer.site a:hover{color:var(--white);}
+  .fine{margin-top:var(--space-7);font-size:13px;color:rgba(246,246,243,0.45);}
+
+  @media (prefers-reduced-motion:reduce){*{transition:none !important;}}
+</style>
+</head>
+<body>
+
+<header class="site">
+  <div class="wrap">
+    <a class="logo" href="/">HALO STRATEGIC</a>
+    <nav class="primary">
+      <a href="/#how-it-works">How Halo Works</a>
+      <a href="/#services">Services</a>
+      <a href="/how-halo-thinks">How Halo Thinks</a>
+      <a class="active" href="/selected-engagements">Selected Engagements</a>
+      <a href="/about">About</a>
+    </nav>
+  </div>
+</header>
+
+<div class="page-head">
+  <div class="page-head-inner">
+    <div class="eyebrow">Selected Engagements</div>
+    <h1 class="page-title">Growth Stories</h1>
+    <p class="intro">Every engagement featured here is based on real consulting work. Where appropriate, client details have been anonymised. Outcomes and quotations are only included where they have been verified.</p>
+  </div>
+</div>
+
+<main>
+<div class="main-inner">
+
+  <article class="story">
+    <div class="story-meta">
+      <span>Industry<b>Architecture</b></span>
+      <span>Client<b>Specialist Architecture Firm</b></span>
+    </div>
+    <h2 class="story-title">We Told the Client the Market Was Too Small</h2>
+
+    <h3>The Challenge</h3>
+    <p>The client was spending on search advertising and getting almost no leads. They were frustrated, and ready to pause billing. On the surface, this looked like a campaign failure: wrong targeting, weak creative, an execution problem that needed fixing.</p>
+    <p>It wasn't. The niche the firm operated in simply didn't generate enough search volume to justify the budget. Roughly a quarter of the monthly spend could actually be deployed each month, the rest had nowhere to go. No amount of optimisation was going to fix a channel with too few searches behind it.</p>
+
+    <h3>My Role</h3>
+    <p>Account lead and strategist. Diagnosed the demand problem and separated it clearly from an execution failure, then designed the channel pivot that followed. The billing and scope decision was held for the agency principal's sign-off, and because the landing page had been built in-house by the client, any page-level diagnosis was routed internally rather than placing blame on their side.</p>
+
+    <h3>What We Discovered</h3>
+    <p>While reviewing performance, a second issue surfaced: some of the early conversions the client had been counting as wins weren't real. A CAPTCHA-related tracking bug had been inflating the conversion numbers. Rather than let the client keep believing in results that hadn't actually happened, the record was corrected, even though it meant admitting the channel was performing worse than it appeared. Put together, the picture was this: the client didn't have a marketing problem, they had a market-size problem, and part of what looked like early traction was ghost data.</p>
+
+    <h3>What Changed</h3>
+    <ul>
+      <li>Diagnosed a demand-side ceiling in the niche, rather than treating it as an execution failure</li>
+      <li>Identified and corrected the tracking bug inflating conversion data, rather than letting the false wins stand</li>
+      <li>Recommended pivoting from search to a visual, portfolio-led demand-generation channel, matching how buyers in this category actually discover firms</li>
+      <li>Escalated the billing and scope conversation honestly, rather than continuing to bill against a channel that structurally couldn't spend its budget</li>
+    </ul>
+
+    <h3>Outcome</h3>
+    <p>The client received an honest explanation for why leads were thin, corrected data they could actually trust, and a channel strategy that matches how their buyers behave. The pivot to the new channel was scoped and ready; whether it launched and how it performed is pending confirmation.</p>
+
+    <div class="insight">"Sometimes the market is the constraint, not the marketing."</div>
+  </article>
+
+  <article class="story">
+    <div class="story-meta">
+      <span>Industry<b>Construction / Home Improvement</b></span>
+      <span>Client<b>Regional ADU Builder</b></span>
+    </div>
+    <h2 class="story-title">Fixing Sales Follow-up Before Buying More Leads</h2>
+
+    <h3>The Challenge</h3>
+    <p>The client, a custom ADU builder rebuilding after a franchise collapse, needed to lift booked site visits from roughly three a week to six or eight, enough to justify hiring their first salesperson. The instinct going in was simple: get more leads.</p>
+    <p>Then the numbers turned worrying. Fourteen leads produced a single booked site visit, and around 43% of those leads were out of the service area entirely. On the surface, that read as a targeting or creative failure, and the client was close to losing confidence in the campaign.</p>
+
+    <h3>My Role</h3>
+    <p>Growth strategist and client lead. Ran discovery, designed the funnel and creative strategy, led the client relationship through the difficult early-performance conversation, and later drove the account's expansion. Creative production and CRM/technical build sat with a wider team, this was strategic ownership, not sole execution.</p>
+
+    <h3>What We Discovered</h3>
+    <p>The leads weren't being called. The real constraint wasn't the campaign at all, it was what happened after a lead came in. Tightening targeting or refreshing creative wouldn't have moved a single number, because the leads arriving were often never being worked in the first place. The bottleneck sat downstream of marketing entirely.</p>
+
+    <h3>What Changed</h3>
+    <ul>
+      <li>Diagnosed the near-churn moment as a sales follow-up failure, not a targeting or creative problem</li>
+      <li>Structured a clear lead form to booking to CRM funnel, so every lead had a consistent place to land</li>
+      <li>Locked a geography-first strategy, deliberately delaying expansion until the home market was saturated</li>
+      <li>Gave an honest answer on adding qualifying questions to the lead form, weighing better signal against added friction, rather than promising a painless fix</li>
+      <li>Opened a second ad channel and a long-form content channel as expansion, once the core process was working</li>
+    </ul>
+
+    <h3>Outcome</h3>
+    <p>The client was retained through a shaky early period, and the account expanded from a single channel into a proposed second channel plus a content workstream. Final site-visit volume against the target, and whether the channel expansion went ahead, are not confirmed.</p>
+
+    <div class="insight">"Fix the sales process before buying more leads."</div>
+  </article>
+
+  <article class="story">
+    <div class="story-meta">
+      <span>Industry<b>Education / International Exchange</b></span>
+      <span>Client<b>International Education Provider</b></span>
+    </div>
+    <h2 class="story-title">Good Reporting Changes Decisions, Not Just Dashboards</h2>
+
+    <h3>The Challenge</h3>
+    <p>The client felt disconnected from the account and unsure whether it was actually progressing. On the surface, that read as a performance complaint, and it was serious enough to escalate.</p>
+    <p>The account was sitting against its defined ROAS guardrail the whole time. The real issue wasn't performance, it was visibility: the reporting was too dense to act on, there was no regular cadence of contact, and no way to see whether the account was growing over time. That gap had eroded trust to the point where the client no longer believed the work was happening.</p>
+
+    <h3>My Role</h3>
+    <p>Account lead. Diagnosed the issue, designed the new reporting and cadence model, briefed the data team on the trend module, and managed the sensitive escalation, including looping in the agency principal onto calls at the client's request.</p>
+
+    <h3>What We Discovered</h3>
+    <p>The client wasn't unhappy with performance, they were unhappy that they couldn't see it. Separating "the client is unhappy" from "the account is underperforming" was the step that mattered. Once that distinction was clear, the fix wasn't a campaign change at all, it was designing for visibility and trust as a deliverable in its own right.</p>
+
+    <h3>What Changed</h3>
+    <ul>
+      <li>Reframed a performance complaint as a reporting and visibility problem</li>
+      <li>Introduced a plain-English top-line summary layer above the metrics dashboard</li>
+      <li>Locked a weekly async update plus a monthly live call as the standard cadence</li>
+      <li>Prioritised a year-on-year trend view to answer the client's real question: are we actually growing</li>
+      <li>Looped the agency principal into calls at the client's request, treated as a relationship signal rather than a routine calendar addition</li>
+    </ul>
+
+    <h3>Outcome</h3>
+    <p>A restructured reporting relationship and cadence were agreed, and a trend layer was scoped and briefed to the data team. The escalation was managed toward a direct conversation between the client and the agency principal. Whether the new cadence held and the escalation resolved positively is not confirmed.</p>
+
+    <div class="insight">"Good reporting changes decisions, not just dashboards."</div>
+  </article>
+
+  <article class="story">
+    <div class="story-meta">
+      <span>Industry<b>Healthcare</b></span>
+      <span>Client<b>Interventional Radiology / Vascular Practice</b></span>
+    </div>
+    <h2 class="story-title">We Moved the Client Off an Unstable Platform Before It Cost Them Momentum</h2>
+
+    <h3>The Challenge</h3>
+    <p>The client's Meta advertising presence kept getting disrupted, repeated account restrictions, suspicious-login locks, and a recovery process that dragged on each time. This wasn't a creative or targeting problem, it was a platform-reliability problem, and it kept interrupting both the campaign and the client's own access to their account.</p>
+
+    <h3>My Role</h3>
+    <p>Account lead. Made the channel-pivot recommendation, wrote the Google playbook brief covering procedure positioning, targeting radius, and keyword direction, and coordinated the team on keyword research and build. Kept the agency principal looped in throughout.</p>
+
+    <h3>What We Discovered</h3>
+    <p>At some point, fighting the platform stops being the right instinct. The procedures being marketed, varicose veins, fibroids, knee pain, are things people actively search for as alternatives to surgery. That made them a better fit for intent-driven search than for social in the first place. The instability wasn't just a nuisance to work around, it was the signal to move to the channel that suited the business better all along.</p>
+
+    <h3>What Changed</h3>
+    <ul>
+      <li>Called the pivot from Meta to Google, rather than continuing to fight recurring account instability</li>
+      <li>Positioned the procedures as surgery alternatives, matched to how people search for them</li>
+      <li>Set a lead creative hook and a defined targeting radius for the new build</li>
+      <li>Sequenced the switch so momentum wasn't lost during the platform recovery process</li>
+    </ul>
+
+    <h3>Outcome</h3>
+    <p>A clear, justified channel pivot was made, with a full build brief in place, protecting the client from ongoing platform disruption. Post-pivot performance is not yet confirmed.</p>
+
+    <div class="insight">"When the platform keeps breaking, the fix isn't another workaround, it's the right channel for how the customer actually searches."</div>
+  </article>
+
+</div>
+</main>
+
+<footer class="site">
+  <div class="wrap">
+    <div class="cols">
+      <div>
+        <h4>Sitemap</h4>
+        <ul>
+          <li><a href="/#how-it-works">How Halo Works</a></li>
+          <li><a href="/#services">Services</a></li>
+          <li><a href="/how-halo-thinks">How Halo Thinks</a></li>
+          <li><a href="/selected-engagements">Selected Engagements</a></li>
+          <li><a href="/about">About</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Contact &amp; Legal</h4>
+        <ul>
+          <li><a href="/contact">Contact</a></li>
+          <li><a href="/privacy-policy">Privacy Policy</a></li>
+          <li><a href="/terms-and-conditions">Terms &amp; Conditions</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="fine">© 2026 Halo Strategic. All rights reserved. halostrategic.com</div>
+  </div>
+</footer>
+
+</body>
+</html>

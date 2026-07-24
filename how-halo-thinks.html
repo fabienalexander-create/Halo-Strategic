@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>How Halo Thinks | Halo Strategic</title>
+<meta name="description" content="Nine commercial principles distilled from a decade of recurring patterns, not written as aspirational values.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy-deep:#101A30;
+    --navy:#1B2A4A;
+    --slate:#44546A;
+    --bronze:#B08D57;
+    --bronze-light:#D8BE8F;
+    --paper:#F6F6F3;
+    --white:#FFFFFF;
+    --ink:#15171B; /* inferred, see note in selected-engagements.html */
+    --rule:rgba(68,84,106,0.18);
+    --font-display:'Fraunces', serif;
+    --font-body:'Inter', sans-serif;
+    --font-mono:'IBM Plex Mono', monospace;
+    --space-4:16px; --space-5:24px; --space-6:32px; --space-7:48px; --space-8:64px; --space-9:96px;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--font-body);line-height:1.6;font-size:16px;}
+  a{color:inherit;}
+  a:focus-visible{outline:2px solid var(--bronze);outline-offset:2px;}
+
+  .wrap{max-width:1280px;margin:0 auto;padding:0 24px;}
+  @media (min-width:768px){.wrap{padding:0 48px;}}
+  @media (min-width:1024px){.wrap{padding:0 80px;}}
+  @media (min-width:1440px){.wrap{padding:0;}}
+
+  header.site{background:var(--navy-deep);padding:var(--space-5) 0;}
+  header.site .wrap{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:var(--space-4);}
+  .logo{font-family:var(--font-mono);letter-spacing:0.14em;font-size:13px;text-transform:uppercase;color:var(--paper);text-decoration:none;}
+  nav.primary{display:flex;gap:var(--space-6);flex-wrap:wrap;font-size:14px;}
+  nav.primary a{text-decoration:none;color:rgba(246,246,243,0.7);transition:color 150ms ease-out;}
+  nav.primary a:hover{color:var(--bronze-light);}
+  nav.primary a.active{color:var(--bronze);}
+
+  .page-head{max-width:720px;margin:0 auto;padding:var(--space-9) 24px var(--space-5);text-align:center;}
+  .eyebrow{font-family:var(--font-mono);font-weight:500;font-size:13px;letter-spacing:0.14em;text-transform:uppercase;color:var(--bronze);}
+  h1.page-title{font-family:var(--font-display);font-weight:500;font-size:32px;line-height:1.2;margin:var(--space-4) 0 var(--space-5);color:var(--navy-deep);}
+  @media (min-width:1024px){h1.page-title{font-size:36px;}}
+  .intro{font-size:18px;line-height:1.6;color:var(--slate);}
+
+  main{max-width:720px;margin:0 auto;padding:var(--space-4) 24px var(--space-9);}
+
+  .principle{padding:var(--space-6) 0;border-bottom:1px solid var(--rule);}
+  .principle:last-of-type{border-bottom:none;}
+  .principle h2{font-family:var(--font-body);font-weight:600;font-size:18px;line-height:1.4;color:var(--navy-deep);margin:0 0 var(--space-3);}
+  .principle p{margin:0;color:var(--slate);font-size:16px;}
+
+  .closing{margin-top:var(--space-8);padding-left:var(--space-5);border-left:3px solid var(--bronze);font-family:var(--font-display);font-size:18px;font-weight:500;font-style:italic;color:var(--navy-deep);}
+
+  footer.site{background:var(--navy-deep);padding:var(--space-8) 0 var(--space-6);}
+  footer.site .cols{display:flex;gap:var(--space-9);flex-wrap:wrap;font-size:14px;}
+  footer.site h4{font-family:var(--font-mono);font-weight:500;font-size:13px;letter-spacing:0.1em;text-transform:uppercase;color:var(--bronze-light);margin:0 0 var(--space-4);}
+  footer.site ul{list-style:none;margin:0;padding:0;}
+  footer.site li{margin-bottom:var(--space-3);}
+  footer.site a{text-decoration:none;color:rgba(246,246,243,0.7);}
+  footer.site a:hover{color:var(--white);}
+  .fine{margin-top:var(--space-7);font-size:13px;color:rgba(246,246,243,0.45);}
+
+  @media (prefers-reduced-motion:reduce){*{transition:none !important;}}
+</style>
+</head>
+<body>
+
+<header class="site">
+  <div class="wrap">
+    <a class="logo" href="/">HALO STRATEGIC</a>
+    <nav class="primary">
+      <a href="/#how-it-works">How Halo Works</a>
+      <a href="/#services">Services</a>
+      <a class="active" href="/how-halo-thinks">How Halo Thinks</a>
+      <a href="/selected-engagements">Selected Engagements</a>
+      <a href="/about">About</a>
+    </nav>
+  </div>
+</header>
+
+<div class="page-head">
+  <div class="eyebrow">How Halo Thinks</div>
+  <h1 class="page-title">Growth problems rarely begin where they first appear.</h1>
+  <p class="intro">Over the last decade, working across publishers, agencies, consultancies and in-house leadership roles, in industries as different as fintech, travel, SaaS and children's entertainment, the same patterns kept turning up. Different business, same underlying problem, more often than not. Those patterns became the principles below.</p>
+</div>
+
+<main>
+
+  <div class="principle">
+    <h2>Growth is usually constrained by systems before it's constrained by marketing.</h2>
+    <p>Most businesses don't need more leads. They need fewer bottlenecks.</p>
+  </div>
+
+  <div class="principle">
+    <h2>Reporting only earns its place if it changes a decision.</h2>
+    <p>If a report doesn't change what happens next, it isn't doing its job. It's admin.</p>
+  </div>
+
+  <div class="principle">
+    <h2>Build the protection before you need it.</h2>
+    <p>The best systems prevent problems. They don't just measure them after the fact.</p>
+  </div>
+
+  <div class="principle">
+    <h2>Reduce dependency by increasing capability.</h2>
+    <p>The goal isn't to be indispensable. It's to leave a business more capable than you found it.</p>
+  </div>
+
+  <div class="principle">
+    <h2>Complexity is only useful once it's simple enough to act on.</h2>
+    <p>If a founder or a board can't act on it, the analysis isn't finished yet.</p>
+  </div>
+
+  <div class="principle">
+    <h2>Capability should be built into people, not just into systems.</h2>
+    <p>Dashboards don't grow a team. The people running them do.</p>
+  </div>
+
+  <div class="principle">
+    <h2>The method should transfer across industries.</h2>
+    <p>The industry isn't the expertise. The approach is.</p>
+  </div>
+
+  <div class="principle">
+    <h2>Judgement sharpens by sitting in every seat at the table.</h2>
+    <p>Publisher, agency, in-house, founder, each seat teaches something the others can't.</p>
+  </div>
+
+  <div class="principle">
+    <h2>Responsibility should expand deliberately, not by accident.</h2>
+    <p>Growth in scope should be earned and chosen, not something that just happens to you.</p>
+  </div>
+
+  <div class="closing">Unlike most consultancy values, these principles weren't written first and justified afterwards. They were distilled from recurring patterns across more than a decade of commercial work, then tested against the evidence before being adopted.</div>
+
+</main>
+
+<footer class="site">
+  <div class="wrap">
+    <div class="cols">
+      <div>
+        <h4>Sitemap</h4>
+        <ul>
+          <li><a href="/#how-it-works">How Halo Works</a></li>
+          <li><a href="/#services">Services</a></li>
+          <li><a href="/how-halo-thinks">How Halo Thinks</a></li>
+          <li><a href="/selected-engagements">Selected Engagements</a></li>
+          <li><a href="/about">About</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Contact &amp; Legal</h4>
+        <ul>
+          <li><a href="/contact">Contact</a></li>
+          <li><a href="/privacy-policy">Privacy Policy</a></li>
+          <li><a href="/terms-and-conditions">Terms &amp; Conditions</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="fine">© 2026 Halo Strategic. All rights reserved. halostrategic.com</div>
+  </div>
+</footer>
+
+</body>
+</html>
