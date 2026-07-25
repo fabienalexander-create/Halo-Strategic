@@ -300,12 +300,12 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       </div>
       <div class="card">
         <div class="k">General enquiries</div>
-        <h3>hello@halostrategic.com</h3>
+        <h3><a href="mailto:hello@halostrategic.com" style="text-decoration:underline;">hello@halostrategic.com</a></h3>
         <p>For anything that isn't a Discovery Call request, questions, press, partnerships.</p>
       </div>
       <div class="card">
         <div class="k">Founder</div>
-        <h3>fabien@halostrategic.com</h3>
+        <h3><a href="mailto:fabien@halostrategic.com" style="text-decoration:underline;">fabien@halostrategic.com</a></h3>
         <p>Direct line to Fabien Alexander, founder of Halo Strategic. Read more <a href="about.html" style="color:var(--bronze);">about Fabien →</a></p>
       </div>
       <div class="card">
@@ -321,6 +321,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
     <form name="contact-page" method="POST" action="/thank-you.html" data-netlify="true" netlify-honeypot="bot-field" class="contact-form" id="contact-page-form" style="margin-top:24px;">
       <input type="hidden" name="form-name" value="contact-page">
+      <input type="hidden" id="cp-service" name="service" value="">
       <p style="display:none;"><label>Don't fill this out if you're human: <input name="bot-field"></label></p>
 
       <div class="form-row">
@@ -402,6 +403,21 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 </footer>
 
 <script>
+  // Read ?service= from the URL (set by the Diagnostic/Audit page CTAs) and
+  // store it in the hidden field so it travels with the form submission.
+  // If a service is present, default the "reason" dropdown to Discovery Call,
+  // since arriving via those CTAs implies wanting to talk, not a general query.
+  (function(){
+    var params = new URLSearchParams(window.location.search);
+    var service = params.get('service');
+    if (service === 'diagnostic' || service === 'audit') {
+      var serviceField = document.getElementById('cp-service');
+      if (serviceField) serviceField.value = service;
+      var reasonField = document.getElementById('cp-reason');
+      if (reasonField && !reasonField.value) reasonField.value = 'discovery-call';
+    }
+  })();
+
   document.querySelectorAll('.contact-form').forEach(function(form){
     form.addEventListener('submit', function(e){
       e.preventDefault();
@@ -417,6 +433,15 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         if (successEl && successEl.classList.contains('form-success')) {
           successEl.style.display = 'block';
         }
+        // Measurement: fire only once the submission has actually succeeded,
+        // not on raw form "submit", so GTM/GA4 never counts a failed send.
+        window.dataLayer = window.dataLayer || [];
+        window.dataLayer.push({
+          'event': 'form_submit_success',
+          'form_id': form.id || form.getAttribute('name') || '',
+          'service': (formData.get('service') || '').toString(),
+          'reason': (formData.get('reason') || '').toString()
+        });
       })
       .catch(function(){
         form.submit();
