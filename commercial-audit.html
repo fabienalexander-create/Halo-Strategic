@@ -4,18 +4,25 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Commercial Audit | Halo Strategic</title>
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon-180x180.png">
+<link rel="manifest" href="/site.webmanifest">
+<meta name="theme-color" content="#101A30">
 <meta name="description" content="Halo Strategic's flagship service: a fixed-fee, evidence-based diagnosis of the constraint limiting your profitable growth.">
+<link rel="canonical" href="https://halostrategic.com/commercial-audit.html">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://halostrategic.com/commercial-audit.html">
 <meta property="og:title" content="Commercial Audit | Halo Strategic">
 <meta property="og:description" content="Halo Strategic's flagship service: a fixed-fee, evidence-based diagnosis of the constraint limiting your profitable growth.">
 <meta property="og:image" content="https://halostrategic.com/assets/og-default-1200x630.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:type" content="website">
-<meta property="og:url" content="https://halostrategic.com/commercial-audit.html">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Commercial Audit | Halo Strategic">
 <meta name="twitter:image" content="https://halostrategic.com/assets/og-default-1200x630.png">
-<link rel="canonical" href="https://halostrategic.com/commercial-audit.html"><link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
@@ -42,11 +49,13 @@
   /* NAV */
   header{ position:sticky; top:0; z-index:100; background:rgba(246,246,243,0.92); backdrop-filter:blur(8px); border-bottom:1px solid var(--border); }
   .navbar{ display:flex; align-items:center; justify-content:space-between; padding:18px 32px; max-width:1180px; margin:0 auto; }
-  .logo{ font-family:'Fraunces',serif; font-size:1.4rem; font-weight:600; color:var(--navy-deep); text-decoration:none; }
-  .nav-links{ display:flex; gap:32px; list-style:none; margin:0; padding:0; }
-  .nav-links a{ text-decoration:none; font-size:0.95rem; color:var(--slate); font-weight:500; transition:color 160ms var(--ease); }
+  .logo{ font-family:'Fraunces',serif; font-size:1.15rem; font-weight:600; color:var(--navy-deep); text-decoration:none; display:flex; align-items:center; gap:10px; letter-spacing:0.01em; white-space:nowrap; }
+  .logo-mark{ width:24px; height:24px; flex:none; }
+  .nav-links{ display:flex; gap:24px; list-style:none; margin:0; padding:0; flex-wrap:wrap; }
+  .nav-links a{ text-decoration:none; font-size:0.92rem; color:var(--slate); font-weight:500; transition:color 160ms var(--ease); }
   .nav-links a:hover{ color:var(--navy-deep); }
-  .nav-right{ display:flex; align-items:center; gap:28px; }
+  .nav-links a.active{ color:var(--navy-deep); font-weight:600; }
+  .nav-right{ display:flex; align-items:center; gap:24px; }
   .nav-toggle{ display:none; background:none; border:none; cursor:pointer; padding:8px; }
   .nav-toggle span{ display:block; width:22px; height:2px; background:var(--navy-deep); margin:5px 0; }
 
@@ -60,6 +69,9 @@
   .btn-primary{ background:var(--navy); color:#fff; }
   .btn-primary:hover{ background:var(--navy-deep); }
   .btn-primary:focus-visible{ outline:2px solid var(--bronze); outline-offset:2px; }
+  .btn-bronze{ background:var(--bronze); color:var(--navy-deep); font-weight:700; }
+  .btn-bronze:hover{ background:var(--bronze-light); }
+  .btn-bronze:focus-visible{ outline:2px solid #fff; outline-offset:2px; }
 
   /* SECTIONS */
   section{ padding:96px 0; }
@@ -80,9 +92,6 @@
     position:absolute; top:0; right:0; height:100%; width:60%; z-index:1;
     opacity:0.16; pointer-events:none;
   }
-  .btn-bronze{ background:var(--bronze); color:var(--navy-deep); }
-  .btn-bronze:hover{ background:var(--bronze-light); }
-  .btn-bronze:focus-visible{ outline:2px solid #fff; outline-offset:2px; }
 
   /* CARDS */
   .card-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:24px; margin-top:40px; }
@@ -97,7 +106,7 @@
   /* PULL / QUOTE */
   .pull{ font-family:'Fraunces',serif; font-weight:500; font-size:1.6rem; line-height:1.4; color:var(--navy-deep); border-left:3px solid var(--bronze); padding:4px 0 4px 28px; margin:32px 0; max-width:34em; }
 
-  /* DARK BAND (Why Different) */
+  /* DARK BAND */
   .band-dark{ background:var(--navy-deep); color:#EDEEF0; }
   .band-dark h2.section-title{ color:#fff; }
   .band-dark p{ color:#C7CBD4; }
@@ -105,25 +114,102 @@
 
   /* EVIDENCE */
   .evidence{ background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-lg); padding:40px; margin-top:8px; }
+  .evidence-grid{ display:grid; grid-template-columns:repeat(2,1fr); gap:20px; margin:28px 0; }
+  .evidence-claim{ padding:18px 20px; background:var(--paper); border-radius:var(--radius-md); font-size:0.95rem; color:var(--ink); }
+  .evidence-claim b{ display:block; color:var(--navy-deep); font-family:'Fraunces',serif; font-size:1.4rem; margin-bottom:4px; }
+  .stat-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin:28px 0; }
+  .stat{ text-align:center; padding:16px 8px; }
+  .stat .n{ font-family:'Fraunces',serif; font-size:1.8rem; color:var(--bronze); display:block; }
+  .stat .l{ font-size:0.8rem; color:var(--slate); }
+  .evidence-more{ margin-top:8px; }
 
   /* FINAL CTA */
   .final-cta{ text-align:left; background:var(--navy-deep); color:#fff; border-radius:var(--radius-lg); padding:56px; margin:0 32px; }
   .final-cta h2{ color:#fff; font-size:2rem; margin-bottom:16px; }
   .final-cta p{ color:#C7CBD4; margin-bottom:28px; max-width:38em; }
+  section.final-cta{ background:var(--navy-deep); color:#fff; border-radius:0; margin:0; padding:96px 0; }
+  section.final-cta h2.section-title{ color:#fff; }
 
   /* CONTACT FORM */
   .contact-form{ max-width:560px; margin-top:8px; }
   .form-row{ margin-bottom:18px; }
   .form-row label{ display:block; font-size:0.85rem; font-weight:600; color:#C7CBD4; margin-bottom:6px; }
-  .form-row input, .form-row textarea{
+  .form-row input, .form-row textarea, .form-row select{
     width:100%; font-family:'Inter',sans-serif; font-size:0.95rem; color:var(--ink);
     background:#fff; border:1px solid transparent; border-radius:var(--radius-md);
     padding:12px 14px; transition:box-shadow 160ms var(--ease);
   }
   .form-row textarea{ min-height:90px; resize:vertical; }
-  .form-row input:focus, .form-row textarea:focus{ outline:2px solid var(--bronze); outline-offset:1px; }
+  .form-row input:focus, .form-row textarea:focus, .form-row select:focus{ outline:2px solid var(--bronze); outline-offset:1px; }
   .form-note{ font-size:0.82rem; color:#93969E; margin-top:14px; }
   .form-success{ display:none; background:var(--green-bg,#E7EDE6); color:#2f4a33; border-radius:var(--radius-md); padding:16px 18px; font-size:0.95rem; }
+
+  /* PAGE UTILITY: table / faq / steps (Diagnostic, Audit, Contact) */
+  .page-table{ width:100%; border-collapse:collapse; margin:24px 0 40px; }
+  .page-table th{ background:var(--navy-deep); color:#fff; text-align:left; padding:12px 16px; font-size:0.82rem; text-transform:uppercase; letter-spacing:0.04em; }
+  .page-table td{ padding:12px 16px; border-bottom:1px solid var(--border); font-size:0.95rem; vertical-align:top; }
+  .page-table tr:nth-child(even) td{ background:var(--paper); }
+
+  .faq details{ border-bottom:1px solid var(--border); padding:20px 0; }
+  .faq summary{ font-family:'Fraunces',serif; font-size:1.1rem; font-weight:600; color:var(--navy-deep); cursor:pointer; list-style:none; display:flex; justify-content:space-between; align-items:center; }
+  .faq summary::-webkit-details-marker{ display:none; }
+  .faq summary::after{ content:'+'; font-family:'Inter',sans-serif; color:var(--bronze); font-size:1.4rem; font-weight:400; }
+  .faq details[open] summary::after{ content:'\2212'; }
+  .faq p{ margin-top:14px; color:var(--slate); max-width:42em; }
+
+  .step-row{ display:flex; gap:24px; margin:32px 0 48px; flex-wrap:wrap; }
+  .step-row .step{ flex:1; min-width:180px; }
+  .step-row .step .n{ font-family:'IBM Plex Mono',monospace; font-size:1.6rem; font-weight:600; color:var(--bronze-light); margin-bottom:6px; }
+  .step-row .step h4{ font-size:1rem; margin-bottom:6px; color:var(--navy-deep); }
+  .step-row .step p{ font-size:0.88rem; color:var(--slate); margin:0; }
+
+  /* ABOUT PAGE */
+  .about-hero{ padding:72px 0 96px; }
+  .about-hero .container{ display:grid; grid-template-columns:0.85fr 1.15fr; gap:64px; align-items:start; }
+  .portrait-frame{
+    width:100%; aspect-ratio:4/5; background:var(--surface); border:1px solid var(--border);
+    border-radius:var(--radius-lg); display:flex; align-items:center; justify-content:center;
+    overflow:hidden; position:sticky; top:96px;
+  }
+  .portrait-frame img{ width:100%; height:100%; object-fit:cover; object-position:22% 35%; display:block; }
+  .about-intro h1{ font-size:2.6rem; line-height:1.15; margin-bottom:8px; }
+  .about-intro .role{ font-size:1.05rem; color:var(--slate); margin-bottom:20px; }
+  .about-intro .positioning{ font-family:'Fraunces',serif; font-weight:500; font-size:1.3rem; line-height:1.4; color:var(--navy-deep); margin-bottom:28px; max-width:30em; }
+  .about-intro p.lead{ margin-bottom:0; }
+  .founder-story{ max-width:42em; }
+  .founder-story p{ font-size:1.05rem; color:var(--ink); margin:0 0 22px; max-width:none; }
+  .founder-story p:last-child{ margin-bottom:0; }
+  .experience-panel{ background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-lg); padding:8px 0; margin-top:8px; }
+  .experience-panel ul{ list-style:none; margin:0; padding:0; }
+  .experience-panel li{ display:flex; align-items:baseline; gap:16px; padding:20px 32px; border-bottom:1px solid var(--border); font-size:0.98rem; color:var(--ink); }
+  .experience-panel li:last-child{ border-bottom:none; }
+  .experience-panel li::before{ content:''; flex:none; width:6px; height:6px; border-radius:50%; background:var(--bronze); margin-top:8px; }
+  .way-block{ border-left:3px solid var(--border); padding-left:28px; margin:0 0 28px; max-width:42em; }
+  .way-block p{ font-size:1.05rem; color:var(--ink); margin:0 0 18px; max-width:none; }
+  .way-block p:last-child{ margin-bottom:0; }
+  .speaking-proof{ padding-top:0; }
+  .proof-frame{ width:100%; max-width:1180px; margin:0 auto; padding:0 32px; }
+  .proof-frame img{ width:100%; height:auto; display:block; border-radius:var(--radius-lg); }
+  .signature{ margin:48px 0 0; }
+  .signature .sig-name{ font-family:'Fraunces',serif; font-size:1.3rem; font-style:italic; color:var(--navy-deep); margin-bottom:4px; }
+  .signature .sig-role{ font-size:0.9rem; color:var(--slate); }
+
+  /* SELECTED ENGAGEMENTS / HOW HALO THINKS content components */
+  .story{ background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-lg); padding:32px; margin-bottom:40px; scroll-margin-top:100px; }
+  .story-meta{ display:flex; gap:32px; font-family:'IBM Plex Mono',monospace; font-size:0.78rem; letter-spacing:0.06em; text-transform:uppercase; color:var(--slate); margin-bottom:20px; flex-wrap:wrap; }
+  .story-meta span b{ display:block; font-weight:500; color:var(--navy-deep); font-size:0.85rem; text-transform:none; letter-spacing:0; margin-top:2px; }
+  h2.story-title{ font-family:'Fraunces',serif; font-weight:500; font-size:1.4rem; line-height:1.3; color:var(--navy-deep); margin:0 0 24px; }
+  .story h3{ font-family:'Inter',sans-serif; font-weight:600; font-size:0.78rem; letter-spacing:0.08em; text-transform:uppercase; color:var(--bronze); margin:24px 0 10px; }
+  .story h3:first-of-type{ margin-top:0; }
+  .story p{ margin:0 0 16px; color:var(--ink); max-width:none; }
+  .story ul{ margin:0 0 16px; padding-left:20px; }
+  .story li{ margin-bottom:10px; color:var(--ink); }
+  .insight{ margin-top:24px; padding-left:20px; border-left:3px solid var(--bronze); font-family:'Fraunces',serif; font-size:1.1rem; font-weight:500; font-style:italic; color:var(--navy-deep); }
+  .principle{ padding:28px 0; border-bottom:1px solid var(--border); }
+  .principle:last-of-type{ border-bottom:none; }
+  .principle h2{ font-family:'Inter',sans-serif; font-weight:600; font-size:1.05rem; line-height:1.4; color:var(--navy-deep); margin:0 0 8px; }
+  .principle p{ margin:0; color:var(--slate); font-size:0.98rem; max-width:none; }
+  .closing{ margin-top:40px; padding-left:20px; border-left:3px solid var(--bronze); font-family:'Fraunces',serif; font-size:1.05rem; font-weight:500; font-style:italic; color:var(--navy-deep); max-width:42em; }
 
   /* FOOTER */
   footer{ border-top:1px solid var(--border); padding:56px 0 40px; margin-top:40px; }
@@ -145,45 +231,36 @@
     .final-cta{ margin:0 20px; padding:36px 28px; }
     .footer-grid{ grid-template-columns:1fr; gap:24px; }
     .container{ padding:0 20px; }
+    .about-hero{ padding:48px 0 64px; }
+    .about-hero .container{ grid-template-columns:1fr; gap:36px; }
+    .portrait-frame{ position:static; max-width:320px; margin:0 auto; }
+    .about-intro h1{ font-size:2rem; }
+    .step-row{ flex-direction:column; }
+    .evidence-grid, .stat-grid{ grid-template-columns:1fr 1fr; }
   }
   @media (prefers-reduced-motion: reduce){
     *{ transition:none !important; scroll-behavior:auto !important; }
   }
-  .btn-bronze{ background:var(--bronze); color:var(--navy-deep); font-weight:700; }
-  .btn-bronze:hover{ background:var(--bronze-light); }
-  .btn-bronze:focus-visible{ outline:2px solid #fff; outline-offset:2px; }
-
-  .page-table{ width:100%; border-collapse:collapse; margin:24px 0 40px; }
-  .page-table th{ background:var(--navy-deep); color:#fff; text-align:left; padding:12px 16px; font-size:0.82rem; text-transform:uppercase; letter-spacing:0.04em; }
-  .page-table td{ padding:12px 16px; border-bottom:1px solid var(--border); font-size:0.95rem; vertical-align:top; }
-  .page-table tr:nth-child(even) td{ background:var(--paper); }
-
-  .faq details{ border-bottom:1px solid var(--border); padding:20px 0; }
-  .faq summary{ font-family:'Fraunces',serif; font-size:1.1rem; font-weight:600; color:var(--navy-deep); cursor:pointer; list-style:none; display:flex; justify-content:space-between; align-items:center; }
-  .faq summary::-webkit-details-marker{ display:none; }
-  .faq summary::after{ content:'+'; font-family:'Inter',sans-serif; color:var(--bronze); font-size:1.4rem; font-weight:400; }
-  .faq details[open] summary::after{ content:'\2212'; }
-  .faq p{ margin-top:14px; color:var(--slate); max-width:42em; }
-
-  .step-row{ display:flex; gap:24px; margin:32px 0 48px; flex-wrap:wrap; }
-  .step-row .step{ flex:1; min-width:180px; }
-  .step-row .step .n{ font-family:'IBM Plex Mono',monospace; font-size:1.6rem; font-weight:600; color:var(--bronze-light); margin-bottom:6px; }
-  .step-row .step h4{ font-size:1rem; margin-bottom:6px; color:var(--navy-deep); }
-  .step-row .step p{ font-size:0.88rem; color:var(--slate); margin:0; }
-
-  @media (max-width:700px){ .step-row{ flex-direction:column; } }
 </style>
 </head>
 <body>
 
 <header>
   <nav class="navbar">
-    <a href="index.html" class="logo">HALO STRATEGIC</a>
+    <a href="index.html" class="logo">
+      <svg class="logo-mark" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path d="M 26 15 A 19 19 0 0 0 26 49" fill="none" stroke="#101A30" stroke-width="4" stroke-linecap="round"/>
+        <path d="M 38 15 A 19 19 0 0 1 38 49" fill="none" stroke="#101A30" stroke-width="4" stroke-linecap="round"/>
+        <path d="M32 21 L37 49 L27 49 Z" fill="#B08D57"/>
+      </svg>
+      HALO STRATEGIC
+    </a>
     <ul class="nav-links">
       <li><a href="index.html#how-it-works">How Halo Works</a></li>
       <li><a href="index.html#services">Services</a></li>
-      <li><a href="commercial-audit.html">Commercial Audit</a></li>
-      <li><a href="index.html#insights">Evidence</a></li>
+      <li><a href="commercial-audit.html" class="active">Commercial Audit</a></li>
+      <li><a href="how-halo-thinks.html">How Halo Thinks</a></li>
+      <li><a href="selected-engagements.html">Selected Engagements</a></li>
       <li><a href="about.html">About</a></li>
     </ul>
     <div class="nav-right">
@@ -207,7 +284,7 @@
 
     <div class="eyebrow">What it is</div>
     <h2 class="section-title">Not a report card. A search for the constraint.</h2>
-    <p style="font-size:1.05rem; margin-bottom:48px;">Most audits score everything evenly and hand you a long list. The Commercial Audit is built on a different premise: a business is limited by its weakest link, not the average of all its parts. Rather than scoring every function equally, the Audit is designed to find the one thing, usually one, sometimes two, that's actually setting the ceiling on your growth right now, and to rank every recommendation by how much it moves that specific constraint.</p>
+    <p style="font-size:1.05rem; margin-bottom:48px;">Most audits score everything evenly and hand you a long list. The Commercial Audit is built on a different premise: a business is limited by its weakest link, not the average of all its parts. Rather than scoring every function equally, the Audit is designed to find the one thing, usually one, sometimes two, that's actually setting the ceiling on your growth right now, and to rank every recommendation by how much it moves that specific constraint. This is the same diagnostic instinct behind every story on <a href="selected-engagements.html" style="color:var(--bronze);">Selected Engagements</a>, applied on a fixed-fee, four-week basis.</p>
 
     <div class="eyebrow">Who it's for</div>
     <h2 class="section-title">Businesses with real commercial complexity.</h2>
@@ -248,7 +325,7 @@
 
     <div class="eyebrow">Expected outcomes</div>
     <h2 class="section-title">Clarity you can act on, not just a document.</h2>
-    <p style="font-size:1.05rem; margin-bottom:48px;">You'll know, specifically, what's limiting growth right now, what to do about it first, and what it's actually costing you to leave it unaddressed. If Halo isn't the right partner to help fix what's found, we'll tell you plainly, the Audit still stands on its own.</p>
+    <p style="font-size:1.05rem; margin-bottom:48px;">You'll know, specifically, what's limiting growth right now, what to do about it first, and what it's actually costing you to leave it unaddressed. If Halo isn't the right partner to help fix what's found, we'll tell you plainly, the Audit still stands on its own. Who's behind the diagnosis? Read more <a href="about.html" style="color:var(--bronze);">about Fabien Alexander</a>.</p>
 
     <div class="eyebrow">FAQ</div>
     <h2 class="section-title">What people ask before starting.</h2>
@@ -286,12 +363,18 @@
   </div>
 </section>
 
-
 <footer>
   <div class="container">
     <div class="footer-grid">
       <div>
-        <div class="logo" style="margin-bottom:10px; display:block;">HALO STRATEGIC</div>
+        <div class="logo" style="margin-bottom:10px; color:#F6F6F3;">
+          <svg class="logo-mark" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <path d="M 26 15 A 19 19 0 0 0 26 49" fill="none" stroke="#F6F6F3" stroke-width="4" stroke-linecap="round"/>
+            <path d="M 38 15 A 19 19 0 0 1 38 49" fill="none" stroke="#F6F6F3" stroke-width="4" stroke-linecap="round"/>
+            <path d="M32 21 L37 49 L27 49 Z" fill="#D8BE8F"/>
+          </svg>
+          HALO STRATEGIC
+        </div>
         <p style="font-size:0.92rem; color:var(--slate); max-width:26em;">A Commercial Growth Consultancy. Our job is to help leadership make better commercial decisions.</p>
       </div>
       <div>
@@ -301,7 +384,8 @@
           <li><a href="index.html#services">Services</a></li>
           <li><a href="commercial-diagnostic.html">Commercial Diagnostic</a></li>
           <li><a href="commercial-audit.html">Commercial Audit</a></li>
-          <li><a href="index.html#case-studies">Case Studies</a></li>
+          <li><a href="how-halo-thinks.html">How Halo Thinks</a></li>
+          <li><a href="selected-engagements.html">Selected Engagements</a></li>
           <li><a href="about.html">About</a></li>
         </ul>
       </div>
@@ -325,11 +409,6 @@
 </footer>
 
 <script>
-  // Contact forms: submit via fetch so the page shows an inline success message
-  // instead of redirecting to Netlify's default success page. Falls back to a
-  // normal full-page form submission (landing on /thank-you.html) if JavaScript
-  // fails to run. Handles every form with class="contact-form" on any page,
-  // so the homepage form and the Contact page form share one implementation.
   document.querySelectorAll('.contact-form').forEach(function(form){
     form.addEventListener('submit', function(e){
       e.preventDefault();
@@ -347,13 +426,11 @@
         }
       })
       .catch(function(){
-        // If the fetch fails for any reason, let the form submit normally
         form.submit();
       });
     });
   });
 
-  // Mobile nav toggle: progressive enhancement only, core content works without it
   document.querySelector('.nav-toggle')?.addEventListener('click', function(){
     var links = document.querySelector('.nav-links');
     var visible = links.style.display === 'flex';
@@ -368,7 +445,6 @@
     links.style.borderBottom = '1px solid var(--border)';
   });
 </script>
-
 
 </body>
 </html>

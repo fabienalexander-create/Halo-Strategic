@@ -4,110 +4,282 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Selected Engagements | Halo Strategic</title>
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon-180x180.png">
+<link rel="manifest" href="/site.webmanifest">
+<meta name="theme-color" content="#101A30">
 <meta name="description" content="Real consulting engagements, anonymised where appropriate. Outcomes and quotations are only included where verified.">
+<link rel="canonical" href="https://halostrategic.com/selected-engagements.html">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://halostrategic.com/selected-engagements.html">
+<meta property="og:title" content="Selected Engagements | Halo Strategic">
+<meta property="og:description" content="Real consulting engagements, anonymised where appropriate. Outcomes and quotations are only included where verified.">
+<meta property="og:image" content="https://halostrategic.com/assets/og-default-1200x630.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Selected Engagements | Halo Strategic">
+<meta name="twitter:image" content="https://halostrategic.com/assets/og-default-1200x630.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
   :root{
-    --navy-deep:#101A30;
-    --navy:#1B2A4A;
-    --slate:#44546A;
-    --bronze:#B08D57;
-    --bronze-light:#D8BE8F;
-    --paper:#F6F6F3;
-    --white:#FFFFFF;
-    --ink:#15171B; /* inferred: Design Bible names "Ink on Paper, 13.1:1" but doesn't give this hex explicitly, see note */
-    --rule:rgba(68,84,106,0.18); /* hairline, derived from Slate at low opacity */
-    --font-display:'Fraunces', serif;
-    --font-body:'Inter', sans-serif;
-    --font-mono:'IBM Plex Mono', monospace;
-    --space-4:16px; --space-5:24px; --space-6:32px; --space-7:48px; --space-8:64px; --space-9:96px;
+    --navy:#1B2A4A; --navy-deep:#101A30; --bronze:#B08D57; --bronze-light:#D8BE8F;
+    --slate:#44546A; --ink:#1A1D24; --paper:#F6F6F3; --surface:#FFFFFF; --border:#E1E3DE;
+    --green:#4B6B4F; --green-bg:#E7EDE6; --amber:#8F6E28; --amber-bg:#F2EAD9; --red:#8C4438; --red-bg:#F2E2DE;
+    --radius-sm:6px; --radius-md:8px; --radius-lg:12px;
+    --ease: cubic-bezier(0.4,0,0.2,1);
   }
   *{box-sizing:border-box;}
-  body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--font-body);line-height:1.6;font-size:16px;}
-  a{color:inherit;}
-  a:focus-visible, button:focus-visible{outline:2px solid var(--bronze);outline-offset:2px;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0; background:var(--paper); color:var(--ink);
+    font-family:'Inter',sans-serif; font-size:17px; line-height:1.65;
+    -webkit-font-smoothing:antialiased;
+  }
+  ::selection{ background:var(--bronze-light); color:var(--navy-deep); }
+  h1,h2,h3{ font-family:'Fraunces',serif; font-weight:500; color:var(--navy-deep); margin:0; letter-spacing:-0.01em; }
+  a{ color:inherit; }
+  .container{ max-width:1180px; margin:0 auto; padding:0 32px; }
+  .mono{ font-family:'IBM Plex Mono',monospace; }
 
-  .wrap{max-width:1280px;margin:0 auto;padding:0 24px;}
-  @media (min-width:768px){.wrap{padding:0 48px;}}
-  @media (min-width:1024px){.wrap{padding:0 80px;}}
-  @media (min-width:1440px){.wrap{padding:0;}}
+  /* NAV */
+  header{ position:sticky; top:0; z-index:100; background:rgba(246,246,243,0.92); backdrop-filter:blur(8px); border-bottom:1px solid var(--border); }
+  .navbar{ display:flex; align-items:center; justify-content:space-between; padding:18px 32px; max-width:1180px; margin:0 auto; }
+  .logo{ font-family:'Fraunces',serif; font-size:1.15rem; font-weight:600; color:var(--navy-deep); text-decoration:none; display:flex; align-items:center; gap:10px; letter-spacing:0.01em; white-space:nowrap; }
+  .logo-mark{ width:24px; height:24px; flex:none; }
+  .nav-links{ display:flex; gap:24px; list-style:none; margin:0; padding:0; flex-wrap:wrap; }
+  .nav-links a{ text-decoration:none; font-size:0.92rem; color:var(--slate); font-weight:500; transition:color 160ms var(--ease); }
+  .nav-links a:hover{ color:var(--navy-deep); }
+  .nav-links a.active{ color:var(--navy-deep); font-weight:600; }
+  .nav-right{ display:flex; align-items:center; gap:24px; }
+  .nav-toggle{ display:none; background:none; border:none; cursor:pointer; padding:8px; }
+  .nav-toggle span{ display:block; width:22px; height:2px; background:var(--navy-deep); margin:5px 0; }
 
-  header.site{background:var(--navy-deep);padding:var(--space-5) 0;}
-  header.site .wrap{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:var(--space-4);}
-  .logo{font-family:var(--font-mono);letter-spacing:0.14em;font-size:13px;text-transform:uppercase;color:var(--paper);text-decoration:none;}
-  nav.primary{display:flex;gap:var(--space-6);flex-wrap:wrap;font-size:14px;}
-  nav.primary a{text-decoration:none;color:rgba(246,246,243,0.7);transition:color 150ms ease-out;}
-  nav.primary a:hover{color:var(--bronze-light);}
-  nav.primary a.active{color:var(--bronze);}
+  /* BUTTONS */
+  .btn{
+    font-family:'Inter',sans-serif; font-size:0.95rem; font-weight:600; padding:13px 24px;
+    border-radius:var(--radius-md); cursor:pointer; border:1px solid transparent;
+    transition:background 160ms var(--ease), border-color 160ms var(--ease), color 160ms var(--ease);
+    text-decoration:none; display:inline-block;
+  }
+  .btn-primary{ background:var(--navy); color:#fff; }
+  .btn-primary:hover{ background:var(--navy-deep); }
+  .btn-primary:focus-visible{ outline:2px solid var(--bronze); outline-offset:2px; }
+  .btn-bronze{ background:var(--bronze); color:var(--navy-deep); font-weight:700; }
+  .btn-bronze:hover{ background:var(--bronze-light); }
+  .btn-bronze:focus-visible{ outline:2px solid #fff; outline-offset:2px; }
 
-  .page-head{padding:var(--space-9) 24px var(--space-6);}
-  @media (min-width:768px){.page-head{padding-left:48px;padding-right:48px;}}
-  @media (min-width:1024px){.page-head{padding-left:80px;padding-right:80px;}}
-  .page-head-inner{max-width:1280px;margin:0 auto;}
-  .eyebrow{font-family:var(--font-mono);font-weight:500;font-size:13px;letter-spacing:0.14em;text-transform:uppercase;color:var(--bronze);}
-  h1.page-title{font-family:var(--font-display);font-weight:500;font-size:36px;line-height:1.15;margin:var(--space-4) 0 var(--space-5);color:var(--navy-deep);}
-  @media (min-width:1024px){h1.page-title{font-size:44px;}}
-  .intro{font-size:18px;line-height:1.6;color:var(--slate);max-width:640px;}
+  /* SECTIONS */
+  section{ padding:96px 0; }
+  section.tight{ padding:64px 0; }
+  .eyebrow{ font-family:'IBM Plex Mono',monospace; font-size:0.78rem; color:var(--bronze); text-transform:uppercase; letter-spacing:0.12em; margin-bottom:16px; }
+  h2.section-title{ font-size:2.1rem; line-height:1.2; max-width:16em; margin-bottom:20px; }
+  p.lead{ font-size:1.2rem; color:var(--slate); max-width:38em; margin:0 0 16px; }
+  p{ max-width:42em; }
 
-  main{padding:0 24px var(--space-9);}
-  @media (min-width:768px){main{padding-left:48px;padding-right:48px;}}
-  @media (min-width:1024px){main{padding-left:80px;padding-right:80px;}}
-  .main-inner{max-width:1280px;margin:0 auto;}
+  /* HERO */
+  .hero{
+    padding:130px 0 100px; background:var(--navy-deep); position:relative; overflow:hidden;
+  }
+  .hero .container{ position:relative; z-index:2; }
+  .hero h1{ font-size:3.1rem; line-height:1.15; max-width:16em; margin-bottom:28px; color:#fff; }
+  .hero p.lead{ margin-bottom:36px; color:#C7CBD4; }
+  .hero-pattern{
+    position:absolute; top:0; right:0; height:100%; width:60%; z-index:1;
+    opacity:0.16; pointer-events:none;
+  }
 
-  .story{background:var(--white);border:1px solid var(--rule);border-radius:12px;padding:var(--space-6);margin-bottom:var(--space-8);scroll-margin-top:100px;}
-  @media (min-width:1024px){.story{padding:var(--space-7);}}
+  /* CARDS */
+  .card-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:24px; margin-top:40px; }
+  .card-grid.two{ grid-template-columns:repeat(2,1fr); }
+  .card{ background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-lg); padding:28px; transition:box-shadow 200ms var(--ease); }
+  .card:hover{ box-shadow:0 4px 20px rgba(16,26,48,0.08); }
+  .card .k{ font-family:'IBM Plex Mono',monospace; font-size:0.72rem; color:var(--bronze); text-transform:uppercase; letter-spacing:0.08em; margin-bottom:10px; }
+  .card h3{ font-size:1.15rem; margin-bottom:10px; }
+  .card p{ font-size:0.95rem; color:var(--slate); margin:0; }
+  .card a.readmore{ display:inline-block; margin-top:14px; font-size:0.9rem; color:var(--bronze); text-decoration:underline; text-underline-offset:3px; font-weight:600; }
 
-  .story-meta{display:flex;gap:var(--space-6);font-family:var(--font-mono);font-size:13px;letter-spacing:0.06em;text-transform:uppercase;color:var(--slate);margin-bottom:var(--space-5);}
-  .story-meta span b{display:block;font-weight:500;color:var(--navy-deep);font-size:13px;text-transform:none;letter-spacing:0;margin-top:2px;}
+  /* PULL / QUOTE */
+  .pull{ font-family:'Fraunces',serif; font-weight:500; font-size:1.6rem; line-height:1.4; color:var(--navy-deep); border-left:3px solid var(--bronze); padding:4px 0 4px 28px; margin:32px 0; max-width:34em; }
 
-  h2.story-title{font-family:var(--font-display);font-weight:500;font-size:24px;line-height:1.25;color:var(--navy-deep);margin:0 0 var(--space-6);}
+  /* DARK BAND */
+  .band-dark{ background:var(--navy-deep); color:#EDEEF0; }
+  .band-dark h2.section-title{ color:#fff; }
+  .band-dark p{ color:#C7CBD4; }
+  .band-dark .pull{ color:#fff; border-left-color:var(--bronze-light); }
 
-  .story h3{font-family:var(--font-body);font-weight:600;font-size:13px;letter-spacing:0.08em;text-transform:uppercase;color:var(--bronze);margin:var(--space-6) 0 var(--space-3);}
-  .story h3:first-of-type{margin-top:0;}
-  .story p{margin:0 0 var(--space-4);color:var(--ink);}
-  .story ul{margin:0 0 var(--space-4);padding-left:20px;}
-  .story li{margin-bottom:var(--space-3);color:var(--ink);}
+  /* EVIDENCE */
+  .evidence{ background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-lg); padding:40px; margin-top:8px; }
+  .evidence-grid{ display:grid; grid-template-columns:repeat(2,1fr); gap:20px; margin:28px 0; }
+  .evidence-claim{ padding:18px 20px; background:var(--paper); border-radius:var(--radius-md); font-size:0.95rem; color:var(--ink); }
+  .evidence-claim b{ display:block; color:var(--navy-deep); font-family:'Fraunces',serif; font-size:1.4rem; margin-bottom:4px; }
+  .stat-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin:28px 0; }
+  .stat{ text-align:center; padding:16px 8px; }
+  .stat .n{ font-family:'Fraunces',serif; font-size:1.8rem; color:var(--bronze); display:block; }
+  .stat .l{ font-size:0.8rem; color:var(--slate); }
+  .evidence-more{ margin-top:8px; }
 
-  .insight{margin-top:var(--space-6);padding-left:var(--space-5);border-left:3px solid var(--bronze);font-family:var(--font-display);font-size:19px;font-weight:500;font-style:italic;color:var(--navy-deep);}
+  /* FINAL CTA */
+  .final-cta{ text-align:left; background:var(--navy-deep); color:#fff; border-radius:var(--radius-lg); padding:56px; margin:0 32px; }
+  .final-cta h2{ color:#fff; font-size:2rem; margin-bottom:16px; }
+  .final-cta p{ color:#C7CBD4; margin-bottom:28px; max-width:38em; }
+  section.final-cta{ background:var(--navy-deep); color:#fff; border-radius:0; margin:0; padding:96px 0; }
+  section.final-cta h2.section-title{ color:#fff; }
 
-  footer.site{background:var(--navy-deep);padding:var(--space-8) 0 var(--space-6);}
-  footer.site .cols{display:flex;gap:var(--space-9);flex-wrap:wrap;font-size:14px;}
-  footer.site h4{font-family:var(--font-mono);font-weight:500;font-size:13px;letter-spacing:0.1em;text-transform:uppercase;color:var(--bronze-light);margin:0 0 var(--space-4);}
-  footer.site ul{list-style:none;margin:0;padding:0;}
-  footer.site li{margin-bottom:var(--space-3);}
-  footer.site a{text-decoration:none;color:rgba(246,246,243,0.7);}
-  footer.site a:hover{color:var(--white);}
-  .fine{margin-top:var(--space-7);font-size:13px;color:rgba(246,246,243,0.45);}
+  /* CONTACT FORM */
+  .contact-form{ max-width:560px; margin-top:8px; }
+  .form-row{ margin-bottom:18px; }
+  .form-row label{ display:block; font-size:0.85rem; font-weight:600; color:#C7CBD4; margin-bottom:6px; }
+  .form-row input, .form-row textarea, .form-row select{
+    width:100%; font-family:'Inter',sans-serif; font-size:0.95rem; color:var(--ink);
+    background:#fff; border:1px solid transparent; border-radius:var(--radius-md);
+    padding:12px 14px; transition:box-shadow 160ms var(--ease);
+  }
+  .form-row textarea{ min-height:90px; resize:vertical; }
+  .form-row input:focus, .form-row textarea:focus, .form-row select:focus{ outline:2px solid var(--bronze); outline-offset:1px; }
+  .form-note{ font-size:0.82rem; color:#93969E; margin-top:14px; }
+  .form-success{ display:none; background:var(--green-bg,#E7EDE6); color:#2f4a33; border-radius:var(--radius-md); padding:16px 18px; font-size:0.95rem; }
 
-  @media (prefers-reduced-motion:reduce){*{transition:none !important;}}
+  /* PAGE UTILITY: table / faq / steps (Diagnostic, Audit, Contact) */
+  .page-table{ width:100%; border-collapse:collapse; margin:24px 0 40px; }
+  .page-table th{ background:var(--navy-deep); color:#fff; text-align:left; padding:12px 16px; font-size:0.82rem; text-transform:uppercase; letter-spacing:0.04em; }
+  .page-table td{ padding:12px 16px; border-bottom:1px solid var(--border); font-size:0.95rem; vertical-align:top; }
+  .page-table tr:nth-child(even) td{ background:var(--paper); }
+
+  .faq details{ border-bottom:1px solid var(--border); padding:20px 0; }
+  .faq summary{ font-family:'Fraunces',serif; font-size:1.1rem; font-weight:600; color:var(--navy-deep); cursor:pointer; list-style:none; display:flex; justify-content:space-between; align-items:center; }
+  .faq summary::-webkit-details-marker{ display:none; }
+  .faq summary::after{ content:'+'; font-family:'Inter',sans-serif; color:var(--bronze); font-size:1.4rem; font-weight:400; }
+  .faq details[open] summary::after{ content:'\2212'; }
+  .faq p{ margin-top:14px; color:var(--slate); max-width:42em; }
+
+  .step-row{ display:flex; gap:24px; margin:32px 0 48px; flex-wrap:wrap; }
+  .step-row .step{ flex:1; min-width:180px; }
+  .step-row .step .n{ font-family:'IBM Plex Mono',monospace; font-size:1.6rem; font-weight:600; color:var(--bronze-light); margin-bottom:6px; }
+  .step-row .step h4{ font-size:1rem; margin-bottom:6px; color:var(--navy-deep); }
+  .step-row .step p{ font-size:0.88rem; color:var(--slate); margin:0; }
+
+  /* ABOUT PAGE */
+  .about-hero{ padding:72px 0 96px; }
+  .about-hero .container{ display:grid; grid-template-columns:0.85fr 1.15fr; gap:64px; align-items:start; }
+  .portrait-frame{
+    width:100%; aspect-ratio:4/5; background:var(--surface); border:1px solid var(--border);
+    border-radius:var(--radius-lg); display:flex; align-items:center; justify-content:center;
+    overflow:hidden; position:sticky; top:96px;
+  }
+  .portrait-frame img{ width:100%; height:100%; object-fit:cover; object-position:22% 35%; display:block; }
+  .about-intro h1{ font-size:2.6rem; line-height:1.15; margin-bottom:8px; }
+  .about-intro .role{ font-size:1.05rem; color:var(--slate); margin-bottom:20px; }
+  .about-intro .positioning{ font-family:'Fraunces',serif; font-weight:500; font-size:1.3rem; line-height:1.4; color:var(--navy-deep); margin-bottom:28px; max-width:30em; }
+  .about-intro p.lead{ margin-bottom:0; }
+  .founder-story{ max-width:42em; }
+  .founder-story p{ font-size:1.05rem; color:var(--ink); margin:0 0 22px; max-width:none; }
+  .founder-story p:last-child{ margin-bottom:0; }
+  .experience-panel{ background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-lg); padding:8px 0; margin-top:8px; }
+  .experience-panel ul{ list-style:none; margin:0; padding:0; }
+  .experience-panel li{ display:flex; align-items:baseline; gap:16px; padding:20px 32px; border-bottom:1px solid var(--border); font-size:0.98rem; color:var(--ink); }
+  .experience-panel li:last-child{ border-bottom:none; }
+  .experience-panel li::before{ content:''; flex:none; width:6px; height:6px; border-radius:50%; background:var(--bronze); margin-top:8px; }
+  .way-block{ border-left:3px solid var(--border); padding-left:28px; margin:0 0 28px; max-width:42em; }
+  .way-block p{ font-size:1.05rem; color:var(--ink); margin:0 0 18px; max-width:none; }
+  .way-block p:last-child{ margin-bottom:0; }
+  .speaking-proof{ padding-top:0; }
+  .proof-frame{ width:100%; max-width:1180px; margin:0 auto; padding:0 32px; }
+  .proof-frame img{ width:100%; height:auto; display:block; border-radius:var(--radius-lg); }
+  .signature{ margin:48px 0 0; }
+  .signature .sig-name{ font-family:'Fraunces',serif; font-size:1.3rem; font-style:italic; color:var(--navy-deep); margin-bottom:4px; }
+  .signature .sig-role{ font-size:0.9rem; color:var(--slate); }
+
+  /* SELECTED ENGAGEMENTS / HOW HALO THINKS content components */
+  .story{ background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-lg); padding:32px; margin-bottom:40px; scroll-margin-top:100px; }
+  .story-meta{ display:flex; gap:32px; font-family:'IBM Plex Mono',monospace; font-size:0.78rem; letter-spacing:0.06em; text-transform:uppercase; color:var(--slate); margin-bottom:20px; flex-wrap:wrap; }
+  .story-meta span b{ display:block; font-weight:500; color:var(--navy-deep); font-size:0.85rem; text-transform:none; letter-spacing:0; margin-top:2px; }
+  h2.story-title{ font-family:'Fraunces',serif; font-weight:500; font-size:1.4rem; line-height:1.3; color:var(--navy-deep); margin:0 0 24px; }
+  .story h3{ font-family:'Inter',sans-serif; font-weight:600; font-size:0.78rem; letter-spacing:0.08em; text-transform:uppercase; color:var(--bronze); margin:24px 0 10px; }
+  .story h3:first-of-type{ margin-top:0; }
+  .story p{ margin:0 0 16px; color:var(--ink); max-width:none; }
+  .story ul{ margin:0 0 16px; padding-left:20px; }
+  .story li{ margin-bottom:10px; color:var(--ink); }
+  .insight{ margin-top:24px; padding-left:20px; border-left:3px solid var(--bronze); font-family:'Fraunces',serif; font-size:1.1rem; font-weight:500; font-style:italic; color:var(--navy-deep); }
+  .principle{ padding:28px 0; border-bottom:1px solid var(--border); }
+  .principle:last-of-type{ border-bottom:none; }
+  .principle h2{ font-family:'Inter',sans-serif; font-weight:600; font-size:1.05rem; line-height:1.4; color:var(--navy-deep); margin:0 0 8px; }
+  .principle p{ margin:0; color:var(--slate); font-size:0.98rem; max-width:none; }
+  .closing{ margin-top:40px; padding-left:20px; border-left:3px solid var(--bronze); font-family:'Fraunces',serif; font-size:1.05rem; font-weight:500; font-style:italic; color:var(--navy-deep); max-width:42em; }
+
+  /* FOOTER */
+  footer{ border-top:1px solid var(--border); padding:56px 0 40px; margin-top:40px; }
+  .footer-grid{ display:grid; grid-template-columns:2fr 1fr 1fr; gap:32px; margin-bottom:40px; }
+  .footer-grid h4{ font-family:'IBM Plex Mono',monospace; font-size:0.72rem; text-transform:uppercase; letter-spacing:0.08em; color:var(--slate); margin-bottom:14px; }
+  .footer-grid ul{ list-style:none; padding:0; margin:0; }
+  .footer-grid li{ margin-bottom:10px; }
+  .footer-grid a{ text-decoration:none; color:var(--ink); font-size:0.92rem; }
+  .footer-grid a:hover{ color:var(--bronze); }
+  .footer-bottom{ font-size:0.82rem; color:var(--slate); border-top:1px solid var(--border); padding-top:24px; display:flex; justify-content:space-between; flex-wrap:wrap; gap:12px; }
+
+  @media (max-width:900px){
+    .nav-links{ display:none; }
+    .nav-toggle{ display:block; }
+    .hero h1{ font-size:2.2rem; }
+    .hero-pattern{ display:none; }
+    .card-grid, .card-grid.two{ grid-template-columns:1fr; }
+    section{ padding:64px 0; }
+    .final-cta{ margin:0 20px; padding:36px 28px; }
+    .footer-grid{ grid-template-columns:1fr; gap:24px; }
+    .container{ padding:0 20px; }
+    .about-hero{ padding:48px 0 64px; }
+    .about-hero .container{ grid-template-columns:1fr; gap:36px; }
+    .portrait-frame{ position:static; max-width:320px; margin:0 auto; }
+    .about-intro h1{ font-size:2rem; }
+    .step-row{ flex-direction:column; }
+    .evidence-grid, .stat-grid{ grid-template-columns:1fr 1fr; }
+  }
+  @media (prefers-reduced-motion: reduce){
+    *{ transition:none !important; scroll-behavior:auto !important; }
+  }
 </style>
 </head>
 <body>
 
-<header class="site">
-  <div class="wrap">
-    <a class="logo" href="/">HALO STRATEGIC</a>
-    <nav class="primary">
-      <a href="/#how-it-works">How Halo Works</a>
-      <a href="/#services">Services</a>
-      <a href="/how-halo-thinks">How Halo Thinks</a>
-      <a class="active" href="/selected-engagements">Selected Engagements</a>
-      <a href="/about">About</a>
-    </nav>
-  </div>
+<header>
+  <nav class="navbar">
+    <a href="index.html" class="logo">
+      <svg class="logo-mark" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path d="M 26 15 A 19 19 0 0 0 26 49" fill="none" stroke="#101A30" stroke-width="4" stroke-linecap="round"/>
+        <path d="M 38 15 A 19 19 0 0 1 38 49" fill="none" stroke="#101A30" stroke-width="4" stroke-linecap="round"/>
+        <path d="M32 21 L37 49 L27 49 Z" fill="#B08D57"/>
+      </svg>
+      HALO STRATEGIC
+    </a>
+    <ul class="nav-links">
+      <li><a href="index.html#how-it-works">How Halo Works</a></li>
+      <li><a href="index.html#services">Services</a></li>
+      <li><a href="commercial-audit.html">Commercial Audit</a></li>
+      <li><a href="how-halo-thinks.html">How Halo Thinks</a></li>
+      <li><a href="selected-engagements.html" class="active">Selected Engagements</a></li>
+      <li><a href="about.html">About</a></li>
+    </ul>
+    <div class="nav-right">
+      <a href="index.html#cta" class="btn btn-primary">Start with a Commercial Diagnostic</a>
+      <button class="nav-toggle" aria-label="Open menu"><span></span><span></span><span></span></button>
+    </div>
+  </nav>
 </header>
 
-<div class="page-head">
-  <div class="page-head-inner">
-    <div class="eyebrow">Selected Engagements</div>
-    <h1 class="page-title">Growth Stories</h1>
-    <p class="intro">Every engagement featured here is based on real consulting work. Where appropriate, client details have been anonymised. Outcomes and quotations are only included where they have been verified.</p>
+<section class="hero">
+  <div class="container">
+    <div class="eyebrow" style="color:#D8BE8F;">Selected Engagements</div>
+    <h1 style="font-size:2.6rem;">Growth Stories</h1>
+    <p class="lead" style="max-width:38em;">Every engagement featured here is based on real consulting work. Where appropriate, client details have been anonymised. Outcomes and quotations are only included where they have been verified.</p>
   </div>
-</div>
+</section>
 
-<main>
-<div class="main-inner">
+<section>
+  <div class="container">
 
   <article class="story" id="market-too-small">
     <div class="story-meta">
@@ -115,17 +287,13 @@
       <span>Client<b>Specialist Architecture Firm</b></span>
     </div>
     <h2 class="story-title">We Told the Client the Market Was Too Small</h2>
-
     <h3>The Challenge</h3>
     <p>The client was spending on search advertising and getting almost no leads. They were frustrated, and ready to pause billing. On the surface, this looked like a campaign failure: wrong targeting, weak creative, an execution problem that needed fixing.</p>
     <p>It wasn't. The niche the firm operated in simply didn't generate enough search volume to justify the budget. Roughly a quarter of the monthly spend could actually be deployed each month, the rest had nowhere to go. No amount of optimisation was going to fix a channel with too few searches behind it.</p>
-
     <h3>My Role</h3>
     <p>Account lead and strategist. Diagnosed the demand problem and separated it clearly from an execution failure, then designed the channel pivot that followed. The billing and scope decision was held for the agency principal's sign-off, and because the landing page had been built in-house by the client, any page-level diagnosis was routed internally rather than placing blame on their side.</p>
-
     <h3>What We Discovered</h3>
     <p>While reviewing performance, a second issue surfaced: some of the early conversions the client had been counting as wins weren't real. A CAPTCHA-related tracking bug had been inflating the conversion numbers. Rather than let the client keep believing in results that hadn't actually happened, the record was corrected, even though it meant admitting the channel was performing worse than it appeared. Put together, the picture was this: the client didn't have a marketing problem, they had a market-size problem, and part of what looked like early traction was ghost data.</p>
-
     <h3>What Changed</h3>
     <ul>
       <li>Diagnosed a demand-side ceiling in the niche, rather than treating it as an execution failure</li>
@@ -133,10 +301,8 @@
       <li>Recommended pivoting from search to a visual, portfolio-led demand-generation channel, matching how buyers in this category actually discover firms</li>
       <li>Escalated the billing and scope conversation honestly, rather than continuing to bill against a channel that structurally couldn't spend its budget</li>
     </ul>
-
     <h3>Outcome</h3>
     <p>The client received an honest explanation for why leads were thin, corrected data they could actually trust, and a channel strategy that matches how their buyers behave. The pivot to the new channel was scoped and ready; whether it launched and how it performed is pending confirmation.</p>
-
     <div class="insight">"Sometimes the market is the constraint, not the marketing."</div>
   </article>
 
@@ -146,17 +312,13 @@
       <span>Client<b>Regional ADU Builder</b></span>
     </div>
     <h2 class="story-title">Fixing Sales Follow-up Before Buying More Leads</h2>
-
     <h3>The Challenge</h3>
     <p>The client, a custom ADU builder rebuilding after a franchise collapse, needed to lift booked site visits from roughly three a week to six or eight, enough to justify hiring their first salesperson. The instinct going in was simple: get more leads.</p>
     <p>Then the numbers turned worrying. Fourteen leads produced a single booked site visit, and around 43% of those leads were out of the service area entirely. On the surface, that read as a targeting or creative failure, and the client was close to losing confidence in the campaign.</p>
-
     <h3>My Role</h3>
     <p>Growth strategist and client lead. Ran discovery, designed the funnel and creative strategy, led the client relationship through the difficult early-performance conversation, and later drove the account's expansion. Creative production and CRM/technical build sat with a wider team, this was strategic ownership, not sole execution.</p>
-
     <h3>What We Discovered</h3>
     <p>The leads weren't being called. The real constraint wasn't the campaign at all, it was what happened after a lead came in. Tightening targeting or refreshing creative wouldn't have moved a single number, because the leads arriving were often never being worked in the first place. The bottleneck sat downstream of marketing entirely.</p>
-
     <h3>What Changed</h3>
     <ul>
       <li>Diagnosed the near-churn moment as a sales follow-up failure, not a targeting or creative problem</li>
@@ -165,10 +327,8 @@
       <li>Gave an honest answer on adding qualifying questions to the lead form, weighing better signal against added friction, rather than promising a painless fix</li>
       <li>Opened a second ad channel and a long-form content channel as expansion, once the core process was working</li>
     </ul>
-
     <h3>Outcome</h3>
     <p>The client was retained through a shaky early period, and the account expanded from a single channel into a proposed second channel plus a content workstream. Final site-visit volume against the target, and whether the channel expansion went ahead, are not confirmed.</p>
-
     <div class="insight">"Fix the sales process before buying more leads."</div>
   </article>
 
@@ -178,17 +338,13 @@
       <span>Client<b>International Education Provider</b></span>
     </div>
     <h2 class="story-title">Good Reporting Changes Decisions, Not Just Dashboards</h2>
-
     <h3>The Challenge</h3>
     <p>The client felt disconnected from the account and unsure whether it was actually progressing. On the surface, that read as a performance complaint, and it was serious enough to escalate.</p>
     <p>The account was sitting against its defined ROAS guardrail the whole time. The real issue wasn't performance, it was visibility: the reporting was too dense to act on, there was no regular cadence of contact, and no way to see whether the account was growing over time. That gap had eroded trust to the point where the client no longer believed the work was happening.</p>
-
     <h3>My Role</h3>
     <p>Account lead. Diagnosed the issue, designed the new reporting and cadence model, briefed the data team on the trend module, and managed the sensitive escalation, including looping in the agency principal onto calls at the client's request.</p>
-
     <h3>What We Discovered</h3>
     <p>The client wasn't unhappy with performance, they were unhappy that they couldn't see it. Separating "the client is unhappy" from "the account is underperforming" was the step that mattered. Once that distinction was clear, the fix wasn't a campaign change at all, it was designing for visibility and trust as a deliverable in its own right.</p>
-
     <h3>What Changed</h3>
     <ul>
       <li>Reframed a performance complaint as a reporting and visibility problem</li>
@@ -197,10 +353,8 @@
       <li>Prioritised a year-on-year trend view to answer the client's real question: are we actually growing</li>
       <li>Looped the agency principal into calls at the client's request, treated as a relationship signal rather than a routine calendar addition</li>
     </ul>
-
     <h3>Outcome</h3>
     <p>A restructured reporting relationship and cadence were agreed, and a trend layer was scoped and briefed to the data team. The escalation was managed toward a direct conversation between the client and the agency principal. Whether the new cadence held and the escalation resolved positively is not confirmed.</p>
-
     <div class="insight">"Good reporting changes decisions, not just dashboards."</div>
   </article>
 
@@ -210,16 +364,12 @@
       <span>Client<b>Interventional Radiology / Vascular Practice</b></span>
     </div>
     <h2 class="story-title">We Moved the Client Off an Unstable Platform Before It Cost Them Momentum</h2>
-
     <h3>The Challenge</h3>
     <p>The client's Meta advertising presence kept getting disrupted, repeated account restrictions, suspicious-login locks, and a recovery process that dragged on each time. This wasn't a creative or targeting problem, it was a platform-reliability problem, and it kept interrupting both the campaign and the client's own access to their account.</p>
-
     <h3>My Role</h3>
     <p>Account lead. Made the channel-pivot recommendation, wrote the Google playbook brief covering procedure positioning, targeting radius, and keyword direction, and coordinated the team on keyword research and build. Kept the agency principal looped in throughout.</p>
-
     <h3>What We Discovered</h3>
     <p>At some point, fighting the platform stops being the right instinct. The procedures being marketed, varicose veins, fibroids, knee pain, are things people actively search for as alternatives to surgery. That made them a better fit for intent-driven search than for social in the first place. The instability wasn't just a nuisance to work around, it was the signal to move to the channel that suited the business better all along.</p>
-
     <h3>What Changed</h3>
     <ul>
       <li>Called the pivot from Meta to Google, rather than continuing to fight recurring account instability</li>
@@ -227,10 +377,8 @@
       <li>Set a lead creative hook and a defined targeting radius for the new build</li>
       <li>Sequenced the switch so momentum wasn't lost during the platform recovery process</li>
     </ul>
-
     <h3>Outcome</h3>
     <p>A clear, justified channel pivot was made, with a full build brief in place, protecting the client from ongoing platform disruption. Post-pivot performance is not yet confirmed.</p>
-
     <div class="insight">"When the platform keeps breaking, the fix isn't another workaround, it's the right channel for how the customer actually searches."</div>
   </article>
 
@@ -240,16 +388,12 @@
       <span>Client<b>Regional Placement &amp; In-Home Care Provider</b></span>
     </div>
     <h2 class="story-title">From Reacting to Leading</h2>
-
     <h3>The Challenge</h3>
     <p>Shortly after launching a second market, this placement and in-home care client's relationship with their agency had narrowed to "launch campaigns, react to issues." Underperformance in the new market looked like ordinary growing pains, the kind more spend or sharper creative usually fixes.</p>
-
     <h3>My Role</h3>
     <p>Account lead. Diagnosed the tracking integrity issue sitting underneath the underperformance, made the call to hold off scaling the client's own parallel test platform, and introduced the Traffic Light reporting system so the client could read performance without living inside the ads account.</p>
-
     <h3>What We Discovered</h3>
     <p>The real fault wasn't the campaign, it was whether the numbers could be trusted at all. Tracking parameters were passing placeholder values. Form-to-CRM data was inconsistent. Scripts were interfering with attribution. A client-initiated test platform running in parallel was assessed just as honestly: a platform-maturity problem, not a strategy one.</p>
-
     <h3>What Changed</h3>
     <ul>
       <li>Diagnosed a trust-in-the-data problem instead of treating it as a performance failure</li>
@@ -257,10 +401,8 @@
       <li>Held off scaling the client's own test platform until its platform-maturity issues were resolved</li>
       <li>Introduced the Traffic Light system externally, so the client could read performance without living inside the ads account</li>
     </ul>
-
     <h3>Outcome</h3>
     <p>The account's own framing shifted, from "is the channel working" to "this is a systems problem, now being solved." The relationship moved from campaign execution to account leadership.</p>
-
     <div class="insight">"A performance problem and a trust-in-the-data problem look identical from outside. The only way to tell them apart is checking the plumbing before touching the strategy."</div>
   </article>
 
@@ -270,16 +412,12 @@
       <span>Client<b>High-Spend Rehabilitation Facility</b></span>
     </div>
     <h2 class="story-title">The Data That Was Never Missing</h2>
-
     <h3>The Challenge</h3>
     <p>This high-spend rehabilitation-facility client's admissions were gated by an internal insurance-verification process the agency, on the surface, had no visibility into. Cost-per-lead on certain campaigns looked expensive enough to justify cutting them.</p>
-
     <h3>My Role</h3>
     <p>Account lead. Read the client's existing verification reports properly for the first time, built a guardrail layer on top of that data, and made the case for holding spend where a surface-level metric said to cut it.</p>
-
     <h3>What We Discovered</h3>
     <p>The working assumption was that downfunnel performance was simply unknown. It wasn't. The client had been sending structured verification and admission data every month, and nobody had converted it into anything decision-usable. Read closely, a clear pattern emerged: some of the "expensive" campaigns consistently produced verified admissions, while some of the cheaper leads stalled at the first verification step and never progressed.</p>
-
     <h3>What Changed</h3>
     <ul>
       <li>Audited the client's existing monthly reports instead of requesting new tracking or access</li>
@@ -287,41 +425,77 @@
       <li>Held spend on higher-cost campaigns the new layer showed were actually the client's best-quality source</li>
       <li>Reframed "we don't have the data" as a claim worth checking, not a fact to accept</li>
     </ul>
-
     <h3>Outcome</h3>
     <p>A defensible, evidence-backed reason to keep spending where the old cost-per-lead metric said not to, and a materially stronger client conversation.</p>
-
     <div class="insight">"'We don't have the data' is a claim worth checking before it's accepted. The gap is very often translation, not access."</div>
   </article>
 
-</div>
-</main>
+    <p style="margin-top:8px; font-size:1.05rem;">Recognise your own business in one of these? Start with a <a href="commercial-audit.html" style="color:var(--bronze); text-decoration:underline;">Commercial Audit</a>, or the free <a href="commercial-diagnostic.html" style="color:var(--bronze); text-decoration:underline;">Commercial Diagnostic</a> first.</p>
 
-<footer class="site">
-  <div class="wrap">
-    <div class="cols">
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <div class="logo" style="margin-bottom:10px; color:#F6F6F3;">
+          <svg class="logo-mark" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <path d="M 26 15 A 19 19 0 0 0 26 49" fill="none" stroke="#F6F6F3" stroke-width="4" stroke-linecap="round"/>
+            <path d="M 38 15 A 19 19 0 0 1 38 49" fill="none" stroke="#F6F6F3" stroke-width="4" stroke-linecap="round"/>
+            <path d="M32 21 L37 49 L27 49 Z" fill="#D8BE8F"/>
+          </svg>
+          HALO STRATEGIC
+        </div>
+        <p style="font-size:0.92rem; color:var(--slate); max-width:26em;">A Commercial Growth Consultancy. Our job is to help leadership make better commercial decisions.</p>
+      </div>
       <div>
         <h4>Sitemap</h4>
         <ul>
-          <li><a href="/#how-it-works">How Halo Works</a></li>
-          <li><a href="/#services">Services</a></li>
-          <li><a href="/how-halo-thinks">How Halo Thinks</a></li>
-          <li><a href="/selected-engagements">Selected Engagements</a></li>
-          <li><a href="/about">About</a></li>
+          <li><a href="index.html#how-it-works">How Halo Works</a></li>
+          <li><a href="index.html#services">Services</a></li>
+          <li><a href="commercial-diagnostic.html">Commercial Diagnostic</a></li>
+          <li><a href="commercial-audit.html">Commercial Audit</a></li>
+          <li><a href="how-halo-thinks.html">How Halo Thinks</a></li>
+          <li><a href="selected-engagements.html">Selected Engagements</a></li>
+          <li><a href="about.html">About</a></li>
         </ul>
       </div>
       <div>
         <h4>Contact &amp; Legal</h4>
         <ul>
-          <li><a href="/contact">Contact</a></li>
-          <li><a href="/privacy-policy">Privacy Policy</a></li>
-          <li><a href="/terms-and-conditions">Terms &amp; Conditions</a></li>
+          <li><a href="contact.html">Contact</a></li>
+          <li><a href="https://www.linkedin.com/company/halo-strategicglobal/" target="_blank" rel="noopener">LinkedIn</a></li>
+          <li><a href="mailto:hello@halostrategic.com">hello@halostrategic.com</a></li>
+          <li><a href="privacy-policy.html">Privacy Policy</a></li>
+          <li><a href="cookie-policy.html">Cookie Policy</a></li>
+          <li><a href="terms-and-conditions.html">Terms &amp; Conditions</a></li>
         </ul>
       </div>
     </div>
-    <div class="fine">© 2026 Halo Strategic. All rights reserved. halostrategic.com</div>
+    <div class="footer-bottom">
+      <span>© 2026 Halo Strategic. All rights reserved.</span>
+      <span class="mono">halostrategic.com</span>
+    </div>
   </div>
 </footer>
+
+<script>
+
+  document.querySelector('.nav-toggle')?.addEventListener('click', function(){
+    var links = document.querySelector('.nav-links');
+    var visible = links.style.display === 'flex';
+    links.style.display = visible ? 'none' : 'flex';
+    links.style.flexDirection = 'column';
+    links.style.position = 'absolute';
+    links.style.top = '64px';
+    links.style.left = '0';
+    links.style.right = '0';
+    links.style.background = 'var(--paper)';
+    links.style.padding = '20px 32px';
+    links.style.borderBottom = '1px solid var(--border)';
+  });
+</script>
 
 </body>
 </html>
