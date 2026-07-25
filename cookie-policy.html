@@ -163,9 +163,23 @@
     background:var(--amber-bg); border:1px solid #E4D3A8; border-radius:8px;
     padding:16px 20px; font-size:0.88rem; color:var(--ink); margin-bottom:40px;
   }
+  .legal-page table{ width:100%; border-collapse:collapse; margin:16px 0 32px; }
+  .legal-page th{ background:var(--navy-deep); color:#fff; text-align:left; padding:10px 14px; font-size:0.8rem; text-transform:uppercase; letter-spacing:0.04em; }
+  .legal-page td{ padding:10px 14px; border-bottom:1px solid var(--border); font-size:0.9rem; }
 </style>
+<!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-T49HRT6J');</script>
+<!-- End Google Tag Manager -->
 </head>
 <body>
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-T49HRT6J"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
 
 <header>
   <nav class="navbar">
@@ -174,7 +188,8 @@
       <li><a href="index.html#how-it-works">How Halo Works</a></li>
       <li><a href="index.html#services">Services</a></li>
       <li><a href="commercial-audit.html">Commercial Audit</a></li>
-      <li><a href="index.html#insights">Evidence</a></li>
+      <li><a href="how-halo-thinks.html">How Halo Thinks</a></li>
+      <li><a href="selected-engagements.html">Selected Engagements</a></li>
       <li><a href="about.html">About</a></li>
     </ul>
     <div class="nav-right">
@@ -188,25 +203,32 @@
   <div class="container">
     <div class="eyebrow">Legal</div>
     <h1>Cookie Policy</h1>
-    <div class="updated">Last updated: 22 July 2026</div>
+    <div class="updated">Last updated: 25 July 2026</div>
 
-    <div class="notice">Short version: this site doesn't currently use tracking or advertising cookies. This page will be updated the moment that changes, rather than describing tools we don't actually use.</div>
+    <div class="notice">Short version: this site uses Google Analytics 4, deployed through Google Tag Manager, to understand traffic and page performance. It does not use advertising or retargeting cookies. This page will be updated first if that changes.</div>
 
     <h2>What a cookie is</h2>
     <p>A cookie is a small text file a website can ask your browser to store, typically used to remember you between visits or track behaviour across a site.</p>
 
     <h2>What we currently use</h2>
-    <p>halostrategic.com does not set analytics, advertising, or behavioural tracking cookies. We haven't added a tool like Google Analytics, and there's no advertising pixel on this site.</p>
-    <p>Our contact form is processed through Netlify Forms, which may use a minimal functional cookie or token as part of its standard anti-spam and form-submission handling. This is not used to track you across the web, only to process the form itself. See <a href="https://www.netlify.com/privacy/" target="_blank" rel="noopener">Netlify's privacy documentation</a> for detail on their infrastructure.</p>
+    <table>
+      <tr><th>Cookie</th><th>Set by</th><th>Purpose</th></tr>
+      <tr><td>_ga, _ga_*</td><td>Google Analytics 4</td><td>Distinguishes visitors and sessions for aggregate site analytics.</td></tr>
+      <tr><td>Form handling</td><td>Netlify Forms</td><td>Minimal functional cookie/token as part of standard anti-spam and submission handling.</td></tr>
+    </table>
+    <p>We do not set advertising, retargeting, or cross-site tracking cookies. If that changes, for example if Google Ads conversion tracking or a retargeting pixel is added, this page will be updated first, and the date at the top will change.</p>
+
+    <h2>Google Analytics</h2>
+    <p>Google Analytics 4 is deployed through Google Tag Manager (container ID GTM-T49HRT6J) to understand which pages are viewed, how visitors arrive at the site, and which pages lead to a Commercial Diagnostic or Audit enquiry. This is aggregate, statistical data, not used to identify you individually. See Google's own policies at <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">policies.google.com/privacy</a>.</p>
 
     <h2>Fonts</h2>
     <p>This site loads typefaces from Google Fonts. This involves your browser making a request to Google's servers, which Google's own policies govern, but this method does not set a cookie in your browser under Google's current font-serving setup.</p>
 
     <h2>Controlling cookies</h2>
-    <p>Most browsers let you view, block, or delete cookies through their settings. Since this site sets essentially none beyond what's described above, there's little to manage, but the option is there if you'd like to check for yourself.</p>
+    <p>Most browsers let you view, block, or delete cookies through their settings, and you can opt out of Google Analytics specifically using Google's <a href="https://tools.google.com/dlpage/gaoptout" target="_blank" rel="noopener">browser add-on</a>.</p>
 
     <h2>Changes to this policy</h2>
-    <p>If we add analytics, advertising, or any other cookie-setting tool in future, this page will be updated first, and the date at the top will change.</p>
+    <p>If we add advertising cookies or any other new tracking tool in future, this page will be updated first, and the date at the top will change.</p>
 
     <h2>Contact</h2>
     <p>Questions about this policy: <a href="mailto:hello@halostrategic.com">hello@halostrategic.com</a>.</p>
@@ -228,7 +250,8 @@
           <li><a href="index.html#services">Services</a></li>
           <li><a href="commercial-diagnostic.html">Commercial Diagnostic</a></li>
           <li><a href="commercial-audit.html">Commercial Audit</a></li>
-          <li><a href="index.html#case-studies">Case Studies</a></li>
+          <li><a href="how-halo-thinks.html">How Halo Thinks</a></li>
+          <li><a href="selected-engagements.html">Selected Engagements</a></li>
           <li><a href="about.html">About</a></li>
         </ul>
       </div>
@@ -252,31 +275,6 @@
 </footer>
 
 <script>
-  // Contact form: submit via fetch so the page shows an inline success message
-  // instead of redirecting to Netlify's default success page. Falls back to a
-  // normal full-page form submission if JavaScript fails to run.
-  var contactForm = document.getElementById('contact-form');
-  if (contactForm) {
-    contactForm.addEventListener('submit', function(e){
-      e.preventDefault();
-      var formData = new FormData(contactForm);
-      fetch('/', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: new URLSearchParams(formData).toString()
-      })
-      .then(function(){
-        contactForm.style.display = 'none';
-        document.getElementById('form-success').style.display = 'block';
-      })
-      .catch(function(){
-        // If the fetch fails for any reason, let the form submit normally
-        contactForm.submit();
-      });
-    });
-  }
-
-  // Mobile nav toggle: progressive enhancement only, core content works without it
   document.querySelector('.nav-toggle')?.addEventListener('click', function(){
     var links = document.querySelector('.nav-links');
     var visible = links.style.display === 'flex';
