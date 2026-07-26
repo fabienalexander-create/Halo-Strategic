@@ -106,3 +106,21 @@ Next. Await Fabien's authorisation to begin Sprint 1 implementation (nav/footer/
 **Verify.** Confirmed no `.py` files or `site/` directory exist in the working tree (unchanged by this edit, since it is documentation-only). Confirmed each touched document's cross-reference to ADR-001's Amendment resolves to the right section. This entry was rebased onto the Phase 3 commits above after both passes had been pushed independently; no further conflicts found outside docs/IMPLEMENTATION_LOG.md and docs/TECHNICAL_SEO_STATUS.md, both resolved here.
 
 **Document.** This entry; see docs/CHANGELOG.md for the summary entry.
+
+---
+
+## Sprint 1 — Nav/Footer/GTM Parity on terms-and-conditions.html and 404.html (2026-07-26)
+
+**Trigger.** Fabien approved Sprint 1's ready-now scope: bring the two lagging pages onto the same nav/footer/GTM baseline as the other 10 pages, closing docs/TECHNICAL_SEO.md findings 7 and 8.
+
+**Inspect.** Read privacy-policy.html (already-verified-correct, per docs/ARCHITECTURAL_DECISIONS.md ADR-002 Consequences and docs/TECHNICAL_SEO.md finding 7/8) as the reference, alongside terms-and-conditions.html and 404.html. Confirmed the head/CSS baseline in all three was already identical; the only gaps were the missing GTM head script and noscript block, the old 5-item nav (missing How Halo Thinks and Selected Engagements, with a stale `index.html#insights` Evidence link), and the old footer Sitemap list (same two items missing, with a stale `index.html#case-studies` link).
+
+**Analyse.** Per docs/ARCHITECTURAL_DECISIONS.md's ADR-005 Amendment (2026-07-26), no template generator exists to route this change through, so it was applied by hand to both files, matching privacy-policy.html's markup exactly rather than improvising new markup.
+
+**Decisions made and why.** Copied the GTM head script/noscript block, the nav-links list, and the footer Sitemap list verbatim from privacy-policy.html into both files. Left everything else untouched, page content, the legal/404 copy, the trailing `<script>` block (including its unused contact-form handler, present in both files as leftover shared markup, not something this task's scope covers), meta tags, and CSS, per the Implementation Guide's smallest-change principle.
+
+**Implement.** Changes made directly to terms-and-conditions.html and 404.html.
+
+**Verify.** Diffed the nav-links block, footer Sitemap block, and GTM head/noscript block in both files against privacy-policy.html: byte-identical in all three cases, both files. Cross-page grep confirmed `GTM-T49HRT6J` now appears twice in both files (head script src, noscript iframe src), matching every other page. Reviewed the full `git diff` for both files line by line to confirm nothing outside the three intended blocks changed. No visual/screenshot verification was available in this environment (local file preview did not render in the available browser tooling); verification was structural and diff-based, consistent with Sprint 0's own precedent.
+
+**Document.** This entry; see docs/CHANGELOG.md, docs/CURRENT_SPRINT.md, and docs/TECHNICAL_SEO_STATUS.md (findings 7 and 8 now marked fully implemented).

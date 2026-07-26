@@ -11,9 +11,11 @@ Sprint 1 - Technical SEO & Analytics
 
 ## Status
 
-Partially ready. Sprint 1 is no longer fully blocked: the approved architecture (docs/ARCHITECTURE.md, docs/ARCHITECTURAL_DECISIONS.md, docs/ROADMAP.md) and the approved Technical SEO audit (docs/TECHNICAL_SEO.md) were committed by Claude Cowork in commit ee3caf6 on 2026-07-26. Per docs/ROADMAP.md, Sprint 1 scope now splits three ways. First, ready for implementation: nav/footer/GTM parity on terms-and-conditions.html and 404.html, plus closing the two unaudited pages (cookie-policy.html, thank-you.html) from docs/TECHNICAL_SEO.md; nothing here depends on an unresolved approval. Second, partially blocked: Organization and FAQPage schema, also Sprint 1 scope per docs/ROADMAP.md, cannot start yet, since docs/ARCHITECTURAL_DECISIONS.md records Schema Philosophy as Pending Product Owner Approval, not yet an approved ADR; Fabien must approve the schema types and rollout order first. Third, out of scope for Sprint 1 rather than a Sprint 1 blocker: URL strategy and sitemap.xml/robots.txt, both explicitly scoped by docs/ROADMAP.md to Sprint 2, which states Sprint 1 does not touch URLs and can proceed independently of the URL strategy decision. This document previously described the URL strategy as a Sprint 1 blocker; that was inaccurate and has been corrected here.
+Partially ready. Sprint 1 is no longer fully blocked: the approved architecture (docs/ARCHITECTURE.md, docs/ARCHITECTURAL_DECISIONS.md, docs/ROADMAP.md) and the approved Technical SEO audit (docs/TECHNICAL_SEO.md) were committed by Claude Cowork in commit ee3caf6 on 2026-07-26. Per docs/ROADMAP.md, Sprint 1 scope now splits three ways. First, nav/footer/GTM parity on terms-and-conditions.html and 404.html was approved and implemented 2026-07-26 (see Completed below); closing the two unaudited pages (cookie-policy.html, thank-you.html) from docs/TECHNICAL_SEO.md remains ready and not yet authorised. Second, partially blocked: Organization and FAQPage schema, also Sprint 1 scope per docs/ROADMAP.md, cannot start yet, since docs/ARCHITECTURAL_DECISIONS.md records Schema Philosophy as Pending Product Owner Approval, not yet an approved ADR; Fabien must approve the schema types and rollout order first. Third, out of scope for Sprint 1 rather than a Sprint 1 blocker: URL strategy and sitemap.xml/robots.txt, both explicitly scoped by docs/ROADMAP.md to Sprint 2, which states Sprint 1 does not touch URLs and can proceed independently of the URL strategy decision. This document previously described the URL strategy as a Sprint 1 blocker; that was inaccurate and has been corrected here.
 
 ## Completed (prior sprints)
+
+Sprint 1, nav/footer/GTM parity on terms-and-conditions.html and 404.html (2026-07-26): both pages brought onto the same nav, footer Sitemap, and GTM baseline as the other 10 pages, closing docs/TECHNICAL_SEO.md findings 7 and 8. Verified by diffing the nav-links, footer Sitemap, and GTM head/noscript blocks byte-identical against privacy-policy.html's already-verified-correct blocks; no other content, scripts, or styling touched. See CHANGELOG.md and IMPLEMENTATION_LOG.md.
 
 Sprint 0, Site Reconciliation (2026-07-25): unified three inconsistent nav/footer templates into one canonical design system across all seven main pages. See CHANGELOG.md, IMPLEMENTATION_LOG.md, RECONCILIATION_REPORT.md.
 
@@ -39,11 +41,11 @@ URL strategy, Sprint 2 not Sprint 1: extensioned versus extensionless paths, and
 
 ## Blocked
 
-None for Sprint 1's core scope (nav/footer/GTM parity, audit-coverage closure). See Awaiting Approval above for the specific items still gated within Sprint 1 (schema) and outside it (Sprint 2's URL strategy).
+None for Sprint 1's remaining core scope (audit-coverage closure). See Awaiting Approval above for the specific items still gated within Sprint 1 (schema) and outside it (Sprint 2's URL strategy).
 
 ## Ready for Implementation (Sprint 1, pending Fabien's authorisation to begin)
 
-Apply the unified nav/footer template to terms-and-conditions.html and 404.html (docs/TECHNICAL_SEO.md, findings 7 and 8; docs/ARCHITECTURAL_DECISIONS.md, ADR-002 consequences). Apply the GTM snippet to terms-and-conditions.html and 404.html (docs/TECHNICAL_SEO.md, finding 7). Source-inspect cookie-policy.html and thank-you.html for GTM, nav/footer, and meta-tag status, closing the two items docs/TECHNICAL_SEO.md left unaudited (finding 13).
+Source-inspect cookie-policy.html and thank-you.html for GTM, nav/footer, and meta-tag status, closing the two items docs/TECHNICAL_SEO.md left unaudited (finding 13). Nav/footer/GTM parity on terms-and-conditions.html and 404.html is done, see Completed above.
 
 Explicitly out of scope for Sprint 1 per docs/ROADMAP.md: URL strategy changes, Insights, sitemap.xml/robots.txt, and Organization/FAQPage schema until approved.
 

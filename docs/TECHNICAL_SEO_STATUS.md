@@ -13,7 +13,7 @@ Tracks implementation and verification status against the findings in docs/TECHN
 
 docs/TECHNICAL_SEO.md now exists. Claude Cowork committed it, along with docs/ARCHITECTURE.md, docs/ARCHITECTURAL_DECISIONS.md, and docs/ROADMAP.md, in commit ee3caf6 on 2026-07-26. The audit itself is dated 2026-07-26, audited against commit 7c7dbc0 and cross-checked against the live production site, and is internally titled Technical SEO Audit, Sprint 2.1. This document previously stated no audit existed; that was accurate at the time and is now out of date.
 
-Per docs/ROADMAP.md, remediation of these findings is split across Sprint 1 (nav/footer/GTM parity on the two lagging pages, Organization and FAQPage schema once approved, and closing the two unaudited pages) and Sprint 2 (sitemap.xml, robots.txt, favicon/manifest consistency, Core Web Vitals baseline, all pending the URL strategy decision). No implementation against any finding below has started as a result of this audit; findings 7 and 8 already show partial progress from Sprint 0 and Sprint 1A, both completed before this audit was written, and are marked accordingly below.
+Per docs/ROADMAP.md, remediation of these findings is split across Sprint 1 (nav/footer/GTM parity on the two lagging pages, Organization and FAQPage schema once approved, and closing the two unaudited pages) and Sprint 2 (sitemap.xml, robots.txt, favicon/manifest consistency, Core Web Vitals baseline, all pending the URL strategy decision). Findings 7 and 8 were fully closed on 2026-07-26 (see below); the remaining findings below have not had implementation start as a result of this audit.
 
 ## Status Table
 
@@ -27,8 +27,8 @@ The table below records implementation status only. The Description column is a 
 | 4 | Canonical tags present and correct | Pass, no remediation needed | Yes, per TECHNICAL_SEO.md | N/A |
 | 5 | OG/Twitter tags share one generic image | Not started, not yet scheduled to a sprint | No | N/A |
 | 6 | Structured data (schema.org) missing entirely | Not started, blocked pending Product Owner approval of Schema Philosophy per ARCHITECTURAL_DECISIONS.md | No | N/A |
-| 7 | GTM coverage incomplete | Partially implemented, 10 of 12 pages, Sprint 1A, commit 4d9503e. terms-and-conditions.html and 404.html remain, Sprint 1 per ROADMAP.md | Partially, per TECHNICAL_SEO.md | None detected on the 10 covered pages |
-| 8 | Nav/footer consistency, two pages out of sync | Partially implemented, 10 of 12 pages, Sprint 0. terms-and-conditions.html and 404.html remain, Sprint 1 per ROADMAP.md | Partially, per TECHNICAL_SEO.md | None detected on the 10 covered pages |
+| 7 | GTM coverage incomplete | Fully implemented, 12 of 12 pages. terms-and-conditions.html and 404.html brought onto the GTM baseline 2026-07-26, completing Sprint 1A's original 10 of 12 | Yes, GTM head script and noscript block diffed byte-identical against privacy-policy.html's verified-correct block | None detected |
+| 8 | Nav/footer consistency, two pages out of sync | Fully implemented, 12 of 12 pages. terms-and-conditions.html and 404.html brought onto the unified nav/footer template 2026-07-26, completing what Sprint 0 started | Yes, nav-links and footer Sitemap blocks diffed byte-identical against privacy-policy.html's verified-correct blocks | None detected |
 | 9 | Broken or placeholder links | Pass, none found | Yes, per TECHNICAL_SEO.md | N/A |
 | 10 | Image alt text correct | Pass, no remediation needed | Yes, per TECHNICAL_SEO.md | N/A |
 | 11 | Favicon/manifest declarations inconsistent | Not started, Sprint 2 per ROADMAP.md | No | N/A |
