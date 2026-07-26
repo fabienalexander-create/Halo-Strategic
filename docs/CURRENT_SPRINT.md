@@ -11,9 +11,11 @@ Sprint 3 - Insights Foundation
 
 ## Status
 
-Sprint 2 is complete in full (see Completed). Sprint 3 (Insights) has the section live with one published article, and the build-scaling question is now resolved (ADR-009: a local template + JSON generator). The CMS/no-CMS decision (ADR-004) remains genuinely open, the generator is not a CMS and doesn't enable non-technical publishing. Article schema and articles #2+ from the 100-idea backlog remain pending Fabien's direction. Framework Library, FAQ Hub, and Resources remain correctly out of scope.
+Sprint 2 is complete in full (see Completed). Sprint 3 (Insights) has the section live with two published articles, built via the ADR-009 generator. The CMS/no-CMS decision (ADR-004) remains genuinely open, the generator is not a CMS and doesn't enable non-technical publishing. Article schema and articles #3+ from the 100-idea backlog remain pending Fabien's direction. Framework Library, FAQ Hub, and Resources remain correctly out of scope.
 
 ## Completed (prior sprints)
+
+Sprint 3, Article #2 (2026-07-26): "How to Tell a Marketing Problem from a Commercial Problem," published via the ADR-009 generator, the first real use of it, one entry added to `tools/insights-articles.json`, `node tools/build-insights.js` run, output reviewed and committed. Grounded in the sales-follow-up and market-too-small Selected Engagements case studies and the relevant How Halo Thinks principle. Approved by Fabien after reading a draft. Verified article #1 unaffected (zero diff) and the index gained exactly one correctly-escaped new card. Added to sitemap.xml and `_redirects`. See docs/IMPLEMENTATION_LOG.md.
 
 Sprint 3, Insights build system (2026-07-26, ADR-009): replaced hand-copying boilerplate per article with a local generator. `tools/insights-article-template.html` and `tools/insights-index-template.html` hold the shared boilerplate once with token placeholders; `tools/insights-articles.json` holds per-article data; `tools/build-insights.js` generates the actual `insights/*.html` files, run locally, output committed normally. Verified: regenerating both existing Insights pages from the new system produced byte-for-byte identical output, after fixing one real bug the verification caught (an unescaped `&` in a plain-text field, same class of bug as the terms-and-conditions.html fix earlier this session). Decided in response to "Decide on the build approach before article #2." Does not touch the 12 root-level pages, which remain hand-maintained; unifying the two is a separate, not-yet-made decision. See docs/IMPLEMENTATION_LOG.md.
 
@@ -55,11 +57,11 @@ None. Both prior Sprint 2 blockers (hosting/deployment mechanism, URL strategy) 
 
 ## Ready for Implementation
 
-Sprint 2's remaining scope: favicon/manifest consistency, Core Web Vitals baseline. Neither blocked. Sprint 3's remaining scope: articles #2+ from the 100-idea backlog (now mechanically cheap to add via `tools/build-insights.js`), Article schema, and the CMS/no-CMS decision (ADR-004, still open, unrelated to the build-scaling fix). All pending Fabien's direction.
+Sprint 2's remaining scope: favicon/manifest consistency, Core Web Vitals baseline. Neither blocked. Sprint 3's remaining scope: articles #3+ from the 100-idea backlog (98 remaining, mechanically cheap to add via `tools/build-insights.js`), Article schema, and the CMS/no-CMS decision (ADR-004, still open, unrelated to the build-scaling fix). All pending Fabien's direction.
 
 ## Next Milestone
 
-To add article #2: add an entry to `tools/insights-articles.json`, run `node tools/build-insights.js`, review the diff, commit. Separately, favicon/manifest consistency (docs/TECHNICAL_SEO.md finding 11) and a Core Web Vitals baseline remain open from Sprint 2.
+To add article #3: add an entry to `tools/insights-articles.json`, run `node tools/build-insights.js`, review the diff, commit, same process article #2 just used successfully. Separately, favicon/manifest consistency (docs/TECHNICAL_SEO.md finding 11) and a Core Web Vitals baseline remain open from Sprint 2.
 
 ## Known Risks
 

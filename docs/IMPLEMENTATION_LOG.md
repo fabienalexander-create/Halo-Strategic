@@ -258,3 +258,15 @@ Next. Await Fabien's authorisation to begin Sprint 1 implementation (nav/footer/
 **Verify.** Ran the generator and diffed its output against the already-published files: found one real discrepancy, an unescaped `&` in the category field (the same class of bug as the terms-and-conditions.html `&amp;` fix earlier this session), caused by injecting plain-text JSON fields directly into HTML without escaping. Fixed by adding an `escapeHtml` helper applied to all plain-text fields (title, meta description, h1, teaser, category), deliberately not applied to the body field, which is meant to contain real markup, consistent with how every other page's content is hand-authored HTML. Re-ran and re-diffed: both files byte-for-byte identical to the already-published, already-approved versions. Confirmed via `git status` that only `tools/` appeared as new, `insights/*.html` were untouched by the verified-correct regeneration.
 
 **Document.** This entry; see docs/CHANGELOG.md, docs/CURRENT_SPRINT.md, docs/ARCHITECTURAL_DECISIONS.md (ADR-009, ADR-004 update), docs/ARCHITECTURE.md (Future Scalability updated), and docs/ROADMAP.md (Sprint 3 scaling flag resolved).
+
+---
+
+## Sprint 3: Article #2 via the Generator (2026-07-26)
+
+**Trigger.** Fabien approved Article #2 ("How to Tell a Marketing Problem from a Commercial Problem") after reading a draft delivered directly this session, drafted per the Editorial Bible and Article Template, grounded only in the sales-follow-up and market-too-small Selected Engagements case studies plus the relevant How Halo Thinks principle, nothing invented.
+
+**Implement.** First real use of ADR-009's generator: appended one entry to `tools/insights-articles.json` (via a small script, not hand-edited, to avoid JSON escaping mistakes) and ran `node tools/build-insights.js`. Added the new URL to `sitemap.xml` and a forced `_redirects` entry for its `.html` filename, matching the pattern for every other page.
+
+**Verify.** Confirmed article #1's regenerated file has zero diff (no regression from adding a second article to the data set). Confirmed the new article's title/meta/canonical are correct, GTM and Organization schema present (2 and 1 occurrences respectively, matching every other page), single `<body>` tag. Confirmed the index page's diff added exactly one new card, correctly HTML-escaped ("Commercial Diagnosis &amp; Constraint-Finding"), with article #1's existing card untouched. Confirmed sitemap.xml remains well-formed (13 `<url>` tags, balanced) after the addition. This is the first real evidence the generator built in response to "decide on the build approach before article #2" actually does what it was built for: adding an article is a one JSON entry, one script run, not a new hand-copied file.
+
+**Document.** This entry; see docs/CHANGELOG.md and docs/CURRENT_SPRINT.md.
