@@ -14,3 +14,24 @@ Unified three inconsistent page templates (see `docs/RECONCILIATION_REPORT.md`) 
 - No content was rewritten. Commercial Diagnostic, Commercial Audit, Contact, About, Selected Engagements, and How Halo Thinks all keep their existing copy exactly as written.
 
 Not done in this sprint (see `docs/SITE_ARCHITECTURE.md` for where these fit): Insights hub, Framework Library, FAQ Hub, Resources. Sprint 1 (Technical SEO) starts next.
+
+
+## 2026-07-25 - Sprint 1A: Google Tag Manager Installation (backfilled 2026-07-26)
+
+Note: this entry was not written when commit 4d9503e was made. It is backfilled during Phase 3 Documentation Reconciliation, reconstructed from docs/GOOGLE_TAG_MANAGER.md and the commit diff, not invented.
+
+Installed Google Tag Manager container GTM-T49HRT6J across 10 of 12 pages: index.html, about.html, contact.html, commercial-diagnostic.html, commercial-audit.html, how-halo-thinks.html, selected-engagements.html, privacy-policy.html, cookie-policy.html, and thank-you.html. terms-and-conditions.html and 404.html were not yet on the unified template at that point and were left out of scope. Added the standard head script and body noscript iframe snippet, generated from a single shared source (site/gtm_snippets.py) so every page received an identical, correctly placed install. Left the existing GA4 configuration tag (GA4, Configuration, Halo Strategic, Measurement ID G-KC0RH0SS1L) and DOM, Page Title variable in place, both already built in the container prior to this pass. Rewrote privacy-policy.html and cookie-policy.html to accurately describe GA4/GTM use and its cookies, since both pages previously stated no analytics or tracking was in use. Did not build the seven Consultancy Events triggers or the eighth, linkedin_clicked; deferred as a scoped follow-up. See docs/GOOGLE_TAG_MANAGER.md.
+
+## 2026-07-25 - Sprint 1B: Service Parameter Plumbing and Mailto Links (backfilled 2026-07-26)
+
+Note: this entry was not written when commit f6bb162 was made. It is backfilled during Phase 3 Documentation Reconciliation, reconstructed from the commit diff, not invented.
+
+Added service query parameters (diagnostic, audit) to the primary CTA links on commercial-diagnostic.html and commercial-audit.html. Added a hidden service form field on contact.html and index.html, populated from the URL parameter via inline JS on contact.html, and set statically to diagnostic on index.html, so submissions carry which service page a lead arrived from. On contact.html, defaulted the reason dropdown to discovery call when a service parameter is present and no reason has been chosen yet. Added a form_submit_success dataLayer push, with form_id, service, and reason, on both contact.html and index.html, firing only after a successful submission, for GTM/GA4 measurement. Converted the two contact.html email addresses to mailto links.
+
+## 2026-07-26 - Architecture, ADRs, Technical SEO Audit, and Roadmap Approved (Cowork)
+
+Claude Cowork committed docs/ARCHITECTURE.md, docs/ARCHITECTURAL_DECISIONS.md, docs/TECHNICAL_SEO.md, and docs/ROADMAP.md, commit ee3caf6, completing Cowork's architectural responsibilities per docs/AI_OPERATING_MODEL.md. These are now the approved architectural source of truth. This entry logs their arrival for the chronological record; their content is Cowork-owned and is not restated or edited here.
+
+## 2026-07-26 - Phase 3: Documentation Reconciliation
+
+Reconciled Browser-owned implementation documentation against the newly approved architecture, commit ee3caf6. docs/CURRENT_SPRINT.md: corrected the Sprint 1 blocker, since the audit now exists and docs/ROADMAP.md scopes URL strategy to Sprint 2 rather than Sprint 1, added the Sprint 1A/Sprint 1B historical entries and a numbering note, and split remaining Sprint 1 scope into ready, partially blocked (schema), and out of scope (URL strategy, Sprint 2). docs/PROJECT_CONTEXT.md: removed references describing docs/ARCHITECTURE.md, docs/ARCHITECTURAL_DECISIONS.md, docs/ROADMAP.md, and docs/TECHNICAL_SEO.md as placeholders, and resolved the open item asking whether a Technical SEO audit exists. docs/TECHNICAL_SEO_STATUS.md: populated the status table against all 13 docs/TECHNICAL_SEO.md findings, reflecting that findings 7 and 8, GTM and nav/footer coverage, are partially implemented (10 of 12 pages) rather than not started. docs/IMPLEMENTATION_LOG.md: backfilled the Sprint 1A and Sprint 1B entries that were missing at the time those changes were committed. No Cowork-owned document was modified. No site code was changed in this pass; this is a documentation-only commit.
