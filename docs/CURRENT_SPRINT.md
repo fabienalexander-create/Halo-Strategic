@@ -15,6 +15,8 @@ Sprint 1 is complete in full (see Completed). Sprint 2's blocking dependency, th
 
 ## Completed (prior sprints)
 
+Sprint 2, sitemap.xml and robots.txt (2026-07-26): sitemap.xml added, 10 URLs (homepage plus 9 content/legal pages, matching the site's canonical URL set exactly), excluding 404.html and thank-you.html as a standard sitemap-inclusion choice (neither page's indexability was changed). robots.txt added, Allow: / for all agents, pointing to the sitemap. Verified: sitemap well-formed, 10 URLs match canonicals exactly, 3 spot-checked URLs resolve live. See docs/IMPLEMENTATION_LOG.md.
+
 Sprint 2, URL strategy resolution (2026-07-26): decided extensionless (docs/ARCHITECTURAL_DECISIONS.md ADR-008) after a live-site test found `/about` and `/about.html` both resolving with no redirect between them, Netlify's default pretty-URL behaviour colliding with an all-`.html` codebase. Implemented same-day: every internal link, canonical tag, and og:url/twitter reference across all 12 pages updated to the extensionless form; a `_redirects` file added at the repository root 301ing every legacy `.html` path to its extensionless equivalent (404.html excluded, Netlify's error-page filename convention). Verified: no remaining internal `.html` links except 404.html's own canonical (intentional), no double slashes, all 12 titles still unique, full diff reviewed per file. See docs/IMPLEMENTATION_LOG.md, docs/ARCHITECTURE.md's URL Philosophy section, and the URL Architecture Decision Record delivered the same session.
 
 Sprint 1, schema rollout (2026-07-26): Organization JSON-LD implemented identically on all 12 pages (name, url, logo, sameAs LinkedIn, contactPoint email); FAQPage JSON-LD implemented on commercial-audit.html, generated from and matching its five visible FAQ entries verbatim. Approved by Fabien in conversation and recorded as docs/ARCHITECTURAL_DECISIONS.md ADR-007. LocalBusiness and Article schema remain deferred per docs/ARCHITECTURE.md's original recommendation (no address to publish; Insights doesn't exist yet). Verified: all JSON-LD blocks validated as syntactically correct. See CHANGELOG.md and IMPLEMENTATION_LOG.md.
@@ -49,11 +51,11 @@ None. Both prior Sprint 2 blockers (hosting/deployment mechanism, URL strategy) 
 
 ## Ready for Implementation
 
-Sprint 2's remaining scope: sitemap.xml, robots.txt, favicon/manifest consistency, Core Web Vitals baseline. All ready to schedule, none blocked.
+Sprint 2's remaining scope: favicon/manifest consistency, Core Web Vitals baseline. Neither blocked.
 
 ## Next Milestone
 
-Generate sitemap.xml (reflecting the now-resolved extensionless URLs) and robots.txt, pending Fabien's go-ahead to proceed.
+Favicon/manifest declarations made consistent across all pages (docs/TECHNICAL_SEO.md finding 11), and a Core Web Vitals baseline once tooling capable of measuring it is available.
 
 ## Known Risks
 

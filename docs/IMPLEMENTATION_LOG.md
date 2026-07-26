@@ -214,3 +214,17 @@ Next. Await Fabien's authorisation to begin Sprint 1 implementation (nav/footer/
 **Document.** This entry; see docs/CHANGELOG.md, docs/ARCHITECTURAL_DECISIONS.md (ADR-008), docs/ARCHITECTURE.md (URL Philosophy, updated), docs/ROADMAP.md and docs/CURRENT_SPRINT.md (Sprint 2 status updated), and the URL Architecture Decision Record delivered this session.
 
 **Follow-up correction (same day, after live verification):** post-deploy, confirmed the HTML changes (canonical tags, links) had gone live correctly, but `/about.html` still returned `200 OK` directly instead of the expected `301` redirect. Root cause: Netlify serves an exactly-matching static file before evaluating `_redirects` rules, unless the rule is explicitly forced. Added the `!` force flag to every rule in `_redirects` and re-deployed. This is a correction to the same not-yet-fully-verified change, not a rewrite of the earlier entry above, the HTML/canonical portion of that work was already confirmed correct; only the redirect-file syntax needed fixing.
+
+---
+
+## Sprint 2: sitemap.xml and robots.txt (2026-07-26)
+
+**Trigger.** Fabien approved generating these now that the URL strategy (ADR-008) was resolved and live, closing the dependency `docs/ROADMAP.md` had flagged.
+
+**Decisions made and why.** Included the 10 pages meant to be discovered via search: homepage and the 9 content/legal pages. Excluded `404.html` (an error page, never a real destination) and `thank-you.html` (a post-submission confirmation page). Neither exclusion required changing either page's indexability, both remain un-`noindex`ed, per the last audit, this is a sitemap-inclusion choice (standard practice for these two page types), not an indexability policy change, and is flagged as such rather than done silently. Used only `<loc>` and `<lastmod>` per URL, skipped `changefreq`/`priority`, both are widely documented as ignored by Google and add no value. `lastmod` set to 2026-07-26 for all 10, accurate, every page was genuinely touched today. robots.txt uses a simple `Allow: /` for all user agents (no private/admin areas exist to disallow) plus a `Sitemap:` line pointing to the new file.
+
+**Implement.** Added `sitemap.xml` and `robots.txt` at the repository root.
+
+**Verify.** Confirmed `sitemap.xml` is well-formed (balanced `<url>` tags, 10 entries, checked programmatically) and that its 10 URLs exactly match the site's own canonical tag set. Spot-checked 3 of the 10 URLs resolve live with `200 OK` post-deploy.
+
+**Document.** This entry; see docs/CHANGELOG.md and docs/CURRENT_SPRINT.md.
