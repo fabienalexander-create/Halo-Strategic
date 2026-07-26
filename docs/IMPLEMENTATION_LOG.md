@@ -180,3 +180,19 @@ Next. Await Fabien's authorisation to begin Sprint 1 implementation (nav/footer/
 **Verify.** Diffed the header logo markup, footer logo markup, and the four CSS rules across all 12 pages against commercial-audit.html: byte-identical everywhere. Reviewed the full `git diff` per file; changes are confined to the four CSS rules and, on the 5 legacy pages, the two logo markup blocks, nothing else touched. No visual/screenshot verification was available (local file preview did not render in the browser tool used this session); verification is structural and diff-based, consistent with this repository's established practice when visual tooling isn't available.
 
 **Document.** This entry; see docs/CHANGELOG.md.
+
+---
+
+## Phase 1 SEO Sprint (2026-07-26)
+
+**Trigger.** Fabien's bounded Phase 1 instruction: finish mechanical, decision-free technical fixes; produce a page-by-page audit; draft (don't invent-and-ship) strategic recommendations; log blocked items; build a content roadmap. Title/meta implementation was explicitly approved directly in conversation after a proposal round, rather than left as a standing PROPOSED item.
+
+**Inspect.** Re-checked the full 12-page audit from the prior session (docs delivered as a standalone report, not committed here) against this narrower brief: heading hierarchy, broken links, canonical, duplicate titles/descriptions, alt text, filenames, accessibility, HTML validation, indexability were all already verified clean except two remaining items: contact.html's H1->H3 heading skip, and no other unescaped `&` beyond the one already fixed on terms-and-conditions.html (checked systematically this pass, none found).
+
+**Decisions made and why.** Fixed contact.html's heading skip by promoting its four card headings from h3 to h2 (semantic level only, zero new copy), rather than inventing a new wrapping heading, since that would have been a content decision this sprint was explicitly scoped to avoid. Drafted title/meta copy for five pages where the prior audit identified a real gap (Home, About, Commercial Diagnostic, Commercial Audit, Contact); left How Halo Thinks and Selected Engagements untouched deliberately, their existing branded framing was flagged as worth protecting from generic keyword-forcing, not a gap to fix; left the three legal pages and two utility pages untouched, no meaningful keyword target exists for them.
+
+**Implement.** Title tags reordered to keyword-first on index.html ("Commercial Growth Consultancy | Halo Strategic") and about.html ("Commercial Growth Strategist | Halo Strategic"); contact.html's title changed to "Book a Discovery Call | Halo Strategic" to match actual intent. Meta descriptions rewritten and lengthened into the 150-160 character target on commercial-diagnostic.html (92 -> 160 chars), commercial-audit.html (126 -> 152 chars), and contact.html (57 -> 149 chars); og:title/og:description/twitter:title updated identically alongside each `<title>`/meta change so nothing drifts out of sync. No other page's title or meta description was touched.
+
+**Verify.** Measured every draft's exact character length with `wc -c` before implementing, not estimated. Confirmed all 12 titles remain unique after the change (no duplicates introduced). Diffed each file's git changes to confirm only the intended tags changed.
+
+**Document.** This entry; see docs/CHANGELOG.md. Full audit report and content roadmap delivered directly, not committed to this repository, since they are working documents for this conversation rather than adopted engineering documentation, consistent with docs/AI_OPERATING_MODEL.md's Research Document Governance principle applied here by analogy.
