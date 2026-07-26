@@ -41,7 +41,9 @@ This matches docs/SITE_ARCHITECTURE.md, which remains the authoritative interim 
 3. **FAQ Hub**. Not yet justified. Commercial Audit already carries a page-level FAQ. Centralise only once FAQs exist across multiple services worth consolidating.
 4. **Resources**. Lowest priority. Holds downloadable material once a real lead-magnet strategy and email nurture sequence exist to route them into. Do not build lead magnets ahead of that sequence.
 
-**Nav order implemented 2026-07-26:** How Halo Works · Services · Commercial Audit · Insights · Selected Engagements · How Halo Thinks · About, matching the order suggested here before Insights existed. Framework Library and FAQ Hub stay nested rather than adding top-level items; a nav with eight or nine top-level links stops being usable.
+**Nav order implemented 2026-07-26:** How Halo Works · Services · Commercial Audit · Product Journey · Insights · Selected Engagements · How Halo Thinks · About, matching the order suggested here before Insights existed. Framework Library and FAQ Hub stay nested rather than adding top-level items; a nav with eight or nine top-level links stops being usable.
+
+**Product ecosystem added 2026-07-26 (Sprint 5.6, ADR-010):** `/commercial-health-check` (new free entry product, self-assessment) and `/product-journey` (the full 6-stage product ecosystem from docs/PRODUCT_SYSTEM.md) added as live pages. The nav-right CTA button, previously "Start with a Commercial Diagnostic," is now "Free Commercial Health Check" site-wide, reflecting Health Check as the new lowest-friction entry point.
 
 ## URL Philosophy
 

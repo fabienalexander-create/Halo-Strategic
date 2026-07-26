@@ -1,6 +1,10 @@
 # Changelog
 
-## 2026-07-26 — Sprint 5.6: Product Architecture & Commercial Positioning
+## 2026-07-26 — Sprint 5.6: Live implementation (pricing, Health Check, Product Journey)
+
+Approved directly by Fabien as Product Owner. Implemented on the live site: `commercial-diagnostic.html` repriced $0 → $995 with the Halo Clarity Guarantee added; `commercial-audit.html` repositioned from a fixed £3,000/4-week engagement to $7,500+, scope-dependent (FAQPage JSON-LD updated to match); new `pricing-config.js` (ADR-010) holds all prices as data, not hardcoded HTML, structured to support additional currencies later, none added yet since only USD prices have been approved; new `commercial-health-check.html`, a free, 6-question, client-side-scored self-assessment with no data submitted or stored; new `product-journey.html`, the full 6-stage product ecosystem, priced only where Fabien actually set prices. Nav, footer, and the nav-right CTA updated across all 16 HTML pages (Insights pages regenerated via the existing generator, not hand-edited). `sitemap.xml` and `_redirects` updated. Open items: US-market/currency positioning still undecided, guarantee refund copy is an explicit placeholder pending legal review, two products from an earlier draft (Lead Management System, Growth Board) remain unconfirmed, and every product beyond Diagnostic/Audit remains unpriced. See docs/IMPLEMENTATION_LOG.md and docs/ARCHITECTURAL_DECISIONS.md (ADR-010).
+
+## 2026-07-26 — Sprint 5.6: Product Architecture & Commercial Positioning (documents)
 
 Added four working documents converting the Halo Bible's philosophy into a proposed product ecosystem: `docs/PRODUCT_SYSTEM.md` (6-stage journey, 14 products, entry criteria as gates), `docs/PRODUCT_POSITIONING.md` (why the ecosystem differs from a traditional agency's service catalogue), `docs/PRICING_STRATEGY.md` (current-vs-proposed comparison for the two live products this would reprice, three sequencing options, no single recommendation forced), and `docs/GUARANTEE.md` (the Halo Clarity Guarantee, flagged as needing real legal review before publishing). None of this is implemented on the live site: Commercial Diagnostic and Commercial Audit remain live at their current free/£3,000 pricing. See docs/IMPLEMENTATION_LOG.md and docs/CURRENT_SPRINT.md for the open items each document carries forward.
 

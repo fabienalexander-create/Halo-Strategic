@@ -289,4 +289,26 @@ Next. Await Fabien's authorisation to begin Sprint 1 implementation (nav/footer/
 
 **Document.** This entry; see docs/CHANGELOG.md and docs/CURRENT_SPRINT.md. Nothing in this sprint touched the live site, the four documents are working documents pending Fabien's decisions on the open items each one lists.
 
+---
+
+## Sprint 5.6: Live Implementation (2026-07-26, ADR-010)
+
+**Trigger.** Fabien, as Product Owner, sent an explicit approval and implementation instruction: "The Product System, pricing direction, and Halo Clarity Guarantee are approved as the strategic direction for Halo. Proceed with implementation," listing approved decisions (introduce Health Check, reprice Diagnostic, reposition Audit, premium positioning), initial USD pricing, the Guarantee as placeholder copy not to be delayed for legal review, and website scope (Health Check page, Diagnostic page, Audit positioning, product journey, nav, ecosystem, internal linking). Instructed not to ask for further approval except for technical blockers, legal issues, or material deviation from the approved decisions.
+
+**Analyse.** Read both live pages in full before editing. Found the actual current model differs slightly from `docs/PRODUCT_SYSTEM.md`'s description: the live Commercial Diagnostic is a free written summary following a free "Discovery Call," not itself a paid session, repricing it to $995 means the Diagnostic absorbs what was previously a two-step free process into one paid, structured session. Decided the pricing needed to be data, not hardcoded text, per the explicit instruction, and that a real payment backend or CMS would be disproportionate (ADR-004's reasoning applies), so a small client-side config file was the right scope.
+
+**Decisions made and why:**
+- Built `pricing-config.js` as the single source of truth for prices (ADR-010), read at runtime via `data-price` attributes, structured for future currencies without inventing a GBP figure Fabien hasn't given.
+- Held Lead Management System and Growth Board out of the live Product Journey page, consistent with them being flagged (not confirmed) in `docs/PRODUCT_SYSTEM.md`.
+- Did not invent prices for Stage 3–6 products; `product-journey.html` shows them as "by proposal" or "retainer," not fabricated figures, so the page doesn't oversell what `docs/PRODUCT_SYSTEM.md` itself still marks open.
+- Used the Guarantee's suggested 14-day placeholder window directly, per Fabien's explicit instruction not to delay implementation for legal wording.
+- Changed the Commercial Audit's nav-right CTA link from a raw contact-form link to `/commercial-diagnostic`, and its process/timeline copy from a fixed "four weeks" to "three to six weeks, depending on scope," consistent with the new scope-dependent pricing.
+- Swapped every page's nav-right CTA from "Start with a Commercial Diagnostic" (linking to a homepage anchor) to "Free Commercial Health Check" (linking to the new page), since Health Check is now the approved lowest-friction entry point and should be the one pushed hardest site-wide.
+
+**Implement.** New files: `pricing-config.js`, `commercial-health-check.html` (6-question client-side-scored self-assessment, one question per Commercial Leakage Framework area, no data submitted or stored), `product-journey.html` (the full 6-stage ecosystem). Modified: `commercial-diagnostic.html` (pricing, Guarantee section, comparison table, step-row, meta/OG tags), `commercial-audit.html` (pricing, FAQ and FAQPage JSON-LD, timeline, hero CTA), `sitemap.xml` (13 → 15 URLs), `_redirects` (2 new forced entries). Nav, footer, and CTA updated across all 16 HTML pages via a script for the 12 unchanged root pages plus the two Insights templates, then two follow-up passes to fix a footer-insertion regex gap the first script run missed (verified by grep count per file until every file showed the expected occurrence counts, rather than assuming the bulk script had worked everywhere). Insights pages regenerated via `tools/build-insights.js` from the updated templates, not hand-edited, per ADR-009's own rule.
+
+**Verify.** Grep-counted GTM (2), pricing-config include (1), and data-price spans across all four pricing-aware pages. Confirmed all 16 HTML pages carry exactly one Health Check footer link, one Product Journey nav link, and one Product Journey footer link, catching and fixing a real bug where the first bulk-update script silently failed to insert the footer's Product Journey link on 12 of 14 files (a regex/indentation mismatch), found by grep-verifying counts rather than trusting the script's own reported success numbers. Confirmed `sitemap.xml` remains well-formed (15 `<url>` tags, balanced). Confirmed single `<body>` tag on both new pages.
+
+**Document.** This entry; see docs/CHANGELOG.md, docs/CURRENT_SPRINT.md, docs/ARCHITECTURAL_DECISIONS.md (ADR-010, Pending Decisions updated).
+
 **Document.** This entry; see docs/CHANGELOG.md and docs/CURRENT_SPRINT.md.
