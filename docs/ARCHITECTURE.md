@@ -45,13 +45,15 @@ Suggested nav order once Insights exists: How Halo Works · Services · Commerci
 
 ## URL Philosophy
 
-**Current state (as implemented):** flat, extensioned, static paths — `/about.html`, `/commercial-audit.html` — served from a static file structure with no routing layer. Internal links use relative `.html` paths (`about.html`, not `/about.html` or `/about`), which is consistent across the 10 pages verified.
+**Current state (as implemented, 2026-07-26, ADR-008):** flat, extensionless, static paths — `/about`, `/commercial-audit` — served from a static file structure with no routing layer. Internal links, canonical tags, and `og:url`/`twitter` references use the extensionless, root-relative form (`/about`, not `about.html` or `/about.html`) across all 12 pages.
 
-**Exception found:** `how-halo-thinks.html` and `selected-engagements.html` were, before Sprint 0, generated as a separate build with extensionless, root-relative links (`/how-halo-thinks`, `/about`). Sprint 0 corrected the internal cross-links on those two pages to match the rest of the site's `relative-path.html` convention. Verified fixed as of commit 7c7dbc0.
+**How this became possible without a routing layer:** Netlify's default behaviour already serves any `page.html` file at both `/page.html` and `/page` (a "pretty URL" feature enabled by default, not something this repository configured). Direct testing of the live site confirmed both forms returned `200 OK` with no redirect between them prior to this decision, that was the actual duplicate-content exposure ADR-008 closes, not a hypothetical one. A `_redirects` file at the repository root now 301s every legacy `.html` path to its extensionless equivalent, so anything that already links to or has indexed a `.html` URL still resolves correctly.
 
-**Pending Product Owner approval:** whether the long-term URL strategy should move to extensionless paths (`/about`, `/commercial-audit`) once Insights and other sections are built, since a nested structure (`/insights/[slug]`) sits more naturally without `.html` suffixes than flat pages do mixed with them. This is exactly the "URL strategy" decision that docs/CURRENT_SPRINT.md flags as blocking implementation. No decision is recorded yet. Recommend resolving this before any Insights build begins, since retrofitting URL structure after content exists means redirects, and redirect debt is cheaper to avoid than to fix.
+**History:** Before Sprint 0, `how-halo-thinks.html` and `selected-engagements.html` briefly used extensionless links while the rest of the site used `.html`; Sprint 0 corrected them to match the (then-canonical) `.html` convention for consistency. That correction is now superseded by ADR-008 in the other direction, everything is extensionless again, this time site-wide and intentional rather than an inconsistency to fix.
 
-**Dependency on an unconfirmed prerequisite:** docs/PROJECT_CONTEXT.md flags that the hosting/deployment mechanism and whether Cloudflare sits as a proxy or is the origin are both unconfirmed. The URL strategy decision cannot be made responsibly in isolation from this, if any existing page's URL changes, the redirect implementation depends entirely on the hosting model (a Netlify `_redirects` file behaves differently from Cloudflare Page Rules). Confirm hosting before finalising the URL strategy ADR, see docs/ROADMAP.md, Sprint 2.
+**Resolved dependency:** the hosting/deployment mechanism this decision depended on is now confirmed (`docs/ARCHITECTURAL_DECISIONS.md`, resolved 2026-07-26): Cloudflare proxies to Netlify, and GitHub pushes trigger deploys. The `_redirects` file format used here is Netlify-specific, consistent with that confirmed hosting model.
+
+**Applies going forward:** any future page, including Insights (`/insights/[slug]`), should be built extensionless from the start per this ADR. No further URL migration should be needed.
 
 ## Navigation Philosophy
 

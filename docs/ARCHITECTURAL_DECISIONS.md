@@ -90,10 +90,21 @@ Architecture Decision Records (ADRs). Only approved decisions are recorded here.
 
 ---
 
+## ADR-008: Extensionless URLs, with 301 redirects from the legacy `.html` paths
+
+**Status:** Approved (implemented)
+**Owner:** Claude Code, evidence gathered and documented in the URL Architecture Decision Record delivered 2026-07-26
+**Approved by:** Fabien, in conversation, 2026-07-26
+**Reason:** Direct testing of the live production site found that both `/about` and `/about.html` already resolved with `200 OK` and no redirect between them, Netlify's untouched default pretty-URL behaviour colliding with a codebase written entirely around `.html` links and canonical tags. `docs/ARCHITECTURE.md`'s URL Philosophy section had already recorded Cowork's lean toward extensionless paths being the more natural fit once `/insights/[slug]` exists. Given the choice had to be made either way to close the duplicate-resolution gap, Fabien chose extensionless.
+**Alternatives considered:** Keeping `.html` and adding a redirect rule the other direction (extensionless → `.html`). Rejected in favour of the option already leaning documented in `ARCHITECTURE.md`, and because it front-loads the larger one-time link migration now rather than leaving it to complicate the future Insights build.
+**Consequences:** Every internal link, canonical tag, and `og:url`/`twitter` reference across all 12 pages now uses the extensionless form (for example `/about`, not `about.html`); the homepage's own canonical and links use `/`. A `_redirects` file at the repository root 301s every legacy `.html` path to its extensionless equivalent (except `404.html`, left alone since Netlify uses that exact filename as its error-page convention, not a page anyone navigates to via a link). `docs/ARCHITECTURE.md`'s URL Philosophy section should be updated to describe this as the current implemented state rather than a future recommendation, see the same-day pass that follows this ADR. Any future page (including Insights) should be built extensionless from the start; no further migration should be needed.
+
+---
+
 ## Pending decisions (no ADR yet, do not build against these as if approved)
 
-- **URL strategy**: extensioned (`.html`) vs. extensionless paths, and whether Insights uses `/insights/[slug]` vs. `/insights/[slug].html`. Flagged as blocking implementation in docs/CURRENT_SPRINT.md. Pending Product Owner approval, and itself blocked on the hosting confirmation below.
-- **Hosting/deployment mechanism**: resolved 2026-07-26. Cloudflare is a proxy in front of Netlify, not the origin (confirmed via `x-nf-request-id` response headers present on every live request checked). Fabien confirmed directly that GitHub is the deploy trigger, pushing to `main` deploys the site. Note: GitHub shows zero commit status checks and zero deployment records for any commit pushed this session, a reporting gap in the GitHub↔Netlify connection, not evidence deploys aren't happening; verifying against the live site directly remains the only independent confirmation a push has actually landed. This no longer blocks the URL strategy decision below on the hosting-model question; the URL strategy decision itself (extensioned vs. extensionless) remains open, see docs/PROJECT_CONTEXT.md and the URL Architecture Decision Record delivered 2026-07-26.
+- **Hosting/deployment mechanism**: resolved 2026-07-26. Cloudflare is a proxy in front of Netlify, not the origin (confirmed via `x-nf-request-id` response headers present on every live request checked). Fabien confirmed directly that GitHub is the deploy trigger, pushing to `main` deploys the site. Note: GitHub shows zero commit status checks and zero deployment records for any commit pushed this session, a reporting gap in the GitHub↔Netlify connection, not evidence deploys aren't happening; verifying against the live site directly remains the only independent confirmation a push has actually landed.
+- **URL strategy**: resolved 2026-07-26, see ADR-008.
 - **LocalBusiness schema**: deferred pending a registered business address Fabien is comfortable publishing, see ADR-007.
 - **Information architecture for Insights, Framework Library, FAQ Hub, Resources**: sequencing and nav placement are proposed in docs/ARCHITECTURE.md, but timing (when each gets built) is a roadmap and resourcing decision, not an architecture decision, see docs/ROADMAP.md.
 - **Future CMS decision**: not yet triggered, see ADR-004.

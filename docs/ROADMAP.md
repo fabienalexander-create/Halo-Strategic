@@ -27,16 +27,18 @@ Architectural objectives and outcomes only. This is not a task list, implementat
 
 ## Sprint 2: Sitemap, Robots, and URL Strategy Resolution
 
-**Objective:** Resolve the pending URL strategy decision (docs/ARCHITECTURAL_DECISIONS.md, Pending Decisions) and build the crawl infrastructure that decision unblocks.
+**Objective:** Build the crawl infrastructure the URL strategy decision unblocks.
+
+**Status (2026-07-26):** URL strategy is resolved, extensionless, recorded as ADR-008, and implemented, every internal link, canonical tag, and `og:url` across all 12 pages uses the extensionless form, with a `_redirects` file 301ing the legacy `.html` paths. Hosting/deployment is also resolved (Cloudflare proxies to Netlify, GitHub push triggers deploy). Neither remains a dependency for the rest of this sprint.
 
 **Architectural outcomes:**
-- URL strategy decision recorded as an approved ADR: extensioned vs. extensionless paths, and the pattern for Insights URLs, resolved before any Insights content exists, not retrofitted after.
-- sitemap.xml generated and submitted, reflecting the URL strategy decided above.
+- ~~URL strategy decision recorded as an approved ADR~~ — done, see ADR-008.
+- sitemap.xml generated and submitted, reflecting the now-resolved extensionless URLs.
 - robots.txt added, pointing to the sitemap.
 - Favicon/manifest declarations made consistent across all pages (currently inconsistent per docs/TECHNICAL_SEO.md finding 11), folded into whatever template pass touches the shared header next.
 - Core Web Vitals baseline established, using tooling capable of measuring it (not available in the environment that produced the Sprint 2.1 audit).
 
-**Dependency:** Sprint 2 cannot start meaningfully until the URL strategy ADR exists. This is a Product Owner decision, not an engineering one; flag it early rather than let it silently block the sprint. It also cannot be resolved in isolation from hosting: docs/PROJECT_CONTEXT.md notes the deployment mechanism and whether Cloudflare is a proxy or the origin are both unconfirmed. If Sprint 2's URL decision moves any existing page to a new path, the redirect implementation depends entirely on that unconfirmed hosting model (Netlify `_redirects`, Cloudflare Page Rules, or something else). Confirm hosting/deployment before finalising the URL strategy ADR, not after, since the two decisions constrain each other.
+**Remaining work:** sitemap.xml, robots.txt, favicon/manifest consistency, and Core Web Vitals baseline. None of these are blocked any longer; they're ready to schedule.
 
 ## Sprint 3: Insights Foundation
 

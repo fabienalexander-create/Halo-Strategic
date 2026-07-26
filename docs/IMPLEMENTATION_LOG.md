@@ -196,3 +196,19 @@ Next. Await Fabien's authorisation to begin Sprint 1 implementation (nav/footer/
 **Verify.** Measured every draft's exact character length with `wc -c` before implementing, not estimated. Confirmed all 12 titles remain unique after the change (no duplicates introduced). Diffed each file's git changes to confirm only the intended tags changed.
 
 **Document.** This entry; see docs/CHANGELOG.md. Full audit report and content roadmap delivered directly, not committed to this repository, since they are working documents for this conversation rather than adopted engineering documentation, consistent with docs/AI_OPERATING_MODEL.md's Research Document Governance principle applied here by analogy.
+
+---
+
+## URL Strategy Resolution: Extensionless URLs Site-Wide (2026-07-26)
+
+**Trigger.** A contradiction surfaced between a research report describing the live site as serving clean URLs while canonicalising to `.html`, and this session's own earlier claim that canonical tags were simply correct. Rather than assume either side, tested the live production site directly.
+
+**Inspect.** `curl` testing against the live site found `/about` and `/about.html` both returning `200 OK` with identical content and no redirect between them, confirmed on a second page (Commercial Audit) to rule out a one-page fluke. A nonexistent path correctly 404'd, ruling out a wildcard misconfiguration. The canonical tag content was identical regardless of which URL variant served the request, since it's static markup, not request-aware. No `netlify.toml`, `_redirects`, or `_headers` file existed anywhere in the repository, confirming this was Netlify's untouched default pretty-URL behaviour colliding with an all-`.html` codebase, not something anyone had configured deliberately. Findings written up as a standalone URL Architecture Decision Record (evidence only, no recommendation) and delivered before any change was made.
+
+**Decisions made and why.** Fabien decided extensionless, informed by the decision record and `docs/ARCHITECTURE.md`'s pre-existing (unapproved until now) lean toward extensionless for future Insights URLs. Recorded as ADR-008 rather than left undocumented, since it's a genuine new architectural decision, not a status correction.
+
+**Implement.** Applied a scripted, verified find-and-replace across all 12 HTML files: every internal `href` referencing another page (`page.html` -> `/page`, `index.html` -> `/`, including anchor variants like `/#how-it-works` and `/selected-engagements#reacting-to-leading`), every canonical tag and `og:url` (`https://halostrategic.com/page.html` -> `https://halostrategic.com/page`), and contact.html's form `action` attribute (`/thank-you.html` -> `/thank-you`). Deliberately excluded 404.html's own filename and canonical, Netlify's error-page convention, not a page anyone links to. Added a `_redirects` file at the repository root 301ing every legacy `.html` path to its extensionless equivalent, so existing shares, bookmarks, or indexed `.html` URLs still resolve.
+
+**Verify.** Grepped for any remaining internal `.html` href/action references (found only 404.html's own canonical, expected). Grepped for double slashes (none). Confirmed all 12 titles remain unique. Reviewed every file's full `git diff` individually; each showed only the intended link/canonical/og:url substitutions, balanced insertion/deletion counts (275/275 across all 12 files), nothing else touched. Cross-checked the resulting internal link set for completeness (all page-name mappings present, both Selected Engagements anchor IDs preserved).
+
+**Document.** This entry; see docs/CHANGELOG.md, docs/ARCHITECTURAL_DECISIONS.md (ADR-008), docs/ARCHITECTURE.md (URL Philosophy, updated), docs/ROADMAP.md and docs/CURRENT_SPRINT.md (Sprint 2 status updated), and the URL Architecture Decision Record delivered this session.

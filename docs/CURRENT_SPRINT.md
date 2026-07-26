@@ -7,13 +7,15 @@ Last Updated: 2026-07-26
 
 ## Sprint
 
-Sprint 1 - Technical SEO & Analytics
+Sprint 2 - Sitemap, Robots, and URL Strategy Resolution
 
 ## Status
 
-Sprint 1 is complete in full as of 2026-07-26. The approved architecture (docs/ARCHITECTURE.md, docs/ARCHITECTURAL_DECISIONS.md, docs/ROADMAP.md) and the approved Technical SEO audit (docs/TECHNICAL_SEO.md) were committed by Claude Cowork in commit ee3caf6 on 2026-07-26. Per docs/ROADMAP.md, Sprint 1 scope split three ways, all now done: nav/footer/GTM parity on terms-and-conditions.html and 404.html; audit-coverage closure on cookie-policy.html and thank-you.html; and Organization + FAQPage schema, approved by Fabien and recorded as docs/ARCHITECTURAL_DECISIONS.md ADR-007, then implemented the same day. LocalBusiness schema remains deferred pending a registered business address (ADR-007), not invented or guessed. Sprint 2 (URL strategy, sitemap.xml/robots.txt) remains explicitly out of scope for Sprint 1 per docs/ROADMAP.md and has its own separate blocker, see Next Milestone.
+Sprint 1 is complete in full (see Completed). Sprint 2's blocking dependency, the URL strategy decision, is now resolved: extensionless, recorded as docs/ARCHITECTURAL_DECISIONS.md ADR-008, and implemented same-day across all 12 pages (internal links, canonical tags, og:url, a `_redirects` file 301ing the legacy `.html` paths). Hosting/deployment is also resolved (Cloudflare proxies to Netlify, GitHub push triggers deploy). Remaining Sprint 2 scope, sitemap.xml, robots.txt, favicon/manifest consistency, Core Web Vitals baseline, is no longer blocked and is ready to schedule.
 
 ## Completed (prior sprints)
+
+Sprint 2, URL strategy resolution (2026-07-26): decided extensionless (docs/ARCHITECTURAL_DECISIONS.md ADR-008) after a live-site test found `/about` and `/about.html` both resolving with no redirect between them, Netlify's default pretty-URL behaviour colliding with an all-`.html` codebase. Implemented same-day: every internal link, canonical tag, and og:url/twitter reference across all 12 pages updated to the extensionless form; a `_redirects` file added at the repository root 301ing every legacy `.html` path to its extensionless equivalent (404.html excluded, Netlify's error-page filename convention). Verified: no remaining internal `.html` links except 404.html's own canonical (intentional), no double slashes, all 12 titles still unique, full diff reviewed per file. See docs/IMPLEMENTATION_LOG.md, docs/ARCHITECTURE.md's URL Philosophy section, and the URL Architecture Decision Record delivered the same session.
 
 Sprint 1, schema rollout (2026-07-26): Organization JSON-LD implemented identically on all 12 pages (name, url, logo, sameAs LinkedIn, contactPoint email); FAQPage JSON-LD implemented on commercial-audit.html, generated from and matching its five visible FAQ entries verbatim. Approved by Fabien in conversation and recorded as docs/ARCHITECTURAL_DECISIONS.md ADR-007. LocalBusiness and Article schema remain deferred per docs/ARCHITECTURE.md's original recommendation (no address to publish; Insights doesn't exist yet). Verified: all JSON-LD blocks validated as syntactically correct. See CHANGELOG.md and IMPLEMENTATION_LOG.md.
 
@@ -41,19 +43,17 @@ None currently logged.
 
 LocalBusiness schema: deferred pending Fabien supplying a registered business address he's comfortable publishing. Not blocking anything else, see ADR-007.
 
-URL strategy, Sprint 2 not Sprint 1: extensioned versus extensionless paths, and the Insights URL pattern. Pending Fabien's approval, and itself pending confirmation of the hosting/deployment mechanism (docs/PROJECT_CONTEXT.md, Open Items). Did not block Sprint 1 and does not retroactively affect it now that Sprint 1 is complete.
-
 ## Blocked
 
-Sprint 2 cannot start meaningfully: the hosting/deployment mechanism (whether Cloudflare is a proxy or the origin, what triggers a deploy from `main`) is unconfirmed, and the URL strategy ADR depends on it, per docs/ARCHITECTURAL_DECISIONS.md's Pending Decisions and docs/ROADMAP.md's Sprint 2 Dependency note. This is a fact only Fabien can supply, not something to infer or guess.
+None. Both prior Sprint 2 blockers (hosting/deployment mechanism, URL strategy) are resolved, see Completed above.
 
 ## Ready for Implementation
 
-Sprint 1 is fully complete, nothing remains ready and unauthorised in its scope. Sprint 2 is not ready to start, see Blocked above.
+Sprint 2's remaining scope: sitemap.xml, robots.txt, favicon/manifest consistency, Core Web Vitals baseline. All ready to schedule, none blocked.
 
 ## Next Milestone
 
-Fabien to confirm the hosting/deployment mechanism, unblocking the URL strategy ADR, so Sprint 2 (sitemap.xml, robots.txt, favicon/manifest consistency, Core Web Vitals baseline) can begin.
+Generate sitemap.xml (reflecting the now-resolved extensionless URLs) and robots.txt, pending Fabien's go-ahead to proceed.
 
 ## Known Risks
 
