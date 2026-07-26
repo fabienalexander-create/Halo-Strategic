@@ -55,6 +55,8 @@ Architecture Decision Records (ADRs). Only approved decisions are recorded here.
 
 **Note (2026-07-26):** Insights was built, and this decision was not made explicitly, it defaulted again, by necessity of shipping one article quickly. Article #1 was hand-authored, no CMS, no templating, the same direct-maintenance approach as every other page. This is consistent with the existing default, not a violation of it, but it means the trigger condition this ADR describes ("Insights needs frequent, non-technical publishing," docs/ARCHITECTURE.md Future Scalability) is now closer, not resolved. The explicit decision this ADR recommends still has not been made, and shouldn't keep defaulting silently once article volume actually grows.
 
+**Update (2026-07-26, ADR-009):** the build-scaling half of this concern is now addressed, a local generator (templates + JSON + a script) replaces hand-copying boilerplate for Insights specifically. This is not a CMS: it doesn't enable non-technical publishing, still requires editing a JSON file and running a script, and this ADR's actual open question (CMS vs. no CMS) remains genuinely undecided.
+
 ---
 
 ## ADR-005: One shared template system is the only place UI changes are made
@@ -105,10 +107,24 @@ Architecture Decision Records (ADRs). Only approved decisions are recorded here.
 
 ---
 
+## ADR-009: Local template + JSON generator for Insights articles, no CMS, no Netlify-side build
+
+**Status:** Approved (implemented)
+**Owner:** Claude Code
+**Approved by:** Fabien, in conversation, 2026-07-26, in response to "Decide on the build approach before article #2"
+**Reason:** Article #1 was hand-authored by copying ~250 lines of shared boilerplate (head, `<style>` block, nav, footer, GTM, schema) into a new file and editing the middle. That approach is exactly what ADR-001 already ruled out for the 12 root-level pages when it chose a template system over hand-editing, and docs/ARCHITECTURE.md's Future Scalability section explicitly flagged it as not scaling past a handful of Insights articles. The actual, demonstrated pain point this session (duplicate GTM blocks, duplicate active-nav classes, a redirect double-hop, all caught only by manual verification) was hand-copying boilerplate and shared elements drifting out of sync across files, not a lack of a CMS or a lack of non-technical publishing. A CMS or a Netlify-side build step would solve problems nobody has actually hit yet; a generator solves the one that already happened.
+**Alternatives considered:** A full CMS or headless CMS (rejected, solves non-technical publishing, which nobody has asked for; disproportionate to one founder publishing occasionally, same reasoning as ADR-004). A Netlify-side build step (a `netlify.toml` build command running a real static site generator) (rejected for now, introduces a new toolchain dependency, `package.json`, `node_modules`, a build step that must succeed for every deploy, for a benefit the simpler local-generator approach already captures). Continuing to hand-copy per article (rejected, this is the problem being solved).
+**Consequences:** `tools/insights-article-template.html` and `tools/insights-index-template.html` hold the shared boilerplate once, with `{{TOKEN}}` placeholders. `tools/insights-articles.json` holds per-article data (slug, title, h1, meta description, category, teaser, publish date, body HTML). `tools/build-insights.js` generates `insights/index.html` and `insights/{slug}.html` from these and must be run locally after any edit to the JSON or templates; it does not run automatically on deploy. The generated files are committed normally, like any other change, review the diff before committing, same as everything else this session. Adding article #2 means adding one entry to `insights-articles.json` and running the script, not hand-copying another 250 lines. A shared-element change (nav, footer, GTM, schema) affecting Insights pages still needs a corresponding change to the templates, followed by a re-run, it does not yet reach the 12 root-level pages, which remain hand-maintained exactly as before (ADR-001 Amendment); unifying the two is a larger, separate decision, not made here.
+**Verified:** regenerated both existing Insights pages from the new templates and JSON data and diffed the output against the already-published, already-approved files: byte-for-byte identical after fixing one real bug the diff caught (an unescaped `&` in the category field, the same class of bug as the terms-and-conditions.html fix earlier this session). The generator now HTML-escapes all plain-text fields (title, meta description, h1, teaser, category) and deliberately does not escape the body field, which is meant to contain real markup, consistent with how every other page's content is hand-authored HTML, not escaped plain text.
+
+---
+
 ## Pending decisions (no ADR yet, do not build against these as if approved)
 
 - **Hosting/deployment mechanism**: resolved 2026-07-26. Cloudflare is a proxy in front of Netlify, not the origin (confirmed via `x-nf-request-id` response headers present on every live request checked). Fabien confirmed directly that GitHub is the deploy trigger, pushing to `main` deploys the site. Note: GitHub shows zero commit status checks and zero deployment records for any commit pushed this session, a reporting gap in the GitHub↔Netlify connection, not evidence deploys aren't happening; verifying against the live site directly remains the only independent confirmation a push has actually landed.
 - **URL strategy**: resolved 2026-07-26, see ADR-008.
 - **LocalBusiness schema**: deferred pending a registered business address Fabien is comfortable publishing, see ADR-007.
-- **Information architecture for Insights, Framework Library, FAQ Hub, Resources**: sequencing and nav placement are proposed in docs/ARCHITECTURE.md, but timing (when each gets built) is a roadmap and resourcing decision, not an architecture decision, see docs/ROADMAP.md.
-- **Future CMS decision**: not yet triggered, see ADR-004.
+- **Article schema for Insights**: still not decided, see docs/ROADMAP.md, Sprint 3. Not automatically unblocked by ADR-009, which covers the build mechanism, not schema.
+- **Whether the 12 root-level pages should move onto the same template+generator approach as Insights**: not decided here. ADR-009 deliberately scoped itself to Insights only, since that's where the demonstrated pain was. Revisit if hand-maintaining the 12 root pages becomes the actual bottleneck, not speculatively.
+- **Information architecture for Framework Library, FAQ Hub, Resources**: sequencing and nav placement are proposed in docs/ARCHITECTURE.md, but timing (when each gets built) is a roadmap and resourcing decision, not an architecture decision, see docs/ROADMAP.md.
+- **Future CMS decision**: not yet triggered, see ADR-004. ADR-009 is a generator, not a CMS, this remains open.

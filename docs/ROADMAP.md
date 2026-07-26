@@ -55,7 +55,7 @@ Architectural objectives and outcomes only. This is not a task list, implementat
 
 **Explicitly out of scope for Sprint 3:** Framework Library, FAQ Hub, Resources. These remain correctly sequenced after Insights per docs/ARCHITECTURE.md and should not be pulled forward without a specific reason recorded as an ADR.
 
-**Scaling flag for this sprint, still unresolved:** the site never had a Python build script to begin with (see docs/ARCHITECTURAL_DECISIONS.md, ADR-001 Amendment; this flag's original wording assumed one existed). Article #1 was hand-authored by copying the shared boilerplate, the same direct-maintenance approach used everywhere else on the site. That does not scale past a handful of articles. Before publishing article #2 or #3, revisit whether a lightweight templating approach is worth building, rather than continuing to hand-copy boilerplate into new files. Retrofitting after 20+ articles exist is more expensive than choosing the right approach now, while there's still only one.
+**Scaling flag for this sprint: resolved 2026-07-26, ADR-009.** A local generator (`tools/build-insights.js`, templates, and a JSON data file) replaces hand-copying boilerplate per article. Adding article #2 is one new entry in `tools/insights-articles.json` plus a script run, not a new hand-copied file. Verified against zero regression: regenerating the two existing Insights pages from the new system produced byte-for-byte identical output. Not a CMS, still requires editing JSON and running a script by hand; non-technical publishing remains unsolved and undecided (ADR-004).
 
 ## Sequencing Notes
 
