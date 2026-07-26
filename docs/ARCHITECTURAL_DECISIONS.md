@@ -132,6 +132,19 @@ Architecture Decision Records (ADRs). Only approved decisions are recorded here.
 
 ---
 
+## ADR-011: Agency Partnerships as a secondary-audience page, footer-only navigation
+
+**Status:** Approved (implemented)
+**Owner:** Claude Code
+**Approved by:** Fabien, full feature brief, 2026-07-26: "FEATURE BRIEF: Halo Agency Partner Network"
+**Reason:** Halo's primary audience remains business owners; agencies are a new, secondary audience who become better strategic advisers by partnering with Halo to diagnose commercial problems before recommending implementation. The brief was explicit that this should not compete for attention with the core business-owner journey.
+**Decision:** New page at `/agency-partnerships` (extensionless, ADR-008), linked from the footer Sitemap column on all 17 pages and one inline mention on `about.html`, deliberately not added to the main nav-links on any page. Content follows the brief's structure exactly: hero, The Problem, A Better Way (using the existing Leakage/Friction/Constraint/Alignment vocabulary from Section One of the Bible, not new terms), a 5-step visual process, Benefits cards, the Halo Partner Promise, Perfect For industry tags, the Halo Clarity Guarantee (reused verbatim from `docs/GUARANTEE.md`), FAQ, and a final CTA. Organization, Service, and FAQPage JSON-LD added.
+**Consequences:** Three FAQ answers (white-labelling, co-branded reports, partner pricing) are honestly stated as not yet available/not yet set, rather than invented, since the brief itself lists white-label diagnostics and co-branded reports under "Future-Proofing... should not be implemented now." No partner-specific pricing exists; the FAQ and page copy route pricing questions to the Partner Strategy Call rather than stating a figure. The brief's future-proofing list (Partner Portal, referral dashboard, certification programme, training academy, partner directory) is not built and not stubbed out on the page, consistent with "should not be implemented now," the page's section-per-topic structure (clear `id` per section) is what makes future additions possible without a redesign, not placeholder UI.
+**Alternatives considered:** Adding "Agency Partnerships" to the main nav (rejected, explicit instruction that this is a secondary audience and shouldn't compete with the core journey). Building placeholder sections for future Partner Portal/certification features now (rejected, the brief explicitly says not to implement these yet, and empty placeholder UI would be a half-finished feature, not future-proofing).
+**Verified:** grep-confirmed the footer link appears exactly once on all 17 existing pages and is absent from every page's `nav-links` block; confirmed `sitemap.xml` remains well-formed (16 `<url>` tags, balanced) after the addition.
+
+---
+
 ## Pending decisions (no ADR yet, do not build against these as if approved)
 
 - **Hosting/deployment mechanism**: resolved 2026-07-26. Cloudflare is a proxy in front of Netlify, not the origin (confirmed via `x-nf-request-id` response headers present on every live request checked). Fabien confirmed directly that GitHub is the deploy trigger, pushing to `main` deploys the site. Note: GitHub shows zero commit status checks and zero deployment records for any commit pushed this session, a reporting gap in the GitHub↔Netlify connection, not evidence deploys aren't happening; verifying against the live site directly remains the only independent confirmation a push has actually landed.
@@ -144,3 +157,6 @@ Architecture Decision Records (ADRs). Only approved decisions are recorded here.
 - **US market positioning / regional pricing**: Sprint 5.6 implemented USD pricing site-wide per Fabien's approval, but the underlying question, is Halo formally pursuing US-market positioning, remains undecided (see docs/PRICING_STRATEGY.md). `pricing-config.js` (ADR-010) supports adding GBP or other currencies later without code changes, but no GBP figures exist yet.
 - **Halo Clarity Guarantee legal review**: implemented as approved placeholder copy (14-day refund window, on-request, no review step) per Fabien's explicit instruction not to delay implementation for this. Still needs real solicitor/accountant review before the refund mechanism is treated as final, see docs/GUARANTEE.md.
 - **Growth Blueprint, Commercial Operating System, and every Stage 4–6 product's pricing**: not set. Only Health Check, Diagnostic, and Audit have real prices; the rest of docs/PRODUCT_SYSTEM.md's ecosystem is structurally live on `/product-journey` but explicitly marked "by proposal" or "retainer" with no figure attached.
+- **Agency Partner Programme pricing/terms**: not set, see ADR-011. Routed to a Partner Strategy Call, not a published figure.
+- **Agency partner white-labelling and co-branded reporting**: explicitly future-phase per the feature brief, not built, see ADR-011. `/agency-partnerships` states this honestly rather than implying they exist.
+- **Partner Portal, referral dashboard, certification programme, training academy, partner directory**: named in the original feature brief as future-proofing, none built or stubbed, see ADR-011.

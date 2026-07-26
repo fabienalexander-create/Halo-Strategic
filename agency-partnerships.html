@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Agency Partnerships | Halo Strategic</title>
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon-180x180.png">
+<link rel="manifest" href="/site.webmanifest">
+<meta name="theme-color" content="#101A30">
+<meta name="description" content="Halo's Agency Partner Programme: give your clients executive-level commercial diagnosis before recommending implementation. Diagnosis before prescription, always.">
+<link rel="canonical" href="https://halostrategic.com/agency-partnerships">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://halostrategic.com/agency-partnerships">
+<meta property="og:title" content="Agency Partnerships | Halo Strategic">
+<meta property="og:description" content="Halo's Agency Partner Programme: give your clients executive-level commercial diagnosis before recommending implementation. Diagnosis before prescription, always.">
+<meta property="og:image" content="https://halostrategic.com/assets/og-default-1200x630.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Agency Partnerships | Halo Strategic">
+<meta name="twitter:image" content="https://halostrategic.com/assets/og-default-1200x630.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#1B2A4A; --navy-deep:#101A30; --bronze:#B08D57; --bronze-light:#D8BE8F;
+    --slate:#44546A; --ink:#1A1D24; --paper:#F6F6F3; --surface:#FFFFFF; --border:#E1E3DE;
+    --green:#4B6B4F; --green-bg:#E7EDE6; --amber:#8F6E28; --amber-bg:#F2EAD9; --red:#8C4438; --red-bg:#F2E2DE;
+    --radius-sm:6px; --radius-md:8px; --radius-lg:12px;
+    --ease: cubic-bezier(0.4,0,0.2,1);
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0; background:var(--paper); color:var(--ink);
+    font-family:'Inter',sans-serif; font-size:17px; line-height:1.65;
+    -webkit-font-smoothing:antialiased;
+  }
+  ::selection{ background:var(--bronze-light); color:var(--navy-deep); }
+  h1,h2,h3{ font-family:'Fraunces',serif; font-weight:500; color:var(--navy-deep); margin:0; letter-spacing:-0.01em; }
+  a{ color:inherit; }
+  .container{ max-width:1180px; margin:0 auto; padding:0 32px; }
+  .mono{ font-family:'IBM Plex Mono',monospace; }
+
+  header{ position:sticky; top:0; z-index:100; background:rgba(246,246,243,0.92); backdrop-filter:blur(8px); border-bottom:1px solid var(--border); }
+  .navbar{ display:flex; align-items:center; justify-content:space-between; padding:22px 32px; max-width:1180px; margin:0 auto; }
+  .logo{ font-family:'Fraunces',serif; font-size:1.35rem; font-weight:600; color:var(--navy-deep); text-decoration:none; display:flex; align-items:center; gap:12px; letter-spacing:0.01em; white-space:nowrap; }
+  .logo-mark{ width:28px; height:28px; flex:none; }
+  .nav-links{ display:flex; gap:21px; list-style:none; margin:0; padding:0; flex-wrap:wrap; }
+  .nav-links a{ text-decoration:none; font-size:0.92rem; color:var(--slate); font-weight:500; transition:color 160ms var(--ease); }
+  .nav-links a:hover{ color:var(--navy-deep); }
+  .nav-links a.active{ color:var(--navy-deep); font-weight:600; }
+  .nav-right{ display:flex; align-items:center; gap:24px; }
+  .nav-toggle{ display:none; background:none; border:none; cursor:pointer; padding:8px; }
+  .nav-toggle span{ display:block; width:22px; height:2px; background:var(--navy-deep); margin:5px 0; }
+
+  .btn{
+    font-family:'Inter',sans-serif; font-size:0.95rem; font-weight:600; padding:13px 24px;
+    border-radius:var(--radius-md); cursor:pointer; border:1px solid transparent;
+    transition:background 160ms var(--ease), border-color 160ms var(--ease), color 160ms var(--ease);
+    text-decoration:none; display:inline-block;
+  }
+  .btn-primary{ background:var(--navy); color:#fff; }
+  .btn-primary:hover{ background:var(--navy-deep); }
+  .btn-bronze{ background:var(--bronze); color:var(--navy-deep); font-weight:700; }
+  .btn-bronze:hover{ background:var(--bronze-light); }
+  .btn-outline{ background:transparent; color:#fff; border:1px solid rgba(255,255,255,0.4); }
+  .btn-outline:hover{ border-color:#fff; }
+
+  section{ padding:96px 0; }
+  section.tight{ padding:64px 0; }
+  .eyebrow{ font-family:'IBM Plex Mono',monospace; font-size:0.78rem; color:var(--bronze); text-transform:uppercase; letter-spacing:0.12em; margin-bottom:16px; }
+  h2.section-title{ font-size:2.1rem; line-height:1.2; max-width:20em; margin-bottom:20px; }
+  p.lead{ font-size:1.2rem; color:var(--slate); max-width:38em; margin:0 0 16px; }
+  p{ max-width:42em; }
+
+  .hero{ padding:130px 0 100px; background:var(--navy-deep); position:relative; overflow:hidden; }
+  .hero .container{ position:relative; z-index:2; }
+  .hero h1{ font-size:3rem; line-height:1.15; max-width:16em; margin-bottom:28px; color:#fff; }
+  .hero p.lead{ margin-bottom:36px; color:#C7CBD4; }
+
+  .pull{ font-family:'Fraunces',serif; font-weight:500; font-size:1.4rem; line-height:1.4; color:var(--navy-deep); border-left:3px solid var(--bronze); padding:4px 0 4px 28px; margin:24px 0; max-width:34em; }
+
+  .band-dark{ background:var(--navy-deep); color:#EDEEF0; }
+  .band-dark h2.section-title{ color:#fff; }
+  .band-dark p{ color:#C7CBD4; }
+  .band-dark .pull{ color:#fff; border-left-color:var(--bronze-light); }
+
+  .card-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:24px; margin-top:24px; }
+  .card-grid.two{ grid-template-columns:repeat(2,1fr); }
+  .card{ background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-lg); padding:28px; }
+  .card .k{ font-family:'IBM Plex Mono',monospace; font-size:0.72rem; color:var(--bronze); text-transform:uppercase; letter-spacing:0.08em; margin-bottom:10px; }
+  .card h3{ font-size:1.1rem; margin-bottom:8px; }
+  .card p{ font-size:0.95rem; color:var(--slate); margin:0; }
+
+  .step-row{ display:flex; gap:24px; margin:32px 0 48px; flex-wrap:wrap; }
+  .step-row .step{ flex:1; min-width:170px; }
+  .step-row .step .n{ font-family:'IBM Plex Mono',monospace; font-size:1.6rem; font-weight:600; color:var(--bronze-light); margin-bottom:6px; }
+  .step-row .step h3{ font-size:0.98rem; margin-bottom:6px; color:var(--navy-deep); }
+  .step-row .step p{ font-size:0.88rem; color:var(--slate); margin:0; }
+  .band-dark .step-row .step h3{ color:#fff; }
+
+  .tag-row{ display:flex; gap:12px; flex-wrap:wrap; margin-top:24px; }
+  .tag{ font-family:'IBM Plex Mono',monospace; font-size:0.85rem; color:var(--navy-deep); background:var(--surface); border:1px solid var(--border); border-radius:999px; padding:9px 18px; }
+
+  .promise-box{ background:var(--surface); border:1px solid var(--border); border-left:4px solid var(--bronze); border-radius:var(--radius-lg); padding:44px; }
+  .promise-box p{ font-family:'Fraunces',serif; font-size:1.2rem; font-weight:500; color:var(--navy-deep); margin:0 0 18px; max-width:none; }
+  .promise-box p:last-child{ margin-bottom:0; }
+
+  .faq details{ border-bottom:1px solid var(--border); padding:20px 0; }
+  .faq summary{ font-family:'Fraunces',serif; font-size:1.1rem; font-weight:600; color:var(--navy-deep); cursor:pointer; list-style:none; display:flex; justify-content:space-between; align-items:center; }
+  .faq summary::-webkit-details-marker{ display:none; }
+  .faq summary::after{ content:'+'; font-family:'Inter',sans-serif; color:var(--bronze); font-size:1.4rem; font-weight:400; }
+  .faq details[open] summary::after{ content:'\2212'; }
+  .faq p{ margin-top:14px; color:var(--slate); max-width:42em; }
+
+  .final-cta{ text-align:left; background:var(--navy-deep); color:#fff; border-radius:var(--radius-lg); padding:56px; margin:0 32px; }
+  section.final-cta{ background:var(--navy-deep); color:#fff; border-radius:0; margin:0; padding:96px 0; }
+  section.final-cta h2.section-title{ color:#fff; }
+
+  footer{ border-top:1px solid var(--border); padding:56px 0 40px; margin-top:40px; }
+  .footer-grid{ display:grid; grid-template-columns:2fr 1fr 1fr; gap:32px; margin-bottom:40px; }
+  .footer-grid h4{ font-family:'IBM Plex Mono',monospace; font-size:0.72rem; text-transform:uppercase; letter-spacing:0.08em; color:var(--slate); margin-bottom:14px; }
+  .footer-grid ul{ list-style:none; padding:0; margin:0; }
+  .footer-grid li{ margin-bottom:10px; }
+  .footer-grid a{ text-decoration:none; color:var(--ink); font-size:0.92rem; }
+  .footer-grid a:hover{ color:var(--bronze); }
+  .footer-bottom{ font-size:0.82rem; color:var(--slate); border-top:1px solid var(--border); padding-top:24px; display:flex; justify-content:space-between; flex-wrap:wrap; gap:12px; }
+
+  @media (max-width:900px){
+    .nav-links{ display:none; }
+    .nav-toggle{ display:block; }
+    .hero h1{ font-size:2.1rem; }
+    section{ padding:64px 0; }
+    .final-cta{ margin:0 20px; padding:36px 28px; }
+    .footer-grid{ grid-template-columns:1fr; gap:24px; }
+    .container{ padding:0 20px; }
+    .card-grid, .card-grid.two{ grid-template-columns:1fr; }
+    .step-row{ flex-direction:column; }
+    .promise-box{ padding:28px; }
+  }
+  @media (prefers-reduced-motion: reduce){
+    *{ transition:none !important; scroll-behavior:auto !important; }
+  }
+</style>
+<!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-T49HRT6J');</script>
+<!-- End Google Tag Manager -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "Halo Strategic",
+  "url": "https://halostrategic.com",
+  "logo": "https://halostrategic.com/android-chrome-512x512.png",
+  "sameAs": ["https://www.linkedin.com/company/halo-strategicglobal/"],
+  "contactPoint": {
+    "@type": "ContactPoint",
+    "email": "hello@halostrategic.com",
+    "contactType": "customer service"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Service",
+  "name": "Halo Agency Partner Programme",
+  "serviceType": "Commercial diagnosis for marketing agencies and their clients",
+  "provider": { "@type": "Organization", "name": "Halo Strategic", "url": "https://halostrategic.com" },
+  "audience": { "@type": "Audience", "audienceType": "Marketing agencies" },
+  "description": "A partnership programme where Halo delivers commercial diagnosis before an agency recommends implementation, so agencies lead with strategy rather than a service they happen to sell."
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Will Halo sell to my clients?",
+      "acceptedAnswer": { "@type": "Answer", "text": "No. We don't market directly to a referred client without your agreement, and the client relationship stays yours throughout." }
+    },
+    {
+      "@type": "Question",
+      "name": "Can the Diagnostic be white-labelled?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Not yet. White-labelling is a planned future addition to the partner programme. Today, Diagnostics are delivered as a clearly credited part of your engagement, positioned as your strategic partner's work." }
+    },
+    {
+      "@type": "Question",
+      "name": "Can we co-brand reports?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Not yet. Co-branded reporting is planned for a future phase of the partner programme, not available today." }
+    },
+    {
+      "@type": "Question",
+      "name": "Do you replace our strategy team?",
+      "acceptedAnswer": { "@type": "Answer", "text": "No. Halo exists to strengthen your strategic offering, not replace it. Where you already have strategic capability, we work alongside it." }
+    },
+    {
+      "@type": "Question",
+      "name": "What happens if marketing isn't the answer?",
+      "acceptedAnswer": { "@type": "Answer", "text": "We tell you and your client that directly. Diagnosis before prescription means the Diagnostic follows the evidence, even when it points away from a marketing solution." }
+    },
+    {
+      "@type": "Question",
+      "name": "How does pricing work?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Partner terms are agreed directly during your Partner Strategy Call, since they depend on your agency's referral volume and how you want to structure client engagements." }
+    }
+  ]
+}
+</script>
+</head>
+<body>
+
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-T49HRT6J"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+<header>
+  <nav class="navbar">
+    <a href="/" class="logo">
+      <svg class="logo-mark" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path d="M 26 15 A 19 19 0 0 0 26 49" fill="none" stroke="#101A30" stroke-width="4" stroke-linecap="round"/>
+        <path d="M 38 15 A 19 19 0 0 1 38 49" fill="none" stroke="#101A30" stroke-width="4" stroke-linecap="round"/>
+        <path d="M32 21 L37 49 L27 49 Z" fill="#B08D57"/>
+      </svg>
+      HALO STRATEGIC
+    </a>
+    <ul class="nav-links">
+      <li><a href="/#how-it-works">How Halo Works</a></li>
+      <li><a href="/#services">Services</a></li>
+      <li><a href="/commercial-audit">Commercial Audit</a></li>
+      <li><a href="/product-journey">Product Journey</a></li>
+      <li><a href="/insights/">Insights</a></li>
+      <li><a href="/selected-engagements">Selected Engagements</a></li>
+      <li><a href="/how-halo-thinks">How Halo Thinks</a></li>
+      <li><a href="/about">About</a></li>
+    </ul>
+    <div class="nav-right">
+      <a href="/commercial-health-check" class="btn btn-primary">Free Commercial Health Check</a>
+      <button class="nav-toggle" aria-label="Open menu"><span></span><span></span><span></span></button>
+    </div>
+  </nav>
+</header>
+
+<section class="hero">
+  <div class="container">
+    <div class="eyebrow" style="color:#D8BE8F;">For Marketing Agencies</div>
+    <h1>Stop Selling Services.<br>Start Diagnosing Businesses.</h1>
+    <p class="lead" style="max-width:36em;">Give your clients executive-level commercial insight before recommending implementation. Become a Halo Agency Partner.</p>
+    <a href="/contact?service=agency-partnership" class="btn btn-bronze" style="text-decoration:none;">Book a Partner Strategy Call</a>
+  </div>
+</section>
+
+<section id="the-problem">
+  <div class="container" style="max-width:800px;">
+    <div class="eyebrow">The Problem</div>
+    <h2 class="section-title">Every agency sees the problem through the lens of what it sells.</h2>
+    <p style="font-size:1.05rem;">If you build websites, every problem starts looking like a website. If you run paid ads, every problem looks like more traffic. If you sell SEO, every problem becomes an SEO opportunity.</p>
+    <div class="pull">This isn't dishonest. It's human nature.</div>
+    <p style="font-size:1.05rem;">Halo exists to diagnose the commercial problem before recommending implementation, so the recommendation your client hears is shaped by evidence, not by what happens to be on your rate card.</p>
+  </div>
+</section>
+
+<section id="a-better-way" class="band-dark tight">
+  <div class="container" style="max-width:800px;">
+    <div class="eyebrow" style="color:var(--bronze-light);">A Better Way</div>
+    <h2 class="section-title">Halo becomes your strategic commercial partner.</h2>
+    <p style="font-size:1.05rem;">Before any implementation is recommended, Halo identifies:</p>
+    <div class="card-grid two" style="margin-bottom:32px;">
+      <div class="card"><div class="k">01</div><h3>Commercial Leakage</h3><p>Where value is escaping the business.</p></div>
+      <div class="card"><div class="k">02</div><h3>Commercial Friction</h3><p>The resistance actually causing that leakage.</p></div>
+      <div class="card"><div class="k">03</div><h3>Primary Constraints</h3><p>The one thing limiting growth right now.</p></div>
+      <div class="card"><div class="k">04</div><h3>Strategic Priorities</h3><p>What should happen first, and why.</p></div>
+    </div>
+    <p style="font-size:1.05rem;">Only after diagnosis are recommendations made. If marketing is genuinely the answer, your agency becomes the implementation partner, with a clearer, evidence-backed brief than a cold pitch ever gives you.</p>
+  </div>
+</section>
+
+<section id="how-it-works">
+  <div class="container" style="max-width:900px;">
+    <div class="eyebrow">How It Works</div>
+    <h2 class="section-title">Five steps, from meeting to delivery.</h2>
+    <div class="step-row">
+      <div class="step"><div class="n">01</div><h3>Agency wins meeting</h3><p>You bring Halo in as your strategic commercial partner.</p></div>
+      <div class="step"><div class="n">02</div><h3>Halo delivers Diagnostic</h3><p>A structured, evidence-based read on what's actually happening.</p></div>
+      <div class="step"><div class="n">03</div><h3>Client gains clarity</h3><p>Executive-level insight into their real commercial constraint.</p></div>
+      <div class="step"><div class="n">04</div><h3>Roadmap created</h3><p>A clear, prioritised implementation plan.</p></div>
+      <div class="step"><div class="n">05</div><h3>Agency delivers</h3><p>You implement. Halo remains strategic advisor where appropriate.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="benefits">
+  <div class="container" style="max-width:1000px;">
+    <div class="eyebrow">Benefits</div>
+    <h2 class="section-title">What partnering with Halo changes for your agency.</h2>
+    <div class="card-grid">
+      <div class="card"><h3>Lead with strategy</h3><p>Open every relationship with diagnosis, not a pitch.</p></div>
+      <div class="card"><h3>Win more trust</h3><p>Clients see you recommend evidence over self-interest.</p></div>
+      <div class="card"><h3>Scope projects correctly</h3><p>Proposals sized to the real constraint, not a guess.</p></div>
+      <div class="card"><h3>Differentiate your agency</h3><p>Stand apart from agencies that only sell what they build.</p></div>
+      <div class="card"><h3>Increase implementation confidence</h3><p>Build against a diagnosis, not an assumption.</p></div>
+      <div class="card"><h3>Strengthen client relationships</h3><p>Clients stay because the advice keeps proving right.</p></div>
+      <div class="card"><h3>Reduce misaligned retainers</h3><p>Fewer engagements built on the wrong problem.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="partner-promise" class="tight">
+  <div class="container" style="max-width:800px;">
+    <div class="eyebrow">The Halo Partner Promise</div>
+    <h2 class="section-title">We don't compete with our agency partners.</h2>
+    <div class="promise-box">
+      <p>We don't market directly to a referred client without your agreement.</p>
+      <p>The client relationship remains yours.</p>
+      <p>Halo exists to strengthen agencies, not replace them.</p>
+      <p>If marketing is the right solution, we want our partners to deliver it.</p>
+    </div>
+  </div>
+</section>
+
+<section id="perfect-for">
+  <div class="container" style="max-width:800px;">
+    <div class="eyebrow">Perfect For</div>
+    <h2 class="section-title">Built for agencies that want to lead with strategy.</h2>
+    <div class="tag-row">
+      <span class="tag">Paid Media</span>
+      <span class="tag">SEO</span>
+      <span class="tag">Web Design</span>
+      <span class="tag">Creative</span>
+      <span class="tag">CRM</span>
+      <span class="tag">Automation</span>
+      <span class="tag">AI</span>
+      <span class="tag">Growth Agencies</span>
+      <span class="tag">Brand Agencies</span>
+      <span class="tag">Fractional CMOs</span>
+    </div>
+  </div>
+</section>
+
+<section id="guarantee" class="band-dark tight">
+  <div class="container" style="max-width:800px;">
+    <div class="eyebrow" style="color:var(--bronze-light);">The Halo Clarity Guarantee</div>
+    <h2 class="section-title">We guarantee clarity. Not business outcomes.</h2>
+    <div class="pull">If your client leaves the Commercial Diagnostic without significantly more clarity about what's holding their business back and what should happen next, we'll refund the investment in full.</div>
+    <p>This isn't a promise about revenue, growth, or results, those depend on decisions only your client can make. Clarity is the part we control, and the part we're willing to guarantee.</p>
+  </div>
+</section>
+
+<section id="faq">
+  <div class="container" style="max-width:800px;">
+    <div class="eyebrow">FAQ</div>
+    <h2 class="section-title">What agencies ask before partnering.</h2>
+    <div class="faq">
+      <details>
+        <summary>Will Halo sell to my clients?</summary>
+        <p>No. We don't market directly to a referred client without your agreement, and the client relationship stays yours throughout.</p>
+      </details>
+      <details>
+        <summary>Can the Diagnostic be white-labelled?</summary>
+        <p>Not yet. White-labelling is a planned future addition to the partner programme. Today, Diagnostics are delivered as a clearly credited part of your engagement, positioned as your strategic partner's work.</p>
+      </details>
+      <details>
+        <summary>Can we co-brand reports?</summary>
+        <p>Not yet. Co-branded reporting is planned for a future phase of the partner programme, not available today.</p>
+      </details>
+      <details>
+        <summary>Do you replace our strategy team?</summary>
+        <p>No. Halo exists to strengthen your strategic offering, not replace it. Where you already have strategic capability, we work alongside it.</p>
+      </details>
+      <details>
+        <summary>What happens if marketing isn't the answer?</summary>
+        <p>We tell you and your client that directly. Diagnosis before prescription means the Diagnostic follows the evidence, even when it points away from a marketing solution.</p>
+      </details>
+      <details>
+        <summary>How does pricing work?</summary>
+        <p>Partner terms are agreed directly during your Partner Strategy Call, since they depend on your agency's referral volume and how you want to structure client engagements.</p>
+      </details>
+    </div>
+  </div>
+</section>
+
+<section class="final-cta">
+  <div class="container">
+    <h2 class="section-title" style="color:#fff; max-width:20em;">Give your clients better answers before you sell better services.</h2>
+    <div style="display:flex; gap:16px; flex-wrap:wrap; margin-top:8px;">
+      <a href="/contact?service=agency-partnership" class="btn btn-bronze" style="text-decoration:none;">Book Partner Strategy Call</a>
+      <a href="/contact?service=agency-partnership" class="btn btn-outline" style="text-decoration:none;">Become a Halo Agency Partner</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <div class="logo" style="margin-bottom:10px; color:#F6F6F3;">
+          <svg class="logo-mark" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <path d="M 26 15 A 19 19 0 0 0 26 49" fill="none" stroke="#F6F6F3" stroke-width="4" stroke-linecap="round"/>
+            <path d="M 38 15 A 19 19 0 0 1 38 49" fill="none" stroke="#F6F6F3" stroke-width="4" stroke-linecap="round"/>
+            <path d="M32 21 L37 49 L27 49 Z" fill="#D8BE8F"/>
+          </svg>
+          HALO STRATEGIC
+        </div>
+        <p style="font-size:0.92rem; color:var(--slate); max-width:26em;">A Commercial Growth Consultancy. Our job is to help leadership make better commercial decisions.</p>
+      </div>
+      <div>
+        <h4>Sitemap</h4>
+        <ul>
+          <li><a href="/#how-it-works">How Halo Works</a></li>
+          <li><a href="/#services">Services</a></li>
+          <li><a href="/commercial-health-check">Commercial Health Check</a></li>
+          <li><a href="/commercial-diagnostic">Commercial Diagnostic</a></li>
+          <li><a href="/commercial-audit">Commercial Audit</a></li>
+          <li><a href="/product-journey">Product Journey</a></li>
+          <li><a href="/agency-partnerships">Agency Partnerships</a></li>
+          <li><a href="/insights/">Insights</a></li>
+          <li><a href="/selected-engagements">Selected Engagements</a></li>
+          <li><a href="/how-halo-thinks">How Halo Thinks</a></li>
+          <li><a href="/about">About</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Contact &amp; Legal</h4>
+        <ul>
+          <li><a href="/contact">Contact</a></li>
+          <li><a href="https://www.linkedin.com/company/halo-strategicglobal/" target="_blank" rel="noopener">LinkedIn</a></li>
+          <li><a href="mailto:hello@halostrategic.com">hello@halostrategic.com</a></li>
+          <li><a href="/privacy-policy">Privacy Policy</a></li>
+          <li><a href="/cookie-policy">Cookie Policy</a></li>
+          <li><a href="/terms-and-conditions">Terms &amp; Conditions</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 Halo Strategic. All rights reserved.</span>
+      <span class="mono">halostrategic.com</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  document.querySelector('.nav-toggle')?.addEventListener('click', function(){
+    var links = document.querySelector('.nav-links');
+    var visible = links.style.display === 'flex';
+    links.style.display = visible ? 'none' : 'flex';
+    links.style.flexDirection = 'column';
+    links.style.position = 'absolute';
+    links.style.top = '64px';
+    links.style.left = '0';
+    links.style.right = '0';
+    links.style.background = 'var(--paper)';
+    links.style.padding = '20px 32px';
+    links.style.borderBottom = '1px solid var(--border)';
+  });
+</script>
+
+</body>
+</html>

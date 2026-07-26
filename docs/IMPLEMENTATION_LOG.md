@@ -311,4 +311,24 @@ Next. Await Fabien's authorisation to begin Sprint 1 implementation (nav/footer/
 
 **Document.** This entry; see docs/CHANGELOG.md, docs/CURRENT_SPRINT.md, docs/ARCHITECTURAL_DECISIONS.md (ADR-010, Pending Decisions updated).
 
+---
+
+## Sprint 5.6: Agency Partnerships (2026-07-26, ADR-011)
+
+**Trigger.** Fabien sent a complete "FEATURE BRIEF: Halo Agency Partner Network," fully specifying headline, subheadline, CTAs, eight content sections, design direction, technical notes, and success criteria for a new secondary-audience page targeting marketing agencies as partners rather than clients.
+
+**Analyse.** The brief was self-contained, no business decision needed inventing (unlike, say, Growth Maturity Model levels earlier in this project). Two things needed judgement rather than being handed directly: (1) three FAQ questions (white-label, co-branding, partner pricing) the brief itself flags as future-phase or unset, so the honest answer is "not yet," not a fabricated feature or number; (2) exact nav/footer placement, resolved directly from the brief's own instruction (footer link, optional About link, not main nav).
+
+**Decisions made and why:**
+- New page at `/agency-partnerships` (brief's preferred URL), extensionless per ADR-008.
+- Footer-only placement across all 17 existing pages (verified via grep, exactly one occurrence per file) plus one inline text link on `about.html`'s closing CTA section ("Run a marketing agency? See Halo's Agency Partnerships"). Not added to any page's main nav-links, confirmed via grep across every nav-links block.
+- Reused the existing Leakage/Friction/Constraint/Alignment vocabulary from Section One of the Bible for "A Better Way" rather than introducing new terms, and reused the Halo Clarity Guarantee's approved wording verbatim rather than drafting new guarantee language for this audience.
+- Did not build or stub the brief's own "Future-Proofing" list (Partner Portal, white-label diagnostics, co-branded reports, referral dashboard, certification programme, training academy, partner directory), consistent with the brief's explicit "should not be implemented now." The page's section-per-topic structure (one `<section id="...">` per topic) is what makes future additions possible without a redesign; no placeholder UI was added for them.
+
+**Implement.** New file `agency-partnerships.html`: hero, 8 content sections (`#the-problem`, `#a-better-way`, `#how-it-works`, `#benefits`, `#partner-promise`, `#perfect-for`, `#guarantee`, `#faq`), final CTA with two buttons per the brief. Organization, Service, and FAQPage JSON-LD. Footer link added to all 16 other existing pages (12 root pages, the 2 Insights templates, then regenerated via `tools/build-insights.js`) via a script anchored on the Product Journey → Insights footer adjacency, same technique as Sprint 5.6's earlier nav rollout. `sitemap.xml` (15 → 16 URLs) and `_redirects` updated.
+
+**Verify.** Grep-confirmed the footer link's presence (exactly once) across all 17 pages including the newly regenerated Insights pages, and its absence from every page's nav-links block. Confirmed `sitemap.xml` remains well-formed (16 `<url>` tags, balanced).
+
+**Document.** This entry; see docs/CHANGELOG.md, docs/CURRENT_SPRINT.md, docs/ARCHITECTURAL_DECISIONS.md (ADR-011, Pending Decisions updated).
+
 **Document.** This entry; see docs/CHANGELOG.md and docs/CURRENT_SPRINT.md.
