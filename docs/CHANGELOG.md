@@ -1,5 +1,9 @@
 # Changelog
 
+## 2026-07-26 — Sprint 5.6: Product Architecture & Commercial Positioning
+
+Added four working documents converting the Halo Bible's philosophy into a proposed product ecosystem: `docs/PRODUCT_SYSTEM.md` (6-stage journey, 14 products, entry criteria as gates), `docs/PRODUCT_POSITIONING.md` (why the ecosystem differs from a traditional agency's service catalogue), `docs/PRICING_STRATEGY.md` (current-vs-proposed comparison for the two live products this would reprice, three sequencing options, no single recommendation forced), and `docs/GUARANTEE.md` (the Halo Clarity Guarantee, flagged as needing real legal review before publishing). None of this is implemented on the live site: Commercial Diagnostic and Commercial Audit remain live at their current free/£3,000 pricing. See docs/IMPLEMENTATION_LOG.md and docs/CURRENT_SPRINT.md for the open items each document carries forward.
+
 ## 2026-07-26 — Documentation Correction: Build System Verification
 
 Corrected documentation that described a Python template system (`common.py`, `site/gtm_snippets.py`) as the site's build mechanism. A full search of this repository's git history plus related local locations (halo-site-package.zip, .openclaw workspace, Documents, Downloads) found no such tooling anywhere. Amended ADR-001 and ADR-005 (docs/ARCHITECTURAL_DECISIONS.md) with dated notes rather than creating a new ADR, since the underlying design decisions are unchanged, only their implementation status was disproven. Corrected docs/PROJECT_CONTEXT.md and docs/ARCHITECTURE.md to describe directly-maintained HTML as the verified current state. Appended a note to docs/GOOGLE_TAG_MANAGER.md and corrected a stale line in docs/TECHNICAL_SEO_STATUS.md. No HTML, CSS, or site behaviour changed; documentation only. See docs/IMPLEMENTATION_LOG.md for full detail.

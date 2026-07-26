@@ -7,13 +7,15 @@ Last Updated: 2026-07-26
 
 ## Sprint
 
-Sprint 3 - Insights Foundation
+Sprint 5.6 - Product Architecture & Commercial Positioning
 
 ## Status
 
-Sprint 2 is complete in full (see Completed). Sprint 3 (Insights) has the section live with two published articles, built via the ADR-009 generator. The CMS/no-CMS decision (ADR-004) remains genuinely open, the generator is not a CMS and doesn't enable non-technical publishing. Article schema and articles #3+ from the 100-idea backlog remain pending Fabien's direction. Framework Library, FAQ Hub, and Resources remain correctly out of scope.
+Sprint 2 and Sprint 3 (Insights Foundation) are complete (see Completed). Sprint 5.6 has produced four working documents (docs/PRODUCT_SYSTEM.md, docs/PRODUCT_POSITIONING.md, docs/PRICING_STRATEGY.md, docs/GUARANTEE.md) converting the Halo Bible's philosophy and frameworks into a proposed 6-stage product ecosystem. Nothing from this sprint is implemented on the live site. Open items pending Fabien's decision: whether/how to reprice the currently-live free Commercial Diagnostic and fixed-£3,000 Commercial Audit, whether Halo is formally pursuing US-market positioning (the USD pricing direction implies this but doesn't decide it), two products dropped from an earlier draft (Lead Management System, Growth Board) unconfirmed as intentional, overlap between Quarterly Commercial Review and Constraint Review unresolved, and the Halo Clarity Guarantee's refund mechanics flagged as needing real legal/accounting review before publishing. The Halo Bible's foundation sections (Philosophy, Core Principles, Commercial Leakage Framework, Master Framework, Revenue Friction Map, Visual Language, Glossary) are treated as settled source of truth for this sprint and were not rewritten. Growth Maturity Model and Halo Metrics remain the two Bible sections still to be originated. Framework Library, FAQ Hub, and Resources remain correctly out of scope.
 
 ## Completed (prior sprints)
+
+Sprint 5.6, Product Architecture & Commercial Positioning (2026-07-26): built `docs/PRODUCT_SYSTEM.md` (6-stage product hierarchy and journey map, 14 products across Discover/Investigate/Design/Implement/Optimise/Partnership), `docs/PRODUCT_POSITIONING.md` (why the ecosystem differs from a traditional agency, mapped to the Philosophy chapter by chapter), `docs/PRICING_STRATEGY.md` (current-vs-proposed comparison for the two live products, three sequencing options, no forced recommendation), and `docs/GUARANTEE.md` (Halo Clarity Guarantee copy and FAQ, flagged for legal review). Every product traces to the Leakage → Friction → Constraint → Alignment hierarchy and Halo's First Law. Approved by Fabien for commit after reviewing all four documents delivered directly. See docs/IMPLEMENTATION_LOG.md.
 
 Sprint 3, Article #2 (2026-07-26): "How to Tell a Marketing Problem from a Commercial Problem," published via the ADR-009 generator, the first real use of it, one entry added to `tools/insights-articles.json`, `node tools/build-insights.js` run, output reviewed and committed. Grounded in the sales-follow-up and market-too-small Selected Engagements case studies and the relevant How Halo Thinks principle. Approved by Fabien after reading a draft. Verified article #1 unaffected (zero diff) and the index gained exactly one correctly-escaped new card. Added to sitemap.xml and `_redirects`. See docs/IMPLEMENTATION_LOG.md.
 

@@ -269,4 +269,24 @@ Next. Await Fabien's authorisation to begin Sprint 1 implementation (nav/footer/
 
 **Verify.** Confirmed article #1's regenerated file has zero diff (no regression from adding a second article to the data set). Confirmed the new article's title/meta/canonical are correct, GTM and Organization schema present (2 and 1 occurrences respectively, matching every other page), single `<body>` tag. Confirmed the index page's diff added exactly one new card, correctly HTML-escaped ("Commercial Diagnosis &amp; Constraint-Finding"), with article #1's existing card untouched. Confirmed sitemap.xml remains well-formed (13 `<url>` tags, balanced) after the addition. This is the first real evidence the generator built in response to "decide on the build approach before article #2" actually does what it was built for: adding an article is a one JSON entry, one script run, not a new hand-copied file.
 
+---
+
+## Sprint 5.6: Product Architecture & Commercial Positioning (2026-07-26)
+
+**Trigger.** Following the Halo Bible's Philosophy, Master Framework, and Revenue Friction Map sections (built via founder interview and direct instruction earlier the same day), Fabien specified an actual 6-stage product ecosystem and requested four documents converting it into commercially usable form, explicitly as product architecture and positioning work, not implementation.
+
+**Analyse.** The brief itself set the constraint: don't invent new philosophy or terminology, trace every product to the existing Leakage → Friction → Constraint → Alignment hierarchy and Halo's First Law (diagnosis before prescription, always), and present any unresolved commercial decision (pricing, naming, scope) as options with rationale rather than an assumed outcome. Two live-site facts made this non-trivial: Commercial Diagnostic is currently free and Commercial Audit is currently a fixed £3,000, both of which this ecosystem's proposed pricing (Diagnostic ~$995, Audit ~$7,500+) would change, and the shift to USD pricing implies an undecided US-market positioning question underneath the pricing itself.
+
+**Decisions made and why:**
+- Restructured the prior 5-tier/16-product draft into Fabien's 6-stage structure (Discover, Investigate, Design, Implement, Optimise, Partnership); flagged two products from the prior draft (Lead Management System, Growth Board) that aren't named in the new structure, rather than silently keeping or cutting them.
+- Did not treat the proposed pricing as decided. `PRICING_STRATEGY.md` presents the current-vs-proposed comparison for both live products plus three sequencing options (sequenced, bundled, pause-and-resolve-market-question-first), with no option recommended over another, since the right choice depends on how firm the US-market decision already is.
+- Drafted the Halo Clarity Guarantee's copy and FAQ, but flagged the refund mechanism (trigger, time window, cross-border payment handling, consumer-protection law) as needing real legal/accounting review before publishing, not something this document can settle.
+- Flagged the weakest point in the diagnosis-first enforcement: Stage 6 (Partnership) has a softer entry criterion ("typically follows the full journey") than every other stage's hard gate.
+
+**Implement.** Four new files: `docs/PRODUCT_SYSTEM.md` (hierarchy, journey map, per-product definitions across all six stages), `docs/PRODUCT_POSITIONING.md` (why the ecosystem differs from a traditional agency's service catalogue, mapped chapter-by-chapter to the Philosophy), `docs/PRICING_STRATEGY.md` (comparison, risks, three options), `docs/GUARANTEE.md` (guarantee copy, customer promise, legal flags, FAQ).
+
+**Verify.** Checked each document's product list, entry criteria, and terminology against `docs/PRODUCT_SYSTEM.md`'s own hierarchy for internal consistency (e.g. Positioning and Guarantee both reference the same stage names and the same Stage 6 gap). Did not verify the $995/$7,500 pricing figures against real market data, `PRICING_STRATEGY.md` says so explicitly and recommends that verification as separate research work.
+
+**Document.** This entry; see docs/CHANGELOG.md and docs/CURRENT_SPRINT.md. Nothing in this sprint touched the live site, the four documents are working documents pending Fabien's decisions on the open items each one lists.
+
 **Document.** This entry; see docs/CHANGELOG.md and docs/CURRENT_SPRINT.md.
