@@ -11,17 +11,29 @@ Tracks implementation and verification status against the findings in docs/TECHN
 
 ## Current State
 
-No docs/TECHNICAL_SEO.md audit exists in this repository yet. Per docs/IMPLEMENTATION_LOG.md, Sprint 1 (Technical SEO & Analytics) is the next planned sprint after Sprint 0 (Site Reconciliation, complete) and has not yet started.
+docs/TECHNICAL_SEO.md now exists. Claude Cowork committed it, along with docs/ARCHITECTURE.md, docs/ARCHITECTURAL_DECISIONS.md, and docs/ROADMAP.md, in commit ee3caf6 on 2026-07-26. The audit itself is dated 2026-07-26, audited against commit 7c7dbc0 and cross-checked against the live production site, and is internally titled Technical SEO Audit, Sprint 2.1. This document previously stated no audit existed; that was accurate at the time and is now out of date.
 
-The anticipated scope for Sprint 1, as noted in docs/IMPLEMENTATION_LOG.md, covers: sitemap.xml (currently empty or missing), a meta description and canonical audit across all pages, an image alt text audit, schema markup (Organization, LocalBusiness, potentially Article once an Insights section exists), a Core Web Vitals spot-check, and a broken-link sweep of privacy-policy.html, cookie-policy.html, terms-and-conditions.html, thank-you.html, and 404.html.
+Per docs/ROADMAP.md, remediation of these findings is split across Sprint 1 (nav/footer/GTM parity on the two lagging pages, Organization and FAQPage schema once approved, and closing the two unaudited pages) and Sprint 2 (sitemap.xml, robots.txt, favicon/manifest consistency, Core Web Vitals baseline, all pending the URL strategy decision). No implementation against any finding below has started as a result of this audit; findings 7 and 8 already show partial progress from Sprint 0 and Sprint 1A, both completed before this audit was written, and are marked accordingly below.
 
 ## Status Table
 
-No findings to track yet. This table will be populated once docs/TECHNICAL_SEO.md exists and its findings are approved.
+The table below records implementation status only. The Description column is a short pointer back to the finding, not a restatement, see docs/TECHNICAL_SEO.md for the full original finding text.
 
-| Finding | Description | Status | Verified | Regression |
+| # | Finding | Implementation Status | Verified | Regression |
 |---|---|---|---|---|
-| - | Awaiting docs/TECHNICAL_SEO.md | Not started | - | - |
+| 1 | Sitemap missing | Not started, Sprint 2 per ROADMAP.md | No | N/A |
+| 2 | Robots.txt missing | Not started, Sprint 2 per ROADMAP.md | No | N/A |
+| 3 | Meta descriptions present and page specific | Pass, no remediation needed | Yes, per TECHNICAL_SEO.md | N/A |
+| 4 | Canonical tags present and correct | Pass, no remediation needed | Yes, per TECHNICAL_SEO.md | N/A |
+| 5 | OG/Twitter tags share one generic image | Not started, not yet scheduled to a sprint | No | N/A |
+| 6 | Structured data (schema.org) missing entirely | Not started, blocked pending Product Owner approval of Schema Philosophy per ARCHITECTURAL_DECISIONS.md | No | N/A |
+| 7 | GTM coverage incomplete | Partially implemented, 10 of 12 pages, Sprint 1A, commit 4d9503e. terms-and-conditions.html and 404.html remain, Sprint 1 per ROADMAP.md | Partially, per TECHNICAL_SEO.md | None detected on the 10 covered pages |
+| 8 | Nav/footer consistency, two pages out of sync | Partially implemented, 10 of 12 pages, Sprint 0. terms-and-conditions.html and 404.html remain, Sprint 1 per ROADMAP.md | Partially, per TECHNICAL_SEO.md | None detected on the 10 covered pages |
+| 9 | Broken or placeholder links | Pass, none found | Yes, per TECHNICAL_SEO.md | N/A |
+| 10 | Image alt text correct | Pass, no remediation needed | Yes, per TECHNICAL_SEO.md | N/A |
+| 11 | Favicon/manifest declarations inconsistent | Not started, Sprint 2 per ROADMAP.md | No | N/A |
+| 12 | Core Web Vitals not assessed | Not started, Sprint 2 per ROADMAP.md, requires tooling not available in the audit environment | No | N/A |
+| 13 | cookie-policy.html and thank-you.html not covered by the audit | Not started, Sprint 1 audit coverage closure per ROADMAP.md | No | N/A |
 
 ## Note
 
