@@ -228,3 +228,19 @@ Next. Await Fabien's authorisation to begin Sprint 1 implementation (nav/footer/
 **Verify.** Confirmed `sitemap.xml` is well-formed (balanced `<url>` tags, 10 entries, checked programmatically) and that its 10 URLs exactly match the site's own canonical tag set. Spot-checked 3 of the 10 URLs resolve live with `200 OK` post-deploy.
 
 **Document.** This entry; see docs/CHANGELOG.md and docs/CURRENT_SPRINT.md.
+
+---
+
+## Sprint 3: Insights Section + Article #1 (2026-07-26)
+
+**Trigger.** Fabien approved standing up the Insights section and publishing Article #1 (drafted and approved earlier this session per the Editorial Bible, content backlog, and article template, all delivered directly, not committed to this repository).
+
+**Inspect.** Confirmed via docs/ARCHITECTURE.md that Insights did not exist and that its suggested nav position and folder-vs-templating question were already documented but not decided. Used about.html as the structural template (head boilerplate, header/nav, footer), since it's a representative, already-verified-correct page.
+
+**Decisions made and why.** Built `insights/index.html` and `insights/every-department-can-be-doing-its-job-well.html` by copying about.html's shared boilerplate programmatically (a Node script, not manual retyping, to avoid transcription drift across the large embedded CSS block), then substituting title/meta/canonical/og tags and the main content. This is direct hand-maintenance, the same approach every other page already uses, not a new templating system, the site never had one to begin with (ADR-001 Amendment). Implemented the nav reorder (insert Insights, move Selected Engagements before How Halo Thinks) across all 12 existing pages via a Node script rather than manual sed, since it required both an insertion and a reorder of two adjacent lines with three different active-class variants depending on the page; verified programmatically that exactly 24 insertions (12 files x nav+footer) and 24 reorders occurred, matching expectation exactly. Did not add Article schema, that's a genuine new decision now that Insights is real, not automatically unblocked by building the section (docs/ROADMAP.md, Sprint 3).
+
+**Implement.** Two new files in a new `insights/` subdirectory. Nav/footer updated across all 12 existing root-level pages. Two new forced `_redirects` entries. Two new sitemap.xml entries.
+
+**Verify.** Caught and fixed two bugs before considering this done: (1) the noscript GTM block was duplicated in both new files, a script logic error (the header slice already included it, and it was also being inserted separately); fixed and reconfirmed exactly 2 GTM references and 1 `<body>` tag per file. (2) Confirmed via grep that the three active-class variants (neither page active, how-halo-thinks.html active, selected-engagements.html active) all resolved correctly after the reorder script ran. Read both new files in full afterward to confirm overall coherence, not just the automated counts. Confirmed sitemap.xml remains well-formed (12 `<url>` tags, balanced) after adding the two new URLs.
+
+**Document.** This entry; see docs/CHANGELOG.md, docs/CURRENT_SPRINT.md, docs/ARCHITECTURE.md (Information Architecture, Folder Structure, Future Scalability all updated), docs/ARCHITECTURAL_DECISIONS.md (ADR-004 and ADR-008 notes added), and docs/ROADMAP.md (Sprint 3 status updated).

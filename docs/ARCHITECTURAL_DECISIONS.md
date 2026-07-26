@@ -53,6 +53,8 @@ Architecture Decision Records (ADRs). Only approved decisions are recorded here.
 **Alternatives considered:** Not yet evaluated, deliberately, since no trigger condition (see docs/ARCHITECTURE.md, Future Scalability) has been reached.
 **Consequences:** Insights, when built, will force this decision one way or another. Recommend making it explicitly as part of the Insights build ADR rather than defaulting into a choice by not deciding.
 
+**Note (2026-07-26):** Insights was built, and this decision was not made explicitly, it defaulted again, by necessity of shipping one article quickly. Article #1 was hand-authored, no CMS, no templating, the same direct-maintenance approach as every other page. This is consistent with the existing default, not a violation of it, but it means the trigger condition this ADR describes ("Insights needs frequent, non-technical publishing," docs/ARCHITECTURE.md Future Scalability) is now closer, not resolved. The explicit decision this ADR recommends still has not been made, and shouldn't keep defaulting silently once article volume actually grows.
+
 ---
 
 ## ADR-005: One shared template system is the only place UI changes are made
@@ -98,6 +100,8 @@ Architecture Decision Records (ADRs). Only approved decisions are recorded here.
 **Reason:** Direct testing of the live production site found that both `/about` and `/about.html` already resolved with `200 OK` and no redirect between them, Netlify's untouched default pretty-URL behaviour colliding with a codebase written entirely around `.html` links and canonical tags. `docs/ARCHITECTURE.md`'s URL Philosophy section had already recorded Cowork's lean toward extensionless paths being the more natural fit once `/insights/[slug]` exists. Given the choice had to be made either way to close the duplicate-resolution gap, Fabien chose extensionless.
 **Alternatives considered:** Keeping `.html` and adding a redirect rule the other direction (extensionless → `.html`). Rejected in favour of the option already leaning documented in `ARCHITECTURE.md`, and because it front-loads the larger one-time link migration now rather than leaving it to complicate the future Insights build.
 **Consequences:** Every internal link, canonical tag, and `og:url`/`twitter` reference across all 12 pages now uses the extensionless form (for example `/about`, not `about.html`); the homepage's own canonical and links use `/`. A `_redirects` file at the repository root 301s every legacy `.html` path to its extensionless equivalent (except `404.html`, left alone since Netlify uses that exact filename as its error-page convention, not a page anyone navigates to via a link). `docs/ARCHITECTURE.md`'s URL Philosophy section should be updated to describe this as the current implemented state rather than a future recommendation, see the same-day pass that follows this ADR. Any future page (including Insights) should be built extensionless from the start; no further migration should be needed.
+
+**Confirmed extended, same day:** when Insights was stood up a few hours later (2026-07-26), its two pages (`/insights`, `/insights/every-department-can-be-doing-its-job-well`) were built extensionless from the start, per this ADR's own instruction, with matching forced `_redirects` entries for their `.html` filenames. No further URL migration was needed, exactly as predicted here.
 
 ---
 

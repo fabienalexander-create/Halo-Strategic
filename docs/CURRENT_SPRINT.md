@@ -7,13 +7,15 @@ Last Updated: 2026-07-26
 
 ## Sprint
 
-Sprint 2 - Sitemap, Robots, and URL Strategy Resolution
+Sprint 3 - Insights Foundation
 
 ## Status
 
-Sprint 1 is complete in full (see Completed). Sprint 2's blocking dependency, the URL strategy decision, is now resolved: extensionless, recorded as docs/ARCHITECTURAL_DECISIONS.md ADR-008, and implemented same-day across all 12 pages (internal links, canonical tags, og:url, a `_redirects` file 301ing the legacy `.html` paths). Hosting/deployment is also resolved (Cloudflare proxies to Netlify, GitHub push triggers deploy). Remaining Sprint 2 scope, sitemap.xml, robots.txt, favicon/manifest consistency, Core Web Vitals baseline, is no longer blocked and is ready to schedule.
+Sprint 2 is complete in full (see Completed). Sprint 3 (Insights) is partially done: the section exists, is navigable, extensionless, and has one published article, but the CMS/no-CMS decision (ADR-004) and the build-scaling question (docs/ARCHITECTURE.md, Future Scalability) were both deliberately deferred again to ship article #1 quickly, and remain genuinely open before article #2. Framework Library, FAQ Hub, and Resources remain correctly out of scope.
 
 ## Completed (prior sprints)
+
+Sprint 3, Insights section + Article #1 (2026-07-26): stood up `/insights` (index) and `/insights/every-department-can-be-doing-its-job-well` (first article), both extensionless from the start (ADR-008) with forced `_redirects` entries for their `.html` filenames. Added "Insights" to primary nav and footer sitemap across all 14 pages, in the position and order docs/ARCHITECTURE.md already specified, also reordering Selected Engagements before How Halo Thinks to match. Both new pages carry Organization schema and GTM, matching every other page; Article schema was not added, still deferred, a genuine decision point now that Insights is real (see docs/ROADMAP.md, Sprint 3). Article #1 approved by Fabien after reading a draft; content traces only to already-published Selected Engagements case studies, nothing invented. Added both new URLs to sitemap.xml. Hand-authored (copied the shared boilerplate), the same direct-maintenance approach as every other page, not a templating solution, see docs/ARCHITECTURE.md's Folder Structure and Future Scalability sections for what this does and doesn't solve before article #2. See docs/IMPLEMENTATION_LOG.md.
 
 Sprint 2, sitemap.xml and robots.txt (2026-07-26): sitemap.xml added, 10 URLs (homepage plus 9 content/legal pages, matching the site's canonical URL set exactly), excluding 404.html and thank-you.html as a standard sitemap-inclusion choice (neither page's indexability was changed). robots.txt added, Allow: / for all agents, pointing to the sitemap. Verified: sitemap well-formed, 10 URLs match canonicals exactly, 3 spot-checked URLs resolve live. See docs/IMPLEMENTATION_LOG.md.
 
@@ -51,11 +53,11 @@ None. Both prior Sprint 2 blockers (hosting/deployment mechanism, URL strategy) 
 
 ## Ready for Implementation
 
-Sprint 2's remaining scope: favicon/manifest consistency, Core Web Vitals baseline. Neither blocked.
+Sprint 2's remaining scope: favicon/manifest consistency, Core Web Vitals baseline. Neither blocked. Sprint 3's remaining scope: the CMS/build-scaling decision (ADR-004), Article schema, and articles #2+ from the 100-idea backlog delivered this session, all pending Fabien's direction.
 
 ## Next Milestone
 
-Favicon/manifest declarations made consistent across all pages (docs/TECHNICAL_SEO.md finding 11), and a Core Web Vitals baseline once tooling capable of measuring it is available.
+Before article #2: decide whether to keep hand-authoring Insights articles or build a lightweight templating approach (docs/ARCHITECTURE.md, Future Scalability). Separately, favicon/manifest consistency (docs/TECHNICAL_SEO.md finding 11) and a Core Web Vitals baseline remain open from Sprint 2.
 
 ## Known Risks
 

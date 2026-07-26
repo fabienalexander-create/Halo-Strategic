@@ -26,6 +26,8 @@ Live requests to halostrategic.com are served through Cloudflare (confirmed via 
 
 index.html, about.html, contact.html, commercial-diagnostic.html, commercial-audit.html, how-halo-thinks.html, selected-engagements.html, privacy-policy.html, cookie-policy.html, terms-and-conditions.html, thank-you.html, and 404.html. docs/ARCHITECTURE.md confirms this same twelve-page sitemap as verified current, as of commit 7c7dbc0.
 
+**Updated 2026-07-26:** the Insights section now exists, adding `insights/index.html` and `insights/every-department-can-be-doing-its-job-well.html` (14 pages total). Both live in a new `insights/` subdirectory rather than the flat root the twelve pages above use, see docs/ARCHITECTURE.md's Folder Structure section for what that does and doesn't solve.
+
 ## Current Sprint
 
 See docs/CURRENT_SPRINT.md for live status. As of this writing: Sprint 0 (Site Reconciliation) is complete, Sprint 1A (Google Tag Manager Installation) and Sprint 1B (Service Parameter Plumbing and Mailto Links) are complete (2026-07-25), and the architecture and Technical SEO audit that Sprint 1 depends on were approved and committed by Claude Cowork on 2026-07-26 (commit ee3caf6). Sprint 1, Technical SEO & Analytics, as scoped in docs/ROADMAP.md, is now partially ready: nav/footer/GTM parity on the two remaining pages and audit-coverage closure can proceed, while Organization/FAQPage schema remains pending Fabien's approval.

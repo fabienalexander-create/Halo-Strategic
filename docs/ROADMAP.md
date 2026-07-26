@@ -44,16 +44,18 @@ Architectural objectives and outcomes only. This is not a task list, implementat
 
 **Objective:** Stand up the Insights section as an architectural capability, not a content sprint. Content strategy and the SEO Content Architecture v1.1 document govern what gets published; this sprint governs whether the site can publish it at all.
 
+**Status (2026-07-26):** Insights exists and article #1 is published. Most architectural outcomes below are done for a single article; the scaling flag is explicitly not resolved, see below.
+
 **Architectural outcomes:**
-- The CMS/no-CMS decision (docs/ARCHITECTURAL_DECISIONS.md, ADR-004) is made explicitly rather than left as a default, evaluated specifically against Insights' publishing cadence needs.
-- `/insights/` index and `/insights/[slug]` article structure exists and is scaffolded, consistent with the URL strategy resolved in Sprint 2.
-- Insights added to primary navigation, in the position specified in docs/ARCHITECTURE.md (Information Architecture): How Halo Works · Services · Commercial Audit · Insights · Selected Engagements · How Halo Thinks · About.
-- Article schema scoped and specified for use once real articles exist (do not implement against placeholder content).
-- Cross-linking pattern defined: every Insights article links back to its Topical Authority Map pillar and to the relevant Selected Engagement, per docs/SITE_ARCHITECTURE.md's existing notes on where this section fits.
+- ~~The CMS/no-CMS decision is made explicitly~~ — not done. Defaulted again by necessity of shipping quickly (ADR-004, note added 2026-07-26). Still genuinely open once article volume grows.
+- `/insights/` index and `/insights/every-department-can-be-doing-its-job-well` exist, extensionless, consistent with the URL strategy resolved in Sprint 2 (ADR-008).
+- Insights added to primary navigation in the specified position, done across all pages.
+- Article schema: not implemented. Deferred, same as it was before Insights existed (ADR-007 covers Organization + FAQPage only); a genuine decision point now that Insights is real, not automatically unblocked by this sprint.
+- Cross-linking pattern: article #1 links to two relevant Selected Engagements anchors and to How Halo Thinks and Commercial Diagnostic. The Topical Authority Map / pillar-linking structure referenced here has not been separately verified to exist; this was done based on the article's own actual content, not a formal map.
 
 **Explicitly out of scope for Sprint 3:** Framework Library, FAQ Hub, Resources. These remain correctly sequenced after Insights per docs/ARCHITECTURE.md and should not be pulled forward without a specific reason recorded as an ADR.
 
-**Scaling flag for this sprint:** the current build approach (one Python script per page, per docs/IMPLEMENTATION_LOG.md) does not scale to 100+ Insights articles. Before scaffolding `/insights/`, the build approach itself needs to move from one-script-per-page to a single templated loop over content. Treat this as part of Sprint 3's scope, not a later cleanup, retrofitting a build system after 20+ articles exist is more expensive than choosing the right one before article 1.
+**Scaling flag for this sprint, still unresolved:** the site never had a Python build script to begin with (see docs/ARCHITECTURAL_DECISIONS.md, ADR-001 Amendment; this flag's original wording assumed one existed). Article #1 was hand-authored by copying the shared boilerplate, the same direct-maintenance approach used everywhere else on the site. That does not scale past a handful of articles. Before publishing article #2 or #3, revisit whether a lightweight templating approach is worth building, rather than continuing to hand-copy boilerplate into new files. Retrofitting after 20+ articles exist is more expensive than choosing the right approach now, while there's still only one.
 
 ## Sequencing Notes
 
