@@ -40,8 +40,10 @@ docs/PROJECT_CONTEXT.md, this file. docs/AI_OPERATING_MODEL.md, roles, responsib
 
 ## Open Items Requiring Confirmation
 
-Exact hosting provider and deployment mechanism, still open, see docs/ARCHITECTURAL_DECISIONS.md's Pending Decisions.
+URL strategy (extensioned `.html` vs. extensionless paths): still open. See the URL Architecture Decision Record delivered 2026-07-26, which documents a confirmed mismatch, both URL forms currently resolve live with no redirect between them, and the site's canonical tags and internal links are 100% `.html`, while Netlify's default behaviour also serves the extensionless form. See docs/ARCHITECTURAL_DECISIONS.md's Pending Decisions.
 
 ## Resolved Items
+
+Exact hosting provider and deployment mechanism: resolved 2026-07-26. Cloudflare proxies to Netlify (the origin); GitHub is the deploy trigger, confirmed directly by Fabien. See docs/ARCHITECTURAL_DECISIONS.md's Pending Decisions for the full detail, including a noted reporting gap (no GitHub commit status/deployment records appear for pushes this session, despite deploys actually happening).
 
 Whether a Sprint 2.1-style Technical SEO audit exists anywhere outside this repository: resolved 2026-07-26. docs/TECHNICAL_SEO.md is that audit (it is internally titled Technical SEO Audit, Sprint 2.1), committed in ee3caf6 alongside docs/ARCHITECTURE.md, docs/ARCHITECTURAL_DECISIONS.md, and docs/ROADMAP.md.
