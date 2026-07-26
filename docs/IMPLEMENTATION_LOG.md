@@ -142,3 +142,21 @@ Next. Await Fabien's authorisation to begin Sprint 1 implementation (nav/footer/
 **Verify.** Diffed the nav-links, footer Sitemap, and GTM head/noscript blocks in both files against privacy-policy.html: byte-identical in both files, all three blocks. Confirmed the meta tag pattern (description, canonical, OG, Twitter) present on both via grep count.
 
 **Document.** This entry; see docs/CHANGELOG.md, docs/CURRENT_SPRINT.md, and docs/TECHNICAL_SEO_STATUS.md (finding 13 now closed).
+
+---
+
+## Sprint 1 — Schema Rollout: Organization Site-Wide, FAQPage on commercial-audit.html (2026-07-26)
+
+**Trigger.** Fabien approved docs/ARCHITECTURE.md's Schema Philosophy recommended priority order, items 1 (Organization) and 3 (FAQPage), recorded as docs/ARCHITECTURAL_DECISIONS.md ADR-007.
+
+**Inspect.** Confirmed via docs/TECHNICAL_SEO.md finding 6 and direct re-check that no JSON-LD existed on any page. Read commercial-audit.html's five `<details>/<summary>` FAQ entries directly to source the FAQPage content from the actual visible markup, not from memory or the audit document's summary of it.
+
+**Analyse.** No template generator exists to route this through (ADR-005 Amendment), so both schema blocks were applied by hand. Organization needed to be identical on all 12 pages; used the site's existing 512x512 icon (`android-chrome-512x512.png`) as the logo URL, since that's a real, already-deployed asset, and the footer's existing LinkedIn URL and hello@halostrategic.com contact email, both already public elsewhere on every page, rather than sourcing anything new. LocalBusiness was not implemented: docs/ARCHITECTURE.md explicitly instructs not to invent an address, and none was supplied.
+
+**Decisions made and why.** Inserted the Organization script block immediately after each page's existing GTM noscript comment, before `</head>`, the same consistent anchor point used for the earlier GTM install (docs/GOOGLE_TAG_MANAGER.md) and Sprint 1 nav/footer/GTM work, applied via a single scripted insertion across all 12 files to guarantee byte-identical content rather than 12 separate hand-typed edits. FAQPage was added only to commercial-audit.html, as a second script block, with question/answer text copied verbatim from the page's own FAQ markup.
+
+**Implement.** Changes made to all 12 HTML files (Organization) and additionally to commercial-audit.html (FAQPage).
+
+**Verify.** Validated every JSON-LD block as syntactically correct JSON via a Node script (`JSON.parse` over each extracted `<script type="application/ld+json">` block), confirming 12 Organization blocks plus 1 FAQPage block, all valid, with the expected `@type` on each. Confirmed via `git diff --stat` that the change was purely additive (228 insertions, 0 deletions) across all 12 files, no existing content touched. Did not independently re-run Google's Rich Results Test or Schema.org validator, no network access to external validation tools was available in this environment; recommend Fabien spot-check with Google's Rich Results Test once live.
+
+**Document.** This entry; see docs/CHANGELOG.md, docs/CURRENT_SPRINT.md, docs/TECHNICAL_SEO_STATUS.md (finding 6 updated), and docs/ARCHITECTURAL_DECISIONS.md (ADR-007).

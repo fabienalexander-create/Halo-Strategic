@@ -78,10 +78,22 @@ Architecture Decision Records (ADRs). Only approved decisions are recorded here.
 
 ---
 
+## ADR-007: Schema rollout — Organization site-wide and FAQPage on commercial-audit.html, approved; LocalBusiness and Article deferred
+
+**Status:** Approved (implemented)
+**Owner:** Claude Cowork (Schema Philosophy recommendation, docs/ARCHITECTURE.md), approval recorded by Claude Code
+**Approved by:** Fabien, in conversation, 2026-07-26
+**Reason:** Adopts docs/ARCHITECTURE.md's Schema Philosophy recommended priority order, items 1 and 3 only. Organization is lowest-risk, highest-baseline-value, and site-wide. FAQPage on commercial-audit.html is generated directly from the page's existing five `<details>/<summary>` FAQ entries, so visible content and structured data cannot drift apart, since one was copied from the other at the time of writing.
+**Deferred, not rejected:** LocalBusiness (recommendation item 2) requires a registered business address Halo is comfortable publishing; none has been supplied, and per docs/ARCHITECTURE.md's own instruction, no address is invented or guessed. Revisit if and when Fabien supplies one. Article (item 4) is explicitly deferred until Insights exists, unchanged from the original recommendation.
+**Alternatives considered:** None beyond docs/ARCHITECTURE.md's own recommended order and reasoning; this ADR adopts that reasoning rather than re-deriving it.
+**Consequences:** Every page carries an identical Organization JSON-LD block (name, url, logo, sameAs LinkedIn, contactPoint email), inserted by hand immediately after the GTM block on all 12 pages, since no template generator exists to route this through (see ADR-005 Amendment). commercial-audit.html additionally carries an FAQPage JSON-LD block matching its five visible FAQ entries verbatim. Any future edit to commercial-audit.html's FAQ content must be mirrored in the FAQPage schema block, or the two will drift, exactly the failure mode this schema choice was meant to avoid structurally, but hand-editing across two locations does not enforce that automatically the way a shared generator would.
+
+---
+
 ## Pending decisions (no ADR yet, do not build against these as if approved)
 
 - **URL strategy**: extensioned (`.html`) vs. extensionless paths, and whether Insights uses `/insights/[slug]` vs. `/insights/[slug].html`. Flagged as blocking implementation in docs/CURRENT_SPRINT.md. Pending Product Owner approval, and itself blocked on the hosting confirmation below.
 - **Hosting/deployment mechanism**: whether Cloudflare is a proxy or the origin, and what triggers a deploy from `main`. Flagged as unconfirmed in docs/PROJECT_CONTEXT.md. This blocks the URL strategy decision above, since any URL change needs a redirect mechanism that depends on the hosting model. Pending Fabien's confirmation, not really an "architecture" decision so much as a fact to establish, but recorded here because two other pending decisions depend on it.
-- **Schema strategy**: which schema types to implement and in what order (see docs/ARCHITECTURE.md, Schema Philosophy, for the recommended default). Pending Product Owner approval.
+- **LocalBusiness schema**: deferred pending a registered business address Fabien is comfortable publishing, see ADR-007.
 - **Information architecture for Insights, Framework Library, FAQ Hub, Resources**: sequencing and nav placement are proposed in docs/ARCHITECTURE.md, but timing (when each gets built) is a roadmap and resourcing decision, not an architecture decision, see docs/ROADMAP.md.
 - **Future CMS decision**: not yet triggered, see ADR-004.

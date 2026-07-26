@@ -47,3 +47,7 @@ Brought the two remaining lagging pages onto the same nav, footer Sitemap, and G
 ## 2026-07-26 - Sprint 1: Audit-Coverage Closure on cookie-policy.html and thank-you.html
 
 Closed docs/TECHNICAL_SEO.md finding 13, both pages source-inspected directly for the first time. Both were already fully compliant, correct GTM, nav, footer Sitemap, and meta tags, no remediation needed. This completes Sprint 1's non-schema scope; schema (Organization, FAQPage) remains pending Product Owner approval. See docs/IMPLEMENTATION_LOG.md for verification detail.
+
+## 2026-07-26 - Sprint 1: Schema Rollout, Organization Site-Wide and FAQPage on commercial-audit.html
+
+Closed docs/TECHNICAL_SEO.md finding 6, approved by Fabien and recorded as docs/ARCHITECTURAL_DECISIONS.md ADR-007. Added an identical Organization JSON-LD block (name, url, logo, sameAs LinkedIn, contactPoint email) to all 12 pages. Added an FAQPage JSON-LD block to commercial-audit.html, generated from and matching its five visible FAQ entries verbatim. LocalBusiness and Article schema remain deferred, per docs/ARCHITECTURE.md's original recommendation, no business address is available to publish and Insights doesn't exist yet. This completes Sprint 1 in full. See docs/IMPLEMENTATION_LOG.md for verification detail.
