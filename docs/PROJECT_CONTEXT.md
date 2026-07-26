@@ -16,7 +16,7 @@ GitHub: fabienalexander-create/Halo-Strategic. Default/production branch: main. 
 
 ## Tech Stack
 
-Static HTML/CSS site, no client-side framework observed. Pages are generated via a small Python template system (common.py holds shared header/footer/style generation, one build script per page) rather than hand-edited per page. See docs/IMPLEMENTATION_LOG.md. Google Tag Manager container GTM-T49HRT6J is installed on 10 of 12 pages, with GA4 property (Measurement ID G-KC0RH0SS1L) configured inside it. See docs/GOOGLE_TAG_MANAGER.md.
+Static HTML/CSS site, no client-side framework observed. Pages are directly-maintained static HTML files. Earlier documentation described a Python template system (common.py, one build script per page) as the generation mechanism, but that tooling could not be located anywhere in this repository's history or in related local locations searched, as of 2026-07-26. See docs/ARCHITECTURAL_DECISIONS.md, ADR-001 Amendment. Until that tooling is located or rebuilt, treat any shared UI change as a manual, per-file edit requiring explicit cross-page verification. Google Tag Manager container GTM-T49HRT6J is installed on 10 of 12 pages, with GA4 property (Measurement ID G-KC0RH0SS1L) configured inside it. See docs/GOOGLE_TAG_MANAGER.md.
 
 ## Hosting and Deployment
 

@@ -12,12 +12,13 @@ Architecture Decision Records (ADRs). Only approved decisions are recorded here.
 
 ## ADR-001: Static HTML with a shared Python template system, no framework
 
-**Status:** Approved (implemented)
+**Status:** Approved (design); implementation unverified as of 2026-07-26, see Amendment below
 **Owner:** Claude Cowork (recorded retroactively)
 **Approved by:** Fabien (implicit, by not objecting to the Sprint 0 implementation approach documented in docs/IMPLEMENTATION_LOG.md)
 **Reason:** Twelve pages, infrequent updates, one non-technical-in-code founder as the primary content owner. A build-time template system (`common.py` generating shared header/footer/style, one script per page) gets the maintainability benefit of componentisation without the operational overhead of a JS framework, a build pipeline, or hosting requirements beyond static file serving.
 **Alternatives considered:** Hand-edited per-page HTML (rejected, this is exactly what produced the three-template inconsistency Sprint 0 had to fix). A JS framework (React/Next etc.) (not seriously evaluated at this scale, disproportionate to twelve static pages).
 **Consequences:** Any shared UI change is a one-file edit. Any move to dynamic content (CMS, per-article publishing) will require revisiting this decision, see ADR-004.
+**Amendment (2026-07-26):** A search of this repository's full git history (`git log --all --diff-filter=A --name-only`) found no `.py` file and no `site/` directory committed at any point. Related local locations (halo-site-package.zip, the .openclaw workspace, the rest of Documents and Downloads) were also searched and found nothing. The design decision and reasoning above are unchanged and still stand as intended architecture. However, "(implemented)" cannot currently be verified: the 12 HTML files in this repository are, as far as can be confirmed, directly maintained rather than generated. Treat the committed HTML as the canonical implementation until the referenced tooling is located or a real templating system is built. This is a correction of an implementation-status claim, not a new architectural decision, so no new ADR was created for it.
 
 ---
 
@@ -56,12 +57,13 @@ Architecture Decision Records (ADRs). Only approved decisions are recorded here.
 
 ## ADR-005: One shared template system is the only place UI changes are made
 
-**Status:** Approved (implemented)
+**Status:** Approved (design); enforcement mechanism unverified as of 2026-07-26, see Amendment below
 **Owner:** Claude Cowork
 **Approved by:** Fabien (implicit, consistent with ADR-001 and the reasoning in docs/RECONCILIATION_REPORT.md's root-cause finding)
 **Reason:** Promoted from docs/ARCHITECTURE.md's Design Principles to a formal ADR because it is a binding constraint on implementation, not just descriptive background, and Design Principles is easy for a future contributor to skim past. The three-template inconsistency Sprint 0 had to fix (docs/RECONCILIATION_REPORT.md) was caused directly by hand-editing shared UI per page instead of through one shared generator. That failure mode should not be allowed to recur.
 **Alternatives considered:** Allowing occasional direct per-page edits for "small" nav/footer tweaks (rejected, this is exactly how three inconsistent families accumulated in the first place, there is no reliably "small" exception).
 **Consequences:** Any nav, footer, or shared-style change must go through `common.py` and the per-page build scripts, never a direct edit to a page's rendered `<header>`/`<footer>`/`<style>` block. If a change genuinely can't go through the shared generator, that is itself a signal the templating approach needs revisiting, escalate it as a new ADR rather than hand-editing around it.
+**Amendment (2026-07-26):** Per ADR-001's amendment, `common.py` and the per-page build scripts referenced above could not be located anywhere in this repository's history or in the related local locations searched. Until that tooling is located or rebuilt, this rule cannot be mechanically enforced, there is currently no generator to route changes through. Interim practice: any shared UI change must instead be applied by hand, consistently, across every affected HTML file, with explicit before/after verification across all pages touched, standing in for the safeguard a real generator would otherwise provide. The underlying rule, that shared UI should not drift per-page, is unchanged; only the enforcement mechanism's existence was disproven.
 
 ---
 

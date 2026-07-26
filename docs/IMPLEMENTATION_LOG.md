@@ -25,7 +25,6 @@
 
 **Next.** Sprint 1 — Technical SEO & Analytics. Analytics (GA4) and Search Console are being set up separately by Fabien, out of scope here. Sprint 1 covers: sitemap.xml (currently empty/missing), meta description and canonical audit across all pages (mostly already present, needs verification), image alt text audit, schema markup (Organization, LocalBusiness, potentially Article once Insights exists), Core Web Vitals spot-check, and a broken-link sweep of the remaining un-crawled pages (privacy-policy, cookie-policy, terms-and-conditions, thank-you, 404).
 
-
 ## Sprint 1A - Google Tag Manager Installation (2026-07-25)
 
 Backfill note. This entry was not written when commit 4d9503e was made. It is backfilled during Phase 3 Documentation Reconciliation (2026-07-26), reconstructed from docs/GOOGLE_TAG_MANAGER.md and the commit diff itself, not invented.
@@ -89,3 +88,21 @@ Document. This entry.
 Commit. Each of the five documents was committed separately to main, with Fabien's prior approval for this Phase 3 pass.
 
 Next. Await Fabien's authorisation to begin Sprint 1 implementation (nav/footer/GTM parity on terms-and-conditions.html and 404.html, and audit-coverage closure on cookie-policy.html and thank-you.html). Schema implementation remains pending separate Product Owner approval of Schema Philosophy.
+
+---
+
+## Documentation Correction — Build System Verification (2026-07-26)
+
+**Trigger.** A separate, concurrent onboarding review found docs/ARCHITECTURE.md, docs/ARCHITECTURAL_DECISIONS.md (ADR-001, ADR-005), the Sprint 0 entry above, and docs/GOOGLE_TAG_MANAGER.md all describing a Python template system (`common.py`, `site/gtm_snippets.py`) as the site's build mechanism.
+
+**Inspect.** Ran `git log --all --diff-filter=A --name-only` against the full history of this repository: no `.py` file and no `site/` directory have ever been committed, at any commit. Also searched `halo-site-package.zip` (Downloads), the `.openclaw/workspace/Halo` folder tree, and the rest of Documents and Downloads for `common.py`, `gtm_snippets.py`, or equivalent build tooling. None found anywhere.
+
+**Analyse.** The architectural decision to use a template system (ADR-001) and the rule that UI changes must go through it (ADR-005) are not disproven as design intent. What's disproven is implementation status: the tooling this repository's own documentation describes as already built does not exist in any location searched. This includes the Sprint 1A entry directly above, added in the concurrent Phase 3 pass this same day, which also states the GTM snippet was "built via the shared snippet source (`site/gtm_snippets.py`)" — that specific file was searched for and not found either, so that claim carries the same caveat as the rest.
+
+**Decision.** Correct the documentation to describe verified current state (directly-maintained HTML) rather than the unverified generated-HTML claim, without rewriting or deleting the original entries that made the claim, including the Sprint 1A/1B entries above. Amend ADR-001 and ADR-005 with a dated note rather than create a new ADR, since no new architectural decision has been made, only a status correction to an existing one. See docs/ARCHITECTURAL_DECISIONS.md.
+
+**Implement.** Documentation-only change set: ADR-001 and ADR-005 amended (docs/ARCHITECTURAL_DECISIONS.md); Tech Stack corrected (docs/PROJECT_CONTEXT.md); Folder Structure and Design Principles corrected (docs/ARCHITECTURE.md); this entry added; a dated note appended to docs/GOOGLE_TAG_MANAGER.md. docs/TECHNICAL_SEO_STATUS.md was independently and more thoroughly reconciled by the concurrent Phase 3 pass above (all 13 findings populated); this pass's smaller fix to that file was superseded by that work during merge and is not separately applied.
+
+**Verify.** Confirmed no `.py` files or `site/` directory exist in the working tree (unchanged by this edit, since it is documentation-only). Confirmed each touched document's cross-reference to ADR-001's Amendment resolves to the right section. This entry was rebased onto the Phase 3 commits above after both passes had been pushed independently; no further conflicts found outside docs/IMPLEMENTATION_LOG.md and docs/TECHNICAL_SEO_STATUS.md, both resolved here.
+
+**Document.** This entry; see docs/CHANGELOG.md for the summary entry.

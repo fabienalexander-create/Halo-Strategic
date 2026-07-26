@@ -39,3 +39,7 @@ privacy-policy.html and cookie-policy.html both previously stated no analytics/t
 3. Build the Consultancy Events triggers/tags as a scoped follow-up, starting with commercial_diagnostic_requested and commercial_audit_requested.
 4. Extend the GTM snippet and nav/footer sync to terms-and-conditions.html and 404.html.
 5. Once Consultancy Events exist, revisit Google Ads/LinkedIn Insight tag installation for the ads-launch alignment noted in the SEO Content Architecture doc.
+
+## Note (2026-07-26)
+
+The `site/gtm_snippets.py` build source referenced above (Container section) could not be located anywhere in this repository's history or in related local locations searched during an onboarding review. See docs/ARCHITECTURAL_DECISIONS.md, ADR-001 Amendment, and docs/IMPLEMENTATION_LOG.md's Documentation Correction entry. The GTM snippet placement described above is otherwise unchanged and, per docs/TECHNICAL_SEO.md, verified present in the pages it claims.
