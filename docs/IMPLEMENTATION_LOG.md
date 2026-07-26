@@ -124,3 +124,21 @@ Next. Await Fabien's authorisation to begin Sprint 1 implementation (nav/footer/
 **Verify.** Diffed the nav-links block, footer Sitemap block, and GTM head/noscript block in both files against privacy-policy.html: byte-identical in all three cases, both files. Cross-page grep confirmed `GTM-T49HRT6J` now appears twice in both files (head script src, noscript iframe src), matching every other page. Reviewed the full `git diff` for both files line by line to confirm nothing outside the three intended blocks changed. No visual/screenshot verification was available in this environment (local file preview did not render in the available browser tooling); verification was structural and diff-based, consistent with Sprint 0's own precedent.
 
 **Document.** This entry; see docs/CHANGELOG.md, docs/CURRENT_SPRINT.md, and docs/TECHNICAL_SEO_STATUS.md (findings 7 and 8 now marked fully implemented).
+
+---
+
+## Sprint 1 — Audit-Coverage Closure on cookie-policy.html and thank-you.html (2026-07-26)
+
+**Trigger.** Fabien approved closing docs/TECHNICAL_SEO.md finding 13, the two pages never directly source-inspected in the original Sprint 2.1 audit, completing Sprint 1's non-schema scope.
+
+**Inspect.** Read both files in full and compared against privacy-policy.html (the same reference used for the terms-and-conditions.html/404.html pass immediately above).
+
+**Analyse.** Both pages already carry the correct GTM head script and noscript block, the current 6-item nav, and the current 7-item footer Sitemap, matching docs/GOOGLE_TAG_MANAGER.md's claim that both were included in the original Sprint 1A install. No gap found; this is a verification task, not an implementation task.
+
+**Decisions made and why.** No changes made to either file, since none were needed. Documented the verification rather than treating the absence of a defect as nothing to record, since finding 13 was explicitly about the absence of verification, not a known defect.
+
+**Implement.** N/A, no HTML changed.
+
+**Verify.** Diffed the nav-links, footer Sitemap, and GTM head/noscript blocks in both files against privacy-policy.html: byte-identical in both files, all three blocks. Confirmed the meta tag pattern (description, canonical, OG, Twitter) present on both via grep count.
+
+**Document.** This entry; see docs/CHANGELOG.md, docs/CURRENT_SPRINT.md, and docs/TECHNICAL_SEO_STATUS.md (finding 13 now closed).

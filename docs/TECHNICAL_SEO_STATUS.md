@@ -13,7 +13,7 @@ Tracks implementation and verification status against the findings in docs/TECHN
 
 docs/TECHNICAL_SEO.md now exists. Claude Cowork committed it, along with docs/ARCHITECTURE.md, docs/ARCHITECTURAL_DECISIONS.md, and docs/ROADMAP.md, in commit ee3caf6 on 2026-07-26. The audit itself is dated 2026-07-26, audited against commit 7c7dbc0 and cross-checked against the live production site, and is internally titled Technical SEO Audit, Sprint 2.1. This document previously stated no audit existed; that was accurate at the time and is now out of date.
 
-Per docs/ROADMAP.md, remediation of these findings is split across Sprint 1 (nav/footer/GTM parity on the two lagging pages, Organization and FAQPage schema once approved, and closing the two unaudited pages) and Sprint 2 (sitemap.xml, robots.txt, favicon/manifest consistency, Core Web Vitals baseline, all pending the URL strategy decision). Findings 7 and 8 were fully closed on 2026-07-26 (see below); the remaining findings below have not had implementation start as a result of this audit.
+Per docs/ROADMAP.md, remediation of these findings is split across Sprint 1 (nav/footer/GTM parity on the two lagging pages, Organization and FAQPage schema once approved, and closing the two unaudited pages) and Sprint 2 (sitemap.xml, robots.txt, favicon/manifest consistency, Core Web Vitals baseline, all pending the URL strategy decision). Findings 7, 8, and 13 were fully closed on 2026-07-26 (see below), completing Sprint 1's non-schema scope. Schema (finding 6) remains pending Product Owner approval; the remaining findings have not had implementation start as a result of this audit.
 
 ## Status Table
 
@@ -33,7 +33,7 @@ The table below records implementation status only. The Description column is a 
 | 10 | Image alt text correct | Pass, no remediation needed | Yes, per TECHNICAL_SEO.md | N/A |
 | 11 | Favicon/manifest declarations inconsistent | Not started, Sprint 2 per ROADMAP.md | No | N/A |
 | 12 | Core Web Vitals not assessed | Not started, Sprint 2 per ROADMAP.md, requires tooling not available in the audit environment | No | N/A |
-| 13 | cookie-policy.html and thank-you.html not covered by the audit | Not started, Sprint 1 audit coverage closure per ROADMAP.md | No | N/A |
+| 13 | cookie-policy.html and thank-you.html not covered by the audit | Closed 2026-07-26: both source-inspected directly, both already fully compliant (correct GTM, nav, footer, meta tags), no remediation needed | Yes, nav-links, footer Sitemap, and GTM blocks diffed byte-identical against privacy-policy.html; meta tag pattern (description, canonical, OG, Twitter) confirmed present on both | N/A |
 
 ## Note
 
