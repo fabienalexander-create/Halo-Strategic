@@ -1,7 +1,7 @@
 ---
 title: "Growth isn't a package"
 publish_date: 2026-07-27
-status: draft
+status: published
 pillar: behind-halo
 format: one-liner
 weekly_theme: none
@@ -10,6 +10,8 @@ hashtags: [CommercialDiagnosis, FounderThinking]
 website_link: https://halostrategic.com
 source: "Halo Bible Ch. 4-5 (growth as recovery-then-creation; diagnosis over service-selling)"
 image_filename: "generated/2026-07-27-growth-isnt-a-package.png"
+linkedin_url: "https://www.linkedin.com/feed/update/urn:li:share:7487478089736929281/"
+published_at: "2026-07-27, confirmed live via post permalink, image and copy verified rendering correctly"
 ---
 
 ## LinkedIn copy

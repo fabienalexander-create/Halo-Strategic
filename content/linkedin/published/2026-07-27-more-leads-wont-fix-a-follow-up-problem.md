@@ -10,7 +10,7 @@ hashtags: [CommercialStrategy, GrowthDiagnostics, B2BGrowth]
 website_link: https://halostrategic.com
 source: "Selected Engagements — Fixing Sales Follow-up Before Buying More Leads (#sales-follow-up)"
 image_filename: "generated/2026-07-27-more-leads-wont-fix-a-follow-up-problem.png"
-linkedin_url: "https://www.linkedin.com/company/142913204/admin/page-posts/published/ (exact permalink not captured — visible as the top post, published 2026-07-27, 'Halo Strategic' page)"
+linkedin_url: "https://www.linkedin.com/feed/update/urn:li:share:7487462591540142080/"
 published_at: "2026-07-27, confirmed live via Page posts admin view, image and copy verified rendering correctly"
 ---
 
