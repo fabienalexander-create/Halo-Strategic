@@ -331,4 +331,24 @@ Next. Await Fabien's authorisation to begin Sprint 1 implementation (nav/footer/
 
 **Document.** This entry; see docs/CHANGELOG.md, docs/CURRENT_SPRINT.md, docs/ARCHITECTURAL_DECISIONS.md (ADR-011, Pending Decisions updated).
 
+---
+
+## Halo Bible v1.0 Frozen (2026-07-26, ADR-012)
+
+**Trigger.** Fabien: "I'd declare the Halo Bible frozen... Version 1.0 should become the constitutional document for the company... From this point forward, you should be protecting Halo," following the completion of Sections Six (Growth Maturity Model) and Seven (Halo Indicators), the last two open sections.
+
+**Analyse.** The Bible's ten sections existed only as scratchpad files (session-temporary) and one working scoped-draft document, neither durable nor actually in the repo. A document meant to govern the company long-term can't live somewhere that vanishes with the session, compiling it into the actual repo wasn't optional busywork, it was the only way the freeze decision could mean anything. Also found, while compiling: the Glossary's Commercial Diagnostic and Commercial Audit entries in the working draft still described pre-Sprint-5.6 pricing (free Diagnostic, fixed £3,000 Audit), a real staleness that would have been frozen into the constitutional version if not caught during the compile pass.
+
+**Decisions made and why:**
+- Compiled all ten sections into a single `docs/HALO_BIBLE.md`, rather than leaving them as ten separate files, so there's one canonical document to point to, not a scattered set of scratchpad references.
+- Section Ten (Products) summarizes and points to `docs/PRODUCT_SYSTEM.md` rather than duplicating its content, since PRODUCT_SYSTEM.md is the living, current-pricing document and will keep changing as pricing/scope decisions resolve; duplicating it into a frozen document would guarantee drift between the two.
+- Corrected the Glossary's Commercial Diagnostic/Audit definitions to match actual live pricing ($995, $7,500+) before freezing, rather than freezing the stale figures and needing an immediate amendment.
+- Updated `docs/AI_OPERATING_MODEL.md`'s Documentation Ownership table with a new row for HALO_BIBLE.md marked as having no ordinary maintainer, constitutional documents don't fit the normal owner/maintainer pattern used for every other doc in that table.
+
+**Implement.** New file `docs/HALO_BIBLE.md`: governance header (frozen, amendment-only, dated appends), table of contents, all ten sections in full. New ADR-012 in `docs/ARCHITECTURAL_DECISIONS.md`. Updated `docs/AI_OPERATING_MODEL.md`, `docs/CURRENT_SPRINT.md`, `docs/CHANGELOG.md`.
+
+**Verify.** Cross-checked every section's compiled content against its originating scratchpad source (Sections One, Three, Five, Six, Seven, each a standalone file) or already-published live content (Sections Two, Four, Eight, Nine) before compilation; no new claims introduced during the compile step itself, only the pricing correction noted above, which is a correction against reality, not new invention.
+
+**Document.** This entry; see docs/CHANGELOG.md, docs/CURRENT_SPRINT.md, docs/ARCHITECTURAL_DECISIONS.md (ADR-012).
+
 **Document.** This entry; see docs/CHANGELOG.md and docs/CURRENT_SPRINT.md.

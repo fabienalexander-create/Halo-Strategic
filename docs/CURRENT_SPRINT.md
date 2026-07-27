@@ -7,13 +7,15 @@ Last Updated: 2026-07-26
 
 ## Sprint
 
-Sprint 5.6 - Product Architecture & Commercial Positioning, plus Agency Partnerships (ADR-011)
+Halo Bible v1.0 frozen (ADR-012); Sprint 6 — Productisation starting next
 
 ## Status
 
 Sprint 2 and Sprint 3 (Insights Foundation) are complete (see Completed). Sprint 5.6 is now implemented on the live site, not just documented: Commercial Diagnostic repriced to $995, Commercial Audit repositioned to $7,500+ (scope-dependent), a new Commercial Health Check page (free self-assessment quiz) and a new Product Journey page (the full 6-stage ecosystem) added, nav/footer updated across all 16 pages, and the Halo Clarity Guarantee published on the Diagnostic page. Approved directly by Fabien as Product Owner, 2026-07-26: "Approved by Product Owner... Proceed with implementation." Open items: US-market/regional-pricing question still undecided (`pricing-config.js`, ADR-010, supports adding currencies later, none added yet), Guarantee refund mechanics are placeholder copy per explicit instruction not to delay for legal review, two products dropped from an earlier draft (Lead Management System, Growth Board) remain unconfirmed, Quarterly Commercial Review vs. Constraint Review overlap unresolved, and every Stage 3–6 product beyond Diagnostic/Audit remains unpriced (shown as "by proposal" or "retainer" on `/product-journey`). The Halo Bible's foundation sections (Philosophy, Core Principles, Commercial Leakage Framework, Master Framework, Revenue Friction Map, Visual Language, Glossary) remain settled source of truth and were not rewritten. Growth Maturity Model and Halo Metrics remain the two Bible sections still to be originated. Framework Library, FAQ Hub, and Resources remain correctly out of scope.
 
 ## Completed (prior sprints)
+
+Halo Bible v1.0, frozen (2026-07-26, ADR-012): all ten sections compiled from scratchpad/working documents into `docs/HALO_BIBLE.md`, committed to the repo, and marked as Halo's constitutional document, no casual edits, future changes require real client evidence and must be dated amendments. `docs/AI_OPERATING_MODEL.md` updated to reflect its special (non-)ownership status. Caught and corrected one real staleness during compilation: the Glossary's Commercial Diagnostic/Audit entries still had pre-Sprint-5.6 pricing. Section Ten summarizes rather than duplicates `docs/PRODUCT_SYSTEM.md`, which remains the living pricing/scope detail. See docs/IMPLEMENTATION_LOG.md.
 
 Sprint 5.6, Agency Partnerships (2026-07-26, ADR-011): new `agency-partnerships.html` at `/agency-partnerships`, a secondary-audience landing page for marketing agencies, built from Fabien's full feature brief. Footer link on all 17 pages plus one inline mention on `about.html`; deliberately not added to the main nav-links per the brief's own instruction (secondary audience, shouldn't compete with the core business-owner journey). Content uses the existing Leakage/Friction/Constraint/Alignment vocabulary and reuses the Halo Clarity Guarantee verbatim, no new terminology introduced. Three FAQ answers (white-labelling, co-branded reports, partner pricing) state honestly that these aren't available/set yet rather than inventing them, since the brief itself scoped them as future-phase. Organization, Service, and FAQPage schema added. `sitemap.xml` and `_redirects` updated. See docs/IMPLEMENTATION_LOG.md.
 
@@ -67,7 +69,9 @@ Sprint 2's remaining scope: favicon/manifest consistency, Core Web Vitals baseli
 
 ## Next Milestone
 
-To add article #3: add an entry to `tools/insights-articles.json`, run `node tools/build-insights.js`, review the diff, commit, same process article #2 just used successfully. Separately, favicon/manifest consistency (docs/TECHNICAL_SEO.md finding 11) and a Core Web Vitals baseline remain open from Sprint 2.
+Sprint 6 — Productisation (2026-07-26, planned, not yet started): with the Bible frozen, the focus moves from internal IP to the client-facing Commercial Diagnostic experience itself, not a report template, the experience a founder has across before/during/after a two-hour Diagnostic. Deliverables: Commercial Diagnostic Experience, Client Workbook, Facilitator Guide, Commercial Diagnostic Report, Internal Delivery SOP, Presentation Deck, Follow-up Email Sequence. The Experience design (what hypotheses Halo prepares, what questions land as genuinely new to the founder, what the after-meeting moment looks like) needs the same founder-interview discipline as the Bible sections, not invention, and is the natural starting point before the other six deliverables, which depend on the Experience being defined first.
+
+Separately, unrelated and lower priority: adding article #3 (one entry in `tools/insights-articles.json`, run `node tools/build-insights.js`), favicon/manifest consistency (docs/TECHNICAL_SEO.md finding 11), and a Core Web Vitals baseline remain open from earlier sprints.
 
 ## Known Risks
 

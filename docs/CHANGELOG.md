@@ -1,5 +1,9 @@
 # Changelog
 
+## 2026-07-26 — Halo Bible v1.0 frozen (ADR-012)
+
+Compiled all ten Bible sections, previously scattered across scratchpad files, into `docs/HALO_BIBLE.md` and committed it to the repo as Halo's constitutional document. No casual edits going forward; changes require real client evidence and must be dated amendments. `docs/AI_OPERATING_MODEL.md` updated with the document's special governance status. Caught and corrected one real staleness during compilation: the Glossary's Commercial Diagnostic/Audit entries still carried pre-Sprint-5.6 pricing. See docs/ARCHITECTURAL_DECISIONS.md (ADR-012) and docs/IMPLEMENTATION_LOG.md.
+
 ## 2026-07-26 — Sprint 5.6: Agency Partnerships (ADR-011)
 
 New `agency-partnerships.html` at `/agency-partnerships`, built from Fabien's full feature brief, a secondary-audience B2B partnership page for marketing agencies (not competing with the core business-owner journey): hero, The Problem, A Better Way, a 5-step process, Benefits, the Halo Partner Promise, Perfect For industries, the Halo Clarity Guarantee (reused verbatim), FAQ, final CTA. Organization, Service, and FAQPage schema added. Footer-only link across all 17 pages plus one inline mention on `about.html`, deliberately kept out of the main nav per the brief. Three FAQ answers (white-label, co-branded reports, partner pricing) stated honestly as not yet available, since the brief scoped those as future-phase, not to be built now. `sitemap.xml` and `_redirects` updated. See docs/IMPLEMENTATION_LOG.md and docs/ARCHITECTURAL_DECISIONS.md (ADR-011).

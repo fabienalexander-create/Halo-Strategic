@@ -145,6 +145,19 @@ Architecture Decision Records (ADRs). Only approved decisions are recorded here.
 
 ---
 
+## ADR-012: The Halo Bible v1.0 is frozen as Halo's constitutional document
+
+**Status:** Approved (implemented)
+**Owner:** Claude Code
+**Approved by:** Fabien, 2026-07-26: "I'd declare the Halo Bible frozen... Version 1.0 should become the constitutional document for the company. Everything else gets built from it. Nothing casually edits it."
+**Reason:** All ten Bible sections were complete as of this session (Philosophy, Core Principles, Master Framework, Commercial Leakage Framework, Revenue Friction Map, Growth Maturity Model, Halo Indicators, Glossary, Visual Language, Products), and three sections built independently (Philosophy, Growth Maturity Model, Halo Indicators) converged on the same underlying concepts (Alignment as the shared destination, Halo's First Law as the governing test) without being planned that way. Fabien identified that as the sign the Bible had reached internal coherence, and that the job from this point changes from authoring Halo to protecting Halo, casual edits risk exactly the identity drift a constitutional document is meant to prevent.
+**Decision:** The full Bible, previously scattered across scratchpad files (session-temporary, not durable) and one working scoped-draft document, was compiled into `docs/HALO_BIBLE.md`, committed to the repo, and marked frozen. Future changes require new evidence from real client engagements, not preference, and must be dated, appended amendments, never silent rewrites, the same discipline already used for the ADR-001/ADR-005 amendments. `docs/AI_OPERATING_MODEL.md`'s Documentation Ownership table was updated to reflect this: HALO_BIBLE.md has no ordinary maintainer, it's constitutional.
+**Alternatives considered:** Leaving the Bible as a living document, editable each sprint (rejected, explicitly what Fabien wants to stop, "that's how companies end up with a coherent identity over years instead of slowly drifting" only holds if the document actually stops moving). Leaving it in scratchpad files rather than committing it to the repo (rejected, a constitutional document that only exists in a session-scoped temp directory isn't durable, the entire point of freezing it requires it to actually persist).
+**Consequences:** `docs/PRODUCT_SYSTEM.md` remains the living, current-pricing detail for Section Ten, `HALO_BIBLE.md` summarizes and points to it rather than duplicating it, so the two documents don't drift apart as pricing/scope changes. The Glossary entries for Commercial Diagnostic and Commercial Audit were corrected during compilation to reflect Sprint 5.6's actual live pricing ($995, $7,500+), catching a real staleness (the scoped-draft working document still had the pre-Sprint-5.6 figures) before it got frozen into the constitutional version.
+**Verified:** every section's content in `HALO_BIBLE.md` cross-checked against its originating scratchpad source or already-published live content before compilation; no new claims introduced during the compile step.
+
+---
+
 ## Pending decisions (no ADR yet, do not build against these as if approved)
 
 - **Hosting/deployment mechanism**: resolved 2026-07-26. Cloudflare is a proxy in front of Netlify, not the origin (confirmed via `x-nf-request-id` response headers present on every live request checked). Fabien confirmed directly that GitHub is the deploy trigger, pushing to `main` deploys the site. Note: GitHub shows zero commit status checks and zero deployment records for any commit pushed this session, a reporting gap in the GitHub↔Netlify connection, not evidence deploys aren't happening; verifying against the live site directly remains the only independent confirmation a push has actually landed.
