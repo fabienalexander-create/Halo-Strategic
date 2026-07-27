@@ -313,6 +313,27 @@ Next. Await Fabien's authorisation to begin Sprint 1 implementation (nav/footer/
 
 ---
 
+## Product Journey Restructure: Clarity → Strategy → Transformation → Partnership (2026-07-27, ADR-014)
+
+**Trigger.** Fabien identified that the live "Diagnostic → Audit → Implementation" framing communicated a product ladder rather than the intended positioning, proposed a 4-word narrative arc and a simplified 5-product structure, then, in a follow-up message, explicitly separated that positioning change from a pricing change he'd floated in the same breath, instructing pricing to be held exactly as-is.
+
+**Analyse.** Two variables were genuinely tangled in the original proposal: new names/narrative (clear win, no downside) and new GBP figures for the Audit ($7,500+ → £5,000–£10,000, not just a currency conversion of the same number). Rather than guess which Fabien actually wanted live, asked directly via AskUserQuestion; he confirmed "positioning now, hold pricing," then reiterated the same in a follow-up message with his reasoning for staying USD (US-oriented target market: ADU companies, agencies, GQL exposure). The consolidation itself (5 products instead of 14) also resolved two previously-flagged open questions from ADR-010/PRODUCT_SYSTEM.md, the Quarterly/Constraint Review overlap and the Growth Partner/Fractional Growth Strategist distinction, by folding both pairs into single products rather than needing to pick a winner.
+
+**Decisions made and why:**
+- Restructured `product-journey.html`'s stage sections from 6 stages to 4, renamed throughout, added the Governing Sentence as a `.pull` blockquote directly under the hero.
+- Added `.tag-row`/`.tag` CSS to `product-journey.html` (previously only existed on `agency-partnerships.html`) to display Commercial Transformation's examples as tags rather than as separate priced cards, since they're illustrative, not a menu.
+- Renamed "Implementation Proposal" → "Commercial Transformation proposal" and "an Implementation engagement" → "a Commercial Transformation engagement" on `commercial-audit.html`, in both the visible FAQ and the FAQPage JSON-LD (kept in sync, per the established ADR-007 rule), and in the deliverables table. Left two lowercase, generic uses of "implementation" untouched (not the product name).
+- Updated `commercial-diagnostic.html`'s "What it is" section to the outcome-focused deliverables list Fabien specified verbatim, added the 90-minute session length to both the comparison table and the step-row, added "no promise to fix anything, the promise is clarity."
+- Did not touch `pricing-config.js` or any `data-price` value; verified this explicitly rather than assuming.
+
+**Implement.** `product-journey.html`, `commercial-diagnostic.html`, `commercial-audit.html` edited directly. `docs/PRODUCT_SYSTEM.md` rewritten (new hierarchy table, journey map, per-product entries under the four new stage headings, open items updated). `docs/PRODUCT_POSITIONING.md` rewritten to match, including a note that the Governing Sentence resolves what was previously this document's own flagged weak point (Partnership's soft entry gate). `docs/HALO_BIBLE.md` Section Ten given a dated amendment note (frozen document, ADR-012, no silent rewrite). New `docs/ARCHITECTURAL_DECISIONS.md` ADR-014; the existing US-market Pending Decision entry appended with Fabien's stated reasoning, not closed.
+
+**Verify.** Grep-confirmed `data-price` values unchanged on both edited pages (healthCheck=Free, diagnostic=$995, audit=$7,500+). Grep-confirmed zero remaining capitalised "Implementation" product references on `commercial-audit.html`. Confirmed body-tag and GTM counts unchanged on all three edited pages (no structural breakage from the section rewrite).
+
+**Document.** This entry; see docs/CHANGELOG.md, docs/CURRENT_SPRINT.md, docs/ARCHITECTURAL_DECISIONS.md (ADR-014).
+
+---
+
 ## Sprint 5.6: Agency Partnerships (2026-07-26, ADR-011)
 
 **Trigger.** Fabien sent a complete "FEATURE BRIEF: Halo Agency Partner Network," fully specifying headline, subheadline, CTAs, eight content sections, design direction, technical notes, and success criteria for a new secondary-audience page targeting marketing agencies as partners rather than clients.

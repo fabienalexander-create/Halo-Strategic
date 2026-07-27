@@ -3,17 +3,19 @@
 Status: Living Document
 Owner: Claude Browser
 Maintainer: Claude Browser
-Last Updated: 2026-07-26
+Last Updated: 2026-07-27
 
 ## Sprint
 
-Halo Bible v1.0 frozen (ADR-012); Sprint 6 — Productisation starting next
+Product journey repositioned (ADR-014); Sprint 6 — Productisation in progress (Experience + Facilitator Guide done)
 
 ## Status
 
 Sprint 2 and Sprint 3 (Insights Foundation) are complete (see Completed). Sprint 5.6 is now implemented on the live site, not just documented: Commercial Diagnostic repriced to $995, Commercial Audit repositioned to $7,500+ (scope-dependent), a new Commercial Health Check page (free self-assessment quiz) and a new Product Journey page (the full 6-stage ecosystem) added, nav/footer updated across all 16 pages, and the Halo Clarity Guarantee published on the Diagnostic page. Approved directly by Fabien as Product Owner, 2026-07-26: "Approved by Product Owner... Proceed with implementation." Open items: US-market/regional-pricing question still undecided (`pricing-config.js`, ADR-010, supports adding currencies later, none added yet), Guarantee refund mechanics are placeholder copy per explicit instruction not to delay for legal review, two products dropped from an earlier draft (Lead Management System, Growth Board) remain unconfirmed, Quarterly Commercial Review vs. Constraint Review overlap unresolved, and every Stage 3–6 product beyond Diagnostic/Audit remains unpriced (shown as "by proposal" or "retainer" on `/product-journey`). The Halo Bible's foundation sections (Philosophy, Core Principles, Commercial Leakage Framework, Master Framework, Revenue Friction Map, Visual Language, Glossary) remain settled source of truth and were not rewritten. Growth Maturity Model and Halo Metrics remain the two Bible sections still to be originated. Framework Library, FAQ Hub, and Resources remain correctly out of scope.
 
 ## Completed (prior sprints)
+
+Product journey repositioning (2026-07-27, ADR-014): restructured 6 stages/14 products into 4 stages/5 products (Clarity, Strategy, Transformation, Partnership). "Implementation" renamed "Commercial Transformation" site-wide. Added the governing sentence to `/product-journey` ("not every client needs a Commercial Audit..."). `commercial-diagnostic.html` updated with 90-minute session length and outcome-focused deliverables. All displayed prices held exactly unchanged, a deliberate separation of positioning from pricing per Fabien's explicit instruction; pricing revisits after real prospect conversations. `docs/PRODUCT_SYSTEM.md`, `docs/PRODUCT_POSITIONING.md` rewritten; `docs/HALO_BIBLE.md` Section Ten amended (dated, not silently rewritten). See docs/IMPLEMENTATION_LOG.md.
 
 Halo Bible v1.0, frozen (2026-07-26, ADR-012): all ten sections compiled from scratchpad/working documents into `docs/HALO_BIBLE.md`, committed to the repo, and marked as Halo's constitutional document, no casual edits, future changes require real client evidence and must be dated amendments. `docs/AI_OPERATING_MODEL.md` updated to reflect its special (non-)ownership status. Caught and corrected one real staleness during compilation: the Glossary's Commercial Diagnostic/Audit entries still had pre-Sprint-5.6 pricing. Section Ten summarizes rather than duplicates `docs/PRODUCT_SYSTEM.md`, which remains the living pricing/scope detail. See docs/IMPLEMENTATION_LOG.md.
 

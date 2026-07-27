@@ -1,16 +1,20 @@
 # PRODUCT_SYSTEM.md
 
-Status: Sprint 5.6 (2026-07-26). Adopted as a working document, not yet implemented on the live site. Built from Fabien's 6-stage product ecosystem decision, restructuring the prior 5-tier draft. Nothing in the Halo Bible's foundation sections (Philosophy, Core Principles, Commercial Leakage Framework, Master Framework, Revenue Friction Map, Visual Language, Glossary) is touched or re-derived here.
+Status: Restructured 2026-07-27 per Fabien's repositioning decision. Supersedes the prior 6-stage/14-product structure (Sprint 5.6) with a simpler 4-stage narrative arc and 5 named products. **Pricing is unchanged from Sprint 5.6 and was deliberately not revisited in this restructuring** ("Pricing is a separate strategic decision and should not change in this sprint... revisit pricing with real market feedback" once 10-20 prospects have been spoken to). Nothing in the Halo Bible's foundation sections is touched or re-derived here; `docs/HALO_BIBLE.md` Section Ten carries a dated amendment note pointing here.
 
 Every product below traces to the Leakage → Friction → Constraint → Alignment hierarchy and is checked against Halo's First Law: diagnosis before prescription, always.
 
 ---
 
-## Open items (unresolved as of adoption)
+## The Governing Sentence
 
-1. **Live-site conflict.** The current site has a free Commercial Diagnostic and a fixed £3,000 Commercial Audit. This ecosystem repositions both (paid Diagnostic, scoped Audit range). See `PRICING_STRATEGY.md` for the comparison and sequencing options; nothing here assumes it's resolved.
-2. **Currency and market shift.** Pricing direction below is USD, with an explicit "US market" positioning objective, a bigger decision than repricing alone for a UK-based consultancy. See `PRICING_STRATEGY.md`.
-3. **Two products from the prior draft, dropped or folded, unconfirmed:** Lead Management System and Growth Board are not named in this structure. Held out rather than silently kept or cut, pending confirmation.
+> Every engagement begins with diagnosis. Not every client needs a Commercial Audit. Not every Commercial Audit leads to a Transformation project. And not every Transformation requires an ongoing Strategic Partnership. Our responsibility is to recommend what is genuinely in your business's best interests, not to move you through a predefined sales journey.
+
+This is live on `/product-journey` and should govern how every product below is described anywhere else on the site: as an offer that's genuinely appropriate, never as the next rung on a ladder everyone is assumed to climb.
+
+## Why this restructured (2026-07-27)
+
+The prior structure named 14 separate products across 6 stages (Discover, Investigate, Design, Implement, Optimise, Partnership). Several were flagged as genuinely unresolved: Quarterly Commercial Review vs. Constraint Review had unconfirmed overlap; Growth Partner vs. Fractional Growth Strategist had no real distinction; Lead Management System and Growth Board had been dropped from an earlier draft without confirmation. Rather than resolving each individually, Fabien's repositioning consolidates them: Design and Implement's four products collapse into one flexible **Commercial Transformation** project (scoped per engagement, not four separately-named offerings), and Optimise and Partnership's four products collapse into one **Strategic Partnership** relationship. This resolves the Quarterly/Constraint Review question and the Growth Partner/Fractional Growth Strategist question by consolidation rather than by picking a winner, consistent with Fabien's own reasoning: "you'll naturally discover whether they're separate products or simply stages within the same engagement" once real client work exists. Lead Management System and Growth Board remain unaddressed by this restructuring, a separate open item.
 
 ---
 
@@ -18,171 +22,80 @@ Every product below traces to the Leakage → Friction → Constraint → Alignm
 
 | Stage | Purpose | Products |
 |---|---|---|
-| 1. Discover | Help a business understand what is actually happening | Commercial Health Check, Commercial Diagnostic |
-| 2. Investigate | Deep commercial investigation | Commercial Audit |
-| 3. Design | Turn diagnosis into a practical commercial roadmap | Growth Blueprint, Commercial Operating System |
-| 4. Implement | Remove the highest-priority commercial constraint | Sales System Optimisation, CRM & Automation, AI Process Optimisation, Reporting & Commercial Intelligence |
-| 5. Optimise | Ongoing improvement | Quarterly Commercial Reviews, Constraint Reviews, Executive Strategy Days |
-| 6. Partnership | Long-term strategic advisory | Growth Partner, Fractional Growth Strategist |
+| **Clarity** | Understand what is actually happening | Commercial Health Check, Commercial Diagnostic |
+| **Strategy** | Go deep, build the roadmap | Commercial Audit |
+| **Transformation** | Remove the highest-priority constraint | Commercial Transformation |
+| **Partnership** | Ongoing commercial advisory, if wanted | Strategic Partnership |
 
 ## Journey Map
 
-**Health Check → Diagnostic → Audit → Blueprint → Operating System → [Implementation product matching the named constraint] → Optimise (Quarterly Review / Constraint Review / Strategy Day) → Partnership (Growth Partner or Fractional Growth Strategist).**
+**Health Check → Diagnostic → Audit → Commercial Transformation → Strategic Partnership.**
 
-A client can enter at any stage if they arrive with an existing diagnosis, but the default path is sequential: each stage's output is the next stage's entry criteria. No stage below Discover/Investigate should be sold to a client who hasn't been through a diagnosis first, whether Halo's or a genuinely equivalent one.
+A client can enter at any stage if they arrive with an existing diagnosis, but the default path is sequential, each stage's output is the next stage's entry criteria. No stage below Clarity should be sold to a client who hasn't been through a diagnosis first, whether Halo's or a genuinely equivalent one. Per the Governing Sentence above, most clients should not be expected to reach Partnership, and that's by design, not a funnel failure.
 
 ---
 
-## Stage 1 — Discover
+## Clarity
 
 ### Commercial Health Check
-- **Definition:** a free, 10-minute self-assessment giving an immediate signal of likely commercial leakage, with no Halo staff time required.
+- **Definition:** a free, 10-minute self-assessment determining whether a full Commercial Diagnostic is appropriate.
 - **Entry criteria:** none. Open access.
 - **Deliverables:** an immediate score, a short narrative of likely leakage areas.
 - **Outcomes:** the client has a first, low-commitment signal of whether further diagnosis is worth pursuing.
-- **Pricing guidance:** Free.
+- **Pricing:** Free.
 - **Upgrade path:** Commercial Diagnostic.
-- **Build note:** genuinely new; the self-assessment content and scoring logic don't exist yet.
 
 ### Commercial Diagnostic
-- **Definition:** a structured, paid session identifying leakage, friction and constraints at a high level, producing an initial action plan.
+- **Definition:** Halo's flagship entry product. A structured 90-minute session identifying the client's primary commercial constraint. No promise to fix anything, the promise is clarity.
 - **Entry criteria:** none beyond booking (or arriving via the Health Check).
-- **Deliverables:** a high-level action plan; an initial read on leakage, friction, and likely constraint.
+- **Deliverables:** identification of the primary commercial constraint; a written Executive Summary; prioritised next steps; a recommendation on whether further work is even needed.
 - **Outcomes:** the client leaves with materially more clarity about what's holding the business back and what should happen next (this is the basis for the Halo Clarity Guarantee, see `GUARANTEE.md`).
-- **Pricing guidance:** approximately $995 (direction only, not final, see `PRICING_STRATEGY.md`).
-- **Upgrade path:** Commercial Audit.
+- **Pricing:** $995 (unchanged, held deliberately, see Status above).
+- **Upgrade path:** Commercial Audit, only if warranted.
 
 ---
 
-## Stage 2 — Investigate
+## Strategy
 
 ### Commercial Audit
-- **Definition:** a deep investigation into the business's full commercial system: stakeholder interviews, systems review, full report, strategic recommendations, scored against the Halo Score.
+- **Definition:** Halo's flagship engagement. A full evidence-based investigation across CRM, lead flow, sales process, marketing, customer journey, commercial reporting, internal systems, and leadership alignment. The output is a comprehensive commercial roadmap, not a list of findings.
 - **Entry criteria:** typically follows a Diagnostic; a business that already knows it needs deep work could enter directly.
-- **Deliverables:** full report and strategic recommendations, Halo Score baseline.
+- **Deliverables:** full report and strategic recommendations, Halo Score baseline, comprehensive commercial roadmap.
 - **Outcomes:** the business has a complete, evidence-based picture of where its commercial system is leaking, where the friction is, and what the primary constraint is.
-- **Pricing guidance:** approximately $7,500, with flexibility depending on scope and company size (direction only, see `PRICING_STRATEGY.md`).
-- **Upgrade path:** Growth Blueprint.
+- **Pricing:** $7,500+ (unchanged, held deliberately, see Status above).
+- **Upgrade path:** Commercial Transformation, only if warranted.
 
 ---
 
-## Stage 3 — Design
+## Transformation
 
-### Growth Blueprint
-- **Definition:** translates the Audit's findings into a concrete, time-bound roadmap: priorities, metrics, ownership, sequence.
-- **Entry criteria:** a completed Audit, or an equivalent existing diagnosis.
-- **Deliverables:** 90-day commercial roadmap, prioritised constraint list, success metrics, named ownership, implementation sequence.
-- **Outcomes:** leadership has an agreed, sequenced plan rather than a list of findings without a path through them.
-- **Pricing guidance:** open, not yet specified.
-- **Upgrade path:** Commercial Operating System, or directly into a Stage 4 implementation product if the priority is narrow enough.
-
-### Commercial Operating System
-- **Definition:** installs the ongoing operating rhythm, sales, marketing, reporting, CRM, leadership cadence, KPIs, that keeps the business aligned after the roadmap is set.
-- **Entry criteria:** typically follows a Growth Blueprint.
-- **Deliverables:** defined sales/marketing/reporting/CRM structure, agreed leadership cadence, agreed KPIs.
-- **Outcomes:** the business has a repeatable operating rhythm, not just a one-off plan.
-- **Pricing guidance:** open, not yet specified.
-- **Upgrade path:** whichever Stage 4 product addresses the constraint the Operating System reveals as most pressing.
+### Commercial Transformation
+- **Definition:** not "Implementation," Implementation sounds like installing software. A project scoped to the specific constraint the Audit found, never sold without one behind it. Every project is different.
+- **Entry criteria:** an identified constraint from a completed Audit (or genuinely equivalent existing diagnosis).
+- **Examples (illustrative, not separately priced sub-products):** CRM redesign, sales process redesign, lead management, automation, a KPI framework, a full commercial operating system.
+- **Deliverables:** scoped per project; whatever the identified constraint actually requires.
+- **Outcomes:** measurable movement on the metric the constraint was named against.
+- **Pricing:** by proposal, scoped to the project (unchanged in substance from the prior four separately-named products, which were also proposal-based).
+- **Guardrail (carried forward):** the AI/automation examples above are the ones most at risk of drifting into "selling a technology" rather than "removing a constraint." No client should receive a Transformation project without a named constraint behind it, consistent with Halo's First Law.
+- **Upgrade path:** Strategic Partnership, only if warranted.
 
 ---
 
-## Stage 4 — Implement
+## Partnership
 
-All four products below are outcome-named, not service-named, deliberately. The product being sold is the removal of a specific, already-identified constraint; the delivery mechanism (a CRM, a piece of content, an automation) is how that happens, never what's being sold. Pricing across this stage is proposal-based, scoped to the specific constraint being addressed.
-
-### Sales System Optimisation
-- **Definition:** fixes the specific sales-process friction identified upstream (response time, follow-up consistency, pipeline visibility).
-- **Entry criteria:** an identified sales-side constraint from a prior stage.
-- **Deliverables:** a redesigned sales process addressing the named friction; exact scope depends on the constraint.
-- **Outcomes:** measurable movement on the specific metric the constraint was named against (e.g. lead-to-contact time).
-- **Pricing guidance:** proposal-based.
-- **Upgrade path:** Stage 5 (Quarterly Commercial Review or Constraint Review) once implemented.
-
-### CRM & Automation
-- **Definition:** makes the CRM a system the business actually trusts, correcting inconsistent data flows and automating manual work.
-- **Entry criteria:** an identified CRM/data-trust constraint (the friction pattern evidenced in the "From Reacting to Leading" Selected Engagement).
-- **Deliverables:** corrected data flows and automation, scope dependent on the constraint.
-- **Outcomes:** two people pulling the same metric get the same number (the Data & Reporting friction test from the Friction Map).
-- **Pricing guidance:** proposal-based.
-- **Upgrade path:** Reporting & Commercial Intelligence, or Stage 5.
-
-### AI Process Optimisation
-- **Definition:** applies automation/AI specifically to a named constraint, not as a generic technology upsell.
-- **Entry criteria:** an identified process constraint where automation is the right intervention, not just an available one.
-- **Deliverables:** dependent entirely on the process being optimised.
-- **Outcomes:** tied back to the same constraint the engagement started from, not a generic efficiency metric.
-- **Pricing guidance:** proposal-based.
-- **Upgrade path:** Stage 5.
-- **Guardrail:** this is the product most at risk of drifting into "selling a technology" rather than "removing a constraint." No client should receive this as a first recommendation without a named constraint behind it, consistent with Halo's First Law.
-
-### Reporting & Commercial Intelligence
-- **Definition:** turns existing data into something leadership actually uses to decide, per the "reports that change decisions, not just dashboards" principle already published.
-- **Entry criteria:** an identified reporting/visibility constraint (the pattern evidenced in "Good Reporting Changes Decisions" and "The Data That Was Never Missing").
-- **Deliverables:** a single trusted reporting view per key metric, scope dependent on the constraint.
-- **Outcomes:** a specific decision changes as a result of the new reporting, the same bar Core Principle 2 already sets.
-- **Pricing guidance:** proposal-based.
-- **Upgrade path:** Stage 5.
-
----
-
-## Stage 5 — Optimise
-
-The overlap between these three is flagged, not yet resolved:
-
-### Quarterly Commercial Review
-- **Definition:** a scheduled, recurring check on whether a previously-fixed constraint stays fixed.
-- **Entry criteria:** a completed implementation engagement.
-- **Deliverables:** a quarterly review against the metrics set during implementation.
-- **Outcomes:** confirms the fix held, or surfaces a newly emerged constraint.
-- **Pricing guidance:** open.
-- **Upgrade path:** Growth Partner, if the client wants this formalised into a standing relationship.
-- **Proposed distinction:** scheduled and recurring by default, calendar-driven, not triggered by a specific concern.
-
-### Constraint Review
-- **Definition:** a focused re-diagnosis, re-running Observe/Diagnose/Prioritise to check the current primary constraint.
-- **Entry criteria:** open; could follow any prior stage.
-- **Deliverables:** an updated view of the current constraint.
-- **Outcomes:** a lighter-touch re-diagnosis than a full Audit when something feels off, without waiting for the next scheduled Quarterly Review.
-- **Pricing guidance:** open.
-- **Upgrade path:** whichever Stage 4 product matches the newly identified constraint.
-- **Proposed distinction:** triggered and on-demand, called when something feels wrong, rather than calendar-driven. If not right, these two may genuinely be the same product under two names.
-
-### Executive Strategy Day
-- **Definition:** a focused, single-day session with leadership to revisit strategy against the current state of the business.
-- **Entry criteria:** open.
-- **Deliverables:** open, beyond the one-day leadership format.
-- **Outcomes:** open.
-- **Pricing guidance:** open.
-- **Upgrade path:** could feed a new Growth Blueprint if a new priority surfaces.
-- **Proposed distinction:** strategic and leadership-facing rather than diagnostic and metric-facing.
-
----
-
-## Stage 6 — Partnership
-
-### Growth Partner
-- **Definition:** an ongoing monthly relationship: strategy session, KPI review, constraint identification, quarterly roadmap updates, priority support.
-- **Entry criteria:** typically follows the full journey through prior stages.
-- **Deliverables:** monthly strategy session, KPI review, constraint identification, quarterly roadmap refresh, priority support access.
-- **Outcomes:** the business retains ongoing access to Halo's judgement rather than the relationship ending after implementation.
-- **Pricing guidance:** retainer (amount not yet specified).
-- **Upgrade path:** none; top of the current journey.
-
-### Fractional Growth Strategist
-- **Definition:** ongoing, part-time embedded strategic support, functioning as a fractional executive rather than a project engagement.
-- **Entry criteria:** open, not yet specified.
-- **Deliverables:** open, not yet specified.
-- **Outcomes:** open, not yet specified.
-- **Pricing guidance:** open, not yet specified.
-- **Upgrade path:** none; this and Growth Partner are the two most similar products in the ecosystem, and their distinction from each other needs deciding before both can be built out properly.
+### Strategic Partnership
+- **Definition:** not "Monthly Retainer." After a Transformation, some clients choose to retain Halo as an ongoing commercial adviser, providing strategic guidance, performance reviews, and independent challenge as their business evolves.
+- **Entry criteria:** typically follows a completed Transformation.
+- **Deliverables:** ongoing strategic guidance; performance reviews (absorbing what were previously separately-named Quarterly Commercial Review and Constraint Review); independent challenge as the business evolves.
+- **Outcomes:** the business retains ongoing access to Halo's judgement without creating dependency, "protects alignment a business has already achieved," per the existing live copy on `/product-journey`.
+- **Pricing:** by arrangement, no figure advertised. "People who need it will ask" (Fabien, 2026-07-27).
+- **Upgrade path:** none; top of the journey, and explicitly not the assumed destination for every client.
 
 ---
 
 ## Open items carried forward
 
-- Live-site repricing decision → `PRICING_STRATEGY.md`.
-- USD/US-market positioning shift → `PRICING_STRATEGY.md`.
-- Lead Management System and Growth Board, dropped or folded, unconfirmed.
-- Quarterly Commercial Review vs. Constraint Review overlap, proposed distinction needs confirmation.
-- Growth Partner vs. Fractional Growth Strategist distinction, not yet resolved.
-- Pricing is only directionally set for Discover and Investigate stages; Design, Optimise, and Partnership stages remain unpriced.
+- **Pricing itself.** Deliberately not revisited in this restructuring. Revisit once Fabien has spoken to 10-20 real prospects, per his own instruction, not before.
+- **Lead Management System and Growth Board**, from the original 16-product draft, remain unaddressed. Not part of the current 5-product structure; whether they resurface as Transformation examples or stay dropped is still open.
+- **US-market/currency positioning.** Still open, see `PRICING_STRATEGY.md` and `docs/ARCHITECTURAL_DECISIONS.md` ADR-010's Pending Decisions. USD remains live; Fabien's stated reasoning (2026-07-27) leans toward keeping USD given an increasingly US-oriented target market (ADU companies, agencies, and direct exposure via GQL), but this hasn't been formalised as a closed decision.
+- **Agency Partnerships pricing/terms**, see `agency-partnerships.html` and ADR-011, still routed to a Partner Strategy Call, not a published figure.

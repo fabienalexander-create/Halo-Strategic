@@ -1,5 +1,9 @@
 # Changelog
 
+## 2026-07-27 — Product journey restructured: Clarity → Strategy → Transformation → Partnership (ADR-014)
+
+Restructured the 6-stage/14-product model into 4 stages/5 products: Clarity (Health Check, Diagnostic), Strategy (Audit), Transformation (one flexible project, replacing five separately-named products), Partnership (one relationship, replacing four). "Implementation" renamed "Commercial Transformation" throughout. Added the governing sentence to `/product-journey`: "Not every client needs a Commercial Audit... not every Transformation requires an ongoing Strategic Partnership." `commercial-diagnostic.html` updated with a 90-minute session length and outcome-focused deliverables. **Every displayed price is unchanged** ($995 Diagnostic, $7,500+ Audit), a deliberate decision to separate positioning from pricing; pricing gets revisited after real prospect conversations, not in this pass. `docs/PRODUCT_SYSTEM.md`, `docs/PRODUCT_POSITIONING.md` rewritten; `docs/HALO_BIBLE.md` Section Ten carries a dated amendment (frozen document, no silent rewrite). See ADR-014.
+
 ## 2026-07-27 — Roadmap library started: CRM & Enquiry Automation
 
 New `docs/roadmap/` folder, a library of future-capability design documents deliberately not scheduled into current sprints. First entry: `CRM_AUTOMATION_ROADMAP.md`, a 7-phase plan (manual workflow through CRM, email automation, AI enquiry briefs, founder dashboard, proposal generation, knowledge base). Planning only, explicitly deferred, Phase 1 (Netlify Forms → email → Fabien, manual) is the only phase currently live. No implementation without a document being explicitly pulled out and scheduled. See `docs/roadmap/README.md`.
