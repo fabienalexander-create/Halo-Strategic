@@ -28,3 +28,8 @@
 /insights/where-commercial-resistance-actually-hides.html  /insights/where-commercial-resistance-actually-hides  301!
 /insights/why-agencies-partner-with-a-diagnostic.html  /insights/why-agencies-partner-with-a-diagnostic  301!
 /insights/what-changes-for-agency-client-relationships.html  /insights/what-changes-for-agency-client-relationships  301!
+
+# Internal knowledge base — never served publicly (ADR-015)
+/docs/*      /404.html   404!
+/tools/*     /404.html   404!
+/content/*   /404.html   404!
