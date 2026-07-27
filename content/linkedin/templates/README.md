@@ -39,3 +39,9 @@ Needs a local Chrome or Edge install (`render.js` checks both standard Windows i
 ## Where images end up
 
 `content/linkedin/generated/` — blocked from public serving along with the rest of `/content/` (see ADR-015). Reference the relevant `.png` in a post's `image_filename` frontmatter field once rendered.
+
+`render.js` also copies every rendered PNG to `Documents/Halo Strategic/09 Editorial & Content Engine/LinkedIn Images/`, since `content/linkedin/generated/` lives under the hidden `.claude` folder and is awkward to find in a normal file picker — this matters because attaching the image to LinkedIn's post composer cannot be automated (see below) and has to be done by hand from a visible folder.
+
+## A note on LinkedIn's post composer
+
+LinkedIn's "create post" modal doesn't expose its contents to accessibility-tree-based browser tools (confirmed 2026-07-27) — screenshots render it fine, but element-reference-based tools (needed for file uploads) only see the page behind it. Post text and links can still be typed in directly; the image attach step needs a human to click the photo icon and pick the file themselves, from the visible folder above.

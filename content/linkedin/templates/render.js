@@ -108,3 +108,16 @@ execFileSync(chromePath, [
 ]);
 
 console.log(`Wrote ${outPngPath}`);
+
+// Also drop a copy somewhere visible — content/linkedin/generated/ lives under the
+// hidden .claude folder, which is awkward to find in a normal file picker (e.g. when
+// attaching to LinkedIn's post composer, which cannot be automated, see README).
+const visibleDir = 'C:/Users/user/Documents/Halo Strategic/09 Editorial & Content Engine/LinkedIn Images';
+try {
+  if (!fs.existsSync(visibleDir)) fs.mkdirSync(visibleDir, { recursive: true });
+  const visiblePath = path.join(visibleDir, `${outputName}.png`);
+  fs.copyFileSync(outPngPath, visiblePath);
+  console.log(`Also copied to ${visiblePath}`);
+} catch (e) {
+  console.error(`Could not copy to visible folder: ${e.message}`);
+}
