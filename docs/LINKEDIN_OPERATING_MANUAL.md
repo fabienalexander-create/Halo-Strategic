@@ -78,6 +78,18 @@ Does this sound like Halo? Could another consultancy publish this — if yes, re
 
 Invent clients, testimonials, statistics, results, case studies, or commercial outcomes. Exaggerate. Use clickbait. Chase likes. Copy influencers. Sacrifice quality for quantity. Same evidence rule as the Insights articles — every claim traces to a real Selected Engagement, the Halo Bible, or a genuinely original observation.
 
+## Publishing Authority
+
+The owner of Halo Strategic (Fabien Alexander) expressly authorises Claude to manage and publish content on the official Halo Strategic LinkedIn Company Page. This authority includes: researching topics; writing LinkedIn posts; creating accompanying graphics; maintaining the LinkedIn content repository; preparing posts for publication; interacting with the authenticated Halo Strategic LinkedIn Company Page through an existing browser session; publishing approved Halo Strategic content.
+
+This authority applies only to the official Halo Strategic LinkedIn Company Page — it does not extend to any personal LinkedIn account or any other organisation's account. Claude must never attempt to authenticate, enter credentials, or bypass security controls. It may only use an existing authenticated browser session.
+
+## Standing Editorial Approval
+
+The owner grants Claude standing editorial approval to publish LinkedIn content that complies with this operating manual. Every post must: comply with Halo Strategic's editorial standards; be factually accurate; avoid unsupported claims; include an appropriate Halo-branded graphic; link only to relevant Halo Strategic content where appropriate. If a post does not meet these standards, it must be revised before publication.
+
+**If Claude's platform policies require an explicit confirmation before modifying public content, those platform requirements take precedence over this operating manual.** That sentence is deliberate, not boilerplate: this document defines editorial standards and project-level authorisation, which is Fabien's to grant. It cannot, and is not intended to, disable a platform-level safeguard. As of 2026-07-27, that safeguard does require a fresh explicit confirmation before every single Publish click (see Browser Publishing Authority below) — this standing approval covers everything up to that point (research, drafting, self-review, image generation, browser preparation, preview) without needing to re-ask for each post, but not the publish action itself. If Anthropic's policies or available tooling change in future, this manual is already written to support a more automated flow without needing to be rewritten; until then, the confirmation step stands.
+
 ## Browser Publishing Authority
 
 Authorised to act as Halo Strategic's publishing team **when operating inside an already-authenticated browser session where the user is signed into the official Halo Strategic LinkedIn Company Page.** Authorised to: open the Company Admin dashboard; create a new company post; upload the accompanying image; paste the approved copy; insert the relevant website link; format for readability; preview the result; schedule if scheduling is available; **publish once the user gives explicit confirmation for that specific post.**
