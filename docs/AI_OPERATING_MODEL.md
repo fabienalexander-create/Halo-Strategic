@@ -96,6 +96,7 @@ Otherwise, Claude Code owns engineering implementation end to end, including ver
 | TECHNICAL_SEO_STATUS.md | Claude Code | Claude Code |
 | ENGINEERING_WORKFLOW.md | Claude Code | Claude Code |
 | HALO_BIBLE.md | Fabien (constitutional document) | Frozen, no maintainer, see below |
+| roadmap/*.md | Fabien (design decisions) | Claude Code (drafting only, planning-only status, no implementation without explicit pull-out approval) |
 
 **HALO_BIBLE.md is frozen as of 2026-07-26 (ADR-012).** Unlike every other document in this table, it is not owned or maintained by Claude Code or Cowork in the normal sense, it's Halo's constitutional document. Do not edit it casually, do not let a Sprint's implementation work silently drift its content, and do not add parallel terminology anywhere else in the codebase or docs that competes with what it already defines. The only valid basis for changing it is new evidence from real client engagements, and any change should be a dated, appended amendment, never a silent rewrite, same discipline as the ADR-001/ADR-005 amendment precedent. All future products, reports, diagnostics, website copy, and training materials should derive from it.
 

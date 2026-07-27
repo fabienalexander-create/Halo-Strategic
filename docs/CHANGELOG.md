@@ -1,5 +1,9 @@
 # Changelog
 
+## 2026-07-27 — Roadmap library started: CRM & Enquiry Automation
+
+New `docs/roadmap/` folder, a library of future-capability design documents deliberately not scheduled into current sprints. First entry: `CRM_AUTOMATION_ROADMAP.md`, a 7-phase plan (manual workflow through CRM, email automation, AI enquiry briefs, founder dashboard, proposal generation, knowledge base). Planning only, explicitly deferred, Phase 1 (Netlify Forms → email → Fabien, manual) is the only phase currently live. No implementation without a document being explicitly pulled out and scheduled. See `docs/roadmap/README.md`.
+
 ## 2026-07-26 — Logo sizing increase and brand asset cleanup (ADR-013)
 
 Header icon increased 28px → 36px (wordmark and gap unchanged, per Fabien's correction after the original instruction's baseline didn't match the live CSS). Fixed two mislabeled asset files (`halo-icon-light.svg`, `halo-lockup-light.svg` both contained navy colours despite their names) and replaced a corrupted `halo-lockup-navy.svg` (actually a 1.69MB PNG with embedded C2PA metadata, not a valid SVG) with a clean regenerated version. Every page's inline header/footer logo SVG replaced with `<img>` references to the canonical asset files, explicit width/height attributes to prevent layout shift. See docs/ARCHITECTURAL_DECISIONS.md (ADR-013).
