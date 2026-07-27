@@ -10,12 +10,12 @@
 <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon-180x180.png">
 <link rel="manifest" href="/site.webmanifest">
 <meta name="theme-color" content="#101A30">
-<meta name="description" content="Ready to talk? Book a free 45-minute Discovery Call with Halo Strategic, or reach us directly by email or LinkedIn. We reply within one business day.">
+<meta name="description" content="Ready to talk? Book a Commercial Diagnostic, a free Discovery Call, or reach Halo Strategic directly by email or LinkedIn. We reply within one business day.">
 <link rel="canonical" href="https://halostrategic.com/contact">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://halostrategic.com/contact">
 <meta property="og:title" content="Book a Discovery Call | Halo Strategic">
-<meta property="og:description" content="Ready to talk? Book a free 45-minute Discovery Call with Halo Strategic, or reach us directly by email or LinkedIn. We reply within one business day.">
+<meta property="og:description" content="Ready to talk? Book a Commercial Diagnostic, a free Discovery Call, or reach Halo Strategic directly by email or LinkedIn. We reply within one business day.">
 <meta property="og:image" content="https://halostrategic.com/assets/og-default-1200x630.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
@@ -299,7 +299,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   <div class="container">
     <div class="eyebrow" style="color:#D8BE8F;">Contact</div>
     <h1 style="font-size:2.6rem;">Let's start with a conversation.</h1>
-    <p class="lead" style="max-width:38em;">Whether you're ready to book a Discovery Call or just have a general question, here's every way to reach Halo Strategic directly.</p>
+    <p class="lead" style="max-width:38em;">Whether you're ready to book a Commercial Diagnostic, want a Discovery Call first, or just have a general question, here's every way to reach Halo Strategic directly.</p>
   </div>
 </section>
 
@@ -354,7 +354,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <label for="cp-reason">What's this about?</label>
         <select id="cp-reason" name="reason" required>
           <option value="">Choose one</option>
-          <option value="discovery-call">Discovery Call enquiry</option>
+          <option value="diagnostic-booking">Book a Commercial Diagnostic ($995)</option>
+          <option value="audit-enquiry">Commercial Audit enquiry</option>
+          <option value="discovery-call">Discovery Call (not sure yet)</option>
           <option value="general">General enquiry</option>
         </select>
       </div>
@@ -419,8 +421,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <script>
   // Read ?service= from the URL (set by the Diagnostic/Audit page CTAs) and
   // store it in the hidden field so it travels with the form submission.
-  // If a service is present, default the "reason" dropdown to Discovery Call,
-  // since arriving via those CTAs implies wanting to talk, not a general query.
+  // Default the "reason" dropdown to match the specific paid service the
+  // visitor was already looking at, rather than collapsing it into a
+  // generic Discovery Call enquiry.
   (function(){
     var params = new URLSearchParams(window.location.search);
     var service = params.get('service');
@@ -428,7 +431,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       var serviceField = document.getElementById('cp-service');
       if (serviceField) serviceField.value = service;
       var reasonField = document.getElementById('cp-reason');
-      if (reasonField && !reasonField.value) reasonField.value = 'discovery-call';
+      if (reasonField && !reasonField.value) {
+        reasonField.value = service === 'diagnostic' ? 'diagnostic-booking' : 'audit-enquiry';
+      }
     }
   })();
 
