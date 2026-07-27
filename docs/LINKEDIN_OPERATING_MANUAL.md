@@ -70,6 +70,12 @@ Every post requires an image. No exceptions. **Before creating any new design, s
 
 `content/linkedin/{draft,scheduled,published,archived}/` — status-based, pillar tracked per-post. Every post file includes: title, publish date, status, content pillar, LinkedIn copy, image prompt, website destination, suggested hashtags, publishing notes, image filename. Full folder mechanics and the frontmatter spec are in `content/linkedin/README.md`.
 
+## Check before drafting: the Page itself is editorial context
+
+Before drafting any new LinkedIn post, inspect the most recently published posts on the Halo Strategic Company Page (`linkedin.com/company/142913204/admin/page-posts/published/`). Maintain a working sense of recent themes, announcements, and campaigns — treat the Page's actual history as part of the editorial context, not just this repository's records. Never publish content that materially duplicates an existing post. If a planned post overlaps substantially with something already published, rewrite it or replace it with a different topic aligned to the content strategy.
+
+This matters because the Page can have a real posting history this repository doesn't know about — confirmed 2026-07-27, when 5 posts already existed on the Page (all dated 2026-07-22) that no draft file or memory record referenced. A planned launch-announcement post was dropped as a direct duplicate as a result. Checking first is what caught it.
+
 ## Self-review, before every post is considered complete
 
 Does this sound like Halo? Could another consultancy publish this — if yes, rewrite. Would this genuinely help a founder? Would a CEO respect this? Does it reinforce Halo's philosophy? Would it strengthen Halo's reputation — if not, rewrite.

@@ -1,7 +1,7 @@
 ---
 title: "Halo Strategic's LinkedIn page is now live"
 publish_date: 2026-07-27
-status: draft
+status: archived — confirmed duplicate of an existing 2026-07-22 launch post already live on the Page, never posted
 pillar: behind-halo
 format: short-essay
 weekly_theme: none
