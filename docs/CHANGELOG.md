@@ -1,5 +1,9 @@
 # Changelog
 
+## 2026-07-26 — Logo sizing increase and brand asset cleanup (ADR-013)
+
+Header icon increased 28px → 36px (wordmark and gap unchanged, per Fabien's correction after the original instruction's baseline didn't match the live CSS). Fixed two mislabeled asset files (`halo-icon-light.svg`, `halo-lockup-light.svg` both contained navy colours despite their names) and replaced a corrupted `halo-lockup-navy.svg` (actually a 1.69MB PNG with embedded C2PA metadata, not a valid SVG) with a clean regenerated version. Every page's inline header/footer logo SVG replaced with `<img>` references to the canonical asset files, explicit width/height attributes to prevent layout shift. See docs/ARCHITECTURAL_DECISIONS.md (ADR-013).
+
 ## 2026-07-26 — Halo Bible v1.0 frozen (ADR-012)
 
 Compiled all ten Bible sections, previously scattered across scratchpad files, into `docs/HALO_BIBLE.md` and committed it to the repo as Halo's constitutional document. No casual edits going forward; changes require real client evidence and must be dated amendments. `docs/AI_OPERATING_MODEL.md` updated with the document's special governance status. Caught and corrected one real staleness during compilation: the Glossary's Commercial Diagnostic/Audit entries still carried pre-Sprint-5.6 pricing. See docs/ARCHITECTURAL_DECISIONS.md (ADR-012) and docs/IMPLEMENTATION_LOG.md.
