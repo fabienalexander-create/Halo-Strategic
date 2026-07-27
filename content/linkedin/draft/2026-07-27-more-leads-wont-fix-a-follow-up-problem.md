@@ -9,6 +9,7 @@ word_count_target: 100-220
 hashtags: [CommercialStrategy, GrowthDiagnostics, B2BGrowth]
 website_link: https://halostrategic.com
 source: "Selected Engagements — Fixing Sales Follow-up Before Buying More Leads (#sales-follow-up)"
+image_filename: "generated/2026-07-27-more-leads-wont-fix-a-follow-up-problem.png"
 ---
 
 ## LinkedIn copy
@@ -32,7 +33,7 @@ https://halostrategic.com
 
 ## Image prompt
 
-Premium, minimal quote card. White background, French Racing Blue accent (single thin rule or the numeral "14→1" in accent colour), simple sans-serif typography, generous whitespace. Primary text: "14 leads. 1 booked visit. Still think it's a lead problem?" Small Halo wordmark bottom-right, no stock photography, no icons, no gradient. Executive feel, closer to a Harvard Business Review pull-quote than a social template.
+Generated via `content/linkedin/templates/render.js` using the `quote-card` template (navy `#101A30` background, bronze `#B08D57`/`#D8BE8F` accents, Fraunces/Inter/IBM Plex Mono — matches the live website's actual palette, superseding the original French-Racing-Blue/white prompt). Output: `generated/2026-07-27-more-leads-wont-fix-a-follow-up-problem.png`.
 
 ## Notes
 

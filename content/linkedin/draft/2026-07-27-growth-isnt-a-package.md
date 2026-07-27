@@ -9,6 +9,7 @@ word_count_target: 50
 hashtags: [CommercialDiagnosis, FounderThinking]
 website_link: https://halostrategic.com
 source: "Halo Bible Ch. 4-5 (growth as recovery-then-creation; diagnosis over service-selling)"
+image_filename: "generated/2026-07-27-growth-isnt-a-package.png"
 ---
 
 ## LinkedIn copy
@@ -23,7 +24,7 @@ More commercial thinking: https://halostrategic.com
 
 ## Image prompt
 
-Premium, minimal one-liner card. White background, single French Racing Blue rule underlining the word "Diagnosis." Large, restrained serif or sans-serif type for the line "Everything else is a guess with a nice slide deck." No icons, no photography, no gradients. Should read like a page torn from a well-designed business book, not a social template.
+Generated via `content/linkedin/templates/render.js` using the `quote-card` template, same navy/bronze palette as the site. Output: `generated/2026-07-27-growth-isnt-a-package.png`.
 
 ## Notes
 

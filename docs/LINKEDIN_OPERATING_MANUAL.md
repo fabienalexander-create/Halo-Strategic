@@ -58,11 +58,13 @@ Never force a CTA. "Explore more thinking: https://halostrategic.com" or "Read t
 
 Every post requires an image. No exceptions. **Before creating any new design, search the repository (`content/linkedin/` and any existing brand assets) for existing Halo graphics, templates, diagrams, or quote cards — extend the existing style rather than reinventing it. If nothing exists yet, create reusable master templates first**, don't design one-off assets per post.
 
-**Style:** premium — Harvard Business Review / Linear / Stripe / McKinsey, not Canva, not influencer graphics, not generic AI art. White backgrounds, French Racing Blue accents, dark charcoal typography, minimal, executive, professional, lots of whitespace.
+**Style:** premium — Harvard Business Review / Linear / Stripe / McKinsey, not Canva, not influencer graphics, not generic AI art. **Palette updated 2026-07-27:** navy background with bronze/gold accents, matching the live website's existing CSS palette (`--bronze`, dark navy tones) — not the white/French Racing Blue originally specified in v1.0/v2.0. Decided after the first real image came back in the site's actual colours; brand consistency across the website and LinkedIn was judged more valuable than a distinct LinkedIn-only sub-brand. White wordmark and body text, bronze/gold for headline emphasis and accent elements (badges, rules, key numbers). Minimal, executive, professional, generous whitespace — those principles are unchanged, only the specific colours are.
 
 **Types to rotate between:** quote cards, commercial frameworks, process diagrams, comparison graphics, flowcharts, checklists, decision trees, carousel slides, commercial illustrations, annotated diagrams, simple executive graphics.
 
-(Production note, unchanged from v1.0: no image-generation tool is available in this environment as of 2026-07-27. Each post's file captures an Image prompt; the actual asset is currently supplied by Fabien per-post until that gap is resolved.)
+**Production note, resolved 2026-07-27:** images are produced by a reusable HTML/CSS template system, not an AI image generator or per-post manual creation. Eight templates live in `content/linkedin/templates/` (quote-card, stat-card, framework, checklist, timeline, comparison, flowchart, carousel), each rendered to PNG via headless Chrome (`node render.js <template> <data.json> <output-name>`, see that folder's own README). This gives pixel-perfect, consistent branding using Halo's actual fonts and hex values rather than an AI model's interpretation of a prompt.
+
+**Design bar:** every visual must be recognisably Halo even with the logo removed — through typography, spacing, and layout alone, the way Stripe, Linear, and McKinsey graphics are identifiable without their logos. The shared template shell (consistent top bar, type treatment, footer position) exists specifically to hit this bar.
 
 ## Repository
 

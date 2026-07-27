@@ -1,0 +1,49 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html, body { width:1200px; height:1200px; background:#101A30; overflow:hidden; }
+  .card { width:1200px; height:1200px; background:#101A30; display:flex; flex-direction:column; padding:90px; position:relative; }
+  .topbar { position:absolute; top:0; left:0; right:0; height:10px; background:#B08D57; }
+  .eyebrow { font-family:'IBM Plex Mono', monospace; font-size:15px; letter-spacing:0.18em; text-transform:uppercase; color:#101A30; background:#D8BE8F; display:inline-block; padding:8px 18px; border-radius:20px; margin-bottom:36px; width:fit-content; }
+  h1 { font-family:'Fraunces', serif; font-weight:600; font-size:48px; line-height:1.2; color:#F6F6F3; margin-bottom:56px; max-width:1000px; }
+  .columns { display:flex; flex:1; gap:60px; }
+  .col { flex:1; display:flex; flex-direction:column; }
+  .col-head { font-family:'IBM Plex Mono', monospace; font-size:16px; letter-spacing:0.12em; text-transform:uppercase; padding-bottom:20px; margin-bottom:24px; border-bottom:1px solid rgba(246,246,243,0.2); }
+  .col.left .col-head { color:#8FA0BD; }
+  .col.right .col-head { color:#D8BE8F; }
+  .row { font-family:'Inter', sans-serif; font-size:24px; line-height:1.4; color:#F6F6F3; opacity:0.9; margin-bottom:26px; }
+  .row.empty { display:none; }
+  .col.left .row { opacity:0.65; }
+  .footer { position:absolute; bottom:70px; left:90px; right:90px; display:flex; align-items:center; justify-content:space-between; border-top:1px solid rgba(246,246,243,0.18); padding-top:28px; }
+  .wordmark { font-family:'IBM Plex Mono', monospace; font-size:17px; letter-spacing:0.14em; text-transform:uppercase; color:#F6F6F3; }
+  .domain { font-family:'IBM Plex Mono', monospace; font-size:15px; letter-spacing:0.1em; text-transform:uppercase; color:#B08D57; }
+</style></head>
+<body>
+  <div class="card">
+    <div class="topbar"></div>
+    <div class="eyebrow">{{EYEBROW}}</div>
+    <h1>{{TITLE}}</h1>
+    <div class="columns">
+      <div class="col left">
+        <div class="col-head">{{LEFT_HEAD}}</div>
+        <div class="row {{LROW1_EMPTY}}">{{LROW1}}</div>
+        <div class="row {{LROW2_EMPTY}}">{{LROW2}}</div>
+        <div class="row {{LROW3_EMPTY}}">{{LROW3}}</div>
+        <div class="row {{LROW4_EMPTY}}">{{LROW4}}</div>
+      </div>
+      <div class="col right">
+        <div class="col-head">{{RIGHT_HEAD}}</div>
+        <div class="row {{RROW1_EMPTY}}">{{RROW1}}</div>
+        <div class="row {{RROW2_EMPTY}}">{{RROW2}}</div>
+        <div class="row {{RROW3_EMPTY}}">{{RROW3}}</div>
+        <div class="row {{RROW4_EMPTY}}">{{RROW4}}</div>
+      </div>
+    </div>
+    <div class="footer">
+      <div class="wordmark">HALO STRATEGIC</div>
+      <div class="domain">halostrategic.com</div>
+    </div>
+  </div>
+</body></html>
