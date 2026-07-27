@@ -1,7 +1,7 @@
 ---
 title: "More leads won't fix a follow-up problem"
 publish_date: 2026-07-27
-status: draft
+status: published
 pillar: diagnosis-before-prescription
 format: myth
 weekly_theme: commercial-myth
@@ -10,6 +10,8 @@ hashtags: [CommercialStrategy, GrowthDiagnostics, B2BGrowth]
 website_link: https://halostrategic.com
 source: "Selected Engagements — Fixing Sales Follow-up Before Buying More Leads (#sales-follow-up)"
 image_filename: "generated/2026-07-27-more-leads-wont-fix-a-follow-up-problem.png"
+linkedin_url: "https://www.linkedin.com/company/142913204/admin/page-posts/published/ (exact permalink not captured — visible as the top post, published 2026-07-27, 'Halo Strategic' page)"
+published_at: "2026-07-27, confirmed live via Page posts admin view, image and copy verified rendering correctly"
 ---
 
 ## LinkedIn copy
