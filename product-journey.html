@@ -95,7 +95,7 @@
   .tag-row{ display:flex; gap:12px; flex-wrap:wrap; margin-top:24px; }
   .tag{ font-family:'IBM Plex Mono',monospace; font-size:0.85rem; color:var(--navy-deep); background:var(--paper); border:1px solid var(--border); border-radius:999px; padding:9px 18px; }
 
-  .stage{ padding:56px 0; border-bottom:1px solid var(--border); }
+  .stage{ padding:56px 0; border-bottom:1px solid var(--border); scroll-margin-top:100px; }
   .stage:last-of-type{ border-bottom:none; }
   .stage-num{ font-family:'IBM Plex Mono',monospace; font-size:0.85rem; color:var(--bronze); }
 
@@ -197,7 +197,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
 <div class="container">
 
-  <div class="stage">
+  <div class="stage" id="clarity">
     <div class="eyebrow"><span class="stage-num">Clarity</span></div>
     <h2 class="section-title">Understand what is actually happening.</h2>
     <div class="card-grid two">
@@ -218,7 +218,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     </div>
   </div>
 
-  <div class="stage">
+  <div class="stage" id="strategy">
     <div class="eyebrow"><span class="stage-num">Strategy</span></div>
     <h2 class="section-title">Go deep, build the roadmap.</h2>
     <div class="card-grid two">
@@ -232,7 +232,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     </div>
   </div>
 
-  <div class="stage">
+  <div class="stage" id="transformation">
     <div class="eyebrow"><span class="stage-num">Transformation</span></div>
     <h2 class="section-title">Remove the highest-priority constraint.</h2>
     <p style="font-size:1.05rem;">Not "Implementation." Implementation sounds like installing software. Commercial Transformation is a project scoped to the constraint your Audit actually found, never sold without one behind it.</p>
@@ -253,7 +253,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     </div>
   </div>
 
-  <div class="stage">
+  <div class="stage" id="partnership">
     <div class="eyebrow"><span class="stage-num">Partnership</span></div>
     <h2 class="section-title">An ongoing commercial adviser, if you want one.</h2>
     <div class="card-grid two">
