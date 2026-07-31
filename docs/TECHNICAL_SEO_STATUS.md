@@ -3,7 +3,7 @@
 Status: Living Document
 Owner: Claude Browser
 Maintainer: Claude Browser
-Last Updated: 2026-07-26
+Last Updated: 2026-07-31
 
 ## Purpose
 
@@ -21,8 +21,8 @@ The table below records implementation status only. The Description column is a 
 
 | # | Finding | Implementation Status | Verified | Regression |
 |---|---|---|---|---|
-| 1 | Sitemap missing | Not started, Sprint 2 per ROADMAP.md | No | N/A |
-| 2 | Robots.txt missing | Not started, Sprint 2 per ROADMAP.md | No | N/A |
+| 1 | Sitemap missing | Fully implemented since 2026-07-26 (Sprint 2), now 29 URLs including all Insights articles; `diagnostic-landing` deliberately excluded (noindex, ADR-018) | Yes, live-checked 2026-07-31: 29 `<loc>` entries present | None detected |
+| 2 | Robots.txt missing | Fully implemented since 2026-07-26 (Sprint 2): `Allow: /` for all agents, points to sitemap.xml | Yes, live-checked 2026-07-31 | None detected |
 | 3 | Meta descriptions present and page specific | Pass, no remediation needed | Yes, per TECHNICAL_SEO.md | N/A |
 | 4 | Canonical tags present and correct | Pass, no remediation needed | Yes, per TECHNICAL_SEO.md | N/A |
 | 5 | OG/Twitter tags share one generic image | Not started, not yet scheduled to a sprint | No | N/A |
@@ -31,8 +31,8 @@ The table below records implementation status only. The Description column is a 
 | 8 | Nav/footer consistency, two pages out of sync | Fully implemented, 12 of 12 pages. terms-and-conditions.html and 404.html brought onto the unified nav/footer template 2026-07-26, completing what Sprint 0 started | Yes, nav-links and footer Sitemap blocks diffed byte-identical against privacy-policy.html's verified-correct blocks | None detected |
 | 9 | Broken or placeholder links | Pass, none found | Yes, per TECHNICAL_SEO.md | N/A |
 | 10 | Image alt text correct | Pass, no remediation needed | Yes, per TECHNICAL_SEO.md | N/A |
-| 11 | Favicon/manifest declarations inconsistent | Not started, Sprint 2 per ROADMAP.md | No | N/A |
-| 12 | Core Web Vitals not assessed | Not started, Sprint 2 per ROADMAP.md, requires tooling not available in the audit environment | No | N/A |
+| 11 | Favicon/manifest declarations inconsistent | Fully implemented 2026-07-31: the four pages missing the block (404.html, cookie-policy.html, privacy-policy.html, terms-and-conditions.html) all brought onto the same favicon/manifest/theme-color declarations already present on the other 12 pages | Yes, block diffed identical against about.html's verified-correct version | None detected |
+| 12 | Core Web Vitals not assessed | Partially addressed 2026-07-31: no Lighthouse/PageSpeed tooling available in this environment (still genuinely not assessed end-to-end), but one concrete, high-impact issue found and fixed by direct inspection: `fabien-alexander.png` (used on about.html and diagnostic-landing.html) was a 1.65MB PNG at 1537×1023 for what displays as a photo, not a graphic with flat colour/text needing lossless compression. Re-encoded as JPEG (quality 82) via local image processing, producing `fabien-alexander.jpg` at 109.5KB (~15x smaller), visually verified for artifacts, all three `<img>` references updated. This was a real, direct LCP risk on the new Ads landing page specifically, not a speculative finding. Recommend a real PageSpeed Insights / Lighthouse run once Fabien can do so from his own machine, to catch anything this manual pass couldn't (JS execution time, font-loading strategy, etc.) | Yes, image dimensions and lack of artifacts confirmed visually | None detected |
 | 13 | cookie-policy.html and thank-you.html not covered by the audit | Closed 2026-07-26: both source-inspected directly, both already fully compliant (correct GTM, nav, footer, meta tags), no remediation needed | Yes, nav-links, footer Sitemap, and GTM blocks diffed byte-identical against privacy-policy.html; meta tag pattern (description, canonical, OG, Twitter) confirmed present on both | N/A |
 
 ## Note
