@@ -3,17 +3,19 @@
 Status: Living Document
 Owner: Claude Browser
 Maintainer: Claude Browser
-Last Updated: 2026-07-27
+Last Updated: 2026-07-31
 
 ## Sprint
 
-Product journey repositioned (ADR-014); Sprint 6 — Productisation in progress (Experience + Facilitator Guide done)
+Product journey repositioned (ADR-014); Sprint 6 — Productisation in progress (Experience + Facilitator Guide done). Google Ads landing page built (ADR-018); Phase 1 of the post-launch roadmap (Google ecosystem setup: GA4, Search Console, Business Profile, GTM publish) remains on Fabien's side before ad spend can begin.
 
 ## Status
 
 Sprint 2 and Sprint 3 (Insights Foundation) are complete (see Completed). Sprint 5.6 is now implemented on the live site, not just documented: Commercial Diagnostic repriced to $995, Commercial Audit repositioned to $7,500+ (scope-dependent), a new Commercial Health Check page (free self-assessment quiz) and a new Product Journey page (the full 6-stage ecosystem) added, nav/footer updated across all 16 pages, and the Halo Clarity Guarantee published on the Diagnostic page. Approved directly by Fabien as Product Owner, 2026-07-26: "Approved by Product Owner... Proceed with implementation." Open items: US-market/regional-pricing question still undecided (`pricing-config.js`, ADR-010, supports adding currencies later, none added yet), Guarantee refund mechanics are placeholder copy per explicit instruction not to delay for legal review, two products dropped from an earlier draft (Lead Management System, Growth Board) remain unconfirmed, Quarterly Commercial Review vs. Constraint Review overlap unresolved, and every Stage 3–6 product beyond Diagnostic/Audit remains unpriced (shown as "by proposal" or "retainer" on `/product-journey`). The Halo Bible's foundation sections (Philosophy, Core Principles, Commercial Leakage Framework, Master Framework, Revenue Friction Map, Visual Language, Glossary) remain settled source of truth and were not rewritten. Growth Maturity Model and Halo Metrics remain the two Bible sections still to be originated. Framework Library, FAQ Hub, and Resources remain correctly out of scope.
 
 ## Completed (prior sprints)
+
+Google Ads landing page (2026-07-31, ADR-018): built `diagnostic-landing.html` at `/diagnostic-landing`, a standalone page for cold paid traffic, no shared nav/footer links, `noindex`, one repeated CTA including a mobile sticky bar, 10-section structure per Fabien's brief (Hero through Final CTA), embedded Netlify form tracked separately from the main contact form. Hero headline built problem-led per his instruction, substituting "another five figures" for his "£10,000" example to hold the site's USD-only pricing consistent. Founder Credibility section redesigned from a circular-headshot layout to a full-width photo once the only available image turned out to be a wide conference-stage shot, not a headshot. Companion notes (trust signals, Ads message-match recommendations, CRO notes, suggested A/B tests) written to `docs/GOOGLE_ADS_LANDING_PAGE.md`. See docs/ARCHITECTURAL_DECISIONS.md ADR-018.
 
 Founder authority + positive positioning copy (2026-07-27, ADR-017): following a "how would McKinsey/Bain differ" review, added a founder byline above the homepage H1 ("Built by Fabien Alexander, founder of Halo Strategic," linked to `/about`), and replaced two negation-based sections (homepage "Halo doesn't sell campaigns/reporting/decisions," About's "What Halo Is Not") with positive "X before Y" claims echoing the First Law language already used elsewhere. Three related ideas from the same review deliberately deferred, see Pending Decisions: reframing the Health Check away from "quiz" language, revisiting the Clarity Guarantee once Halo wins larger engagements, and a possible category rename to "Commercial Diagnostics for Growth Businesses." See docs/ARCHITECTURAL_DECISIONS.md ADR-017.
 
