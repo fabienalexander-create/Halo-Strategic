@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Frameworks | Halo Strategic</title>
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon-180x180.png">
+<link rel="manifest" href="/site.webmanifest">
+<meta name="theme-color" content="#101A30">
+<meta name="description" content="Halo Strategic's commercial frameworks: repeatable ways of diagnosing commercial problems and helping founder-led businesses make better decisions.">
+<link rel="canonical" href="https://halostrategic.com/frameworks">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://halostrategic.com/frameworks">
+<meta property="og:title" content="Frameworks | Halo Strategic">
+<meta property="og:description" content="Halo Strategic's commercial frameworks: repeatable ways of diagnosing commercial problems and helping founder-led businesses make better decisions.">
+<meta property="og:image" content="https://halostrategic.com/assets/og-default-1200x630.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Frameworks | Halo Strategic">
+<meta name="twitter:image" content="https://halostrategic.com/assets/og-default-1200x630.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#1B2A4A; --navy-deep:#101A30; --bronze:#B08D57; --bronze-light:#D8BE8F;
+    --slate:#44546A; --ink:#1A1D24; --paper:#F6F6F3; --surface:#FFFFFF; --border:#E1E3DE;
+    --green:#4B6B4F; --green-bg:#E7EDE6; --amber:#8F6E28; --amber-bg:#F2EAD9; --red:#8C4438; --red-bg:#F2E2DE;
+    --radius-sm:6px; --radius-md:8px; --radius-lg:12px;
+    --ease: cubic-bezier(0.4,0,0.2,1);
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0; background:var(--paper); color:var(--ink);
+    font-family:'Inter',sans-serif; font-size:17px; line-height:1.65;
+    -webkit-font-smoothing:antialiased;
+  }
+  ::selection{ background:var(--bronze-light); color:var(--navy-deep); }
+  h1,h2,h3{ font-family:'Fraunces',serif; font-weight:500; color:var(--navy-deep); margin:0; letter-spacing:-0.01em; }
+  a{ color:inherit; }
+  .container{ max-width:1180px; margin:0 auto; padding:0 32px; }
+  .mono{ font-family:'IBM Plex Mono',monospace; }
+
+  header{ position:sticky; top:0; z-index:100; background:rgba(246,246,243,0.92); backdrop-filter:blur(8px); border-bottom:1px solid var(--border); }
+  .navbar{ display:flex; align-items:center; justify-content:space-between; padding:22px 32px; max-width:1180px; margin:0 auto; }
+  .logo{ font-family:'Fraunces',serif; font-size:1.35rem; font-weight:600; color:var(--navy-deep); text-decoration:none; display:flex; align-items:center; gap:12px; letter-spacing:0.01em; white-space:nowrap; }
+  .logo-mark{ width:36px; height:36px; flex:none; display:block; }
+  .nav-links{ display:flex; gap:21px; list-style:none; margin:0; padding:0; flex-wrap:wrap; }
+  .nav-links a{ text-decoration:none; font-size:0.92rem; color:var(--slate); font-weight:500; transition:color 160ms var(--ease); }
+  .nav-links a:hover{ color:var(--navy-deep); }
+  .nav-links a.active{ color:var(--navy-deep); font-weight:600; }
+  .nav-right{ display:flex; align-items:center; gap:24px; }
+  .nav-toggle{ display:none; background:none; border:none; cursor:pointer; padding:12px; }
+  .nav-toggle span{ display:block; width:22px; height:2px; background:var(--navy-deep); margin:5px 0; }
+
+  .btn{
+    font-family:'Inter',sans-serif; font-size:0.95rem; font-weight:600; padding:13px 24px;
+    border-radius:var(--radius-md); cursor:pointer; border:1px solid transparent;
+    transition:background 160ms var(--ease), border-color 160ms var(--ease), color 160ms var(--ease);
+    text-decoration:none; display:inline-block;
+  }
+  .btn-primary{ background:var(--navy); color:#fff; }
+  .btn-primary:hover{ background:var(--navy-deep); }
+  .btn-bronze{ background:var(--bronze); color:var(--navy-deep); font-weight:700; }
+  .btn-bronze:hover{ background:var(--bronze-light); }
+
+  section{ padding:96px 0; }
+  section.tight{ padding:64px 0; }
+  .eyebrow{ font-family:'IBM Plex Mono',monospace; font-size:0.78rem; color:var(--bronze); text-transform:uppercase; letter-spacing:0.12em; margin-bottom:16px; }
+  h2.section-title{ font-size:2.1rem; line-height:1.2; max-width:20em; margin-bottom:20px; }
+  p.lead{ font-size:1.2rem; color:var(--slate); max-width:38em; margin:0 0 16px; }
+  p{ max-width:42em; }
+
+  .hero{ padding:130px 0 100px; background:var(--navy-deep); position:relative; overflow:hidden; }
+  .hero .container{ position:relative; z-index:2; }
+  .hero h1{ font-size:3.1rem; line-height:1.15; max-width:18em; margin-bottom:28px; color:#fff; }
+  .hero p.lead{ margin-bottom:36px; color:#C7CBD4; }
+
+  .pull{ font-family:'Fraunces',serif; font-weight:500; font-size:1.6rem; line-height:1.4; color:var(--navy-deep); border-left:3px solid var(--bronze); padding:4px 0 4px 28px; margin:32px 0; max-width:34em; }
+
+  .band-dark{ background:var(--navy-deep); color:#EDEEF0; }
+  .band-dark .eyebrow{ color:var(--bronze-light); }
+  .band-dark h2.section-title{ color:#fff; }
+  .band-dark p{ color:#C7CBD4; }
+  .band-dark .pull{ color:#fff; border-left-color:var(--bronze-light); }
+
+  .card-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:24px; margin-top:24px; }
+  .card-grid.two{ grid-template-columns:repeat(2,1fr); }
+  .card{ background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-lg); padding:28px; }
+  .card .k{ font-family:'IBM Plex Mono',monospace; font-size:0.72rem; color:var(--bronze); text-transform:uppercase; letter-spacing:0.08em; margin-bottom:10px; }
+  .card h3{ font-size:1.15rem; margin-bottom:10px; }
+  .card p{ font-size:0.95rem; color:var(--slate); margin:0 0 12px; }
+  .card a.readmore{ display:inline-block; font-size:0.9rem; color:var(--bronze); text-decoration:underline; text-underline-offset:3px; font-weight:600; }
+  .card .status{ display:inline-block; font-family:'IBM Plex Mono',monospace; font-size:0.72rem; text-transform:uppercase; letter-spacing:0.06em; padding:4px 10px; border-radius:999px; margin-top:6px; }
+  .card .status.open{ background:var(--amber-bg); color:var(--amber); }
+
+  .fw-block{ padding:56px 0; border-bottom:1px solid var(--border); scroll-margin-top:100px; }
+  .fw-block:last-of-type{ border-bottom:none; }
+  .fw-num{ font-family:'IBM Plex Mono',monospace; font-size:0.85rem; color:var(--bronze); }
+
+  .page-table{ width:100%; border-collapse:collapse; margin:24px 0; font-size:0.95rem; }
+  .page-table th, .page-table td{ text-align:left; padding:14px 16px; border-bottom:1px solid var(--border); vertical-align:top; }
+  .page-table th{ font-family:'IBM Plex Mono',monospace; font-size:0.72rem; text-transform:uppercase; letter-spacing:0.06em; color:var(--slate); }
+
+  .step-row{ display:flex; gap:16px; margin:28px 0; flex-wrap:wrap; }
+  .step-row .step{ flex:1; min-width:130px; }
+  .step-row .step .n{ font-family:'IBM Plex Mono',monospace; font-size:1.2rem; font-weight:600; color:var(--bronze); margin-bottom:6px; }
+  .step-row .step h4{ font-size:0.95rem; margin-bottom:4px; color:var(--navy-deep); }
+  .step-row .step p{ font-size:0.85rem; color:var(--slate); margin:0; }
+
+  .level-row{ border-left:3px solid var(--border); padding:4px 0 4px 20px; margin:18px 0; }
+  .level-row.active{ border-left-color:var(--bronze); }
+  .level-row h4{ font-size:1rem; margin-bottom:4px; color:var(--navy-deep); }
+  .level-row p{ font-size:0.92rem; color:var(--slate); margin:0; }
+
+  .final-cta{ text-align:left; background:var(--navy-deep); color:#fff; border-radius:var(--radius-lg); padding:56px; margin:0 32px; }
+  section.final-cta{ background:var(--navy-deep); color:#fff; border-radius:0; margin:0; padding:96px 0; }
+  section.final-cta h2.section-title{ color:#fff; }
+  section.final-cta p{ color:#C7CBD4; }
+
+  footer{ border-top:1px solid var(--border); padding:56px 0 40px; margin-top:40px; }
+  .footer-grid{ display:grid; grid-template-columns:2fr 1fr 1fr; gap:32px; margin-bottom:40px; }
+  .footer-grid h4{ font-family:'IBM Plex Mono',monospace; font-size:0.72rem; text-transform:uppercase; letter-spacing:0.08em; color:var(--slate); margin-bottom:14px; }
+  .footer-grid ul{ list-style:none; padding:0; margin:0; }
+  .footer-grid li{ margin-bottom:10px; }
+  .footer-grid a{ text-decoration:none; color:var(--ink); font-size:0.92rem; }
+  .footer-grid a:hover{ color:var(--bronze); }
+  .footer-bottom{ font-size:0.82rem; color:var(--slate); border-top:1px solid var(--border); padding-top:24px; display:flex; justify-content:space-between; flex-wrap:wrap; gap:12px; }
+
+  @media (max-width:900px){
+    .nav-links{ display:none; }
+    .nav-toggle{ display:block; }
+    .hero h1{ font-size:2.2rem; }
+    section{ padding:64px 0; }
+    .final-cta{ margin:0 20px; padding:36px 28px; }
+    .footer-grid{ grid-template-columns:1fr; gap:24px; }
+    .container{ padding:0 20px; }
+    .card-grid, .card-grid.two{ grid-template-columns:1fr; }
+    .page-table{ font-size:0.85rem; }
+    .page-table th, .page-table td{ padding:10px 8px; }
+  }
+  @media (prefers-reduced-motion: reduce){
+    *{ transition:none !important; scroll-behavior:auto !important; }
+  }
+</style>
+<!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-T49HRT6J');</script>
+<!-- End Google Tag Manager -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "Halo Strategic",
+  "url": "https://halostrategic.com",
+  "logo": "https://halostrategic.com/android-chrome-512x512.png",
+  "sameAs": ["https://www.linkedin.com/company/halo-strategicglobal/"],
+  "contactPoint": {
+    "@type": "ContactPoint",
+    "email": "hello@halostrategic.com",
+    "contactType": "customer service"
+  }
+}
+</script>
+</head>
+<body>
+
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-T49HRT6J"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+<header>
+  <nav class="navbar">
+    <a href="/" class="logo">
+      <img src="/halo-icon-navy.svg" width="36" height="36" alt="Halo Strategic" class="logo-mark">
+      HALO STRATEGIC
+    </a>
+    <ul class="nav-links">
+      <li><a href="/#how-it-works">How Halo Works</a></li>
+      <li><a href="/#services">Services</a></li>
+      <li><a href="/commercial-audit">Commercial Audit</a></li>
+      <li><a href="/product-journey">Product Journey</a></li>
+      <li><a href="/agency-partnerships">Agency Partnerships</a></li>
+      <li><a href="/insights/">Insights</a></li>
+      <li><a href="/selected-engagements">Selected Engagements</a></li>
+      <li><a href="/how-halo-thinks">How Halo Thinks</a></li>
+      <li><a href="/frameworks" class="active">Frameworks</a></li>
+      <li><a href="/about">About</a></li>
+    </ul>
+    <div class="nav-right">
+      <a href="/commercial-health-check" class="btn btn-primary">Free Commercial Health Check</a>
+      <button class="nav-toggle" aria-label="Open menu"><span></span><span></span><span></span></button>
+    </div>
+  </nav>
+</header>
+
+<section class="hero">
+  <div class="container">
+    <div class="eyebrow" style="color:#D8BE8F;">Frameworks</div>
+    <h1>Repeatable ways of diagnosing commercial problems.</h1>
+    <p class="lead">Everything Halo Strategic does is built around a small number of practical commercial frameworks. Not templates. Not theory. The same structures, used consistently across every Diagnostic, Audit, and piece of writing, so a founder-led business can see exactly how a recommendation was reached.</p>
+  </div>
+</section>
+
+<!-- FIRST LAW -->
+<section class="band-dark tight">
+  <div class="container" style="max-width:800px;">
+    <div class="eyebrow">The Governing Law</div>
+    <p class="pull">Diagnosis before prescription. Always.</p>
+    <p>Every framework below exists to serve one sentence. Before any recommendation, product, or piece of content is created at Halo, it's checked against this: does it assume diagnosis happens first, or does it quietly skip to prescription? See the reasoning behind it on <a href="/how-halo-thinks" style="color:var(--bronze-light); text-decoration:underline;">How Halo Thinks</a>.</p>
+  </div>
+</section>
+
+<!-- OVERVIEW GRID -->
+<section>
+  <div class="container">
+    <div class="eyebrow">Overview</div>
+    <h2 class="section-title">Seven frameworks, built from real engagements, not invented for a website.</h2>
+    <p style="margin-bottom:8px;">Each one is documented in full in Halo's own internal constitution before it ever became a page. Nothing here was created to fill a gap on this site — it existed first, and is being formalised, not invented.</p>
+    <div class="card-grid">
+      <div class="card">
+        <div class="k">Diagnostic Language</div>
+        <h3>Leakage → Friction → Constraint → Alignment</h3>
+        <p>The four-term causal chain behind every Halo diagnosis, in sequence.</p>
+        <a href="#diagnostic-language" class="readmore">See the sequence →</a>
+      </div>
+      <div class="card">
+        <div class="k">Master Framework</div>
+        <h3>The Halo Commercial Growth System</h3>
+        <p>Seven stages describing how Halo actually diagnoses and improves a business.</p>
+        <a href="#master-framework" class="readmore">See the seven stages →</a>
+      </div>
+      <div class="card">
+        <div class="k">Flagship Framework</div>
+        <h3>Commercial Leakage Framework</h3>
+        <p>Six areas where value quietly escapes a business, each with its own diagnostic question.</p>
+        <a href="#leakage-framework" class="readmore">See the six areas →</a>
+      </div>
+      <div class="card">
+        <div class="k">Diagnostic Tool</div>
+        <h3>Revenue Friction Map</h3>
+        <p>Seven functional domains, cross-checked against the Leakage Framework, honest about what's still thin.</p>
+        <a href="#friction-map" class="readmore">See the seven domains →</a>
+      </div>
+      <div class="card">
+        <div class="k">Maturity Model</div>
+        <h3>Growth Maturity Model</h3>
+        <p>Five levels defined by the quality of commercial decision-making, not revenue or headcount.</p>
+        <a href="/insights/five-levels-of-commercial-maturity" class="readmore">Read the full breakdown →</a>
+      </div>
+      <div class="card">
+        <div class="k">Measurement</div>
+        <h3>Halo Indicators</h3>
+        <p>Four universal measures of commercial capability, distinct from business-specific engagement metrics.</p>
+        <a href="/insights/the-four-things-halo-actually-measures" class="readmore">Read the full breakdown →</a>
+      </div>
+      <div class="card">
+        <div class="k">Process</div>
+        <h3>Diagnostic &amp; Audit Process</h3>
+        <p>How the Commercial Diagnostic and Commercial Audit actually run, stage by stage.</p>
+        <a href="#process" class="readmore">See both processes →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DIAGNOSTIC LANGUAGE -->
+<section class="tight" id="diagnostic-language" style="background:var(--surface); border-top:1px solid var(--border); border-bottom:1px solid var(--border);">
+  <div class="container" style="max-width:800px;">
+    <div class="eyebrow">Framework 01 — The Diagnostic Language</div>
+    <h2 class="section-title" style="font-size:1.8rem;">Four terms, one causal chain, not four competing ideas.</h2>
+    <p>You observe leakage, trace it to friction, find the constraint causing that friction, remove it, and the result is alignment. Alignment isn't a fifth item on the list, it's what the other three, done in order, produce.</p>
+    <div class="card-grid two">
+      <div class="card"><div class="k">01 — Observable symptom</div><h3>Commercial Leakage</h3><p>Where value escapes the business. Lost opportunities, visible in the numbers.</p></div>
+      <div class="card"><div class="k">02 — The resistance</div><h3>Commercial Friction</h3><p>What's causing the leakage. Processes that slow momentum, misalignment between functions.</p></div>
+      <div class="card"><div class="k">03 — The root cause</div><h3>Commercial Constraint</h3><p>The bottleneck that matters most. The single thing to remove first.</p></div>
+      <div class="card"><div class="k">04 — The outcome</div><h3>Commercial Alignment</h3><p>A business whose systems reinforce each other instead of working against each other.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- MASTER FRAMEWORK -->
+<section class="tight" id="master-framework">
+  <div class="container" style="max-width:900px;">
+    <div class="eyebrow">Framework 02 — The Halo Commercial Growth System</div>
+    <h2 class="section-title" style="font-size:1.8rem;">How Halo actually diagnoses and improves a business.</h2>
+    <p>Seven stages. The first three are the diagnostic sequence. The next three turn diagnosis into a confirmed result. The seventh acknowledges that alignment is maintained, not finished.</p>
+    <div class="step-row">
+      <div class="step"><div class="n">01</div><h4>Observe</h4><p>Identify commercial leakage — where value is escaping.</p></div>
+      <div class="step"><div class="n">02</div><h4>Diagnose</h4><p>Understand the friction creating that leakage.</p></div>
+      <div class="step"><div class="n">03</div><h4>Prioritise</h4><p>Identify the primary constraint.</p></div>
+      <div class="step"><div class="n">04</div><h4>Align</h4><p>Bring leadership, sales, marketing and operations around the constraint.</p></div>
+      <div class="step"><div class="n">05</div><h4>Execute</h4><p>Implement the highest-leverage changes.</p></div>
+      <div class="step"><div class="n">06</div><h4>Measure</h4><p>Confirm whether friction has reduced and alignment has improved.</p></div>
+      <div class="step"><div class="n">07</div><h4>Repeat</h4><p>Growth is continuous. New constraints emerge.</p></div>
+    </div>
+    <p style="font-size:0.92rem; color:var(--slate);">Every stage is grounded against a real <a href="/selected-engagements" style="color:var(--bronze); text-decoration:underline;">Selected Engagement</a>, not asserted in the abstract.</p>
+  </div>
+</section>
+
+<!-- COMMERCIAL LEAKAGE FRAMEWORK -->
+<section class="tight" id="leakage-framework" style="background:var(--surface); border-top:1px solid var(--border); border-bottom:1px solid var(--border);">
+  <div class="container" style="max-width:900px;">
+    <div class="eyebrow">Framework 03 — Commercial Leakage Framework</div>
+    <h2 class="section-title" style="font-size:1.8rem;">Six places value quietly escapes a business.</h2>
+    <p>Most revenue doesn't disappear in one dramatic failure. It leaks through a dozen small, unowned handoffs between departments — a slow response to a new lead, a CRM nobody trusts enough to use properly, a reporting gap that means two departments are arguing over two different numbers.</p>
+    <table class="page-table">
+      <tr><th>Constraint area</th><th>Diagnostic question</th></tr>
+      <tr><td>Commercial Strategy</td><td>Is there one growth plan leadership agrees on, and do the unit economics actually support it?</td></tr>
+      <tr><td>Acquisition Systems</td><td>Which channels produce customers, versus which produce leads that never convert?</td></tr>
+      <tr><td>Conversion &amp; Sales Systems</td><td>How long between a lead arriving and a human actually engaging it?</td></tr>
+      <tr><td>Operations &amp; CRM Systems</td><td>Does the CRM reflect what's actually happening, or is it a system nobody trusts?</td></tr>
+      <tr><td>Retention &amp; Client Experience</td><td>What's the real churn rate, against what the business believes it is?</td></tr>
+      <tr><td>Decision &amp; Reporting Systems</td><td>Does leadership have one trusted number per key metric, or six different versions of the same one?</td></tr>
+    </table>
+    <p style="font-size:0.92rem; color:var(--slate);">This is the framework behind the Halo Score, the scored output of a <a href="/commercial-audit" style="color:var(--bronze); text-decoration:underline;">Commercial Audit</a> — every pillar scored on evidence quality, performance gap, and commercial leverage.</p>
+  </div>
+</section>
+
+<!-- REVENUE FRICTION MAP -->
+<section class="tight" id="friction-map">
+  <div class="container" style="max-width:900px;">
+    <div class="eyebrow">Framework 04 — Revenue Friction Map</div>
+    <h2 class="section-title" style="font-size:1.8rem;">Not where value is lost. Where the resistance causing it actually lives.</h2>
+    <p>The practical, diagnostic-tool version of the framework above: seven functional domains instead of six commercial areas, cross-checked so both read the same business through two different lenses. Two domains are still honestly thin — shown as open, not papered over with an invented example.</p>
+    <table class="page-table">
+      <tr><th>Domain</th><th>Diagnostic question</th><th>Status</th></tr>
+      <tr><td>Leadership</td><td>Does leadership agree on one growth plan, or is every function quietly working to its own version of "growth"?</td><td>Evidenced</td></tr>
+      <tr><td>Marketing</td><td>Are channels producing customers, or leads that never convert?</td><td>Evidenced</td></tr>
+      <tr><td>Sales</td><td>What happens to a lead in the first hour it arrives?</td><td>Evidenced</td></tr>
+      <tr><td>Customer Experience</td><td>When a customer leaves, does anyone find out why?</td><td>Open — thin evidence</td></tr>
+      <tr><td>Operations</td><td>Does the CRM reflect what's actually happening, or is it a system nobody trusts?</td><td>Evidenced</td></tr>
+      <tr><td>Data &amp; Reporting</td><td>If two people pulled the same metric today, would they get the same number?</td><td>Evidenced</td></tr>
+      <tr><td>Finance</td><td>Not yet evidenced — no Selected Engagement framed around pricing, margin, or cash flow.</td><td>Open — placeholder</td></tr>
+    </table>
+  </div>
+</section>
+
+<!-- PROCESS -->
+<section class="tight" id="process" style="background:var(--surface); border-top:1px solid var(--border); border-bottom:1px solid var(--border);">
+  <div class="container" style="max-width:900px;">
+    <div class="eyebrow">Framework 05 — Diagnostic &amp; Audit Process</div>
+    <h2 class="section-title" style="font-size:1.8rem;">How the frameworks above actually get applied.</h2>
+    <div class="card-grid two">
+      <div class="card">
+        <h3>Commercial Diagnostic</h3>
+        <p>One 90-minute session, identifying your primary commercial constraint. No promise to fix anything — the promise is clarity.</p>
+        <a href="/commercial-diagnostic" class="readmore">See the full process →</a>
+      </div>
+      <div class="card">
+        <h3>Commercial Audit</h3>
+        <p>Three to six weeks, a full evidence-based investigation across all six Commercial Leakage areas, scored via the Halo Score.</p>
+        <a href="/commercial-audit" class="readmore">See the full process →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CLOSING -->
+<section class="final-cta">
+  <div class="container" style="max-width:800px;">
+    <div class="eyebrow" style="color:var(--bronze-light);">Where This Goes Next</div>
+    <h2 class="section-title">A competitor can copy a website. A way of thinking is harder to copy.</h2>
+    <p>These frameworks aren't static. Growth Maturity Model and Halo Indicators already have full write-ups on <a href="/insights/" style="color:var(--bronze-light); text-decoration:underline;">Insights</a>. The Diagnostic Language, Master Framework, Leakage Framework, and Friction Map are documented here in full for the first time. As real engagements add evidence to the open areas above, this page gets more precise, not longer for its own sake.</p>
+    <a href="/commercial-diagnostic" class="btn btn-bronze" style="text-decoration:none;">See where your business sits — Start with a Commercial Diagnostic</a>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <div class="logo" style="margin-bottom:10px; color:#F6F6F3;">
+          <img src="/halo-icon-light.svg" width="36" height="36" alt="Halo Strategic" class="logo-mark">
+          HALO STRATEGIC
+        </div>
+        <p style="font-size:0.92rem; color:var(--slate); max-width:26em;">A Commercial Growth Consultancy. Our job is to help leadership make better commercial decisions.</p>
+      </div>
+      <div>
+        <h4>Sitemap</h4>
+        <ul>
+          <li><a href="/#how-it-works">How Halo Works</a></li>
+          <li><a href="/#services">Services</a></li>
+          <li><a href="/commercial-health-check">Commercial Health Check</a></li>
+          <li><a href="/commercial-diagnostic">Commercial Diagnostic</a></li>
+          <li><a href="/commercial-audit">Commercial Audit</a></li>
+          <li><a href="/product-journey">Product Journey</a></li>
+          <li><a href="/agency-partnerships">Agency Partnerships</a></li>
+          <li><a href="/frameworks">Frameworks</a></li>
+          <li><a href="/insights/">Insights</a></li>
+          <li><a href="/selected-engagements">Selected Engagements</a></li>
+          <li><a href="/how-halo-thinks">How Halo Thinks</a></li>
+          <li><a href="/about">About</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Contact &amp; Legal</h4>
+        <ul>
+          <li><a href="/contact">Contact</a></li>
+          <li><a href="https://www.linkedin.com/company/halo-strategicglobal/" target="_blank" rel="noopener">LinkedIn</a></li>
+          <li><a href="mailto:hello@halostrategic.com">hello@halostrategic.com</a></li>
+          <li><a href="/privacy-policy">Privacy Policy</a></li>
+          <li><a href="/cookie-policy">Cookie Policy</a></li>
+          <li><a href="/terms-and-conditions">Terms &amp; Conditions</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 Halo Strategic. All rights reserved.</span>
+      <span class="mono">halostrategic.com</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  document.querySelector('.nav-toggle')?.addEventListener('click', function(){
+    var links = document.querySelector('.nav-links');
+    var visible = links.style.display === 'flex';
+    links.style.display = visible ? 'none' : 'flex';
+    links.style.flexDirection = 'column';
+    links.style.position = 'absolute';
+    links.style.top = '76px';
+    links.style.left = '0';
+    links.style.right = '0';
+    links.style.background = 'var(--paper)';
+    links.style.padding = '20px 32px';
+    links.style.borderBottom = '1px solid var(--border)';
+  });
+</script>
+
+</body>
+</html>
