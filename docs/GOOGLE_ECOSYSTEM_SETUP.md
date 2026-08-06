@@ -64,14 +64,19 @@ Worth a direct flag before the checklist: GBP's main value is the local map-pack
 1. business.google.com → Create a profile → enter "Halo Strategic" as the business name.
 2. When asked "Do you want to add a location customers can visit?", choose **No** — this is what unlocks the service-area flow instead of requiring a public street address.
 3. Set your **service area** (by city/region/country — you can list multiple, e.g. "United Kingdom" and "United States" if that matches where you actually take clients).
-4. Category: "Business management consultant" is the closest standard GBP category; "Marketing consultant" is a reasonable secondary category if GBP allows more than one.
+4. Category: **Primary — "Business Management Consultant"**. **Secondary — "Marketing Consultant"**. Fabien confirmed 2026-08-04: deliberately not "Advertising Agency" or "Business Development Service" — both undersell the positioning and would mismatch how the site itself is framed.
 5. Add a phone number if you have one you're willing to make public (Google requires *a* contact method; if you don't want a personal mobile number listed, a Google Voice number or a dedicated business line is the usual workaround — your call, not something I can source for you).
 6. Add `https://halostrategic.com` as the website.
 7. Add business hours (or mark "by appointment" if that fits better for a consultancy).
-8. Write a business description — I can draft this copy for you if you want it in Halo's voice, just ask; not doing it speculatively here since GBP descriptions have a strict character limit and benefit from being drafted against the actual live field, not blind.
+8. Business description (final, approved by Fabien 2026-08-04 — 480 characters, well under GBP's 750 limit):
+
+   > Halo Strategic helps founder-led businesses make better commercial decisions. Through our Commercial Diagnostic, we identify the commercial challenges limiting growth before recommending solutions. Rather than assuming the answer is more marketing or more sales, we help leadership teams understand what will make the biggest difference first. Evidence-led, practical and tailored to each business, we work with founder-led companies across the UK and US.
+
 9. Google will ask to verify the profile — usually by phone/text/email for service-area businesses without a public address (postcard-by-mail verification is more common for storefronts). Follow whatever verification method Google offers.
 
 **What has to wait for a permanent office:** nothing above requires one. The only thing a real address would unlock is switching from a service-area listing to a full local-search/map-pin listing, which isn't a launch blocker either way.
+
+**UK & US as the stated service area:** confirmed accurate by Fabien 2026-08-04 — matches where the business is actually working today and the market being targeted. Update if that changes.
 
 ---
 
@@ -106,4 +111,25 @@ Worth a direct flag before the checklist: GBP's main value is the local map-pack
 **Not blockers, do when convenient:**
 - [ ] Google Business Profile (Section 4) — credibility item, not a paid-traffic dependency.
 - [ ] A real PageSpeed Insights run, once, before spend, just to confirm nothing else is dragging load time.
+
+---
+
+## 7. Confirmed sequencing (2026-08-04)
+
+Fabien reviewed this doc and confirmed the order below rather than working the sections top-to-bottom. Follow this sequence, not the section numbering above:
+
+1. **Search Console** (Section 3) — ~30 minutes, immediate long-term value (search queries, indexing status, CTR, impressions) for a brand-new site.
+2. **Google Business Profile** (Section 4).
+3. **Verify GA4 is actually receiving data** (Section 1, steps 1–2).
+4. **Build the `diagnostic_requested` conversion event** (Section 2) — do this *before* spending on Ads. His reasoning: "There's no point paying Google for traffic if you can't reliably measure whether people are converting."
+5. **Only then** set up a Google Ads account/campaign.
+
+**Bing Webmaster Tools** — new item, not previously in this doc. Fabien flagged it as a ~10-minute add-on once Search Console is verified: bing.com/webmasters usually offers a one-click "import from Google Search Console" option once GSC is verified, since it reuses the same DNS/HTML verification. Low effort, no reason to skip it.
+
+**The broader roadmap this sits inside**, per Fabien 2026-08-04:
+- **Phase 1 — Build** (done): brand, website, positioning, About, Diagnostic/Audit product pages, email, GitHub, Netlify.
+- **Phase 2 — Foundation** (this week): Search Console, Google Business Profile, GA4 verification, GTM conversion events, Bing Webmaster Tools, indexing.
+- **Phase 3 — Growth**: LinkedIn, SEO content, founder outreach, Commercial Audits, case studies, referrals.
+
+Any future session picking this up should treat Phase 2 as still in progress until every box in Section 6 and this section is checked, and shouldn't jump ahead to Phase 3 growth activities (content volume, ad spend) while foundational measurement is still unverified.
 - [ ] Page-specific OG images — purely a social-share nicety.
