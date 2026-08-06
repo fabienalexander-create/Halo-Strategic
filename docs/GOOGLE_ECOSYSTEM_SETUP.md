@@ -29,14 +29,55 @@ Full detail in docs/GOOGLE_TAG_MANAGER.md, rewritten today to remove a stale pla
 - `form_submit_success` with `form_id: 'contact-form'` — the main site's Contact form.
 - `health_check_completed` — the free Health Check quiz.
 
-**Exact steps in tagmanager.google.com:**
+**Exact click-by-click steps in tagmanager.google.com** (expanded 2026-08-04, per docs/GOOGLE_TAG_MANAGER.md's exact event/field names — four trigger/tag pairs total):
 
-1. Open Workspace → Triggers → New. Name it "CE - diagnostic_requested". Trigger type: **Custom Event**. Event name: `form_submit_success`. Under "This trigger fires on", choose "Some Custom Events", condition `form_id` equals `diagnostic-landing`. Save.
-2. Workspace → Tags → New. Name it "GA4 - diagnostic_requested". Tag type: **Google Analytics: GA4 Event**. Configuration Tag: select your existing "GA4 - Configuration - Halo Strategic" tag. Event Name: `diagnostic_requested`. Triggering: the trigger from step 1. Save.
-3. Repeat the same two steps for `health_check_completed` (trigger on that exact custom event name, no `form_id` condition needed since only one thing fires it) → GA4 Event tag, Event Name `health_check_completed`.
-4. Optional but useful: repeat once more for the main Contact form (`form_submit_success`, `form_id` equals `contact-form`) → GA4 Event tag, Event Name `contact_form_submitted`.
-5. Click **Preview**, enter `https://halostrategic.com/diagnostic-landing`, submit the test form, and confirm in the Tag Assistant panel that "GA4 - diagnostic_requested" fired exactly once, no duplicates, and that the existing GA4 Configuration tag also fired on page load.
-6. Once Preview looks clean: Workspace → **Submit** → give the version a name like "Add diagnostic_requested + health_check conversion events" → Publish.
+### A. `diagnostic_requested` — the Ads landing page form (build this one first)
+
+1. Go to tagmanager.google.com → open the "Halo Strategic" account → the container with ID `GTM-T49HRT6J` → make sure you're in the **Default Workspace** (top left).
+2. Left sidebar → **Triggers** → **New** (top right).
+3. Click the trigger config box (pencil icon) → under "Choose a trigger type" pick **Custom Event**.
+4. Field "Event name": type `form_submit_success` exactly (case-sensitive, no spaces).
+5. Below that, "This trigger fires on" → select **Some Custom Events**.
+6. In the condition row that appears: left dropdown → `form_id`, middle dropdown → `equals`, right field → `diagnostic-landing`.
+7. Top left, click the untitled trigger name field → rename to `CE - diagnostic_requested`.
+8. Click **Save** (top right).
+9. Left sidebar → **Tags** → **New**.
+10. Click the tag config box → "Choose a tag type" → **Google Analytics: GA4 Event**.
+11. "Configuration Tag" dropdown → select your existing **"GA4 - Configuration - Halo Strategic"** tag (do not create a new GA4 Configuration tag — this one already exists and points at `G-KC0RH0SS1L`).
+12. "Event Name" field → type `diagnostic_requested`.
+13. Scroll down to "Triggering" → click the pencil icon → select the `CE - diagnostic_requested` trigger you just made in step 7.
+14. Top left, rename the tag to `GA4 - diagnostic_requested`.
+15. Click **Save**.
+
+### B. `contact_diagnostic_requested` and `contact_audit_requested` — the main Contact form
+
+The main Contact form's `service` field carries which option the visitor picked (Diagnostic booking / Audit enquiry / General enquiry), so this needs two trigger/tag pairs, not one — otherwise you can't tell which service someone actually asked about.
+
+16. **Triggers → New** → Custom Event → Event name: `form_submit_success`.
+17. "This trigger fires on" → **Some Custom Events** → add **two** condition rows (use the "+" next to the first row): `form_id` equals `contact-form` **AND** `service` equals `diagnostic`.
+18. Rename to `CE - contact_diagnostic_requested` → Save.
+19. Repeat steps 16–18 exactly, but with `service` equals `audit` instead, named `CE - contact_audit_requested`.
+20. **Tags → New** → GA4 Event → Configuration Tag: the same existing "GA4 - Configuration - Halo Strategic" → Event Name: `contact_diagnostic_requested` → Triggering: the trigger from step 18 → rename tag `GA4 - contact_diagnostic_requested` → Save.
+21. Repeat step 20 for the audit version: Event Name `contact_audit_requested`, trigger from step 19, tag name `GA4 - contact_audit_requested`.
+
+### C. `health_check_completed` — the free Health Check quiz
+
+22. **Triggers → New** → Custom Event → Event name: `health_check_completed` (no condition needed — this event only fires from one place, the quiz).
+23. Rename to `CE - health_check_completed` → Save.
+24. **Tags → New** → GA4 Event → Configuration Tag: the same existing GA4 Configuration tag → Event Name: `health_check_completed` → Triggering: the trigger from step 23 → rename tag `GA4 - health_check_completed` → Save.
+25. Optional refinement, not required for launch: under this tag's "Event Parameters" section, add two rows — parameter name `health_check_score` / value `{{DLV - health_check_score}}`, and `health_check_band` / `{{DLV - health_check_band}}`. Each `{{DLV - ...}}` needs its own Data Layer Variable created first (**Variables → New → Data Layer Variable**, name matching the dataLayer key exactly) — skip this step entirely if you just want to know the quiz was completed, not the score.
+
+### D. Test, then publish
+
+26. Top right → **Preview**. A new tab opens (Tag Assistant Connect) — enter `https://halostrategic.com/diagnostic-landing`, click Connect.
+27. In the real site tab that opens, fill in and submit the landing page form.
+28. Back in the Tag Assistant panel (left side lists events like "Container Loaded", "form_submit_success"), click on the `form_submit_success` event → confirm **`GA4 - diagnostic_requested`** appears under "Tags Fired" — not under "Tags Not Fired". Also click "Container Loaded" and confirm the existing GA4 Configuration tag fired there.
+29. Repeat the same check for the main Contact form (submit a test enquiry choosing "Diagnostic" as the service) and for the Health Check quiz, confirming each event's specific GA4 tag fires and nothing fires twice.
+30. Once everything in Preview looks clean, close the debug tab, go back to the GTM workspace → **Submit** (top right) → give the version a name like "Add diagnostic_requested, contact, and health_check conversion events" → **Publish**.
+
+### E. Last step — mark the primary conversion in GA4
+
+31. Go to analytics.google.com → Admin → **Events** (under "Data display") → wait for `diagnostic_requested` to appear in the list (only shows up after it's fired at least once post-publish) → toggle **"Mark as key event"** next to it. This is what makes it eligible as a Google Ads conversion goal later.
 
 Nothing else in the container needs touching. Google Ads Conversion and LinkedIn Insight tags can both be added later as new tags in this same container with zero code changes, whenever those accounts exist.
 
@@ -111,6 +152,7 @@ Worth a direct flag before the checklist: GBP's main value is the local map-pack
 **Not blockers, do when convenient:**
 - [ ] Google Business Profile (Section 4) — credibility item, not a paid-traffic dependency.
 - [ ] A real PageSpeed Insights run, once, before spend, just to confirm nothing else is dragging load time.
+- [ ] Page-specific OG images — purely a social-share nicety.
 
 ---
 
@@ -132,4 +174,39 @@ Fabien reviewed this doc and confirmed the order below rather than working the s
 - **Phase 3 — Growth**: LinkedIn, SEO content, founder outreach, Commercial Audits, case studies, referrals.
 
 Any future session picking this up should treat Phase 2 as still in progress until every box in Section 6 and this section is checked, and shouldn't jump ahead to Phase 3 growth activities (content volume, ad spend) while foundational measurement is still unverified.
-- [ ] Page-specific OG images — purely a social-share nicety.
+
+---
+
+## 8. Verification Checklist — Definition of Done
+
+This setup is complete when every box below is checked. Not a suggestion list — a single source of truth for whether Phase 2 (Foundation) is actually finished, so nothing gets silently skipped.
+
+- [ ] Google Search Console verifies `halostrategic.com`
+- [ ] `sitemap.xml` has been submitted successfully in Search Console
+- [ ] Google Business Profile is verified
+- [ ] GA4 Realtime shows live visits
+- [ ] `diagnostic_requested` appears in GA4 Events
+- [ ] `diagnostic_requested` is marked as a Key Event
+- [ ] `contact_diagnostic_requested` appears in GA4 Events
+- [ ] `contact_audit_requested` appears in GA4 Events
+- [ ] `health_check_completed` appears in GA4 Events
+- [ ] All GTM tags fire correctly in Preview Mode (Section 2, step D)
+- [ ] A GTM container version has been published
+- [ ] Bing Webmaster Tools has imported the Search Console property
+
+Once every box above is checked, Phase 2 is done — move to Phase 3 (Growth: LinkedIn, SEO content, founder outreach, Commercial Audits, case studies, referrals), per Section 7's roadmap.
+
+---
+
+## 9. Future Integrations (Not Yet Required)
+
+Not installed, and deliberately not being installed now. The GTM container (Section 2) is structured so every item below can be added later as new tags/triggers with zero code changes to the site — this section exists so the reasoning behind that architecture doesn't get lost, not as a to-do list to start working through.
+
+- Google Ads Conversion tag — once a Google Ads account/campaign actually exists (Section 6).
+- Microsoft Ads (Bing Ads) conversion tag.
+- LinkedIn Insight Tag — once LinkedIn is being used for paid distribution, not just organic posting.
+- Meta Pixel — only if Halo runs paid social; not currently part of the plan.
+- Microsoft Clarity — free session-recording/heatmap tool, complements GA4's numbers with qualitative behaviour; cheap to add, no urgency.
+- Call tracking — worth revisiting once phone enquiries become a meaningful share of leads. No `tel:` link exists on the site yet either (see docs/GOOGLE_TAG_MANAGER.md, `phone_clicked` event).
+
+Revisit this section when a specific business reason to add one of these shows up — not on a schedule.
