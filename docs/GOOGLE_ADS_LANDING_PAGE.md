@@ -41,6 +41,10 @@ Ad copy should echo the landing page's own language directly, not just the produ
 - FAQ covers all seven objections you listed, in the order most likely to be live for a first-time visitor (agency comparison and internal-capability doubt first, price and logistics last).
 - The founder-credibility section was originally spec'd as a small circular headshot; the only available photo is a wide conference-stage shot, so it's now shown at full width instead of force-cropped — this is very likely a stronger trust signal for cold traffic than a headshot would have been (public speaking recognition), but worth commissioning an actual dedicated headshot at some point since it's currently the only asset of its kind serving three different placements across the site (About's portrait, About's stage-proof, and now this page).
 
+## Update, 2026-08-04
+
+Added one line to the "Why Halo" section (§6): "The goal isn't more data. It's a clearer commercial decision, made with evidence instead of a guess." Added to keep this page consistent with Halo's finalised sitewide positioning ("Helping founder-led businesses make better commercial decisions" — see `index.html` hero, commit `bc30b87`), which this page predates. Deliberately did not touch the hero headline, FAQ, or CTA copy: those have documented, tested reasoning behind them (see "Headline decision" and "CRO notes" above), and the positioning idea only needed one clear landing spot, not a rewrite of proven copy with zero live traffic data yet.
+
 ## Suggested A/B tests, once traffic exists
 
 1. **Headline: problem-led (current) vs. price-led** ("Commercial Diagnostic — $995, Find Your Real Constraint") — this is the test you specifically flagged as potentially Halo's biggest differentiator; worth running first.
