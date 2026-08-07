@@ -33,11 +33,12 @@
     --ease: cubic-bezier(0.4,0,0.2,1);
   }
   *{box-sizing:border-box;}
-  html{scroll-behavior:smooth;}
+  html{scroll-behavior:smooth; overflow-x:hidden;}
   body{
     margin:0; background:var(--paper); color:var(--ink);
     font-family:'Inter',sans-serif; font-size:17px; line-height:1.65;
     -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
   }
   ::selection{ background:var(--bronze-light); color:var(--navy-deep); }
   h1,h2,h3{ font-family:'Fraunces',serif; font-weight:500; color:var(--navy-deep); margin:0; letter-spacing:-0.01em; }
@@ -55,6 +56,7 @@
   .nav-links a:hover{ color:var(--navy-deep); }
   .nav-right{ display:flex; align-items:center; gap:28px; }
   .nav-toggle{ display:none; background:none; border:none; cursor:pointer; padding:12px; }
+  .nav-cta-mobile{ display:none; }
   .nav-toggle span{ display:block; width:22px; height:2px; background:var(--navy-deep); margin:5px 0; }
 
   /* BUTTONS */
@@ -145,6 +147,14 @@
   @media (max-width:900px){
     .nav-links{ display:none; }
     .nav-toggle{ display:block; }
+    .navbar{ padding:14px 12px; }
+    .logo{ font-size:1rem; gap:6px; }
+    .logo-mark{ width:24px; height:24px; }
+    .nav-toggle{ padding:8px; }
+    .nav-right{ gap:8px; }
+    .nav-right .btn-primary{ display:none; }
+    .nav-cta-mobile{ display:block; margin-top:12px; }
+    .nav-cta-mobile a{ display:inline-block; background:var(--bronze); color:var(--navy-deep); font-weight:700; padding:12px 20px; border-radius:var(--radius-md); text-decoration:none; font-size:0.92rem; }
     .hero h1{ font-size:2.2rem; }
     .hero-pattern{ display:none; }
     .card-grid, .card-grid.two{ grid-template-columns:1fr; }
@@ -217,6 +227,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       <li><a href="/how-halo-thinks">How Halo Thinks</a></li>
       <li><a href="/frameworks">Frameworks</a></li>
       <li><a href="/about">About</a></li>
+      <li class="nav-cta-mobile"><a href="/commercial-health-check">Free Commercial Health Check</a></li>
     </ul>
     <div class="nav-right">
       <a href="/commercial-health-check" class="btn btn-primary">Free Commercial Health Check</a>
