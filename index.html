@@ -89,8 +89,8 @@
   .hero h1{ font-size:3.1rem; line-height:1.15; max-width:16em; margin-bottom:28px; color:#fff; }
   .hero p.lead{ margin-bottom:36px; color:#C7CBD4; }
   .hero-pattern{
-    position:absolute; top:0; right:0; height:100%; width:60%; z-index:1;
-    opacity:0.16; pointer-events:none;
+    position:absolute; top:0; left:0; height:100%; width:100%; z-index:1;
+    opacity:0.55; pointer-events:none;
   }
 
   /* CARDS */
@@ -300,20 +300,47 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
   <!-- HERO -->
   <section class="hero">
-    <svg class="hero-pattern" viewBox="0 0 600 500" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+    <svg class="hero-pattern" viewBox="0 0 1200 700" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+      <defs>
+        <linearGradient id="heroFade" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stop-color="#101A30" stop-opacity="1"/>
+          <stop offset="38%" stop-color="#101A30" stop-opacity="0.55"/>
+          <stop offset="72%" stop-color="#101A30" stop-opacity="0"/>
+        </linearGradient>
+        <pattern id="dotGrid" width="34" height="34" patternUnits="userSpaceOnUse">
+          <circle cx="2" cy="2" r="1.3" fill="#D8BE8F" fill-opacity="0.4"/>
+        </pattern>
+      </defs>
+
+      <!-- faint full-bleed texture, gives depth without competing with the lines -->
+      <rect width="1200" height="700" fill="url(#dotGrid)"/>
+
+      <!-- the commercial system: departments as nodes, one clear connecting path -->
       <g fill="none" stroke="#D8BE8F" stroke-width="1.5">
-        <line x1="60" y1="420" x2="180" y2="340"/>
-        <line x1="180" y1="340" x2="300" y2="380"/>
-        <line x1="300" y1="380" x2="420" y2="260"/>
-        <line x1="420" y1="260" x2="540" y2="160"/>
+        <line x1="480" y1="580" x2="630" y2="480"/>
+        <line x1="630" y1="480" x2="600" y2="330"/>
+        <line x1="600" y1="330" x2="760" y2="250"/>
+        <line x1="760" y1="250" x2="940" y2="300"/>
+        <line x1="760" y1="250" x2="850" y2="110"/>
+        <line x1="600" y1="330" x2="450" y2="230"/>
+        <line x1="940" y1="300" x2="1090" y2="210"/>
+        <line x1="940" y1="300" x2="1060" y2="430"/>
       </g>
-      <g fill="#101A30" stroke="#D8BE8F" stroke-width="1.5">
-        <circle cx="60" cy="420" r="10"/>
-        <circle cx="180" cy="340" r="10"/>
-        <circle cx="300" cy="380" r="14"/>
-        <circle cx="420" cy="260" r="10"/>
-        <circle cx="540" cy="160" r="10"/>
+      <g stroke="#D8BE8F" stroke-width="1.5" fill="#101A30">
+        <circle cx="480" cy="580" r="9"/>
+        <circle cx="630" cy="480" r="9"/>
+        <circle cx="600" cy="330" r="9"/>
+        <circle cx="450" cy="230" r="7"/>
+        <circle cx="940" cy="300" r="9"/>
+        <circle cx="1090" cy="210" r="7"/>
+        <circle cx="1060" cy="430" r="7"/>
+        <circle cx="850" cy="110" r="7"/>
       </g>
+      <!-- the one constraint that actually matters, picked out in bronze -->
+      <circle cx="760" cy="250" r="13" fill="#B08D57" stroke="#D8BE8F" stroke-width="1.5"/>
+
+      <!-- fades the whole graphic back to solid navy under the headline -->
+      <rect width="1200" height="700" fill="url(#heroFade)"/>
     </svg>
     <div class="container">
       <div class="eyebrow" style="color:var(--bronze-light);">Independent Commercial Growth Consultancy</div>
@@ -472,7 +499,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           <label for="tried">What have you already tried to solve it? <span style="font-weight:400; color:#93969E;">(optional)</span></label>
           <textarea id="tried" name="already_tried"></textarea>
         </div>
-        <button type="submit" class="btn btn-primary">Book your Commercial Diagnostic</button>
+        <button type="submit" class="btn btn-bronze">Book your Commercial Diagnostic</button>
         <p class="form-note">No pitch deck. We'll reply within one business day.</p>
       </form>
 
