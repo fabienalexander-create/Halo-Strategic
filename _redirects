@@ -1,4 +1,4 @@
-/index.html                  /                            301!
+﻿/index.html                  /                            301!
 /about.html                  /about                       301!
 /contact.html                /contact                     301!
 /commercial-audit.html       /commercial-audit             301!
@@ -32,9 +32,10 @@
 /insights/the-first-hour-rule-for-sales-follow-up.html  /insights/the-first-hour-rule-for-sales-follow-up  301!
 /insights/the-reporting-problem-hiding-behind-good-performance.html  /insights/the-reporting-problem-hiding-behind-good-performance  301!
 /insights/complex-decisions-deserve-better-diagnosis.html  /insights/complex-decisions-deserve-better-diagnosis  301!
+/insights/build-the-protection-before-you-need-it.html  /insights/build-the-protection-before-you-need-it  301!
 /diagnostic-landing.html     /diagnostic-landing          301!
 
-# Internal knowledge base — never served publicly (ADR-015)
+# Internal knowledge base â€” never served publicly (ADR-015)
 /docs/*      /404.html   404!
 /tools/*     /404.html   404!
 /content/*   /404.html   404!
