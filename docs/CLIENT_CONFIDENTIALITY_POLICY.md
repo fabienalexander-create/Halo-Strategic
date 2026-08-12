@@ -16,6 +16,15 @@ This policy defines an editorial process for what's safe to publish. It cannot a
 
 **"GQL," the second agency's name, and the name of any of their clients must never appear in anything published anywhere — the website, LinkedIn, frameworks, PDFs, lead magnets, speaking material, anywhere.** This isn't part of the genericisation judgement call below; it's a hard filter that applies before that process even starts. Even in a sentence that's otherwise fully generic and would pass both recognition tests, the name itself is still not permitted. This document itself lives in `docs/`, which is blocked from public serving (`_redirects`, ADR-015) — that's why it's safe to reference "GQL" here for internal clarity, but that internal use is not license to use it anywhere the confidentiality question in this document actually governs.
 
+### Amendment — 2026-08-11: "GQL" the name is now publishable
+
+Fabien confirmed directly that **"GQL" may now appear publicly** as the name of a current consulting role (e.g. in the About page career timeline), and approved adding it there himself. This narrows, not removes, the absolute rule above:
+
+- **Now permitted:** naming "GQL" as a place Fabien currently works — the fact of the relationship, no more.
+- **Still absolutely prohibited, unchanged:** GQL's clients, GQL's own internal commercial situations/decisions, anything derived from the work done for GQL (the genericisation process below still applies in full), and the second agency's name (not addressed by this amendment — still fully covered by the original rule).
+
+This amendment covers naming GQL only. It does not constitute a check of Fabien's actual written agreement with GQL for a confidentiality/non-disclosure clause — the unresolved question in the section above still stands for everything except the bare name.
+
 ## The core rule
 
 **Every insight must pass two tests before it's published anywhere — the site, LinkedIn, a framework, anywhere — not just a general sense of caution:**
