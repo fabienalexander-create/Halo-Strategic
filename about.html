@@ -250,6 +250,15 @@
   .career-caption .artefact-cap{ font-family:'IBM Plex Mono',monospace; font-size:0.66rem; color:var(--slate); padding:8px 10px; background:var(--paper); border-top:1px solid var(--border); }
   .career-caption .no-artefact-note{ font-size:0.85rem; color:#93969E; font-style:italic; }
   @media (max-width:800px){ .career-caption.has-artefact{ grid-template-columns:1fr; } }
+  .career-group{ margin-top:36px; }
+  .career-group:first-of-type{ margin-top:32px; }
+  .career-group-label{ display:flex; align-items:baseline; gap:12px; margin-bottom:14px; }
+  .career-group-label .num{ font-family:'IBM Plex Mono',monospace; font-size:0.72rem; color:var(--bronze); text-transform:uppercase; letter-spacing:0.1em; }
+  .career-group-label .frame{ font-size:0.88rem; color:var(--slate); }
+  @media (max-width:600px){ .career-group-label{ flex-direction:column; align-items:flex-start; gap:2px; } }
+  .career-group .career-chain{ margin-top:0; }
+  .career-synthesis{ margin-top:36px; padding-top:28px; border-top:1px solid var(--border); }
+  .career-synthesis p{ font-family:'Fraunces',serif; font-size:1.15rem; font-weight:500; line-height:1.5; color:var(--navy-deep); max-width:44em; margin:0; }
 
   @media (max-width:900px){
     .nav-links{ display:none; }
@@ -412,27 +421,43 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <div class="container">
       <div class="eyebrow">Experience at a Glance</div>
       <h2 class="section-title" style="font-size:1.7rem;">A career built inside founder-led businesses, not around them.</h2>
-      <p class="lead" style="margin-bottom:0;">Publisher, agency, business owner, and embedded commercial lead - different seats at the same table, each one changing how a growth problem looks from the inside.</p>
+      <p class="lead" style="margin-bottom:0;">Over time, I've seen the same problem from very different sides. A business asks for better lead generation when the real constraint sits in sales. It asks for a new proposition when the evidence points to something operational. It asks for better reporting when the real problem is that nobody knows what decision the numbers are supposed to inform.</p>
+      <p style="font-family:'Fraunces',serif; font-size:1.15rem; font-weight:500; color:var(--navy-deep); margin:16px 0 0;">That pattern is why Halo starts every engagement with diagnosis, not a proposal.</p>
 
-      <div class="career-chain" id="career-chain">
-        <div class="career-node"><div class="box" data-key="superawesome" tabindex="0" role="button">SuperAwesome</div><div class="years">2014&ndash;15</div></div>
-        <div class="career-arrow">&rarr;</div>
-        <div class="career-node"><div class="box" data-key="travelsupermarket" tabindex="0" role="button">TravelSupermarket</div><div class="years">~2016</div></div>
-        <div class="career-arrow">&rarr;</div>
-        <div class="career-node"><div class="box" data-key="sojern" tabindex="0" role="button">Sojern</div><div class="years">2017&ndash;18</div></div>
-        <div class="career-arrow">&rarr;</div>
-        <div class="career-node"><div class="box has-artefact" data-key="alexandertwelve" tabindex="0" role="button">Alexander Twelve</div><div class="years">2019&ndash;25</div></div>
-        <div class="career-arrow">&rarr;</div>
-        <div class="career-node"><div class="box" data-key="alexanderhome" tabindex="0" role="button">Alexander Home</div><div class="years">concurrent</div></div>
-        <div class="career-arrow">&rarr;</div>
-        <div class="career-node"><div class="box has-artefact" data-key="nordicmarkets" tabindex="0" role="button">Nordic Markets</div><div class="years">2024</div></div>
-        <div class="career-arrow">&rarr;</div>
-        <div class="career-node"><div class="box" data-key="gql" tabindex="0" role="button">GQL</div><div class="years">current</div></div>
-        <div class="career-arrow">&rarr;</div>
-        <div class="career-node"><div class="box" data-key="halo" tabindex="0" role="button">Halo Strategic</div><div class="years">Now</div></div>
+      <div class="career-group">
+        <div class="career-group-label"><span class="num">Earlier Career</span><span class="frame">Enterprise, advertising technology, travel</span></div>
+        <div class="career-chain" id="career-chain-1">
+          <div class="career-node"><div class="box" data-key="superawesome" tabindex="0" role="button">SuperAwesome</div><div class="years">2014&ndash;15</div></div>
+          <div class="career-arrow">&rarr;</div>
+          <div class="career-node"><div class="box" data-key="travelsupermarket" tabindex="0" role="button">TravelSupermarket</div><div class="years">~2016</div></div>
+          <div class="career-arrow">&rarr;</div>
+          <div class="career-node"><div class="box" data-key="sojern" tabindex="0" role="button">Sojern</div><div class="years">2017&ndash;18</div></div>
+        </div>
+      </div>
+
+      <div class="career-group">
+        <div class="career-group-label"><span class="num">Building Businesses</span><span class="frame">Ownership, not advice</span></div>
+        <div class="career-chain" id="career-chain-2">
+          <div class="career-node"><div class="box has-artefact" data-key="alexandertwelve" tabindex="0" role="button">Alexander Twelve</div><div class="years">2019&ndash;25</div></div>
+          <div class="career-arrow">&rarr;</div>
+          <div class="career-node"><div class="box" data-key="alexanderhome" tabindex="0" role="button">Alexander Home</div><div class="years">concurrent</div></div>
+        </div>
+      </div>
+
+      <div class="career-group">
+        <div class="career-group-label"><span class="num">Current Practice</span><span class="frame">The same question, asked in real time</span></div>
+        <div class="career-chain" id="career-chain-3">
+          <div class="career-node"><div class="box has-artefact" data-key="nordicmarkets" tabindex="0" role="button">Nordic Markets</div><div class="years">2024</div></div>
+          <div class="career-arrow">&rarr;</div>
+          <div class="career-node"><div class="box" data-key="gql" tabindex="0" role="button">GQL</div><div class="years">current</div></div>
+        </div>
       </div>
 
       <div class="career-caption" id="career-caption"></div>
+
+      <div class="career-synthesis">
+        <p>I've spent my career working around commercial problems, from the inside and the outside, at scale and at the size where every decision is felt immediately. Halo is where I've brought that experience together into a deliberate methodology, rather than a collection of stories.</p>
+      </div>
     </div>
   </section>
 
@@ -442,57 +467,56 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         superawesome: {
           tag: "SuperAwesome &middot; 2014&ndash;15",
           role: "Enterprise advertising sales - kids-media platform",
-          capability: "<b>Capability built:</b> enterprise, compliance-led sales in a highly regulated market (COPPA) - selling into brands, not founders.",
+          capability: "<b>What it taught him:</b> the difference between an output and an outcome - a good impressions number and a good campaign aren't automatically the same thing.",
           artefact: null
         },
         travelsupermarket: {
           tag: "TravelSupermarket &middot; circa 2016",
           role: "Travel comparison - display &amp; programmatic",
-          capability: "<b>Capability built:</b> volume-driven acquisition inside a comparison/marketplace model.",
+          capability: "<b>What it taught him:</b> volume-driven acquisition inside a comparison/marketplace model.",
           artefact: null,
-          note: "Thin evidence - single documented reference. Confirm exact dates/scope before treating this as settled."
+          note: "Thin evidence - single documented reference. Kept deliberately minimal rather than overclaiming."
         },
         sojern: {
           tag: "Sojern &middot; 2017&ndash;18",
           role: "Travel ad-tech - airline &amp; travel-brand campaigns",
-          capability: "<b>Capability built:</b> diagnosing attribution/tracking problems before running a campaign, managing campaigns across airlines, OTAs and hotel brands including Singapore Airlines, British Airways and Qatar Airways.",
+          capability: "<b>What it taught him:</b> the reported numbers were only as trustworthy as the tracking underneath them - the first time a &ldquo;campaign problem&rdquo; turned out to be a measurement problem instead. Campaigns spanned airlines, OTAs and hotel brands including Singapore Airlines, British Airways and Qatar Airways.",
           artefact: null
         },
         alexandertwelve: {
           tag: "Alexander Twelve &middot; 2019&ndash;25",
           role: "Founder - own marketing agency, four years active",
-          capability: "<b>Capability built:</b> full commercial ownership - sales, delivery, and proving credibility without a bigger brand name behind him. Worked directly with clients including Mercedes-Benz Trucks &amp; Vans.",
+          capability: "<b>What it taught him:</b> running campaigns end to end, the same lesson showed up again - but now connected to what happened after the click, not just before it. Full commercial ownership, proving credibility without a bigger brand name behind him. Worked directly with clients including Mercedes-Benz Trucks &amp; Vans.",
           artefact: { src: "career-section-assets/alexander-twelve-credibility.png", cap: "Real artefact - Alexander Twelve credentials slide (Facebook Marketing Partner, Google, Telegraph press mention)" }
         },
         alexanderhome: {
           tag: "Alexander Home &middot; concurrent with Alexander Twelve",
           role: "Owner/operator - home-services business",
-          capability: "<b>Capability built:</b> real P&amp;L discipline at small scale - a documented profit-split model (revenue &rarr; gross profit &rarr; split) built and used to run the business.",
+          capability: "<b>What it taught him:</b> a different kind of discipline - real P&amp;L ownership, where profit, not revenue, was always the number that mattered (a documented profit-split model built and used to run the business).",
           artefact: null
         },
         nordicmarkets: {
           tag: "Nordic Markets &middot; 2024",
           role: "Marketing lead - FX/trading platform",
-          capability: "<b>Capability built:</b> this is Fabien's own strategic thinking, not a client's - the funnel below is a document he authored to structure acquisition for the business.",
+          capability: "<b>What it taught him:</b> the same instinct again, this time on a two-million-contact database - the constraint wasn't the campaign, it was the list underneath it. This is Fabien's own strategic thinking, not a client's - the funnel below is a document he authored himself.",
           artefact: { src: "career-section-assets/nordic-markets-funnel.png", cap: "Real artefact - Fabien's own funnel diagram for Nordic Markets" }
         },
         gql: {
-          tag: "GQL &middot; Current",
-          role: "Ongoing commercial consulting",
-          capability: "<b>Capability built:</b> live, current commercial advisory work, running alongside Halo.",
-          artefact: null
-        },
-        halo: {
-          tag: "Halo Strategic &middot; Now",
-          role: "Founder",
-          capability: "<b>Capability built:</b> all of it, converted into a method other founder-led businesses can use.",
+          tag: "Current practice",
+          role: "Ongoing commercial advisory work",
+          capability: "<b>What it looks like now:</b> the same question, asked in real time, across the founder-led businesses he works with today - including defining what actually counts as a qualified result before measuring anything against it, a discipline he still runs his own current work through.",
           artefact: null
         }
       };
 
-      var chain = document.getElementById('career-chain');
+      var chains = [
+        document.getElementById('career-chain-1'),
+        document.getElementById('career-chain-2'),
+        document.getElementById('career-chain-3')
+      ];
       var caption = document.getElementById('career-caption');
-      var boxes = Array.prototype.slice.call(chain.querySelectorAll('.box'));
+      var boxes = [];
+      chains.forEach(function(c){ boxes = boxes.concat(Array.prototype.slice.call(c.querySelectorAll('.box'))); });
 
       function render(key){
         boxes.forEach(function(b){ b.classList.toggle('is-active', b.getAttribute('data-key') === key); });
