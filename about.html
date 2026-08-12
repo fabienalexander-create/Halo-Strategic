@@ -223,6 +223,34 @@
   .footer-grid a:hover{ color:var(--bronze); }
   .footer-bottom{ font-size:0.82rem; color:var(--slate); border-top:1px solid var(--border); padding-top:24px; display:flex; justify-content:space-between; flex-wrap:wrap; gap:12px; }
 
+  /* CAREER CHAIN — reuses the site's existing chain/node motif */
+  .career-chain{ display:flex; align-items:flex-start; gap:0; margin:32px 0 0; overflow-x:auto; padding-bottom:8px; }
+  .career-node{ display:flex; flex-direction:column; align-items:center; flex:none; width:150px; }
+  .career-node .box{
+    font-family:'IBM Plex Mono',monospace; font-size:0.72rem; letter-spacing:0.03em; text-transform:uppercase;
+    background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-sm);
+    padding:12px 10px; color:var(--navy-deep); text-align:center; cursor:pointer; width:100%;
+    transition:border-color 160ms var(--ease), background 160ms var(--ease);
+  }
+  .career-node .box:hover, .career-node .box.is-active{ border-color:var(--bronze); background:#FBF7F0; }
+  .career-node .years{ font-family:'IBM Plex Mono',monospace; font-size:0.68rem; color:var(--slate); margin-top:6px; }
+  .career-arrow{ display:flex; align-items:center; justify-content:center; color:var(--bronze); font-family:'IBM Plex Mono',monospace; padding:20px 4px 0; flex:none; }
+  .career-node .has-artefact::after{ content:'●'; display:block; font-size:0.5rem; color:var(--bronze); margin-top:4px; }
+  .career-caption{
+    background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-lg);
+    padding:28px 32px; margin-top:24px; display:grid; grid-template-columns:1fr; gap:20px;
+  }
+  .career-caption.has-artefact{ grid-template-columns:1.1fr 0.9fr; align-items:center; }
+  .career-caption .tag{ font-family:'IBM Plex Mono',monospace; font-size:0.72rem; color:var(--bronze); text-transform:uppercase; letter-spacing:0.08em; display:block; margin-bottom:10px; }
+  .career-caption h3{ font-size:1.2rem; margin-bottom:10px; }
+  .career-caption .capability{ font-size:0.95rem; color:var(--ink); }
+  .career-caption .capability b{ color:var(--navy-deep); font-weight:600; }
+  .career-caption .artefact{ border:1px solid var(--border); border-radius:var(--radius-md); overflow:hidden; }
+  .career-caption .artefact img{ width:100%; display:block; }
+  .career-caption .artefact-cap{ font-family:'IBM Plex Mono',monospace; font-size:0.66rem; color:var(--slate); padding:8px 10px; background:var(--paper); border-top:1px solid var(--border); }
+  .career-caption .no-artefact-note{ font-size:0.85rem; color:#93969E; font-style:italic; }
+  @media (max-width:800px){ .career-caption.has-artefact{ grid-template-columns:1fr; } }
+
   @media (max-width:900px){
     .nav-links{ display:none; }
     .nav-toggle{ display:block; }
@@ -384,17 +412,106 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <div class="container">
       <div class="eyebrow">Experience at a Glance</div>
       <h2 class="section-title" style="font-size:1.7rem;">A career built inside founder-led businesses, not around them.</h2>
-      <div class="experience-panel">
-        <ul>
-          <li>Founder, Halo Strategic</li>
-          <li>Former Head of Marketing &amp; Business Development, Trading Platform</li>
-          <li>Founder, Marketing Agency</li>
-          <li>Commercial Growth Strategist</li>
-          <li>Experience supporting founder-led businesses across the UK &amp; US</li>
-        </ul>
+      <p class="lead" style="margin-bottom:0;">Publisher, agency, business owner, and embedded commercial lead &mdash; different seats at the same table, each one changing how a growth problem looks from the inside.</p>
+
+      <div class="career-chain" id="career-chain">
+        <div class="career-node"><div class="box" data-key="superawesome" tabindex="0" role="button">SuperAwesome</div><div class="years">2014&ndash;15</div></div>
+        <div class="career-arrow">&rarr;</div>
+        <div class="career-node"><div class="box" data-key="travelsupermarket" tabindex="0" role="button">TravelSupermarket</div><div class="years">~2016</div></div>
+        <div class="career-arrow">&rarr;</div>
+        <div class="career-node"><div class="box" data-key="sojern" tabindex="0" role="button">Sojern</div><div class="years">2017&ndash;18</div></div>
+        <div class="career-arrow">&rarr;</div>
+        <div class="career-node"><div class="box has-artefact" data-key="alexandertwelve" tabindex="0" role="button">Alexander Twelve</div><div class="years">2019&ndash;25</div></div>
+        <div class="career-arrow">&rarr;</div>
+        <div class="career-node"><div class="box" data-key="alexanderhome" tabindex="0" role="button">Alexander Home</div><div class="years">concurrent</div></div>
+        <div class="career-arrow">&rarr;</div>
+        <div class="career-node"><div class="box has-artefact" data-key="nordicmarkets" tabindex="0" role="button">Nordic Markets</div><div class="years">2024</div></div>
+        <div class="career-arrow">&rarr;</div>
+        <div class="career-node"><div class="box" data-key="halo" tabindex="0" role="button">Halo Strategic</div><div class="years">Now</div></div>
       </div>
+
+      <div class="career-caption" id="career-caption"></div>
     </div>
   </section>
+
+  <script>
+    (function(){
+      var DATA = {
+        superawesome: {
+          tag: "SuperAwesome &middot; 2014&ndash;15",
+          role: "Enterprise advertising sales &mdash; kids-media platform",
+          capability: "<b>Capability built:</b> enterprise, compliance-led sales in a highly regulated market (COPPA) &mdash; selling into brands, not founders.",
+          artefact: null
+        },
+        travelsupermarket: {
+          tag: "TravelSupermarket &middot; circa 2016",
+          role: "Travel comparison &mdash; display &amp; programmatic",
+          capability: "<b>Capability built:</b> volume-driven acquisition inside a comparison/marketplace model.",
+          artefact: null,
+          note: "Thin evidence &mdash; single documented reference. Confirm exact dates/scope before treating this as settled."
+        },
+        sojern: {
+          tag: "Sojern &middot; 2017&ndash;18",
+          role: "Travel ad-tech &mdash; airline &amp; travel-brand campaigns",
+          capability: "<b>Capability built:</b> diagnosing attribution/tracking problems before running a campaign, managing campaigns across airlines, OTAs and hotel brands including Singapore Airlines, British Airways and Qatar Airways.",
+          artefact: null
+        },
+        alexandertwelve: {
+          tag: "Alexander Twelve &middot; 2019&ndash;25",
+          role: "Founder &mdash; own marketing agency, four years active",
+          capability: "<b>Capability built:</b> full commercial ownership &mdash; sales, delivery, and proving credibility without a bigger brand name behind him. Worked directly with clients including Mercedes-Benz Trucks &amp; Vans.",
+          artefact: { src: "career-section-assets/alexander-twelve-credibility.png", cap: "Real artefact &mdash; Alexander Twelve credentials slide (Facebook Marketing Partner, Google, Telegraph press mention)" }
+        },
+        alexanderhome: {
+          tag: "Alexander Home &middot; concurrent with Alexander Twelve",
+          role: "Owner/operator &mdash; home-services business",
+          capability: "<b>Capability built:</b> real P&amp;L discipline at small scale &mdash; a documented profit-split model (revenue &rarr; gross profit &rarr; split) built and used to run the business.",
+          artefact: null
+        },
+        nordicmarkets: {
+          tag: "Nordic Markets &middot; 2024",
+          role: "Marketing lead &mdash; FX/trading platform",
+          capability: "<b>Capability built:</b> this is Fabien's own strategic thinking, not a client's &mdash; the funnel below is a document he authored to structure acquisition for the business.",
+          artefact: { src: "career-section-assets/nordic-markets-funnel.png", cap: "Real artefact &mdash; Fabien's own funnel diagram for Nordic Markets" }
+        },
+        halo: {
+          tag: "Halo Strategic &middot; Now",
+          role: "Founder",
+          capability: "<b>Capability built:</b> all of it, converted into a method other founder-led businesses can use.",
+          artefact: null
+        }
+      };
+
+      var chain = document.getElementById('career-chain');
+      var caption = document.getElementById('career-caption');
+      var boxes = Array.prototype.slice.call(chain.querySelectorAll('.box'));
+
+      function render(key){
+        boxes.forEach(function(b){ b.classList.toggle('is-active', b.getAttribute('data-key') === key); });
+        var d = DATA[key];
+        var artefactHtml = d.artefact
+          ? '<div class="artefact"><img src="' + d.artefact.src + '" alt=""><div class="artefact-cap">' + d.artefact.cap + '</div></div>'
+          : (d.note ? '<div class="no-artefact-note">' + d.note + '</div>' : '');
+        caption.className = 'career-caption' + (d.artefact ? ' has-artefact' : '');
+        caption.innerHTML =
+          '<div>' +
+            '<span class="tag">' + d.tag + '</span>' +
+            '<h3>' + d.role + '</h3>' +
+            '<p class="capability">' + d.capability + '</p>' +
+          '</div>' +
+          artefactHtml;
+      }
+
+      boxes.forEach(function(box){
+        box.addEventListener('click', function(){ render(box.getAttribute('data-key')); });
+        box.addEventListener('keydown', function(e){
+          if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); render(box.getAttribute('data-key')); }
+        });
+      });
+
+      render('alexandertwelve');
+    })();
+  </script>
 
   <!-- BEYOND THE CV -->
   <section class="tight" style="background:var(--surface); border-top:1px solid var(--border); border-bottom:1px solid var(--border);">
