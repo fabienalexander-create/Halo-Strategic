@@ -1,7 +1,7 @@
 ---
 title: "Add the right thing, or fix the leak?"
 publish_date: 2026-07-27
-status: draft
+status: published
 pillar: commercial-patterns
 format: commercial-truth
 weekly_theme: none
@@ -10,6 +10,8 @@ hashtags: [GrowthMisconceptions, CommercialClarity]
 website_link: https://halostrategic.com/how-halo-thinks
 source: "Halo Bible Ch. 4 (biggest misconception about growth)"
 image_filename: "generated/2026-07-27-add-the-right-thing-or-fix-the-leak.png"
+linkedin_url: "https://www.linkedin.com/feed/update/urn:li:share:7490622794376835072/"
+published_at: "2026-08-05, confirmed live via Page posts admin view, custom quote-card image confirmed attached (renders as a link-preview-style card since a URL was also in the post text, not a defect)"
 ---
 
 ## LinkedIn copy
