@@ -125,17 +125,20 @@
   .footer-grid a:hover{ color:var(--bronze); }
   .footer-bottom{ font-size:0.82rem; color:var(--slate); border-top:1px solid var(--border); padding-top:24px; display:flex; justify-content:space-between; flex-wrap:wrap; gap:12px; }
 
-  @media (max-width:900px){
+  @media (max-width:1300px){
     .nav-links{ display:none; }
     .nav-toggle{ display:block; }
+    .nav-right .btn-primary{ display:none; }
+    .nav-cta-mobile{ display:block; margin-top:12px; }
+    .nav-cta-mobile a{ display:inline-block; background:var(--bronze); color:var(--navy-deep); font-weight:700; padding:12px 20px; border-radius:var(--radius-md); text-decoration:none; font-size:0.92rem; }
+  }
+
+  @media (max-width:900px){
     .navbar{ padding:14px 12px; }
     .logo{ font-size:1rem; gap:6px; }
     .logo-mark{ width:24px; height:24px; }
     .nav-toggle{ padding:8px; }
     .nav-right{ gap:8px; }
-    .nav-right .btn-primary{ display:none; }
-    .nav-cta-mobile{ display:block; margin-top:12px; }
-    .nav-cta-mobile a{ display:inline-block; background:var(--bronze); color:var(--navy-deep); font-weight:700; padding:12px 20px; border-radius:var(--radius-md); text-decoration:none; font-size:0.92rem; }
     .hero h1{ font-size:2.2rem; }
     section{ padding:64px 0; }
     .final-cta{ margin:0 20px; padding:36px 28px; }
