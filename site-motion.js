@@ -20,16 +20,15 @@
 
   if (reduce) return;
 
-  // Hero diagram draw-in
+  // Hero diagram draw-in (setTimeout, not rAF — rAF can stall indefinitely
+  // in a backgrounded/inactive tab, which would leave the diagram undrawn)
   var heroSvg = document.querySelector('.hero-pattern');
   if (heroSvg) {
-    requestAnimationFrame(function () {
-      setTimeout(function () {
-        heroSvg.querySelectorAll('.hero-line, .hero-node').forEach(function (el) {
-          el.classList.add('is-drawn');
-        });
-      }, 250);
-    });
+    setTimeout(function () {
+      heroSvg.querySelectorAll('.hero-line, .hero-node').forEach(function (el) {
+        el.classList.add('is-drawn');
+      });
+    }, 250);
   }
 
   // Scroll reveal for section content blocks
