@@ -331,27 +331,27 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
       <!-- the commercial system: departments as nodes, one clear connecting path -->
       <g fill="none" stroke="#D8BE8F" stroke-width="1.5">
-        <line x1="480" y1="580" x2="630" y2="480"/>
-        <line x1="630" y1="480" x2="600" y2="330"/>
-        <line x1="600" y1="330" x2="760" y2="250"/>
-        <line x1="760" y1="250" x2="940" y2="300"/>
-        <line x1="760" y1="250" x2="850" y2="110"/>
-        <line x1="600" y1="330" x2="450" y2="230"/>
-        <line x1="940" y1="300" x2="1090" y2="210"/>
-        <line x1="940" y1="300" x2="1060" y2="430"/>
+        <line class="hero-line" style="transition-delay:0ms" x1="480" y1="580" x2="630" y2="480"/>
+        <line class="hero-line" style="transition-delay:150ms" x1="630" y1="480" x2="600" y2="330"/>
+        <line class="hero-line" style="transition-delay:300ms" x1="600" y1="330" x2="760" y2="250"/>
+        <line class="hero-line" style="transition-delay:450ms" x1="760" y1="250" x2="940" y2="300"/>
+        <line class="hero-line" style="transition-delay:450ms" x1="760" y1="250" x2="850" y2="110"/>
+        <line class="hero-line" style="transition-delay:300ms" x1="600" y1="330" x2="450" y2="230"/>
+        <line class="hero-line" style="transition-delay:600ms" x1="940" y1="300" x2="1090" y2="210"/>
+        <line class="hero-line" style="transition-delay:600ms" x1="940" y1="300" x2="1060" y2="430"/>
       </g>
       <g stroke="#D8BE8F" stroke-width="1.5" fill="#101A30">
-        <circle cx="480" cy="580" r="9"/>
-        <circle cx="630" cy="480" r="9"/>
-        <circle cx="600" cy="330" r="9"/>
-        <circle cx="450" cy="230" r="7"/>
-        <circle cx="940" cy="300" r="9"/>
-        <circle cx="1090" cy="210" r="7"/>
-        <circle cx="1060" cy="430" r="7"/>
-        <circle cx="850" cy="110" r="7"/>
+        <circle class="hero-node" style="transition-delay:0ms" cx="480" cy="580" r="9"/>
+        <circle class="hero-node" style="transition-delay:150ms" cx="630" cy="480" r="9"/>
+        <circle class="hero-node" style="transition-delay:300ms" cx="600" cy="330" r="9"/>
+        <circle class="hero-node" style="transition-delay:450ms" cx="450" cy="230" r="7"/>
+        <circle class="hero-node" style="transition-delay:600ms" cx="940" cy="300" r="9"/>
+        <circle class="hero-node" style="transition-delay:750ms" cx="1090" cy="210" r="7"/>
+        <circle class="hero-node" style="transition-delay:750ms" cx="1060" cy="430" r="7"/>
+        <circle class="hero-node" style="transition-delay:600ms" cx="850" cy="110" r="7"/>
       </g>
       <!-- the one constraint that actually matters, picked out in bronze -->
-      <circle cx="760" cy="250" r="13" fill="#B08D57" stroke="#D8BE8F" stroke-width="1.5"/>
+      <circle class="hero-node hero-node-constraint" style="transition-delay:450ms" cx="760" cy="250" r="13" fill="#B08D57" stroke="#D8BE8F" stroke-width="1.5"/>
 
       <!-- fades the whole graphic back to solid navy under the headline -->
       <rect width="1200" height="700" fill="url(#heroFade)"/>
@@ -650,5 +650,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   });
 </script>
 
+<script src="/site-motion.js" defer></script>
 </body>
 </html>
