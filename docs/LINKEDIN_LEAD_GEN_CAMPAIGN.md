@@ -166,4 +166,6 @@ Built in `content/linkedin/templates/ad-offer.html`, a new `vw`/`vh`-sized templ
 
 One deliberate change from §3-4 above while building: both concepts now keep headline copy entirely white rather than mixing in a bronze second line, since `docs/HALO_BIBLE.md` Section Nine specifies bronze as a single non-competing accent, better reserved for the rule, the offer line and the footer. Concept D's "find out what's actually wrong with it first" moved into the support line rather than a bronze headline line; the words are unchanged, only the visual treatment.
 
+**Approved by Fabien, 2026-09-05.** Frozen: don't re-edit the creative or copy above without a new reason to reopen it.
+
 Not yet done: the LinkedIn campaign itself set up in Campaign Manager, and the internal qualified-lead tracker (§8). Both remain their own module. The currency and SLA items from §0 still need real answers before spend goes live.
