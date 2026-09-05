@@ -1,5 +1,16 @@
 # LinkedIn Ads — Free Website Review campaign
 
+## Qualified-lead tracker
+
+`qualified-lead-tracker.xlsx` — the working tracker for this campaign, since LinkedIn Campaign Manager has no visibility past form-submit. Four tabs:
+
+- **Dashboard** — funnel totals and Qualified CPL, computed from the other two tabs. Nothing to enter here.
+- **Campaign Summary** — one row per creative (A, D), yellow cells for what you enter by hand from Campaign Manager (spend, impressions, clicks, form opens, leads); CTR, CPL and Qualified CPL are formulas.
+- **Leads** — one row per lead as they come in. Delete the example row (in grey) before entering real data. `Concept` must be `A` or `D` exactly, matching Campaign Summary's formulas.
+- **Qualified Lead Criteria** — the checklist from the campaign brief (§20): check it before marking a lead Qualified = Y on the Leads tab.
+
+Every total on the Dashboard is a formula, not a typed-in number, so it stays correct as leads and spend get added.
+
 Creative assets for the paid LinkedIn lead-gen campaign specified in `docs/LINKEDIN_LEAD_GEN_CAMPAIGN.md`. That document is the source of truth for strategy, copy rationale, targeting, economics and the lead form; this folder only holds the render-ready asset data for the two approved concepts (A: hero, D: challenger). Like `content/linkedin/`, this path is blocked from public serving (`_redirects`, `/content/*`).
 
 ## Template
