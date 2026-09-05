@@ -1,12 +1,12 @@
 # LinkedIn Lead Generation Campaign — Free Website Review
 
-Status: Draft architecture, not yet approved. Owner: Claude Code. Built 2026-09-05 from Fabien's full campaign brief. This document is the equivalent of `docs/GOOGLE_ADS_LANDING_PAGE.md` for this campaign: the durable reference for strategy, creative, copy, targeting, form spec and tracking. Per standing instruction, this is the architecture pass. The actual creative assets (rendered images) are a separate module, built after this document is reviewed and frozen, not in the same pass.
+Status: Strategy, creative and form spec approved and frozen (2026-09-05). Owner: Claude Code. Built 2026-09-05 from Fabien's full campaign brief. This document is the equivalent of `docs/GOOGLE_ADS_LANDING_PAGE.md` for this campaign: the durable reference for strategy, creative, copy, targeting, form spec and tracking. Remaining before launch: the campaign itself set up in LinkedIn Campaign Manager (manual, outside this repo) and the internal qualified-lead tracker (§8), see §10.
 
 Nothing in this document invents a fact, a result, a statistic or an SLA that Halo hasn't actually confirmed. Every open question below is flagged rather than guessed.
 
 ---
 
-## 0 — Two things still to resolve before this campaign spends real money
+## 0 — Pre-launch decisions
 
 **1. RESOLVED, 2026-09-05 (Fabien): Free Website Review feeds into the Commercial Diagnostic.**
 
@@ -15,17 +15,13 @@ Confirmed: this is a distinct, human-delivered, website-scoped lead magnet, posi
 - `docs/PRODUCT_SYSTEM.md` should get this new entry point added so it doesn't drift out of sync with this document, once the campaign is actually live rather than speculative.
 - The reviewer still needs to actually apply the Acquisition and Conversion & Sales Systems columns of the Commercial Leakage Framework (`docs/HALO_BIBLE.md` Section Four) when writing up each review, and the "Conversation" stage should explicitly bridge into the Diagnostic offer, otherwise the funnel is confirmed on paper but not in the actual conversation script. Worth a short internal note (not built here) once the first few reviews are actually delivered.
 
-The two remaining open items don't block building the creative or setting up the form, but do block turning spend on:
+**2. RESOLVED, 2026-09-05 (Fabien): keep USD for now.**
 
-**2. Currency mismatch: this campaign runs in GBP, against an audience being sold into a USD-priced product.**
+This campaign runs in GBP media spend (£200 test, £10/day, £40 lead value) against a UK audience, feeding into a USD-priced Commercial Diagnostic ($995). Fabien's explicit call: keep USD for now rather than add a GBP figure ahead of real prospect conversations, consistent with the standing US-market-positioning reasoning already logged in `docs/ARCHITECTURAL_DECISIONS.md` ("Pending decisions → US market positioning / regional pricing"), which stays open, not closed by this campaign. Practical consequence for whoever runs the follow-up conversation with a UK lead: say the price in USD plainly rather than let it surprise anyone at the Diagnostic stage.
 
-The whole media plan below is in £ (£200 test, £10/day, £40 lead value), correctly, since it's a UK audience and a UK media budget. But `pricing-config.js` only has one live currency (USD: Diagnostic $995), and the US-vs-UK pricing question is an explicitly open decision (`docs/ARCHITECTURAL_DECISIONS.md`, "Pending decisions → US market positioning / regional pricing"). A UK founder who responds to this ad, has a good conversation, and then sees "$995" is a real friction point this campaign will surface for the first time in production. Not blocking, this doesn't stop a £200 test, but it should be resolved (or at least anticipated with a plain "in USD" line somewhere in the follow-up conversation) before the campaign is scaled past the test.
+**3. RESOLVED, 2026-09-05 (Fabien): confirmation-message SLA is 48 hours.**
 
-**2. The confirmation-message SLA (§18 in the original brief) needs Fabien's real number, not a placeholder.**
-
-"We'll get back to you within 48 business hours" is a specific operational promise. Per Halo's own non-negotiables (`docs/HALO_BIBLE.md` Chapter 6: "we will not sell certainty where certainty doesn't exist"), this shouldn't ship as invented copy. Placeholder used below, flagged inline, same discipline as the Guarantee's refund-window copy (`docs/GUARANTEE.md`).
-
-Neither is a reason to stop building. They're the difference between a campaign built on Halo's own standard of evidence and one built on assumption. Proceeding with the rest of the brief on the understanding that both get a real answer before spend goes live.
+Not "48 business hours" as the original brief's placeholder had it, plain 48 hours, per Fabien's direct answer. Applied in §7 below. Per Halo's own non-negotiables (`docs/HALO_BIBLE.md` Chapter 6: "we will not sell certainty where certainty doesn't exist"), this is now a real operational commitment, not invented copy, and whoever delivers the reviews needs to actually hold it.
 
 ---
 
@@ -142,9 +138,9 @@ Fields (4, at LinkedIn's recommended 3-4): First name, Work email, Company name,
 
 **Form CTA:** Request Review
 
-**Confirmation message (PLACEHOLDER, needs Fabien's real SLA, see §0.2):**
+**Confirmation message:**
 
-> Thanks, your website review request has been received. We'll review your website and get back to you within [X] with our initial findings.
+> Thanks, your website review request has been received. We'll review your website and get back to you within 48 hours with our initial findings.
 
 ---
 
@@ -168,4 +164,4 @@ One deliberate change from §3-4 above while building: both concepts now keep he
 
 **Approved by Fabien, 2026-09-05.** Frozen: don't re-edit the creative or copy above without a new reason to reopen it.
 
-Not yet done: the LinkedIn campaign itself set up in Campaign Manager, and the internal qualified-lead tracker (§8). Both remain their own module. The currency and SLA items from §0 still need real answers before spend goes live.
+All three items in §0 are now resolved. Not yet done: the LinkedIn campaign itself set up in Campaign Manager (a manual step in LinkedIn's own UI, not something built in this repo), and the internal qualified-lead tracker (§8).
