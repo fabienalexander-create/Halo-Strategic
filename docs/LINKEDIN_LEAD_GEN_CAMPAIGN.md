@@ -6,27 +6,26 @@ Nothing in this document invents a fact, a result, a statistic or an SLA that Ha
 
 ---
 
-## 0 — Three things to resolve before this campaign launches
+## 0 — Two things still to resolve before this campaign spends real money
 
-Raising these now because building past them would mean inventing answers, which is exactly what this whole project has consistently refused to do elsewhere (pricing, guarantees, client claims). None of the three blocks writing the brief below, but all three block spending real money.
+**1. RESOLVED, 2026-09-05 (Fabien): Free Website Review feeds into the Commercial Diagnostic.**
 
-**1. "Free Website Review" is a new funnel entry point that doesn't exist in the Product Journey yet, and it sits close enough to the Commercial Health Check to need a decision, not an assumption.**
+Confirmed: this is a distinct, human-delivered, website-scoped lead magnet, positioned ahead of the Commercial Diagnostic in the funnel, not a replacement for or duplicate of the self-serve Commercial Health Check. Funnel is now Commercial Health Check (free, self-serve) / Free Website Review (free, human-delivered, this campaign) → Commercial Diagnostic ($995) → Commercial Audit. Two follow-ups this unlocks, not yet done:
 
-Halo's live funnel (`docs/PRODUCT_SYSTEM.md`, ADR-014) is Commercial Health Check (free, self-serve, no data collected) → Commercial Diagnostic ($995, human-delivered) → Commercial Audit. A "Free Website Review" would be a third free thing: human-delivered like a Diagnostic, but free like a Health Check, and scoped to one page rather than the whole commercial system. That's not automatically wrong, a website-specific lens is a legitimate advertising hook (see §3), but it needs a decision, not a silent build:
+- `docs/PRODUCT_SYSTEM.md` should get this new entry point added so it doesn't drift out of sync with this document, once the campaign is actually live rather than speculative.
+- The reviewer still needs to actually apply the Acquisition and Conversion & Sales Systems columns of the Commercial Leakage Framework (`docs/HALO_BIBLE.md` Section Four) when writing up each review, and the "Conversation" stage should explicitly bridge into the Diagnostic offer, otherwise the funnel is confirmed on paper but not in the actual conversation script. Worth a short internal note (not built here) once the first few reviews are actually delivered.
 
-- Is this review a manual, human look at the prospect's actual website, applying the Acquisition and Conversion & Sales Systems columns of the Commercial Leakage Framework (`docs/HALO_BIBLE.md` Section Four)? If so, who does it, and how long does it actually take per lead? The brief's "48 business hours" SLA (§18) is currently a placeholder, not a confirmed capacity commitment, and Halo has exactly one person.
-- Does a lead who requests this review then get routed into the existing Diagnostic funnel, or does it stay a standalone thing? If it's meant to warm someone into the $995 Diagnostic, say so explicitly in the internal process, so "Conversation" and "Opportunity" in the tracking table (§21 below) have a real next step behind them.
-- Recommendation, not a decision I'm making unilaterally: keep it as a distinct, narrower, human-delivered lead magnet (it does something a self-serve quiz can't: put a named contact into a real conversation about their business), explicitly feeding into the Commercial Diagnostic as next step, and note this addition in `docs/PRODUCT_SYSTEM.md` once confirmed so the two documents don't drift apart. Needs Fabien's sign-off before it's treated as decided.
+The two remaining open items don't block building the creative or setting up the form, but do block turning spend on:
 
 **2. Currency mismatch: this campaign runs in GBP, against an audience being sold into a USD-priced product.**
 
 The whole media plan below is in £ (£200 test, £10/day, £40 lead value), correctly, since it's a UK audience and a UK media budget. But `pricing-config.js` only has one live currency (USD: Diagnostic $995), and the US-vs-UK pricing question is an explicitly open decision (`docs/ARCHITECTURAL_DECISIONS.md`, "Pending decisions → US market positioning / regional pricing"). A UK founder who responds to this ad, has a good conversation, and then sees "$995" is a real friction point this campaign will surface for the first time in production. Not blocking, this doesn't stop a £200 test, but it should be resolved (or at least anticipated with a plain "in USD" line somewhere in the follow-up conversation) before the campaign is scaled past the test.
 
-**3. The confirmation-message SLA (§18 in the original brief) needs Fabien's real number, not a placeholder.**
+**2. The confirmation-message SLA (§18 in the original brief) needs Fabien's real number, not a placeholder.**
 
 "We'll get back to you within 48 business hours" is a specific operational promise. Per Halo's own non-negotiables (`docs/HALO_BIBLE.md` Chapter 6: "we will not sell certainty where certainty doesn't exist"), this shouldn't ship as invented copy. Placeholder used below, flagged inline, same discipline as the Guarantee's refund-window copy (`docs/GUARANTEE.md`).
 
-None of these are reasons to stop. They're the difference between a campaign built on Halo's own standard of evidence and one built on assumption. Proceeding with the rest of the brief on the understanding that all three get a real answer before spend goes live.
+Neither is a reason to stop building. They're the difference between a campaign built on Halo's own standard of evidence and one built on assumption. Proceeding with the rest of the brief on the understanding that both get a real answer before spend goes live.
 
 ---
 
@@ -143,7 +142,7 @@ Fields (4, at LinkedIn's recommended 3-4): First name, Work email, Company name,
 
 **Form CTA:** Request Review
 
-**Confirmation message (PLACEHOLDER, needs Fabien's real SLA, see §0.3):**
+**Confirmation message (PLACEHOLDER, needs Fabien's real SLA, see §0.2):**
 
 > Thanks, your website review request has been received. We'll review your website and get back to you within [X] with our initial findings.
 
@@ -163,4 +162,4 @@ Kept from the original brief (§22) unchanged: no wholesale changes before 48 ho
 
 ## 10 — What this document deliberately does not include yet
 
-Per standing instruction to build architecture first and modules one at a time: this document does not include the rendered ad images, the LinkedIn campaign itself set up in Campaign Manager, or the internal qualified-lead tracker. Once §0's three open items are resolved and this document is reviewed, the next module is the actual creative assets: 1200x1200 and 1200x628 renders of Concepts A and D, using the same navy/bronze/Fraunces system already built for `content/linkedin/templates/quote-card.html`, adapted for the offer/CTA structure this campaign needs rather than a new template built from scratch.
+Per standing instruction to build architecture first and modules one at a time: this document does not include the rendered ad images, the LinkedIn campaign itself set up in Campaign Manager, or the internal qualified-lead tracker. The funnel decision in §0 is resolved; the currency and SLA items still need real answers before spend goes live. The next module is the actual creative assets: 1200x1200 and 1200x628 renders of Concepts A and D, using the same navy/bronze/Fraunces system already built for `content/linkedin/templates/quote-card.html`, adapted for the offer/CTA structure this campaign needs rather than a new template built from scratch.
