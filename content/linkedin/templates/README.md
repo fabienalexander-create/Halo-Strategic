@@ -14,6 +14,7 @@ Reusable HTML/CSS templates rendered to PNG via headless Chrome, instead of prom
 | `comparison.html` | Two-column "X vs Y" comparison (up to 4 rows each side) |
 | `flowchart.html` | A linear top-to-bottom flow (up to 5 boxes) |
 | `carousel.html` | One slide of a multi-slide carousel — render once per slide |
+| `ad-offer.html` | Paid ad creative: headline (up to 3 lines) + support line + bronze offer line. `vw`/`vh`-sized so it renders correctly at both 1200x1200 and 1200x627 from the same markup — see `content/ads/*/README.md` for a campaign using it |
 
 Every template shares the same foundation: navy `#101A30` background, bronze `#B08D57`/`#D8BE8F` accents, white `#F6F6F3` text, thin bronze top bar, bottom rule with "HALO STRATEGIC" wordmark and "halostrategic.com". That consistent shell is deliberate — the goal (per the Operating Manual) is that a Halo graphic is recognisable even with the logo cropped out, from typography, spacing, and layout alone.
 

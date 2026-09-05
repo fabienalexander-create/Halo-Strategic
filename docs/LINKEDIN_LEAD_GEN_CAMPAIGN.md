@@ -160,6 +160,10 @@ Kept from the original brief (§22) unchanged: no wholesale changes before 48 ho
 
 ---
 
-## 10 — What this document deliberately does not include yet
+## 10 — Creative assets (module 2, built 2026-09-05)
 
-Per standing instruction to build architecture first and modules one at a time: this document does not include the rendered ad images, the LinkedIn campaign itself set up in Campaign Manager, or the internal qualified-lead tracker. The funnel decision in §0 is resolved; the currency and SLA items still need real answers before spend goes live. The next module is the actual creative assets: 1200x1200 and 1200x628 renders of Concepts A and D, using the same navy/bronze/Fraunces system already built for `content/linkedin/templates/quote-card.html`, adapted for the offer/CTA structure this campaign needs rather than a new template built from scratch.
+Built in `content/linkedin/templates/ad-offer.html`, a new `vw`/`vh`-sized template (same navy/bronze/Fraunces system as the existing organic-post templates) that renders both the 1200x1200 and 1200x627 LinkedIn formats from one file. Render-ready data for Concept A and Concept D lives in `content/ads/linkedin-website-review/`, along with per-ad metadata (ad name, intro text, headline, CTA, alt text) for Campaign Manager. See that folder's README for exact render commands.
+
+One deliberate change from §3-4 above while building: both concepts now keep headline copy entirely white rather than mixing in a bronze second line, since `docs/HALO_BIBLE.md` Section Nine specifies bronze as a single non-competing accent, better reserved for the rule, the offer line and the footer. Concept D's "find out what's actually wrong with it first" moved into the support line rather than a bronze headline line; the words are unchanged, only the visual treatment.
+
+Not yet done: the LinkedIn campaign itself set up in Campaign Manager, and the internal qualified-lead tracker (§8). Both remain their own module. The currency and SLA items from §0 still need real answers before spend goes live.
