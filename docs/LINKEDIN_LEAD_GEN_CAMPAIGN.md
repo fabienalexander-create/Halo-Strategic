@@ -171,3 +171,53 @@ All three items in §0 are now resolved.
 `content/ads/linkedin-website-review/qualified-lead-tracker.xlsx`: Dashboard (funnel totals and Qualified CPL, all formulas), Campaign Summary (per-creative platform metrics, entered by hand from LinkedIn Campaign Manager), Leads (one row per lead), and a Qualified Lead Criteria reference tab built directly from the original brief's §20 definition. Formulas verified with a real recalculation pass (LibreOffice, zero formula errors) rather than assumed correct from the Python that wrote them.
 
 Not yet done, and outside what this repo can build: the campaign itself set up in LinkedIn Campaign Manager, a manual step in LinkedIn's own UI using the creative, copy and form spec above. `docs/LINKEDIN_CAMPAIGN_MANAGER_SETUP.md` (module 4, built 2026-09-05) is the screen-by-screen checklist for that step, mapping every value above onto Campaign Manager's actual fields.
+
+---
+
+## 12 — Second-wave concepts B and C (backup, built 2026-09-05)
+
+Per Fabien's instruction, Concepts B and C now exist as finished backup assets, not queued into the live test. §2's reasoning for holding them out of the first £200 test still stands: two creatives is already a thin split of that budget, a third or fourth would make it thinner still. These are ready to run as the second-wave test §2 describes, once A vs. D produces a clean read, not before.
+
+Both were tightened from the original brief while finalising, same discipline as A and D in §3-4: no em dashes, no accusatory or generic phrasing the brief itself already flagged as weak.
+
+### Concept B — The Cost (rebalanced)
+
+The original brief's headline ("What is your website actually costing your business?") was flagged in §2 as risking an unsupported-accusation tone the brief's own §03 warns against ("actually costing" reads as an assertion, not a genuine question). Rebalanced into real curiosity rather than a claim:
+
+**Headline (creative):**
+WHAT COULD YOUR
+WEBSITE BE
+COSTING YOU?
+
+**Supporting line:** Most business owners don't know until they look.
+
+**Offer line:** FREE WEBSITE REVIEW
+
+**Introductory text:** A website that looks fine can still be costing you enquiries you never see. Halo Strategic offers a free website review: a practical look at where visitors are most likely to drop off before they ever get in touch. No obligation, just what we'd actually tell you if you asked.
+
+**Headline (ad unit):** What Could Your Website Be Costing You?
+
+**CTA button:** Request Review
+
+### Concept C — The Diagnosis (rewritten)
+
+The original brief's headline ("Your website could be working harder") was flagged in §2 as the one line in the whole brief a competitor could publish unchanged, too generic to do any of the differentiation work §15 asks for. Rewritten around Halo's own diagnostic language (a findable, specific reason, not a vague "could do better") rather than softened web-agency phrasing:
+
+**Headline (creative):**
+YOUR WEBSITE HAS
+A REASON IT'S NOT
+CONVERTING
+
+**Supporting line:** We'll show you what it is.
+
+**Offer line:** FREE WEBSITE REVIEW
+
+**Introductory text:** Every website has a reason it isn't converting as well as it could. We'll look at yours and show you what we find. No obligation, no pitch, just what we see.
+
+**Headline (ad unit):** Find Out Why Your Website Isn't Converting
+
+**CTA button:** Get Free Review
+
+### Assets
+
+Render data for both lives in `content/ads/linkedin-website-review/concept-b.json` and `concept-c.json`, using the same `ad-offer.html` template as A and D. Layout-checked in-sandbox (fallback font, same caveat as the module 2 renders); PNGs aren't rendered yet since neither concept is scheduled to run, render them per that folder's README once one actually is.

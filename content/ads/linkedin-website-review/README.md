@@ -32,6 +32,15 @@ node render.js ad-offer ../../ads/linkedin-website-review/concept-d.json ad-webs
 node render.js ad-offer ../../ads/linkedin-website-review/concept-d.json ad-website-review-concept-d-wide --wide
 ```
 
+Concept B and Concept C are backup assets for a second wave, not part of the live test (see `docs/LINKEDIN_LEAD_GEN_CAMPAIGN.md` §2 and §12). Their `.json` data files exist so they're ready to render on short notice; only render the PNGs once one is actually scheduled to run:
+
+```
+node render.js ad-offer ../../ads/linkedin-website-review/concept-b.json ad-website-review-concept-b-square
+node render.js ad-offer ../../ads/linkedin-website-review/concept-b.json ad-website-review-concept-b-wide --wide
+node render.js ad-offer ../../ads/linkedin-website-review/concept-c.json ad-website-review-concept-c-square
+node render.js ad-offer ../../ads/linkedin-website-review/concept-c.json ad-website-review-concept-c-wide --wide
+```
+
 Output lands in `content/linkedin/generated/` (and the visible LinkedIn Images folder `render.js` also copies to), as PNGs ready to upload to LinkedIn Campaign Manager. Both are well under LinkedIn's 5MB image limit.
 
 Rendered and visually checked in this session using the sandbox's Chromium (not `render.js` itself, which only targets Windows paths); layout holds correctly at both 1200x1200 and 1200x627 with no cropping or overflow. That test run's fonts fell back to a generic serif/sans (no outbound access to Google Fonts from the sandbox), so re-check the real render on a machine with live font access before shipping, since Fraunces reads noticeably more premium than the fallback.
@@ -57,3 +66,21 @@ Full copy rationale is in `docs/LINKEDIN_LEAD_GEN_CAMPAIGN.md` §3-4. Reference 
 - **CTA:** Get Free Review
 - **Image alt text:** Halo Strategic ad: "Before you redesign your website, find out what's actually wrong with it first." Free website review offer.
 - **File format:** PNG (both `-square` and `-wide` renders)
+
+### Concept B — second-wave backup, held (not in the first test)
+
+- **Ad name:** Website Review — Concept B (Cost)
+- **Introductory text:** A website that looks fine can still be costing you enquiries you never see. Halo Strategic offers a free website review: a practical look at where visitors are most likely to drop off before they ever get in touch. No obligation, just what we'd actually tell you if you asked.
+- **Headline:** What Could Your Website Be Costing You?
+- **CTA:** Request Review
+- **Image alt text:** Halo Strategic ad: "What could your website be costing you?" Free website review offer.
+- **File format:** PNG (square rendered; render `-wide` when this concept is actually scheduled)
+
+### Concept C — second-wave backup, held (not in the first test)
+
+- **Ad name:** Website Review — Concept C (Diagnosis)
+- **Introductory text:** Every website has a reason it isn't converting as well as it could. We'll look at yours and show you what we find. No obligation, no pitch, just what we see.
+- **Headline:** Find Out Why Your Website Isn't Converting
+- **CTA:** Get Free Review
+- **Image alt text:** Halo Strategic ad: "Your website has a reason it's not converting. We'll show you what it is." Free website review offer.
+- **File format:** PNG (square rendered; render `-wide` when this concept is actually scheduled)
