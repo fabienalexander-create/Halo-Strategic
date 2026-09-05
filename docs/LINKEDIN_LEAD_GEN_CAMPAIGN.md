@@ -170,4 +170,4 @@ All three items in §0 are now resolved.
 
 `content/ads/linkedin-website-review/qualified-lead-tracker.xlsx`: Dashboard (funnel totals and Qualified CPL, all formulas), Campaign Summary (per-creative platform metrics, entered by hand from LinkedIn Campaign Manager), Leads (one row per lead), and a Qualified Lead Criteria reference tab built directly from the original brief's §20 definition. Formulas verified with a real recalculation pass (LibreOffice, zero formula errors) rather than assumed correct from the Python that wrote them.
 
-Not yet done, and outside what this repo can build: the campaign itself set up in LinkedIn Campaign Manager, a manual step in LinkedIn's own UI using the creative, copy and form spec above.
+Not yet done, and outside what this repo can build: the campaign itself set up in LinkedIn Campaign Manager, a manual step in LinkedIn's own UI using the creative, copy and form spec above. `docs/LINKEDIN_CAMPAIGN_MANAGER_SETUP.md` (module 4, built 2026-09-05) is the screen-by-screen checklist for that step, mapping every value above onto Campaign Manager's actual fields.
