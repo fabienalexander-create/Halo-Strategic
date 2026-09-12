@@ -85,7 +85,9 @@ This Lead Gen Form captures **HVAC business** contact information for a B2B sale
 
 ## Tracking
 
-Same structure as `BRIEF.md` §11: Impressions → Clicks → Form opens → Form submissions → Qualified HVAC businesses (real company, real contact, genuinely fits the target profile) → Sales conversations → Paid trials → Repeat purchases. **Primary metric: cost to acquire one paying HVAC customer**, not raw cost-per-lead or cost-per-form-fill. Log this in a tracker analogous to `content/ads/linkedin-website-review/qualified-lead-tracker.xlsx`, not built yet for this campaign, worth doing once the campaign is actually ready to launch.
+Same structure as `BRIEF.md` §11: Impressions → Clicks → Form opens → Form submissions → Qualified HVAC businesses (real company, real contact, genuinely fits the target profile) → Sales conversations → Paid trials → Repeat purchases. **Primary metric: cost to acquire one paying HVAC customer**, not raw cost-per-lead or cost-per-form-fill.
+
+**Tracker: `halo-growth-hvac/hvac-qualified-lead-tracker.xlsx`**, built 2026-09-15, Dashboard/Campaign Summary/Leads/Zapier Setup tabs, formulas verified via a real recalculation pass. Leads should land in the "Leads" tab automatically once connected via Zapier (see that file's "Zapier Setup" tab for the exact steps, not yet built or tested in this session, no LinkedIn/Zapier access here) or be pasted in manually from a Campaign Manager CSV export in the meantime. One thing the Zapier setup tab flags and doesn't resolve: LinkedIn's form itself has no "which ad/concept did this come from" field, so either build two separate Zaps (one per ad) or accept that the Concept A/C column has to be filled in by hand per lead.
 
 ## Sequencing checklist
 
