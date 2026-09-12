@@ -58,9 +58,12 @@ Full detail and rationale for all five concepts is in `CREATIVE_CONCEPTS.md`. St
 - **CTA:** closest preset to "Start the $750 Trial"
 - **Creative:** not yet rendered as an image, needs a visual builder session (see below)
 
-## What's still missing before these can actually run
+## Creative images
 
-- **No image files exist yet for either concept.** `CREATIVE_CONCEPTS.md` describes each concept's visual direction but nothing has been designed or rendered. Building the actual creative (using Halo's existing navy/bronze/Fraunces template system, or a new one for the US HVAC audience, per the open question in `BRIEF.md` §6) is a separate step before either ad can be uploaded.
+Rendered 2026-09-12 in `halo-growth-hvac/creative/generated/`: `hvac-concept-a-square.png` / `-wide.png` and `hvac-concept-c-square.png` / `-wide.png`. Built on Halo's existing navy/bronze/Fraunces template (`content/linkedin/templates/ad-offer.html`), reused as-is for speed rather than a researched decision, per the still-open question in `BRIEF.md` §6 about whether a US HVAC audience needs its own visual system. Upload the `-square` PNGs as primary (1:1 is LinkedIn's current recommended format); the `-wide` PNGs are available if the 1.91:1 placement is used too. Source data is in `halo-growth-hvac/creative/concept-a.json` and `concept-c.json` if either needs a copy tweak and re-render (`node render.js ad-offer <path-to-json> <output-name> [--wide]` from `content/linkedin/templates/`).
+
+## What's still missing before this can actually launch
+
 - **No landing page exists for this offer.** Given that, the pragmatic path for a first test is a **native LinkedIn Lead Gen Form** (see below) rather than an external landing page, this avoids the dependency entirely and matches how the earlier website-review campaign was built. If Fabien wants an actual landing page for this offer eventually, that's `BRIEF.md` §7, not built yet.
 
 ## Lead Gen Form
