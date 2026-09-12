@@ -2,10 +2,22 @@
 
 Status: Built 2026-09-12, for handoff to a separate Claude session with browser/LinkedIn access. Self-contained: written so it doesn't require the reader to have this conversation's context. Full strategic reasoning lives in `halo-growth-hvac/BRIEF.md`, `COMPETITOR_RESEARCH.md`, and `CREATIVE_CONCEPTS.md` in this same repo, read those first if anything below is unclear.
 
-## Do not launch real spend until these two things are confirmed
+## Do not spend money until this is confirmed in-session
 
-1. **Fabien has resolved `BRIEF.md` §0.** This product (selling qualified HVAC leads/appointments) runs under Halo Strategic itself, and needs an explicit, dated reconciliation with `docs/HALO_BIBLE.md` before it's treated as a settled part of Halo's positioning. If that hasn't happened, building the campaign in draft form is fine; spending money on it isn't yet.
-2. **A test budget hasn't been set anywhere in this brief.** Unlike the earlier LinkedIn website-review campaign (`docs/LINKEDIN_LEAD_GEN_CAMPAIGN.md`, £200 total, £10/day), no HVAC campaign budget has been specified by Fabien. Don't invent one. A reasonable starting point, given the $750 trial value, might be a few hundred dollars, but confirm the actual number with Fabien before entering anything into Campaign Manager's budget field.
+1. **Fabien has resolved `BRIEF.md` §0.** This product (selling qualified HVAC leads/appointments) runs under Halo Strategic itself, and needs an explicit, dated reconciliation with `docs/HALO_BIBLE.md` before it's treated as a settled part of Halo's positioning. If that hasn't happened, building the campaign in draft form is fine; spending money on it isn't yet. Confirm directly with Fabien before launch, don't assume this is resolved just because this brief exists.
+2. **Confirm the test budget and business hours below out loud with Fabien before entering anything into Campaign Manager**, even though the numbers are now filled in. They were set as a recommendation, not observed from a live decision Fabien made in front of Claude Browser, so treat them as a starting proposal to confirm, not a rubber stamp.
+
+Build the campaign, creative, and form in draft freely. Just don't push the button on real spend until both of the above are actually confirmed in that session.
+
+## Test budget
+
+**$300 total, deliberately a validation budget, not a scale-up budget.** Roughly $30/day over 10 days, or front-loaded if the campaign needs more daily spend to generate a readable signal, use judgement on the split, the $300 ceiling is the fixed part. The objective at this budget is answering five questions, not closing customers: are HVAC owners clicking, are they submitting the form, which of the two creatives performs better, what's the cost per qualified prospect, and does anyone actually want the $750 trial. If the signal is good, budget increases from here, that's a separate, later decision, not assumed now.
+
+## Confirmation / first-response SLA
+
+**Respond to every new lead within 15 minutes during business hours. Outside business hours, respond by 9:00 AM the following business day.** Define the actual business hours and time zone in this campaign-setup session, don't invent them silently, they need to match how Fabien (or whoever's answering leads) actually operates. A LinkedIn prospect submitting a form while actively considering the offer is worth meaningfully more with a fast response, that's the reasoning behind the 15-minute window, not an arbitrary number.
+
+Lead Gen Form confirmation message, once business hours are set: "Thanks, we've received your request. We'll follow up within 15 minutes if you're submitting during business hours ([state the actual hours/time zone here]), or by 9:00 AM the next business day otherwise."
 
 ## Objective
 
@@ -59,7 +71,7 @@ Full detail and rationale for all five concepts is in `CREATIVE_CONCEPTS.md`. St
   - "How many technicians does your company have?" (free text or ranges: 1-3 / 4-10 / 11+)
   - "How are you currently generating leads?" (multiple choice: Referrals / Google Ads / Angi or HomeAdvisor / Other lead services / Not actively marketing / Other)
 - **CTA:** closest preset to "Start My Trial"
-- **Confirmation message:** needs Fabien's real commitment on response time, don't invent one. Placeholder pattern to fill in once confirmed: "Thanks, we've received your request. [X] will follow up within [Y] to get your trial started."
+- **Confirmation message:** "Thanks, we've received your request. We'll follow up within 15 minutes if you're submitting during business hours ([fill in actual hours/time zone in this session]), or by 9:00 AM the next business day otherwise." (see "Confirmation / first-response SLA" above, hours need confirming with Fabien, don't leave the bracket unfilled when publishing)
 - **Privacy policy link:** `https://halostrategic.com/privacy-policy` unless Fabien specifies a different one for this US-facing offer
 
 ## A compliance note specific to this form, not the AI-SMS system
@@ -73,8 +85,7 @@ Same structure as `BRIEF.md` §11: Impressions → Clicks → Form opens → For
 ## Sequencing checklist
 
 1. Confirm `BRIEF.md` §0 (Bible reconciliation) with Fabien
-2. Confirm a real test budget with Fabien, don't assume one
+2. Confirm the $300 test budget and the business hours/time zone for the SLA with Fabien, out loud, in this session
 3. Build the two creative images for Concept A and Concept C
-4. Set up the campaign, audience, and Lead Gen Form in Campaign Manager per this doc
-5. Get the confirmation-message SLA from Fabien before publishing the form
-6. Launch, then hold changes for the same reasoning as the earlier campaign, don't touch anything before enough data accumulates to read cleanly
+4. Set up the campaign, audience, and Lead Gen Form in Campaign Manager per this doc, with the confirmation message's bracket filled in with real business hours
+5. Launch, then hold changes for the same reasoning as the earlier campaign, don't touch anything before enough data accumulates to read cleanly
