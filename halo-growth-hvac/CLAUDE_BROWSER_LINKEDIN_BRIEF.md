@@ -17,7 +17,9 @@ Build the campaign, creative, and form in draft freely. Just don't push the butt
 
 **Respond to every new lead within 15 minutes during business hours. Outside business hours, respond by 9:00 AM the following business day.** Define the actual business hours and time zone in this campaign-setup session, don't invent them silently, they need to match how Fabien (or whoever's answering leads) actually operates. A LinkedIn prospect submitting a form while actively considering the offer is worth meaningfully more with a fast response, that's the reasoning behind the 15-minute window, not an arbitrary number.
 
-Lead Gen Form confirmation message, once business hours are set: "Thanks, we've received your request. We'll follow up within 15 minutes if you're submitting during business hours ([state the actual hours/time zone here]), or by 9:00 AM the next business day otherwise."
+Business hours, confirmed by Fabien: **9:00 AM-6:00 PM EST, Monday to Friday.**
+
+Lead Gen Form confirmation message: "Thanks, we've received your request. We'll follow up within 15 minutes if you're submitting Monday-Friday, 9:00 AM-6:00 PM EST, or by 9:00 AM EST the next business day otherwise."
 
 ## Objective
 
@@ -71,7 +73,7 @@ Full detail and rationale for all five concepts is in `CREATIVE_CONCEPTS.md`. St
   - "How many technicians does your company have?" (free text or ranges: 1-3 / 4-10 / 11+)
   - "How are you currently generating leads?" (multiple choice: Referrals / Google Ads / Angi or HomeAdvisor / Other lead services / Not actively marketing / Other)
 - **CTA:** closest preset to "Start My Trial"
-- **Confirmation message:** "Thanks, we've received your request. We'll follow up within 15 minutes if you're submitting during business hours ([fill in actual hours/time zone in this session]), or by 9:00 AM the next business day otherwise." (see "Confirmation / first-response SLA" above, hours need confirming with Fabien, don't leave the bracket unfilled when publishing)
+- **Confirmation message:** "Thanks, we've received your request. We'll follow up within 15 minutes if you're submitting Monday-Friday, 9:00 AM-6:00 PM EST, or by 9:00 AM EST the next business day otherwise." (business hours confirmed by Fabien, see "Confirmation / first-response SLA" above)
 - **Privacy policy link:** `https://halostrategic.com/privacy-policy` unless Fabien specifies a different one for this US-facing offer
 
 ## A compliance note specific to this form, not the AI-SMS system
@@ -85,7 +87,7 @@ Same structure as `BRIEF.md` §11: Impressions → Clicks → Form opens → For
 ## Sequencing checklist
 
 1. Confirm `BRIEF.md` §0 (Bible reconciliation) with Fabien
-2. Confirm the $300 test budget and the business hours/time zone for the SLA with Fabien, out loud, in this session
+2. Confirm the $300 test budget with Fabien, out loud, in this session (business hours are now set: 9:00 AM-6:00 PM EST, Monday-Friday)
 3. Build the two creative images for Concept A and Concept C
-4. Set up the campaign, audience, and Lead Gen Form in Campaign Manager per this doc, with the confirmation message's bracket filled in with real business hours
+4. Set up the campaign, audience, and Lead Gen Form in Campaign Manager per this doc, using the confirmation message as written below
 5. Launch, then hold changes for the same reasoning as the earlier campaign, don't touch anything before enough data accumulates to read cleanly
