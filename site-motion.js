@@ -55,7 +55,11 @@
   );
 
   targets.forEach(function (el) {
-    el.classList.add('reveal');
+    var rect = el.getBoundingClientRect();
+    var alreadyVisible = rect.top < window.innerHeight * 0.88 && rect.bottom > 0;
+    if (!alreadyVisible) {
+      el.classList.add('reveal');
+    }
     io.observe(el);
   });
 })();
