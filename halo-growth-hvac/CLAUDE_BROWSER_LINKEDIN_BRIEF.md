@@ -66,9 +66,10 @@ Rendered 2026-09-12 in `halo-growth-hvac/creative/generated/`: `hvac-concept-a-s
 
 - **No landing page exists for this offer.** Given that, the pragmatic path for a first test is a **native LinkedIn Lead Gen Form** (see below) rather than an external landing page, this avoids the dependency entirely and matches how the earlier website-review campaign was built. If Fabien wants an actual landing page for this offer eventually, that's `BRIEF.md` §7, not built yet.
 
-## Lead Gen Form
+## Lead Gen Form — build TWO, one per ad, not one shared form
 
-- **Form name:** HVAC 5-Opportunity Trial
+Changed from the original plan (one shared form) per Fabien's decision to run two separate Make.com scenarios for Concept A/C attribution: LinkedIn's Lead Gen Form response carries no "which ad" field, so two scenarios watching one shared form can't reliably split by concept. Build two forms with **identical content** below, one attached to Ad 1 (Concept A) and one to Ad 2 (Concept C), so each Make scenario watches its own form and knows its concept automatically. Name them so they're not confused: "HVAC 5-Opportunity Trial — Concept A" and "— Concept C."
+
 - **Headline:** Get 5 Qualified HVAC Opportunities — $750
 - **Supporting copy:** Test 5 exclusive, qualified homeowner opportunities in your service area. No monthly contract, see exactly what you get before buying more.
 - **Fields:** Name, Company name, Work email, Phone number, Company website, Service area/location
@@ -87,12 +88,13 @@ This Lead Gen Form captures **HVAC business** contact information for a B2B sale
 
 Same structure as `BRIEF.md` §11: Impressions → Clicks → Form opens → Form submissions → Qualified HVAC businesses (real company, real contact, genuinely fits the target profile) → Sales conversations → Paid trials → Repeat purchases. **Primary metric: cost to acquire one paying HVAC customer**, not raw cost-per-lead or cost-per-form-fill.
 
-**Tracker: `halo-growth-hvac/hvac-qualified-lead-tracker.xlsx`**, built 2026-09-15, Dashboard/Campaign Summary/Leads/Make.com Setup tabs, formulas verified via a real recalculation pass. Leads should land in the "Leads" tab automatically once connected via **Make.com** (LinkedIn Lead Gen Ads "Watch Leads" trigger → Google Sheets "Add a Row" action, exact steps on that file's "Make.com Setup" tab, not yet built or tested in this session, no LinkedIn or Make.com access here) or be pasted in manually from a Campaign Manager CSV export in the meantime. This needs the file imported into Google Sheets first, Make writes to a live Google Sheet, not a local .xlsx. One thing the Make.com setup tab flags and doesn't resolve: LinkedIn's form itself has no "which ad/concept did this come from" field, so either build two separate Make scenarios (one per ad) or accept that the Concept A/C column has to be filled in by hand per lead.
+**Tracker: `halo-growth-hvac/hvac-qualified-lead-tracker.xlsx`**, built 2026-09-15, Dashboard/Campaign Summary/Leads/Make.com Setup tabs, formulas verified via a real recalculation pass. Leads should land in the "Leads" tab automatically once connected via **two Make.com scenarios**, one per ad/form, each writing a static Concept value ("A" or "C") into the Google Sheets row (exact steps on that file's "Make.com Setup" tab, not yet built or tested in this session, no LinkedIn or Make.com access here), or be pasted in manually from a Campaign Manager CSV export in the meantime. This needs the file imported into Google Sheets first, Make writes to a live Google Sheet, not a local .xlsx.
 
 ## Sequencing checklist
 
 1. Confirm `BRIEF.md` §0 (Bible reconciliation) with Fabien
 2. Confirm the $300 test budget with Fabien, out loud, in this session (business hours are now set: 9:00 AM-6:00 PM EST, Monday-Friday)
 3. Build the two creative images for Concept A and Concept C
-4. Set up the campaign, audience, and Lead Gen Form in Campaign Manager per this doc, using the confirmation message as written below
-5. Launch, then hold changes for the same reasoning as the earlier campaign, don't touch anything before enough data accumulates to read cleanly
+4. Set up the campaign, audience, and TWO Lead Gen Forms (one per ad, identical content) in Campaign Manager per this doc, using the confirmation message as written below
+5. Build the two Make.com scenarios per the tracker's "Make.com Setup" tab, test each before scheduling live
+6. Launch, then hold changes for the same reasoning as the earlier campaign, don't touch anything before enough data accumulates to read cleanly
