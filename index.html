@@ -125,6 +125,20 @@
   .stat .l{ font-size:0.8rem; color:var(--slate); }
   .evidence-more{ margin-top:8px; }
 
+  /* WHO THIS IS FOR */
+  .who-grid{ list-style:none; margin:28px 0 0; padding:0; display:grid; gap:12px; }
+  .who-grid li{ background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-md); padding:16px 20px; font-family:'Fraunces',serif; font-style:italic; font-size:1.05rem; color:var(--navy-deep); }
+  .who-cta{ margin-top:24px; font-size:1.05rem; }
+
+  /* WHAT HALO DOESN'T DO */
+  .dont-list{ list-style:none; margin:24px 0 0; padding:0; }
+  .dont-list li{ display:flex; gap:12px; padding:12px 0; border-bottom:1px solid var(--border); font-size:1rem; }
+  .dont-list li::before{ content:'\2014'; color:var(--slate); flex:none; }
+  .dont-final{ font-family:'Fraunces',serif; font-size:1.3rem; color:var(--navy-deep); margin-top:24px; font-style:italic; }
+
+  /* FOUNDER PERSPECTIVE */
+  .fp-card .k{ font-family:'IBM Plex Mono',monospace; font-size:0.72rem; color:var(--bronze); text-transform:uppercase; letter-spacing:0.08em; margin-bottom:10px; }
+
   /* FINAL CTA */
   .final-cta{ text-align:left; background:var(--navy-deep); color:#fff; border-radius:var(--radius-lg); padding:56px; margin:0 32px; }
   .final-cta h2{ color:#fff; font-size:2rem; margin-bottom:16px; }
@@ -366,10 +380,11 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     </svg>
     <div class="container">
       <div class="eyebrow" style="color:var(--bronze-light);">Independent Commercial Growth Consultancy</div>
-      <h1>Helping founder-led businesses make better commercial decisions.</h1>
-      <p class="lead">Whether you're overcoming growth challenges or planning your next stage of growth, Halo Strategic helps founder-led businesses identify the commercial priorities that matter most, make better decisions, and build stronger, more predictable businesses.</p>
-      <p style="color:#C7CBD4; font-size:1.05rem; margin:-16px 0 36px; max-width:38em;">Marketing isn't always the answer. Sales isn't always the problem. Better commercial decisions start with understanding the real problem.</p>
+      <h1>Find what's actually holding your business back.</h1>
+      <p class="lead">Halo Strategic diagnoses the commercial constraint behind stalled growth, before you spend more on marketing, sales, or technology.</p>
+      <p style="color:#C7CBD4; font-size:1.05rem; margin:-16px 0 28px; max-width:38em;">Marketing isn't always the problem. Sometimes it's the offer. Sometimes it's the customer journey. Sometimes it's lead quality, or conversion, or what happens after the lead arrives. <b style="color:#fff;">We find out which.</b></p>
       <a href="#cta" class="btn btn-bronze">Start with a Commercial Diagnostic</a>
+      <a href="/commercial-health-check" class="btn" style="background:transparent; color:#fff; border:1px solid rgba(255,255,255,0.35); margin-left:12px;">Take the Free Health Check</a>
     </div>
   </section>
 
@@ -383,12 +398,19 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     </div>
   </section>
 
-  <!-- LEADERSHIP SHOULDN'T HAVE TO GUESS -->
+  <!-- WHO THIS IS FOR -->
   <section class="tight" style="background:var(--surface); border-top:1px solid var(--border); border-bottom:1px solid var(--border);">
     <div class="container">
-      <div class="eyebrow">Leadership Shouldn't Have to Guess</div>
-      <p class="lead">Why isn't growth translating into profit? Why does every department tell a different story about the same quarter? Which numbers can actually be trusted? What should happen next?</p>
-      <p>These are the questions most leadership teams are quietly living with - and the ones Halo exists to answer with evidence, not more opinions.</p>
+      <div class="eyebrow">Who This Is For</div>
+      <h2 class="section-title" style="font-size:1.7rem;">Halo is for businesses asking questions like:</h2>
+      <ul class="who-grid">
+        <li>"We're generating leads, but they're not converting."</li>
+        <li>"We're spending more on marketing, but growth isn't following."</li>
+        <li>"Our sales and marketing teams aren't aligned."</li>
+        <li>"We don't know where the commercial bottleneck actually is."</li>
+        <li>"We're about to invest heavily. We want to know what to fix first."</li>
+      </ul>
+      <p class="who-cta">If those questions sound familiar, <a href="/commercial-diagnostic" style="color:var(--bronze); font-weight:600; text-decoration:underline;">start with the Diagnostic →</a></p>
     </div>
   </section>
 
@@ -414,7 +436,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <div class="container">
       <div class="eyebrow">Why Halo</div>
       <h2 class="section-title">Built from experience, not a template.</h2>
-      <p class="lead">Fabien Alexander has worked across enterprise sales, advertising technology, travel, and running his own agency, seeing commercial problems from very different sides.</p>
+      <p class="lead">Fabien Alexander has worked across the parts of a business that most companies manage separately: enterprise sales, advertising technology, travel, partnerships and running his own agency. That breadth changes how Halo diagnoses growth problems, because the constraint is rarely sitting neatly inside one department.</p>
 
       <div class="why-halo-grid" style="display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:32px; margin:36px 0 0;">
         <div style="min-width:0;">
@@ -496,6 +518,23 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     </div>
   </section>
 
+  <!-- WHAT HALO DOESN'T DO -->
+  <section class="tight" style="background:var(--surface); border-top:1px solid var(--border); border-bottom:1px solid var(--border);">
+    <div class="container">
+      <div class="eyebrow">What Halo Doesn't Do</div>
+      <h2 class="section-title" style="font-size:1.7rem;">We don't:</h2>
+      <ul class="dont-list">
+        <li>Prescribe more ads before understanding the constraint</li>
+        <li>Sell technology because it's fashionable</li>
+        <li>Equate more leads with more growth</li>
+        <li>Recommend a redesign simply because the website looks dated</li>
+        <li>Bury recommendations beneath an 80-page strategy deck</li>
+        <li>Promise outcomes we can't evidence</li>
+      </ul>
+      <p class="dont-final">We diagnose first.</p>
+    </div>
+  </section>
+
   <!-- AGENCY PARTNERSHIPS -->
   <section class="tight" style="border-top:1px solid var(--border); border-bottom:1px solid var(--border);">
     <div class="container">
@@ -525,6 +564,42 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         </div>
       </div>
       <p style="margin-top:32px;"><a href="/selected-engagements" style="color:var(--bronze); font-weight:600; text-decoration:underline;">See all six Selected Engagements →</a></p>
+    </div>
+  </section>
+
+  <!-- FOUNDER PERSPECTIVE -->
+  <section class="tight">
+    <div class="container">
+      <div class="eyebrow">Founder Perspective</div>
+      <h2 class="section-title" style="font-size:1.7rem;">What Fabien has learned from working inside the commercial system, not just the marketing function.</h2>
+      <p class="lead" style="margin-bottom:8px;">43 pieces, each tested against a real engagement before publishing. Four to start with:</p>
+      <div class="card-grid two" style="margin-top:24px;">
+        <div class="card fp-card">
+          <div class="k">Founder Mindset</div>
+          <h3>The Commercial Question Comes Before the Commercial Solution</h3>
+          <p>Why the diagnosis has to be right before any fix does.</p>
+          <a href="/insights/the-commercial-question-comes-before-the-commercial-solution" class="readmore">Read the article →</a>
+        </div>
+        <div class="card fp-card">
+          <div class="k">Lead Quality</div>
+          <h3>What Counts as a Qualified Lead Isn't Universal</h3>
+          <p>The definition your CRM uses might not be the one costing you sales.</p>
+          <a href="/insights/what-counts-as-a-qualified-lead-isnt-universal" class="readmore">Read the article →</a>
+        </div>
+        <div class="card fp-card">
+          <div class="k">Commercial Systems</div>
+          <h3>Marketing Problem or Commercial Problem?</h3>
+          <p>Two real engagements on why that distinction changes everything.</p>
+          <a href="/insights/marketing-problem-or-commercial-problem" class="readmore">Read the article →</a>
+        </div>
+        <div class="card fp-card">
+          <div class="k">Revenue Leakage</div>
+          <h3>Six Places Revenue Quietly Leaks</h3>
+          <p>None of them show up in a standard marketing report.</p>
+          <a href="/insights/six-places-revenue-quietly-leaks" class="readmore">Read the article →</a>
+        </div>
+      </div>
+      <p style="margin-top:32px;"><a href="/insights/" style="color:var(--bronze); font-weight:600; text-decoration:underline;">See all 43 Founder Perspective articles →</a></p>
     </div>
   </section>
 
