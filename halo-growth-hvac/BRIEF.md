@@ -1,6 +1,6 @@
 # Halo Strategic — US HVAC Lead Generation / Appointment Engine
 
-Status: Master build brief, architecture pass only. Written 2026-09-12 from Fabien's brief. Nothing past this document is built yet, no competitor research, no creative, no landing page changes, no tech stack. This folder is where all of that will live once it's actually built, module by module, not in one sitting, same discipline as `docs/LINKEDIN_LEAD_GEN_CAMPAIGN.md`.
+Status: **Campaign live, 2026-09-13.** Written 2026-09-12 from Fabien's brief; competitor research, creative (Concepts A and C), Lead Gen Forms, and the Make.com-connected tracker were built as separate modules (see `CLAUDE_BROWSER_LINKEDIN_BRIEF.md` for exact launch config) before spend went live. Everything past launch, homeowner-acquisition engine, AI SMS qualification, CRM, compliance sign-off, is still not built, that's the rest of this document's scope, not yet started.
 
 ## 0 — This is Halo Strategic, not a separate brand: what that actually means
 

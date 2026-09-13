@@ -1,6 +1,8 @@
 # Claude Browser Execution Brief — HVAC LinkedIn Campaign Setup
 
-Status: Built 2026-09-12, for handoff to a separate Claude session with browser/LinkedIn access. Self-contained: written so it doesn't require the reader to have this conversation's context. Full strategic reasoning lives in `halo-growth-hvac/BRIEF.md`, `COMPETITOR_RESEARCH.md`, and `CREATIVE_CONCEPTS.md` in this same repo, read those first if anything below is unclear.
+Status: **Live, confirmed by Fabien 2026-09-13.** Built 2026-09-12 for handoff to a separate Claude session with browser/LinkedIn access. Full strategic reasoning lives in `halo-growth-hvac/BRIEF.md`, `COMPETITOR_RESEARCH.md`, and `CREATIVE_CONCEPTS.md` in this same repo.
+
+**Now that it's live: hold.** Per the "Optimisation rules" reasoning already established for the earlier UK campaign (`docs/LINKEDIN_LEAD_GEN_CAMPAIGN.md` §9) and BRIEF.md §11's own logic, don't touch budget, targeting, or creative before enough data accumulates to read cleanly, a few days at minimum on a $300 test. Check the tracker (§ below) rather than gut feeling before making any change.
 
 ## Do not spend money until this is confirmed in-session
 
