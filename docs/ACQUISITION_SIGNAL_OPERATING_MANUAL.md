@@ -66,6 +66,8 @@ Halo doesn't have to produce every pound of near-term income. The same signal-so
 - Halo opportunities aren't undersold as "I can do your job posting for you."
 - Fabien's CV (a separate, hands-on-delivery-focused asset — see internal CV project) is the conversion asset for the freelance funnel; the Smartsheet commercial-hypothesis writeup is the conversion asset for the Halo funnel.
 
-## Open item
+## Smartsheet homes
 
-Freelance opportunities currently have no dedicated Smartsheet home (existing sheets — "04 Hiring Signals", "05 CommissionCrowd" — are Halo-prospect trackers). Until a "06 Freelance Opportunities" sheet (or equivalent) is created and confirmed with Fabien, freelance-qualifying signals should be surfaced directly in the daily/session report rather than silently dropped, and not force-fitted into the Halo-prospect sheets.
+- Halo Opportunity → "04 Hiring Signals" (sheet ID 1404183690563460) or "05 CommissionCrowd" (sheet ID 5069268262801284), both in the "Halo Acquisition System" workspace.
+- Freelance/Contract Opportunity → "06 Freelance Opportunities" (sheet ID 5192907553460100, same workspace), created 2026-09-24. Columns: Company, Role, Job URL, Contract/Freelance Type, Deadline, Could Fabien Deliver (Y/N + Why), Dual-Track (Halo Potential), Status, Next Action.
+- A dual-track signal (both funnels apply) gets a row in both sheets, cross-referenced by company name — there's no single combined sheet.
