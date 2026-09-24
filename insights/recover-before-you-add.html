@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Before You Add a New Channel, Recover the One You Have</title>
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon-180x180.png">
+<link rel="manifest" href="/site.webmanifest">
+<meta name="theme-color" content="#101A30">
+<meta name="description" content="Most founders assume growth means adding something new. A real case shows why recovering what's already leaking usually has to come first.">
+<link rel="canonical" href="https://halostrategic.com/insights/recover-before-you-add">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://halostrategic.com/insights/recover-before-you-add">
+<meta property="og:title" content="Before You Add a New Channel, Recover the One You Have | Halo Strategic">
+<meta property="og:description" content="Most founders assume growth means adding something new. A real case shows why recovering what's already leaking usually has to come first.">
+<meta property="og:image" content="https://halostrategic.com/assets/og-default-1200x630.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Before You Add a New Channel, Recover the One You Have | Halo Strategic">
+<meta name="twitter:image" content="https://halostrategic.com/assets/og-default-1200x630.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#1B2A4A; --navy-deep:#101A30; --bronze:#B08D57; --bronze-light:#D8BE8F;
+    --slate:#44546A; --ink:#1A1D24; --paper:#F6F6F3; --surface:#FFFFFF; --border:#E1E3DE;
+    --green:#4B6B4F; --green-bg:#E7EDE6; --amber:#8F6E28; --amber-bg:#F2EAD9; --red:#8C4438; --red-bg:#F2E2DE;
+    --radius-sm:6px; --radius-md:8px; --radius-lg:12px;
+    --ease: cubic-bezier(0.4,0,0.2,1);
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth; overflow-x:hidden;}
+  body{
+    margin:0; background:var(--paper); color:var(--ink);
+    font-family:'Inter',sans-serif; font-size:17px; line-height:1.65;
+    -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+  }
+  ::selection{ background:var(--bronze-light); color:var(--navy-deep); }
+  h1,h2,h3{ font-family:'Fraunces',serif; font-weight:500; color:var(--navy-deep); margin:0; letter-spacing:-0.01em; }
+  a{ color:inherit; }
+  .container{ max-width:1180px; margin:0 auto; padding:0 32px; }
+  .mono{ font-family:'IBM Plex Mono',monospace; }
+
+  /* NAV */
+  header{ position:sticky; top:0; z-index:100; background:rgba(246,246,243,0.92); backdrop-filter:blur(8px); border-bottom:1px solid var(--border); }
+  .navbar{ display:flex; align-items:center; justify-content:space-between; padding:22px 32px; max-width:1320px; margin:0 auto; }
+  .logo{ font-family:'Fraunces',serif; font-size:1.35rem; font-weight:600; color:var(--navy-deep); text-decoration:none; display:flex; align-items:center; gap:12px; letter-spacing:0.01em; white-space:nowrap; }
+  .logo-mark{ width:36px; height:36px; flex:none; display:block; }
+  .nav-links{ display:flex; gap:17px; list-style:none; margin:0; padding:0; flex-wrap:wrap; }
+  .nav-links a{ text-decoration:none; font-size:0.89rem; color:var(--slate); font-weight:500; white-space:nowrap; transition:color 160ms var(--ease); }
+  .nav-links a:hover{ color:var(--navy-deep); }
+  .nav-links a.active{ color:var(--navy-deep); font-weight:600; }
+  .nav-right{ display:flex; align-items:center; gap:18px; }
+  .nav-toggle{ display:none; background:none; border:none; cursor:pointer; padding:12px; }
+  .nav-cta-mobile{ display:none; }
+  .nav-toggle span{ display:block; width:22px; height:2px; background:var(--navy-deep); margin:5px 0; }
+
+  /* BUTTONS */
+  .btn{
+    font-family:'Inter',sans-serif; font-size:0.95rem; font-weight:600; padding:13px 24px;
+    border-radius:var(--radius-md); cursor:pointer; border:1px solid transparent;
+    transition:background 160ms var(--ease), border-color 160ms var(--ease), color 160ms var(--ease);
+    text-decoration:none; display:inline-block;
+  }
+  .btn-primary{ background:var(--navy); color:#fff; }
+  .btn-primary:hover{ background:var(--navy-deep); }
+  .btn-primary:focus-visible{ outline:2px solid var(--bronze); outline-offset:2px; }
+  .btn-bronze{ background:var(--bronze); color:var(--navy-deep); font-weight:700; }
+  .btn-bronze:hover{ background:var(--bronze-light); }
+  .btn-bronze:focus-visible{ outline:2px solid #fff; outline-offset:2px; }
+
+  /* SECTIONS */
+  section{ padding:96px 0; }
+  section.tight{ padding:64px 0; }
+  .eyebrow{ font-family:'IBM Plex Mono',monospace; font-size:0.78rem; color:var(--bronze); text-transform:uppercase; letter-spacing:0.12em; margin-bottom:16px; }
+  h2.section-title{ font-size:2.1rem; line-height:1.2; max-width:16em; margin-bottom:20px; }
+  p.lead{ font-size:1.2rem; color:var(--slate); max-width:38em; margin:0 0 16px; }
+  p{ max-width:42em; }
+
+  /* HERO */
+  .hero{
+    padding:130px 0 100px; background:var(--navy-deep); position:relative; overflow:hidden;
+  }
+  .hero .container{ position:relative; z-index:2; }
+  .hero h1{ font-size:3.1rem; line-height:1.15; max-width:16em; margin-bottom:28px; color:#fff; }
+  .hero p.lead{ margin-bottom:36px; color:#C7CBD4; }
+  .hero-pattern{
+    position:absolute; top:0; right:0; height:100%; width:60%; z-index:1;
+    opacity:0.16; pointer-events:none;
+  }
+
+  /* CARDS */
+  .card-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:24px; margin-top:40px; }
+  .card-grid.two{ grid-template-columns:repeat(2,1fr); }
+  .card{ background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-lg); padding:28px; transition:box-shadow 200ms var(--ease); }
+  .card:hover{ box-shadow:0 4px 20px rgba(16,26,48,0.08); }
+  .card .k{ font-family:'IBM Plex Mono',monospace; font-size:0.72rem; color:var(--bronze); text-transform:uppercase; letter-spacing:0.08em; margin-bottom:10px; }
+  .card h3{ font-size:1.15rem; margin-bottom:10px; }
+  .card p{ font-size:0.95rem; color:var(--slate); margin:0; }
+  .card a.readmore{ display:inline-block; margin-top:14px; font-size:0.9rem; color:var(--bronze); text-decoration:underline; text-underline-offset:3px; font-weight:600; }
+
+  /* PULL / QUOTE */
+  .pull{ font-family:'Fraunces',serif; font-weight:500; font-size:1.6rem; line-height:1.4; color:var(--navy-deep); border-left:3px solid var(--bronze); padding:4px 0 4px 28px; margin:32px 0; max-width:34em; }
+
+  /* DARK BAND */
+  .band-dark{ background:var(--navy-deep); color:#EDEEF0; }
+  .band-dark h2.section-title{ color:#fff; }
+  .band-dark p{ color:#C7CBD4; }
+  .band-dark .pull{ color:#fff; border-left-color:var(--bronze-light); }
+
+  /* EVIDENCE */
+  .evidence{ background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-lg); padding:40px; margin-top:8px; }
+  .evidence-grid{ display:grid; grid-template-columns:repeat(2,1fr); gap:20px; margin:28px 0; }
+  .evidence-claim{ padding:18px 20px; background:var(--paper); border-radius:var(--radius-md); font-size:0.95rem; color:var(--ink); }
+  .evidence-claim b{ display:block; color:var(--navy-deep); font-family:'Fraunces',serif; font-size:1.4rem; margin-bottom:4px; }
+  .stat-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin:28px 0; }
+  .stat{ text-align:center; padding:16px 8px; }
+  .stat .n{ font-family:'Fraunces',serif; font-size:1.8rem; color:var(--bronze); display:block; }
+  .stat .l{ font-size:0.8rem; color:var(--slate); }
+  .evidence-more{ margin-top:8px; }
+
+  /* FINAL CTA */
+  .final-cta{ text-align:left; background:var(--navy-deep); color:#fff; border-radius:var(--radius-lg); padding:56px; margin:0 32px; }
+  .final-cta h2{ color:#fff; font-size:2rem; margin-bottom:16px; }
+  .final-cta p{ color:#C7CBD4; margin-bottom:28px; max-width:38em; }
+  section.final-cta{ background:var(--navy-deep); color:#fff; border-radius:0; margin:0; padding:96px 0; }
+  section.final-cta h2.section-title{ color:#fff; }
+
+  /* CONTACT FORM */
+  .contact-form{ max-width:560px; margin-top:8px; }
+  .form-row{ margin-bottom:18px; }
+  .form-row label{ display:block; font-size:0.85rem; font-weight:600; color:#C7CBD4; margin-bottom:6px; }
+  .form-row input, .form-row textarea, .form-row select{
+    width:100%; font-family:'Inter',sans-serif; font-size:0.95rem; color:var(--ink);
+    background:#fff; border:1px solid transparent; border-radius:var(--radius-md);
+    padding:12px 14px; transition:box-shadow 160ms var(--ease);
+  }
+  .form-row textarea{ min-height:90px; resize:vertical; }
+  .form-row input:focus, .form-row textarea:focus, .form-row select:focus{ outline:2px solid var(--bronze); outline-offset:1px; }
+  .form-note{ font-size:0.82rem; color:#93969E; margin-top:14px; }
+  .form-success{ display:none; background:var(--green-bg,#E7EDE6); color:#2f4a33; border-radius:var(--radius-md); padding:16px 18px; font-size:0.95rem; }
+
+  /* PAGE UTILITY: table / faq / steps (Diagnostic, Audit, Contact) */
+  .page-table{ width:100%; border-collapse:collapse; margin:24px 0 40px; }
+  .page-table th{ background:var(--navy-deep); color:#fff; text-align:left; padding:12px 16px; font-size:0.82rem; text-transform:uppercase; letter-spacing:0.04em; }
+  .page-table td{ padding:12px 16px; border-bottom:1px solid var(--border); font-size:0.95rem; vertical-align:top; }
+  .page-table tr:nth-child(even) td{ background:var(--paper); }
+
+  .faq details{ border-bottom:1px solid var(--border); padding:20px 0; }
+  .faq summary{ font-family:'Fraunces',serif; font-size:1.1rem; font-weight:600; color:var(--navy-deep); cursor:pointer; list-style:none; display:flex; justify-content:space-between; align-items:center; }
+  .faq summary::-webkit-details-marker{ display:none; }
+  .faq summary::after{ content:'+'; font-family:'Inter',sans-serif; color:var(--bronze); font-size:1.4rem; font-weight:400; }
+  .faq details[open] summary::after{ content:'\2212'; }
+  .faq p{ margin-top:14px; color:var(--slate); max-width:42em; }
+
+  .step-row{ display:flex; gap:24px; margin:32px 0 48px; flex-wrap:wrap; }
+  .step-row .step{ flex:1; min-width:180px; }
+  .step-row .step .n{ font-family:'IBM Plex Mono',monospace; font-size:1.6rem; font-weight:600; color:var(--bronze-light); margin-bottom:6px; }
+  .step-row .step h4{ font-size:1rem; margin-bottom:6px; color:var(--navy-deep); }
+  .step-row .step p{ font-size:0.88rem; color:var(--slate); margin:0; }
+
+  /* ABOUT PAGE */
+  .about-hero{ padding:72px 0 96px; }
+  .about-hero .container{ display:grid; grid-template-columns:0.85fr 1.15fr; gap:64px; align-items:start; }
+  .portrait-frame{
+    width:100%; aspect-ratio:4/5; background:var(--surface); border:1px solid var(--border);
+    border-radius:var(--radius-lg); display:flex; align-items:center; justify-content:center;
+    overflow:hidden; position:sticky; top:96px;
+  }
+  .portrait-frame img{ width:100%; height:100%; object-fit:cover; object-position:22% 35%; display:block; }
+  .about-intro h1{ font-size:2.6rem; line-height:1.15; margin-bottom:8px; }
+  .about-intro .role{ font-size:1.05rem; color:var(--slate); margin-bottom:20px; }
+  .about-intro .positioning{ font-family:'Fraunces',serif; font-weight:500; font-size:1.3rem; line-height:1.4; color:var(--navy-deep); margin-bottom:28px; max-width:30em; }
+  .about-intro p.lead{ margin-bottom:0; }
+  .founder-story{ max-width:42em; }
+  .founder-story p{ font-size:1.05rem; color:var(--ink); margin:0 0 22px; max-width:none; }
+  .founder-story p:last-child{ margin-bottom:0; }
+  .experience-panel{ background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-lg); padding:8px 0; margin-top:8px; }
+  .experience-panel ul{ list-style:none; margin:0; padding:0; }
+  .experience-panel li{ display:flex; align-items:baseline; gap:16px; padding:20px 32px; border-bottom:1px solid var(--border); font-size:0.98rem; color:var(--ink); }
+  .experience-panel li:last-child{ border-bottom:none; }
+  .experience-panel li::before{ content:''; flex:none; width:6px; height:6px; border-radius:50%; background:var(--bronze); margin-top:8px; }
+  .way-block{ border-left:3px solid var(--border); padding-left:28px; margin:0 0 28px; max-width:42em; }
+  .way-block p{ font-size:1.05rem; color:var(--ink); margin:0 0 18px; max-width:none; }
+  .way-block p:last-child{ margin-bottom:0; }
+  .speaking-proof{ padding-top:0; }
+  .proof-frame{ width:100%; max-width:1180px; margin:0 auto; padding:0 32px; }
+  .proof-frame img{ width:100%; height:auto; display:block; border-radius:var(--radius-lg); }
+  .signature{ margin:48px 0 0; }
+  .signature .sig-name{ font-family:'Fraunces',serif; font-size:1.3rem; font-style:italic; color:var(--navy-deep); margin-bottom:4px; }
+  .signature .sig-role{ font-size:0.9rem; color:var(--slate); }
+
+  /* SELECTED ENGAGEMENTS / HOW HALO THINKS content components */
+  .story{ background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-lg); padding:32px; margin-bottom:40px; scroll-margin-top:100px; }
+  .story-meta{ display:flex; gap:32px; font-family:'IBM Plex Mono',monospace; font-size:0.78rem; letter-spacing:0.06em; text-transform:uppercase; color:var(--slate); margin-bottom:20px; flex-wrap:wrap; }
+  .story-meta span b{ display:block; font-weight:500; color:var(--navy-deep); font-size:0.85rem; text-transform:none; letter-spacing:0; margin-top:2px; }
+  h2.story-title{ font-family:'Fraunces',serif; font-weight:500; font-size:1.4rem; line-height:1.3; color:var(--navy-deep); margin:0 0 24px; }
+  .story h3{ font-family:'Inter',sans-serif; font-weight:600; font-size:0.78rem; letter-spacing:0.08em; text-transform:uppercase; color:var(--bronze); margin:24px 0 10px; }
+  .story h3:first-of-type{ margin-top:0; }
+  .story p{ margin:0 0 16px; color:var(--ink); max-width:none; }
+  .story ul{ margin:0 0 16px; padding-left:20px; }
+  .story li{ margin-bottom:10px; color:var(--ink); }
+  .insight{ margin-top:24px; padding-left:20px; border-left:3px solid var(--bronze); font-family:'Fraunces',serif; font-size:1.1rem; font-weight:500; font-style:italic; color:var(--navy-deep); }
+  .principle{ padding:28px 0; border-bottom:1px solid var(--border); }
+  .principle:last-of-type{ border-bottom:none; }
+  .principle h2{ font-family:'Inter',sans-serif; font-weight:600; font-size:1.05rem; line-height:1.4; color:var(--navy-deep); margin:0 0 8px; }
+  .principle p{ margin:0; color:var(--slate); font-size:0.98rem; max-width:none; }
+  .closing{ margin-top:40px; padding-left:20px; border-left:3px solid var(--bronze); font-family:'Fraunces',serif; font-size:1.05rem; font-weight:500; font-style:italic; color:var(--navy-deep); max-width:42em; }
+
+  /* FOOTER */
+  footer{ border-top:1px solid var(--border); padding:56px 0 40px; margin-top:40px; }
+  .footer-grid{ display:grid; grid-template-columns:2fr 1fr 1fr; gap:32px; margin-bottom:40px; }
+  .footer-grid h4{ font-family:'IBM Plex Mono',monospace; font-size:0.72rem; text-transform:uppercase; letter-spacing:0.08em; color:var(--slate); margin-bottom:14px; }
+  .footer-grid ul{ list-style:none; padding:0; margin:0; }
+  .footer-grid li{ margin-bottom:10px; }
+  .footer-grid a{ text-decoration:none; color:var(--ink); font-size:0.92rem; }
+  .footer-grid a:hover{ color:var(--bronze); }
+  .footer-bottom{ font-size:0.82rem; color:var(--slate); border-top:1px solid var(--border); padding-top:24px; display:flex; justify-content:space-between; flex-wrap:wrap; gap:12px; }
+
+  @media (max-width:1300px){
+    .nav-links{ display:none; }
+    .nav-toggle{ display:block; }
+    .nav-right .btn-primary{ display:none; }
+    .nav-cta-mobile{ display:block; margin-top:12px; }
+    .nav-cta-mobile a{ display:inline-block; background:var(--bronze); color:var(--navy-deep); font-weight:700; padding:12px 20px; border-radius:var(--radius-md); text-decoration:none; font-size:0.92rem; }
+  }
+
+  @media (max-width:900px){
+    .navbar{ padding:14px 12px; }
+    .logo{ font-size:1rem; gap:6px; }
+    .logo-mark{ width:24px; height:24px; }
+    .nav-toggle{ padding:8px; }
+    .nav-right{ gap:8px; }
+    .hero h1{ font-size:2.2rem; }
+    .hero-pattern{ display:none; }
+    .card-grid, .card-grid.two{ grid-template-columns:1fr; }
+    section{ padding:64px 0; }
+    .final-cta{ margin:0 20px; padding:36px 28px; }
+    .footer-grid{ grid-template-columns:1fr; gap:24px; }
+    .container{ padding:0 20px; }
+    .about-hero{ padding:48px 0 64px; }
+    .about-hero .container{ grid-template-columns:1fr; gap:36px; }
+    .portrait-frame{ position:static; max-width:320px; margin:0 auto; }
+    .about-intro h1{ font-size:2rem; }
+    .step-row{ flex-direction:column; }
+    .evidence-grid, .stat-grid{ grid-template-columns:1fr 1fr; }
+  }
+  @media (prefers-reduced-motion: reduce){
+    *{ transition:none !important; scroll-behavior:auto !important; }
+  }
+</style>
+<!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-T49HRT6J');</script>
+<!-- End Google Tag Manager -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "Halo Strategic",
+  "url": "https://halostrategic.com",
+  "logo": "https://halostrategic.com/android-chrome-512x512.png",
+  "sameAs": ["https://www.linkedin.com/company/halo-strategicglobal/", "https://www.facebook.com/profile.php?id=61591459224716"],
+  "contactPoint": {
+    "@type": "ContactPoint",
+    "email": "hello@halostrategic.com",
+    "contactType": "customer service"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Before You Add a New Channel, Recover the One You Have",
+  "description": "Most founders assume growth means adding something new. A real case shows why recovering what's already leaking usually has to come first.",
+  "image": "https://halostrategic.com/assets/og-default-1200x630.png",
+  "datePublished": "2026-09-24",
+  "dateModified": "2026-09-24",
+  "author": { "@type": "Organization", "name": "Halo Strategic", "url": "https://halostrategic.com" },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Halo Strategic",
+    "logo": { "@type": "ImageObject", "url": "https://halostrategic.com/android-chrome-512x512.png" }
+  },
+  "mainEntityOfPage": { "@type": "WebPage", "@id": "https://halostrategic.com/insights/recover-before-you-add" }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://halostrategic.com/" },
+    { "@type": "ListItem", "position": 2, "name": "Insights", "item": "https://halostrategic.com/insights/" },
+    { "@type": "ListItem", "position": 3, "name": "Before You Add a New Channel, Recover the One You Have", "item": "https://halostrategic.com/insights/recover-before-you-add" }
+  ]
+}
+</script>
+</head>
+<body>
+
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-T49HRT6J"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+<header>
+  <nav class="navbar">
+    <a href="/" class="logo">
+      <img src="/halo-icon-navy.svg" width="36" height="36" alt="Halo Strategic" class="logo-mark">
+      HALO STRATEGIC
+    </a>
+    <ul class="nav-links">
+      <li><a href="/#how-it-works">How Halo Works</a></li>
+      <li><a href="/#services">Services</a></li>
+      <li><a href="/commercial-audit">Commercial Audit</a></li>
+      <li><a href="/product-journey">Product Journey</a></li>
+      <li><a href="/agency-partnerships">Agency Partnerships</a></li>
+      <li><a href="/insights/" class="active">Insights</a></li>
+      <li><a href="/selected-engagements">Selected Engagements</a></li>
+      <li><a href="/how-halo-thinks">How Halo Thinks</a></li>
+      <li><a href="/frameworks">Frameworks</a></li>
+      <li><a href="/about">About</a></li>
+      <li class="nav-cta-mobile"><a href="/commercial-diagnostic">Start with a Commercial Diagnostic</a></li>
+    </ul>
+    <div class="nav-right">
+      <a href="/commercial-diagnostic" class="btn btn-primary">Start with a Commercial Diagnostic</a>
+      <button class="nav-toggle" aria-label="Open menu"><span></span><span></span><span></span></button>
+    </div>
+  </nav>
+</header>
+
+<main>
+
+  <section class="hero" style="padding:96px 0 64px;">
+    <div class="container">
+      <div class="eyebrow" style="color:#D8BE8F;">Insights</div>
+      <h1 style="font-size:2.4rem;">Before You Add a New Channel, Recover the One You Have</h1>
+    </div>
+  </section>
+
+  <section>
+    <div class="container" style="max-width:720px;">
+
+<p style="font-size:1.05rem;">When growth stalls, the instinct is almost always the same: add something. A new channel, a new territory, a new hire, a new tool. Adding feels like progress. It's visible, it's decisive, and it's a lot more exciting than going back over ground the business has already covered.</p>
+
+<p style="font-size:1.05rem;"><a href="/insights/the-biggest-misconception-about-growth" style="color:var(--bronze); text-decoration:underline;">The biggest misconception about growth</a> is that this instinct is usually right. It's usually backwards. Growth tends to happen in two stages, not one: first a business recovers the value it's already creating but failing to capture, and only then does it make sense to focus on creating more. A real case shows what that looks like in practice, and what it would have cost to get the order wrong.</p>
+
+<p style="font-size:1.05rem;">A regional ADU builder, rebuilding after a franchise collapse, needed to lift booked site visits from around three a week to six or eight, enough to justify hiring their first salesperson. The instinct going in was the obvious one: buy more leads. The full diagnosis is covered in <a href="/insights/the-first-hour-rule-for-sales-follow-up" style="color:var(--bronze); text-decoration:underline;">The First-Hour Rule for Sales Follow-Up</a>, the short version is that the constraint wasn't the campaign at all, it was what happened, or didn't happen, after a lead arrived.</p>
+
+<p style="font-size:1.05rem;">What's easy to miss in that story is what happened next, once the sales process itself was fixed. The obvious move, with a working funnel finally in place, would have been to immediately widen the net: new territories, more spend, a second market to go after the growth everyone had been waiting for. That's not what happened. The strategy locked in was geography-first, deliberately delaying expansion into new territory until the home market was actually saturated.</p>
+
+<p style="font-size:1.05rem;">Only once that foundation held, a fixed funnel, a trustworthy CRM, a sales process that actually worked the leads it already had, was a second ad channel and a long-form content channel opened, as expansion. Not before. The order mattered as much as the decision itself.</p>
+
+<p style="font-size:1.05rem;">Run the counterfactual and the reason becomes obvious. Spreading a still-fragile follow-up process across a wider geography wouldn't have produced more booked visits, it would have produced the same leak at a larger scale, in a second territory before the first one was even fixed. Opening two underperforming channels instead of saturating one working one doesn't create more demand. It just creates more places for the same value to go on quietly escaping.</p>
+
+<p style="font-size:1.05rem;">This is the same commercial leakage every other engagement on <a href="/insights/six-places-revenue-quietly-leaks" style="color:var(--bronze); text-decoration:underline;">Six Places Revenue Quietly Leaks</a> describes, applied to expansion specifically rather than a single department. A business can be leaking value in the market it already has for exactly the same reasons it would leak value in a new one, an unowned handoff, an inconsistent process, a follow-up gap nobody's measured. Adding a second market on top of that doesn't fix the leak. It just gives it a second place to happen.</p>
+
+<p style="font-size:1.05rem;">For a founder weighing whether it's time to expand, the more useful question usually isn't "where should we go next." It's a plainer one: is this business actually capturing everything available in the market it's already in? If nobody can answer that with real evidence, rather than a confident guess, that's usually the sign expansion is being considered as a way to avoid finishing the harder, less exciting work already in front of the business.</p>
+
+<p style="font-size:1.05rem;">A short way to check, before adding anything new:</p>
+
+<ul style="font-size:1.05rem; padding-left:22px;">
+  <li style="margin-bottom:10px;"><strong>Measure saturation, not just performance.</strong> "This channel is working" and "this channel has nothing left to capture" are different claims. Most businesses only ever check the first one.</li>
+  <li style="margin-bottom:10px;"><strong>Fix the process before you widen its footprint.</strong> A follow-up gap, a reporting gap, or a trust-in-the-data gap doesn't shrink when it's spread across a second territory or channel. It just repeats itself somewhere new.</li>
+  <li style="margin-bottom:10px;"><strong>Treat "we need to expand" as a claim worth testing.</strong> Before committing budget to a new channel or market, ask what evidence, specifically, says the current one is actually exhausted rather than just underperforming.</li>
+  <li style="margin-bottom:10px;"><strong>Sequence deliberately, not by default.</strong> Recovering what's already leaking and adding something new aren't opposites, they're stages. The mistake isn't wanting to add. It's adding before the first stage is actually finished.</li>
+</ul>
+
+<p class="pull">Saturating the market you already have isn't the cautious option. It's the only way to know whether the next one is actually needed.</p>
+
+<p style="font-size:1.05rem;">The same pattern, small frictions compounding quietly until they look like a growth ceiling rather than what they actually are, is covered from a different angle in <a href="/insights/why-growth-slows-quietly-not-overnight" style="color:var(--bronze); text-decoration:underline;">Why Growth Slows Quietly, Long Before It Stops</a>. Both come back to the same question: is this genuinely a lack of opportunity, or a business that hasn't finished capturing the opportunity it already has?</p>
+
+<p style="font-size:1.05rem;">For a business already fairly sure the gap runs deeper than one channel decision, a <a href="/commercial-audit" style="color:var(--bronze); text-decoration:underline;">Commercial Audit</a> scores exactly this, evidence quality, performance gap, and commercial leverage, across the whole business rather than one market at a time. More on the thinking behind this is on <a href="/about" style="color:var(--bronze); text-decoration:underline;">About</a>, or <a href="/contact" style="color:var(--bronze); text-decoration:underline;">get in touch</a> directly.</p>
+
+<div class="eyebrow">FAQ</div>
+<h2 class="section-title">What people ask before expanding.</h2>
+<div class="faq" style="margin-bottom:48px;">
+  <details>
+    <summary>How do we know if our current market is actually saturated, rather than just underperforming?</summary>
+    <p>Look for evidence, not confidence. A saturated market shows flattening returns despite consistent effort, an underperforming one usually has an identifiable, fixable gap, in follow-up, targeting, or process, that nobody's actually checked yet.</p>
+  </details>
+  <details>
+    <summary>Isn't delaying expansion just a way of avoiding growth?</summary>
+    <p>It's the opposite. Expanding on top of an unfixed process usually means the new market inherits the same problem, at a higher cost. Delaying expansion until the core process holds is what makes the eventual expansion actually work.</p>
+  </details>
+  <details>
+    <summary>We're already growing. Doesn't that mean we should add more channels now?</summary>
+    <p>Growth and saturation aren't the same signal. A channel can still be producing new results while leaving real value uncaptured. The question isn't whether it's growing, it's whether it's still leaking.</p>
+  </details>
+  <details>
+    <summary>What's the practical first step if we suspect we're adding before recovering?</summary>
+    <p>Pick the market, channel, or process you already have and ask what percentage of its available value is actually being captured today. If nobody in the business can answer that with real numbers, that's the gap to close before opening anything new.</p>
+  </details>
+</div>
+
+<p style="font-size:1.05rem;">If your business is weighing a new channel, market, or hire before anyone's checked whether the current one is actually finished, a <a href="/commercial-diagnostic" style="color:var(--bronze); text-decoration:underline;">Commercial Diagnostic</a> is a focused way to find out which one you're actually dealing with before spending anything on the next thing.</p>
+
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <div class="logo" style="margin-bottom:10px; color:#F6F6F3;">
+          <img src="/halo-icon-light.svg" width="36" height="36" alt="Halo Strategic" class="logo-mark">
+          HALO STRATEGIC
+        </div>
+        <p style="font-size:0.92rem; color:var(--slate); max-width:26em;">A Commercial Growth Consultancy. Our job is to help leadership make better commercial decisions.</p>
+      </div>
+      <div>
+        <h4>Sitemap</h4>
+        <ul>
+          <li><a href="/#how-it-works">How Halo Works</a></li>
+          <li><a href="/#services">Services</a></li>
+          <li><a href="/commercial-health-check">Commercial Health Check</a></li>
+          <li><a href="/commercial-diagnostic">Commercial Diagnostic</a></li>
+          <li><a href="/commercial-audit">Commercial Audit</a></li>
+          <li><a href="/product-journey">Product Journey</a></li>
+          <li><a href="/agency-partnerships">Agency Partnerships</a></li>
+          <li><a href="/insights/">Insights</a></li>
+          <li><a href="/selected-engagements">Selected Engagements</a></li>
+          <li><a href="/how-halo-thinks">How Halo Thinks</a></li>
+          <li><a href="/frameworks">Frameworks</a></li>
+          <li><a href="/about">About</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Contact &amp; Legal</h4>
+        <ul>
+          <li><a href="/contact">Contact</a></li>
+          <li><a href="https://www.linkedin.com/company/halo-strategicglobal/" target="_blank" rel="noopener">LinkedIn</a></li>
+          <li><a href="https://www.facebook.com/profile.php?id=61591459224716" target="_blank" rel="noopener">Facebook</a></li>
+          <li><a href="mailto:hello@halostrategic.com">hello@halostrategic.com</a></li>
+          <li><a href="/privacy-policy">Privacy Policy</a></li>
+          <li><a href="/cookie-policy">Cookie Policy</a></li>
+          <li><a href="/terms-and-conditions">Terms &amp; Conditions</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 Halo Strategic Ltd. All rights reserved. Registered in England &amp; Wales, Company No. 17409402.</span>
+      <span class="mono">halostrategic.com</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+
+  document.querySelector('.nav-toggle')?.addEventListener('click', function(){
+    var links = document.querySelector('.nav-links');
+    var visible = links.style.display === 'flex';
+    links.style.display = visible ? 'none' : 'flex';
+    links.style.flexDirection = 'column';
+    links.style.position = 'absolute';
+    links.style.top = '64px';
+    links.style.left = '0';
+    links.style.right = '0';
+    links.style.background = 'var(--paper)';
+    links.style.padding = '20px 32px';
+    links.style.borderBottom = '1px solid var(--border)';
+  });
+</script>
+
+<script src="/site-motion.js?v=3" defer></script>
+</body>
+</html>
