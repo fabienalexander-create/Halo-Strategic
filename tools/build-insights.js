@@ -50,12 +50,24 @@ for (const a of articles) {
   if (!/^[a-z0-9-]+$/.test(a.slug)) throw new Error(`Article slug "${a.slug}" must be lowercase letters, numbers, and hyphens only`);
 }
 
+// JSON string literal safe to drop inside a <script type="application/ld+json"> block.
+function jsonLdString(str) {
+  return JSON.stringify(str).split('</').join('<\\/');
+}
+
 // Generate one file per article
 for (const a of articles) {
   const canonical = `https://halostrategic.com/insights/${a.slug}`;
+  // <title>, the BlogPosting headline and the breadcrumb name drop the brand
+  // suffix (SEO audit, PR #9); og:title / twitter:title keep the full title.
+  const pageTitle = a.title.replace(/ \| Halo Strategic$/, '');
   let html = articleTemplate
+    .split('{{PAGE_TITLE}}').join(escapeHtml(pageTitle))
     .split('{{TITLE}}').join(escapeHtml(a.title))
     .split('{{META_DESCRIPTION}}').join(escapeHtml(a.metaDescription))
+    .split('{{LD_HEADLINE}}').join(jsonLdString(pageTitle))
+    .split('{{LD_DESCRIPTION}}').join(jsonLdString(a.metaDescription))
+    .split('{{PUBLISH_DATE}}').join(a.publishDate)
     .split('{{CANONICAL}}').join(canonical)
     .split('{{H1}}').join(escapeHtml(a.h1))
     .split('{{BODY}}').join(a.bodyHtml); // trusted markup, not escaped
