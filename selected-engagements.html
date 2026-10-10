@@ -198,6 +198,10 @@
 
   /* SELECTED ENGAGEMENTS / HOW HALO THINKS content components */
   .story{ background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-lg); padding:32px; margin-bottom:40px; scroll-margin-top:100px; }
+  .story-summary{ display:grid; grid-template-columns:repeat(2,1fr); gap:16px 28px; background:var(--paper); border:1px solid var(--border); border-radius:var(--radius-md); padding:20px 24px; margin:0 0 28px; }
+  .story-summary .sk{ font-family:'IBM Plex Mono',monospace; font-size:0.7rem; text-transform:uppercase; letter-spacing:0.08em; color:var(--bronze); margin-bottom:4px; display:block; }
+  .story-summary .sv{ font-size:0.92rem; color:var(--ink); line-height:1.5; }
+  @media (max-width:900px){ .story-summary{ grid-template-columns:1fr; } }
   .story-meta{ display:flex; gap:32px; font-family:'IBM Plex Mono',monospace; font-size:0.78rem; letter-spacing:0.06em; text-transform:uppercase; color:var(--slate); margin-bottom:20px; flex-wrap:wrap; }
   .story-meta span b{ display:block; font-weight:500; color:var(--navy-deep); font-size:0.85rem; text-transform:none; letter-spacing:0; margin-top:2px; }
   h2.story-title{ font-family:'Fraunces',serif; font-weight:500; font-size:1.4rem; line-height:1.3; color:var(--navy-deep); margin:0 0 24px; }
@@ -374,6 +378,12 @@ if (window.__haloShowBanner) {
       <span>Client<b>Specialist Architecture Firm</b></span>
     </div>
     <h2 class="story-title">We Told the Client the Market Was Too Small</h2>
+    <div class="story-summary">
+      <div><span class="sk">Business situation</span><span class="sv">A specialist architecture firm was spending on search advertising and getting almost no leads, and was close to pausing billing.</span></div>
+      <div><span class="sk">Actual constraint</span><span class="sv">Not an execution problem. The niche didn't generate enough search volume to justify the budget, and some of the early "wins" were a tracking bug, not real conversions.</span></div>
+      <div><span class="sk">Decision</span><span class="sv">Corrected the inflated conversion data, then recommended pivoting from search to a visual, portfolio-led channel matching how buyers actually discover firms like this.</span></div>
+      <div><span class="sk">Outcome</span><span class="sv">An honest explanation, trustworthy data, and a new channel strategy scoped and ready to launch. Performance after launch wasn't available for independent confirmation.</span></div>
+    </div>
     <h3>The Challenge</h3>
     <p>The client was spending on search advertising and getting almost no leads. They were frustrated, and ready to pause billing. On the surface, this looked like a campaign failure: wrong targeting, weak creative, an execution problem that needed fixing.</p>
     <p>It wasn't. The niche the firm operated in simply didn't generate enough search volume to justify the budget. Roughly a quarter of the monthly spend could actually be deployed each month, the rest had nowhere to go. No amount of optimisation was going to fix a channel with too few searches behind it.</p>
@@ -399,6 +409,12 @@ if (window.__haloShowBanner) {
       <span>Client<b>Regional ADU Builder</b></span>
     </div>
     <h2 class="story-title">Fixing Sales Follow-up Before Buying More Leads</h2>
+    <div class="story-summary">
+      <div><span class="sk">Business situation</span><span class="sv">A custom ADU builder, rebuilding after a franchise collapse, needed to lift booked site visits from roughly three a week to six or eight. The instinct was to buy more leads.</span></div>
+      <div><span class="sk">Actual constraint</span><span class="sv">Leads weren't being called. The bottleneck sat downstream of the campaign entirely, in sales follow-up, not in targeting or creative.</span></div>
+      <div><span class="sk">Decision</span><span class="sv">Structured a consistent lead-to-booking-to-CRM funnel, held a geography-first strategy, then expanded channels only once that process was working.</span></div>
+      <div><span class="sk">Outcome</span><span class="sv">The client was retained through a shaky early period and the account expanded into a proposed second channel plus a content workstream. Later site-visit volume wasn't available for independent confirmation.</span></div>
+    </div>
     <h3>The Challenge</h3>
     <p>The client, a custom ADU builder rebuilding after a franchise collapse, needed to lift booked site visits from roughly three a week to six or eight, enough to justify hiring their first salesperson. The instinct going in was simple: get more leads.</p>
     <p>Then the numbers turned worrying. Fourteen leads produced a single booked site visit, and around 43% of those leads were out of the service area entirely. On the surface, that read as a targeting or creative failure, and the client was close to losing confidence in the campaign.</p>
@@ -425,6 +441,12 @@ if (window.__haloShowBanner) {
       <span>Client<b>International Education Provider</b></span>
     </div>
     <h2 class="story-title">Good Reporting Changes Decisions, Not Just Dashboards</h2>
+    <div class="story-summary">
+      <div><span class="sk">Business situation</span><span class="sv">An international education provider felt disconnected from its account and unsure whether it was progressing, serious enough to escalate.</span></div>
+      <div><span class="sk">Actual constraint</span><span class="sv">The account was sitting inside its own defined ROAS guardrail the whole time. The real issue was visibility, not performance: dense reporting and no regular contact cadence.</span></div>
+      <div><span class="sk">Decision</span><span class="sv">Introduced a plain-English summary layer above the dashboard, a fixed weekly-async-plus-monthly-call cadence, and a year-on-year trend view.</span></div>
+      <div><span class="sk">Outcome</span><span class="sv">A restructured reporting relationship and cadence were agreed, and a trend layer was scoped. Whether the new cadence held wasn't available for independent confirmation.</span></div>
+    </div>
     <h3>The Challenge</h3>
     <p>The client felt disconnected from the account and unsure whether it was actually progressing. On the surface, that read as a performance complaint, and it was serious enough to escalate.</p>
     <p>The account was sitting against its defined ROAS guardrail the whole time. The real issue wasn't performance, it was visibility: the reporting was too dense to act on, there was no regular cadence of contact, and no way to see whether the account was growing over time. That gap had eroded trust to the point where the client no longer believed the work was happening.</p>
@@ -456,6 +478,12 @@ if (window.__haloShowBanner) {
       <span>Client<b>Interventional Radiology / Vascular Practice</b></span>
     </div>
     <h2 class="story-title">We Moved the Client Off an Unstable Platform Before It Cost Them Momentum</h2>
+    <div class="story-summary">
+      <div><span class="sk">Business situation</span><span class="sv">An interventional radiology / vascular practice's Meta advertising presence kept getting disrupted by account restrictions and login locks, interrupting both the campaign and the client's own account access.</span></div>
+      <div><span class="sk">Actual constraint</span><span class="sv">Not a creative or targeting problem. The procedures being marketed are things people actively search for as alternatives to surgery, a better fit for intent-driven search than social in the first place.</span></div>
+      <div><span class="sk">Decision</span><span class="sv">Called the pivot from Meta to Google, repositioned the procedures as surgery alternatives matched to how people search for them, and sequenced the switch to protect momentum.</span></div>
+      <div><span class="sk">Outcome</span><span class="sv">A justified channel pivot with a full build brief delivered. Post-pivot performance wasn't available for independent confirmation.</span></div>
+    </div>
     <h3>The Challenge</h3>
     <p>The client's Meta advertising presence kept getting disrupted, repeated account restrictions, suspicious-login locks, and a recovery process that dragged on each time. This wasn't a creative or targeting problem, it was a platform-reliability problem, and it kept interrupting both the campaign and the client's own access to their account.</p>
     <h3>My Role</h3>
@@ -480,6 +508,12 @@ if (window.__haloShowBanner) {
       <span>Client<b>Regional Placement &amp; In-Home Care Provider</b></span>
     </div>
     <h2 class="story-title">From Reacting to Leading</h2>
+    <div class="story-summary">
+      <div><span class="sk">Business situation</span><span class="sv">Shortly after a regional placement and in-home care client launched a second market, the agency relationship had narrowed to "launch campaigns, react to issues," and the new market was underperforming.</span></div>
+      <div><span class="sk">Actual constraint</span><span class="sv">Not ordinary growing pains. Tracking parameters were passing placeholder values, form-to-CRM data was inconsistent, and scripts were interfering with attribution, a trust-in-the-data problem, not a performance one.</span></div>
+      <div><span class="sk">Decision</span><span class="sv">Fixed tracking before making any performance call, held off scaling the client's own parallel test platform, and introduced the Traffic Light reporting system.</span></div>
+      <div><span class="sk">Outcome</span><span class="sv">The account's framing shifted from "is the channel working" to "this is a systems problem, now being solved," and the relationship moved from execution to account leadership.</span></div>
+    </div>
     <h3>The Challenge</h3>
     <p>Shortly after launching a second market, this placement and in-home care client's relationship with their agency had narrowed to "launch campaigns, react to issues." Underperformance in the new market looked like ordinary growing pains, the kind more spend or sharper creative usually fixes.</p>
     <h3>My Role</h3>
@@ -504,6 +538,12 @@ if (window.__haloShowBanner) {
       <span>Client<b>High-Spend Rehabilitation Facility</b></span>
     </div>
     <h2 class="story-title">The Data That Was Never Missing</h2>
+    <div class="story-summary">
+      <div><span class="sk">Business situation</span><span class="sv">A high-spend rehabilitation facility's admissions were gated by an internal insurance-verification process the agency had no visibility into, and cost-per-lead on some campaigns looked expensive enough to cut.</span></div>
+      <div><span class="sk">Actual constraint</span><span class="sv">The data wasn't missing. The client had been sending structured verification and admission data every month, and nobody had converted it into anything decision-usable.</span></div>
+      <div><span class="sk">Decision</span><span class="sv">Audited the client's own existing reports, built a guardrail layer on top of them, and held spend on campaigns the new layer showed were actually the best-quality source.</span></div>
+      <div><span class="sk">Outcome</span><span class="sv">A defensible, evidence-backed reason to keep spending where the old cost-per-lead metric said not to, and a materially stronger client conversation.</span></div>
+    </div>
     <h3>The Challenge</h3>
     <p>This high-spend rehabilitation-facility client's admissions were gated by an internal insurance-verification process the agency, on the surface, had no visibility into. Cost-per-lead on certain campaigns looked expensive enough to justify cutting them.</p>
     <h3>My Role</h3>
@@ -534,6 +574,12 @@ if (window.__haloShowBanner) {
       <span>Register<b>Operating discipline</b></span>
     </div>
     <h2 class="story-title">Connecting the Click to What Came After</h2>
+    <div class="story-summary">
+      <div><span class="sk">Business situation</span><span class="sv">Running paid social and display campaigns for a range of small and mid-sized clients through my own agency, each with a different product, budget and customer journey.</span></div>
+      <div><span class="sk">Actual constraint</span><span class="sv">Judged only on a blended cost-per-lead, campaigns that looked identical on paper could be worth very different amounts to the business behind them.</span></div>
+      <div><span class="sk">Decision</span><span class="sv">Restructured every campaign around three stages of the customer journey, awareness, acquisition and re-engagement, measured and tactically treated separately rather than as one blended push.</span></div>
+      <div><span class="sk">Outcome</span><span class="sv">Documented cost-per-lead from under £2 to nearly £20 by stage, and a combined £102,663.59 spend producing 15,797 leads at a blended £6.50.</span></div>
+    </div>
     <h3>The Situation</h3>
     <p>Running paid social and display campaigns for a range of small and mid-sized clients through my own agency, each with a different product, budget, and customer journey.</p>
     <h3>The Problem</h3>
@@ -556,6 +602,12 @@ if (window.__haloShowBanner) {
       <span>Register<b>Delivery &amp; accountability</b></span>
     </div>
     <h2 class="story-title">The Numbers That Held Up</h2>
+    <div class="story-summary">
+      <div><span class="sk">Business situation</span><span class="sv">At SuperAwesome, running a paid media campaign across the company's kids-safe advertising network to promote the release of a major animated film, on a fixed media plan.</span></div>
+      <div><span class="sk">Actual constraint</span><span class="sv">None to diagnose. Unlike every other story here, this one isn't about finding a hidden problem, it's about delivering exactly what was promised.</span></div>
+      <div><span class="sk">Decision</span><span class="sv">Ran the campaign across all three contracted formats, refreshed and rotated creative through the flight, and reported results only after the fact, not projected in advance.</span></div>
+      <div><span class="sk">Outcome</span><span class="sv">Over 2 million bought impressions, a 2.5% average click-through rate across all formats, and video completion rates averaging over 80%, per the end-of-campaign wrap report.</span></div>
+    </div>
     <h3>The Situation</h3>
     <p>At SuperAwesome, working in media and sponsorship sales, running a paid media campaign across the company's kids-safe advertising network to promote the release of a major animated film.</p>
     <h3>The Brief</h3>
