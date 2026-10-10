@@ -93,15 +93,55 @@
     .bottom-cta-mobile .btn{ padding:13px 0; font-size:0.95rem; }
   }
 </style>
-<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-})(window,document,'script','dataLayer','GTM-T49HRT6J');</script>
+<!-- Cookie consent (gates Google Tag Manager until accepted) -->
+<script>
+(function(){
+  var CONSENT_KEY = 'halo_cookie_consent';
+  function loadGTM(){
+    if(window.__gtmLoaded) return;
+    window.__gtmLoaded = true;
+    (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-T49HRT6J');
+  }
+  function getConsent(){ try { return localStorage.getItem(CONSENT_KEY); } catch(e){ return null; } }
+  function setConsent(v){ try { localStorage.setItem(CONSENT_KEY, v); } catch(e){} }
+  function hideBanner(){ var b=document.getElementById('halo-cookie-banner'); if(b) b.style.display='none'; }
+  window.haloConsent = {
+    get: getConsent,
+    accept: function(){ setConsent('granted'); loadGTM(); hideBanner(); },
+    reject: function(){ setConsent('denied'); hideBanner(); }
+  };
+  var existing = getConsent();
+  if(existing === 'granted'){
+    if(document.readyState === 'loading'){ document.addEventListener('DOMContentLoaded', loadGTM); }
+    else { loadGTM(); }
+  }
+  window.__haloShowBanner = (existing !== 'granted' && existing !== 'denied');
+})();
+</script>
+<!-- End cookie consent / Google Tag Manager -->
 </head>
 <body>
-<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-T49HRT6J"
-height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- Cookie consent banner -->
+<div id="halo-cookie-banner" style="display:none;position:fixed;left:16px;right:16px;bottom:16px;z-index:9999;max-width:620px;margin:0 auto;background:var(--navy-deep,#101A30);color:#fff;border:1px solid rgba(216,190,143,0.35);border-radius:10px;padding:18px 20px;box-shadow:0 12px 32px rgba(0,0,0,0.3);font-size:14px;line-height:1.55;font-family:inherit;">
+  <p style="margin:0 0 12px;">We use cookies that are essential for the site to work, and, with your consent, analytics cookies to understand how it's used. See our <a href="/cookie-policy" style="color:#D8BE8F;text-decoration:underline;">Cookie Policy</a>.</p>
+  <div style="display:flex;gap:10px;flex-wrap:wrap;">
+    <button type="button" onclick="window.haloConsent.accept()" style="background:#B08D57;color:#101A30;border:none;padding:9px 18px;border-radius:6px;font-weight:600;font-size:14px;cursor:pointer;">Accept</button>
+    <button type="button" onclick="window.haloConsent.reject()" style="background:transparent;color:#fff;border:1px solid rgba(255,255,255,0.45);padding:9px 18px;border-radius:6px;font-size:14px;cursor:pointer;">Reject non-essential</button>
+  </div>
+</div>
+<script>
+if (window.__haloShowBanner) {
+  document.addEventListener('DOMContentLoaded', function(){
+    var b = document.getElementById('halo-cookie-banner');
+    if (b) b.style.display = 'block';
+  });
+}
+</script>
+<!-- End cookie consent banner -->
 
 <div class="top-bar"><span class="wordmark">HALO STRATEGIC</span></div>
 
@@ -255,6 +295,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           <label for="roofing-volume">What's the main challenge with your current lead flow?</label>
           <textarea id="roofing-volume" name="challenge" required></textarea>
         </div>
+        <div class="form-row" style="display:flex; align-items:flex-start; gap:8px;">
+          <input type="checkbox" id="roofing-consent" name="privacy_consent" required style="width:auto; margin-top:3px;">
+          <label for="roofing-consent" style="font-weight:400; font-size:0.85rem;">I agree to Halo Strategic's <a href="/privacy-policy" style="color:var(--bronze);">Privacy Policy</a> and consent to being contacted about this enquiry.</label>
+        </div>
         <button type="submit" class="btn btn-bronze btn-wide">Talk to Halo About Roofing Leads</button>
         <p class="form-note">No pitch deck. We'll reply within one business day.</p>
       </form>
@@ -266,7 +310,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
 <footer>
   <div class="container">
-    &copy; 2026 Halo Strategic. All rights reserved. &middot; <a href="/privacy-policy">Privacy Policy</a>
+    &copy; 2026 Halo Strategic. All rights reserved. &middot; <a href="/privacy-policy">Privacy Policy</a> &middot; <a href="/refund-policy">Refund Policy</a>
   </div>
 </footer>
 

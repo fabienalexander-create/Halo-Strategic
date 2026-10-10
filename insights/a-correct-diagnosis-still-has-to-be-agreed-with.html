@@ -255,13 +255,36 @@
     *{ transition:none !important; scroll-behavior:auto !important; }
   }
 </style>
-<!-- Google Tag Manager -->
-<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-})(window,document,'script','dataLayer','GTM-T49HRT6J');</script>
-<!-- End Google Tag Manager -->
+<!-- Cookie consent (gates Google Tag Manager until accepted) -->
+<script>
+(function(){
+  var CONSENT_KEY = 'halo_cookie_consent';
+  function loadGTM(){
+    if(window.__gtmLoaded) return;
+    window.__gtmLoaded = true;
+    (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-T49HRT6J');
+  }
+  function getConsent(){ try { return localStorage.getItem(CONSENT_KEY); } catch(e){ return null; } }
+  function setConsent(v){ try { localStorage.setItem(CONSENT_KEY, v); } catch(e){} }
+  function hideBanner(){ var b=document.getElementById('halo-cookie-banner'); if(b) b.style.display='none'; }
+  window.haloConsent = {
+    get: getConsent,
+    accept: function(){ setConsent('granted'); loadGTM(); hideBanner(); },
+    reject: function(){ setConsent('denied'); hideBanner(); }
+  };
+  var existing = getConsent();
+  if(existing === 'granted'){
+    if(document.readyState === 'loading'){ document.addEventListener('DOMContentLoaded', loadGTM); }
+    else { loadGTM(); }
+  }
+  window.__haloShowBanner = (existing !== 'granted' && existing !== 'denied');
+})();
+</script>
+<!-- End cookie consent / Google Tag Manager -->
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -310,10 +333,23 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 </head>
 <body>
 
-<!-- Google Tag Manager (noscript) -->
-<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-T49HRT6J"
-height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
-<!-- End Google Tag Manager (noscript) -->
+<!-- Cookie consent banner -->
+<div id="halo-cookie-banner" style="display:none;position:fixed;left:16px;right:16px;bottom:16px;z-index:9999;max-width:620px;margin:0 auto;background:var(--navy-deep,#101A30);color:#fff;border:1px solid rgba(216,190,143,0.35);border-radius:10px;padding:18px 20px;box-shadow:0 12px 32px rgba(0,0,0,0.3);font-size:14px;line-height:1.55;font-family:inherit;">
+  <p style="margin:0 0 12px;">We use cookies that are essential for the site to work, and, with your consent, analytics cookies to understand how it's used. See our <a href="/cookie-policy" style="color:#D8BE8F;text-decoration:underline;">Cookie Policy</a>.</p>
+  <div style="display:flex;gap:10px;flex-wrap:wrap;">
+    <button type="button" onclick="window.haloConsent.accept()" style="background:#B08D57;color:#101A30;border:none;padding:9px 18px;border-radius:6px;font-weight:600;font-size:14px;cursor:pointer;">Accept</button>
+    <button type="button" onclick="window.haloConsent.reject()" style="background:transparent;color:#fff;border:1px solid rgba(255,255,255,0.45);padding:9px 18px;border-radius:6px;font-size:14px;cursor:pointer;">Reject non-essential</button>
+  </div>
+</div>
+<script>
+if (window.__haloShowBanner) {
+  document.addEventListener('DOMContentLoaded', function(){
+    var b = document.getElementById('halo-cookie-banner');
+    if (b) b.style.display = 'block';
+  });
+}
+</script>
+<!-- End cookie consent banner -->
 <header>
   <nav class="navbar">
     <a href="/" class="logo">
@@ -448,6 +484,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           <li><a href="tel:+19176957177">+1 917 695 7177</a></li>
           <li><a href="/privacy-policy">Privacy Policy</a></li>
           <li><a href="/cookie-policy">Cookie Policy</a></li>
+          <li><a href="/refund-policy">Refund Policy</a></li>
           <li><a href="/terms-and-conditions">Terms &amp; Conditions</a></li>
         </ul>
       </div>
