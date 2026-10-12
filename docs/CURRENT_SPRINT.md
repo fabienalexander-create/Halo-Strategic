@@ -73,7 +73,7 @@ Sprint 1A and Sprint 1B were implemented and committed on 2026-07-25, under thos
 
 ## In Progress
 
-None currently logged.
+LinkedIn content backlog scheduled (2026-10-12): all 9 remaining drafts from the 2026-07-27 batch reviewed against the Operating Manual's self-review checklist (all passed, no changes needed) and moved from `content/linkedin/draft/` to `content/linkedin/scheduled/`, renamed to their new target dates. Queue: Oct 13 (AM: "The five levels of commercial maturity," PM: "Would you make the same three decisions again?"), Oct 16 (AM: "Trust the plumbing before the strategy," PM: "Every agency sees what it sells"), Oct 17 (AM: "One prescription, every diagnosis," PM: "Good reporting changes decisions"), Oct 18 (AM: "Growth doesn't usually stop, it erodes," PM: "We will not sell certainty that doesn't exist"), Oct 19 (AM: "Sometimes the market is the constraint"). Sequenced so no pillar or format repeats back-to-back. Not actually published — no browser tool was available in that session, so publishing per the Operating Manual's Browser Publishing Authority (authenticated session + fresh per-post confirmation) still needs to happen from a session that has one. Next action: when a browser-capable session is available, work through the queue in order, confirming each post individually before it goes live.
 
 ## Awaiting Approval
 

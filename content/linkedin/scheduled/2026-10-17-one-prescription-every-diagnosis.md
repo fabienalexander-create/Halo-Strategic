@@ -1,7 +1,7 @@
 ---
 title: "One prescription, every diagnosis"
-publish_date: 2026-07-27
-status: draft
+publish_date: 2026-10-17
+status: scheduled
 pillar: diagnosis-before-prescription
 format: commercial-truth
 weekly_theme: none

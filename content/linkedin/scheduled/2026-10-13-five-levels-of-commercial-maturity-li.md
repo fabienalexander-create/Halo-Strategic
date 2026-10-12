@@ -1,7 +1,7 @@
 ---
 title: "The five levels of commercial maturity"
-publish_date: 2026-07-27
-status: draft
+publish_date: 2026-10-13
+status: scheduled
 pillar: commercial-frameworks
 format: framework
 weekly_theme: none

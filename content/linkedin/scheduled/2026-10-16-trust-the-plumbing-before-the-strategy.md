@@ -1,7 +1,7 @@
 ---
 title: "Trust the plumbing before the strategy"
-publish_date: 2026-07-27
-status: draft
+publish_date: 2026-10-16
+status: scheduled
 pillar: diagnosis-before-prescription
 format: mini-case-study
 weekly_theme: none
