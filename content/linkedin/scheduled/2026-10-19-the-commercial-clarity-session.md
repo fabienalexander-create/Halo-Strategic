@@ -1,7 +1,7 @@
 ---
 title: "Introducing the Commercial Clarity Session"
-publish_date: TBC - do not publish until the $199 offer is approved and live
-status: draft
+publish_date: 2026-10-19
+status: scheduled
 pillar: behind-halo
 format: announcement
 weekly_theme: none

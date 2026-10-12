@@ -1,7 +1,7 @@
 ---
 title: "When you need a focused session vs. a full diagnostic"
-publish_date: TBC - do not publish until the $199 offer is approved and live
-status: draft
+publish_date: 2026-10-20
+status: scheduled
 pillar: diagnosis-before-prescription
 format: framework
 weekly_theme: none
