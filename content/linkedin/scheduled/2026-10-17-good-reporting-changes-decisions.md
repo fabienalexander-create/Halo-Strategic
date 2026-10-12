@@ -1,7 +1,7 @@
 ---
 title: "Good reporting changes decisions, not just dashboards"
-publish_date: 2026-07-27
-status: draft
+publish_date: 2026-10-17
+status: scheduled
 pillar: selected-engagements
 format: mini-case-study
 weekly_theme: none

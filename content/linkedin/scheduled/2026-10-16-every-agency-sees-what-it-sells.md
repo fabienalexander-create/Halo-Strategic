@@ -1,7 +1,7 @@
 ---
 title: "Every agency sees the problem through the lens of what it sells"
-publish_date: 2026-07-27
-status: draft
+publish_date: 2026-10-16
+status: scheduled
 pillar: agency-partnerships
 format: observation
 weekly_theme: none

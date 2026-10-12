@@ -36,7 +36,11 @@ For each event below: Trigger type "Custom Event", Event name matching exactly, 
 - **Trigger:** Custom Event, event name `form_submit_success`, fire condition `form_id equals contact-form` AND `service equals diagnostic` (or `audit`, run twice for two separate tags if you want them split) → **GA4 Event tag**, Event Name `contact_diagnostic_requested` / `contact_audit_requested`.
 - **Trigger:** Custom Event, event name `health_check_completed` → **GA4 Event tag** named "GA4 - health_check_completed", Event Name `health_check_completed`, with `health_check_score` and `health_check_band` passed through as event parameters (Preview mode will show them in the dataLayer to map).
 
-Two further click-based events from the original brief remain genuinely not possible yet: `phone_clicked` (no `tel:` link exists anywhere on the site) and `linkedin_clicked` (the LinkedIn Page link in the footer would need a Click - Just Links trigger filtered to `linkedin.com` — buildable, just not done in this pass, low priority next to the form events above).
+One further click-based event from the original brief remains genuinely not possible yet: `linkedin_clicked` (the LinkedIn Page link in the footer would need a Click - Just Links trigger filtered to `linkedin.com` — buildable, just not done in this pass, low priority next to the form events above).
+
+**Correction (2026-10-12):** `phone_clicked` was previously listed here as blocked on "no `tel:` link exists anywhere on the site." That's no longer true — `tel:+19176957177` links are live in contact.html and the footer of every other page. No `dataLayer.push` for `phone_clicked` exists in the code, so the event still isn't firing, but not because the link is missing. Two ways to close it:
+- **No code change needed:** a GTM-native trigger, type "Click - Just Links", fire condition `Click URL contains tel:` → GA4 Event tag, Event Name `phone_clicked`. Buildable directly in tagmanager.google.com.
+- **Or**, to match how the other three events are implemented, add a small `dataLayer.push({event: 'phone_clicked'})` on click in the site code, then wire a Custom Event trigger the same way as the others above.
 
 ## Future-proofing
 

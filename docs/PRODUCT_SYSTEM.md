@@ -22,14 +22,16 @@ The prior structure named 14 separate products across 6 stages (Discover, Invest
 
 | Stage | Purpose | Products |
 |---|---|---|
-| **Clarity** | Understand what is actually happening | Commercial Health Check, Commercial Diagnostic |
+| **Clarity** | Understand what is actually happening | Commercial Health Check, Commercial Clarity Session, Commercial Diagnostic |
 | **Strategy** | Go deep, build the roadmap | Commercial Audit |
 | **Transformation** | Remove the highest-priority constraint | Commercial Transformation |
 | **Partnership** | Ongoing commercial advisory, if wanted | Strategic Partnership |
 
 ## Journey Map
 
-**Health Check → Diagnostic → Audit → Commercial Transformation → Strategic Partnership.**
+**Health Check → Clarity Session → Diagnostic → Audit → Commercial Transformation → Strategic Partnership.**
+
+The Clarity Session is a proposed, not mandatory, step: a client who already knows they need the full Diagnostic (or Audit) can go straight there.
 
 A client can enter at any stage if they arrive with an existing diagnosis, but the default path is sequential, each stage's output is the next stage's entry criteria. No stage below Clarity should be sold to a client who hasn't been through a diagnosis first, whether Halo's or a genuinely equivalent one. Per the Governing Sentence above, most clients should not be expected to reach Partnership, and that's by design, not a funnel failure.
 
@@ -37,13 +39,24 @@ A client can enter at any stage if they arrive with an existing diagnosis, but t
 
 ## Clarity
 
+**Amendment (2026-10-12):** added the Commercial Clarity Session, a new $199 entry point between the Health Check and the Diagnostic, per Fabien's explicit instruction. This is a new product decision, not a revisit of the Diagnostic ($995) or Audit ($7,500+) figures, which remain exactly as held above. Rationale: give qualified prospects a lower-risk, lower-commitment way to experience Halo's diagnostic approach before committing to the full Diagnostic, and learn which narrower problems buyers will pay to have solved. Explicitly not a discounted Diagnostic — narrower scope (one defined problem, not the full commercial journey), shorter session (45-60 min vs. 90 min), and does not carry the Halo Clarity Guarantee, which remains specific to the Diagnostic.
+
 ### Commercial Health Check
 - **Definition:** a free, 10-minute self-assessment determining whether a full Commercial Diagnostic is appropriate.
 - **Entry criteria:** none. Open access.
 - **Deliverables:** an immediate score, a short narrative of likely leakage areas.
 - **Outcomes:** the client has a first, low-commitment signal of whether further diagnosis is worth pursuing.
 - **Pricing:** Free.
-- **Upgrade path:** Commercial Diagnostic.
+- **Upgrade path:** Commercial Clarity Session, or straight to Commercial Diagnostic if the need is already clear.
+
+### Commercial Clarity Session
+- **Definition:** a focused, lower-commitment entry point. The client brings one clearly defined commercial problem; Halo spends 45-60 minutes on it directly.
+- **Entry criteria:** none beyond booking. Suited to a prospect who already knows the specific question they want answered.
+- **Deliverables:** a short pre-session questionnaire, a 45-60 minute session, a preliminary read on the likely constraint, three prioritised recommended actions, a concise written summary.
+- **Outcomes:** the client gets a lower-risk way to experience Halo's diagnostic approach and leaves with a clear, prioritised next step on one problem, whether or not they go further.
+- **Explicitly not included:** multi-channel data analysis, implementation, ongoing advisory, or the Halo Clarity Guarantee (that guarantee is specific to the Diagnostic).
+- **Pricing:** $199 (new, 2026-10-12).
+- **Upgrade path:** Commercial Diagnostic, if the session surfaces a broader problem than one session can responsibly cover.
 
 ### Commercial Diagnostic
 - **Definition:** Halo's flagship entry product. A structured 90-minute session identifying the client's primary commercial constraint. No promise to fix anything, the promise is clarity.

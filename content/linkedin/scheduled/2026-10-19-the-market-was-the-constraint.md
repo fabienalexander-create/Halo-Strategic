@@ -1,7 +1,7 @@
 ---
 title: "Sometimes the market is the constraint, not the marketing"
-publish_date: 2026-07-27
-status: draft
+publish_date: 2026-10-19
+status: scheduled
 pillar: selected-engagements
 format: mini-case-study
 weekly_theme: none

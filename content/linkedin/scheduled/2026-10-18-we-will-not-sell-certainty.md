@@ -1,7 +1,7 @@
 ---
 title: "We will not sell certainty that doesn't exist"
-publish_date: 2026-07-27
-status: draft
+publish_date: 2026-10-18
+status: scheduled
 pillar: diagnosis-before-prescription
 format: commercial-truth
 weekly_theme: none

@@ -13,6 +13,7 @@ window.HALO_PRICING = {
   currencies: {
     USD: {
       healthCheck: { display: 'Free' },
+      clarity: { display: '$199' },
       diagnostic: { display: '$995' },
       audit: { display: '$7,500+', note: 'scope-dependent' }
     }

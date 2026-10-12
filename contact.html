@@ -427,6 +427,7 @@ if (window.__haloShowBanner) {
         <label for="cp-reason">What's this about?</label>
         <select id="cp-reason" name="reason" required>
           <option value="">Choose one</option>
+          <option value="clarity-session">Request a Commercial Clarity Session ($199)</option>
           <option value="diagnostic-booking">Request a Commercial Diagnostic ($995)</option>
           <option value="audit-enquiry">Commercial Audit enquiry</option>
           <option value="general">General enquiry (not sure yet)</option>
@@ -507,12 +508,12 @@ if (window.__haloShowBanner) {
   (function(){
     var params = new URLSearchParams(window.location.search);
     var service = params.get('service');
-    if (service === 'diagnostic' || service === 'audit') {
+    if (service === 'diagnostic' || service === 'audit' || service === 'clarity') {
       var serviceField = document.getElementById('cp-service');
       if (serviceField) serviceField.value = service;
       var reasonField = document.getElementById('cp-reason');
       if (reasonField && !reasonField.value) {
-        reasonField.value = service === 'diagnostic' ? 'diagnostic-booking' : 'audit-enquiry';
+        reasonField.value = service === 'diagnostic' ? 'diagnostic-booking' : service === 'audit' ? 'audit-enquiry' : 'clarity-session';
       }
     }
   })();

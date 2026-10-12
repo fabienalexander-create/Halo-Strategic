@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Commercial Clarity Session | Halo Strategic</title>
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon-180x180.png">
+<link rel="manifest" href="/site.webmanifest">
+<meta name="theme-color" content="#101A30">
+<meta name="description" content="A $199, 45-60 minute strategy session to get clarity on one specific commercial growth problem and the next sensible actions to take.">
+<link rel="canonical" href="https://halostrategic.com/commercial-clarity-session">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://halostrategic.com/commercial-clarity-session">
+<meta property="og:title" content="Commercial Clarity Session | Halo Strategic">
+<meta property="og:description" content="A $199, 45-60 minute strategy session to get clarity on one specific commercial growth problem and the next sensible actions to take.">
+<meta property="og:image" content="https://halostrategic.com/assets/og-default-1200x630.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Commercial Clarity Session | Halo Strategic">
+<meta name="twitter:image" content="https://halostrategic.com/assets/og-default-1200x630.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#1B2A4A; --navy-deep:#101A30; --bronze:#B08D57; --bronze-light:#D8BE8F;
+    --slate:#44546A; --ink:#1A1D24; --paper:#F6F6F3; --surface:#FFFFFF; --border:#E1E3DE;
+    --green:#4B6B4F; --green-bg:#E7EDE6; --amber:#8F6E28; --amber-bg:#F2EAD9; --red:#8C4438; --red-bg:#F2E2DE;
+    --radius-sm:6px; --radius-md:8px; --radius-lg:12px;
+    --ease: cubic-bezier(0.4,0,0.2,1);
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth; overflow-x:hidden;}
+  body{
+    margin:0; background:var(--paper); color:var(--ink);
+    font-family:'Inter',sans-serif; font-size:17px; line-height:1.65;
+    -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+  }
+  ::selection{ background:var(--bronze-light); color:var(--navy-deep); }
+  h1,h2,h3{ font-family:'Fraunces',serif; font-weight:500; color:var(--navy-deep); margin:0; letter-spacing:-0.01em; }
+  a{ color:inherit; }
+  .container{ max-width:1180px; margin:0 auto; padding:0 32px; }
+  .mono{ font-family:'IBM Plex Mono',monospace; }
+
+  /* NAV */
+  header{ position:sticky; top:0; z-index:100; background:rgba(246,246,243,0.92); backdrop-filter:blur(8px); border-bottom:1px solid var(--border); }
+  .navbar{ display:flex; align-items:center; justify-content:space-between; padding:22px 32px; max-width:1320px; margin:0 auto; }
+  .logo{ font-family:'Fraunces',serif; font-size:1.35rem; font-weight:600; color:var(--navy-deep); text-decoration:none; display:flex; align-items:center; gap:12px; letter-spacing:0.01em; white-space:nowrap; }
+  .logo-mark{ width:36px; height:36px; flex:none; display:block; }
+  .nav-links{ display:flex; gap:17px; list-style:none; margin:0; padding:0; flex-wrap:wrap; }
+  .nav-links a{ text-decoration:none; font-size:0.89rem; color:var(--slate); font-weight:500; white-space:nowrap; transition:color 160ms var(--ease); }
+  .nav-links a:hover{ color:var(--navy-deep); }
+  .nav-links a.active{ color:var(--navy-deep); font-weight:600; }
+  .nav-right{ display:flex; align-items:center; gap:18px; }
+  .nav-toggle{ display:none; background:none; border:none; cursor:pointer; padding:12px; }
+  .nav-cta-mobile{ display:none; }
+  .nav-toggle span{ display:block; width:22px; height:2px; background:var(--navy-deep); margin:5px 0; }
+
+  /* BUTTONS */
+  .btn{
+    font-family:'Inter',sans-serif; font-size:0.95rem; font-weight:600; padding:13px 24px;
+    border-radius:var(--radius-md); cursor:pointer; border:1px solid transparent;
+    transition:background 160ms var(--ease), border-color 160ms var(--ease), color 160ms var(--ease);
+    text-decoration:none; display:inline-block;
+  }
+  .btn-primary{ background:var(--navy); color:#fff; }
+  .btn-primary:hover{ background:var(--navy-deep); }
+  .btn-primary:focus-visible{ outline:2px solid var(--bronze); outline-offset:2px; }
+  .btn-bronze{ background:var(--bronze); color:var(--navy-deep); font-weight:700; }
+  .btn-bronze:hover{ background:var(--bronze-light); }
+  .btn-bronze:focus-visible{ outline:2px solid #fff; outline-offset:2px; }
+
+  /* SECTIONS */
+  section{ padding:96px 0; }
+  section.tight{ padding:64px 0; }
+  .eyebrow{ font-family:'IBM Plex Mono',monospace; font-size:0.78rem; color:var(--bronze); text-transform:uppercase; letter-spacing:0.12em; margin-bottom:16px; }
+  h2.section-title{ font-size:2.1rem; line-height:1.2; max-width:16em; margin-bottom:20px; }
+  p.lead{ font-size:1.2rem; color:var(--slate); max-width:38em; margin:0 0 16px; }
+  p{ max-width:42em; }
+
+  /* HERO */
+  .hero{
+    padding:130px 0 100px; background:var(--navy-deep); position:relative; overflow:hidden;
+  }
+  .hero .container{ position:relative; z-index:2; }
+  .hero h1{ font-size:3.1rem; line-height:1.15; max-width:16em; margin-bottom:28px; color:#fff; }
+  .hero p.lead{ margin-bottom:36px; color:#C7CBD4; }
+
+  /* CARDS */
+  .card-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:24px; margin-top:40px; }
+  .card-grid.two{ grid-template-columns:repeat(2,1fr); }
+  .card{ background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-lg); padding:28px; transition:box-shadow 200ms var(--ease); }
+  .card:hover{ box-shadow:0 4px 20px rgba(16,26,48,0.08); }
+  .card .k{ font-family:'IBM Plex Mono',monospace; font-size:0.72rem; color:var(--bronze); text-transform:uppercase; letter-spacing:0.08em; margin-bottom:10px; }
+  .card h3{ font-size:1.15rem; margin-bottom:10px; }
+  .card p{ font-size:0.95rem; color:var(--slate); margin:0; }
+  .card a.readmore{ display:inline-block; margin-top:14px; font-size:0.9rem; color:var(--bronze); text-decoration:underline; text-underline-offset:3px; font-weight:600; }
+
+  /* PULL / QUOTE */
+  .pull{ font-family:'Fraunces',serif; font-weight:500; font-size:1.6rem; line-height:1.4; color:var(--navy-deep); border-left:3px solid var(--bronze); padding:4px 0 4px 28px; margin:32px 0; max-width:34em; }
+
+  /* DARK BAND */
+  .band-dark{ background:var(--navy-deep); color:#EDEEF0; }
+  .band-dark h2.section-title{ color:#fff; }
+  .band-dark p{ color:#C7CBD4; }
+  .band-dark .pull{ color:#fff; border-left-color:var(--bronze-light); }
+
+  /* FINAL CTA */
+  .final-cta{ text-align:left; background:var(--navy-deep); color:#fff; border-radius:var(--radius-lg); padding:56px; margin:0 32px; }
+  .final-cta h2{ color:#fff; font-size:2rem; margin-bottom:16px; }
+  .final-cta p{ color:#C7CBD4; margin-bottom:28px; max-width:38em; }
+  section.final-cta{ background:var(--navy-deep); color:#fff; border-radius:0; margin:0; padding:96px 0; }
+  section.final-cta h2.section-title{ color:#fff; }
+
+  /* PAGE UTILITY: table / faq / steps */
+  .page-table{ width:100%; border-collapse:collapse; margin:24px 0 40px; }
+  .page-table th{ background:var(--navy-deep); color:#fff; text-align:left; padding:12px 16px; font-size:0.82rem; text-transform:uppercase; letter-spacing:0.04em; }
+  .page-table td{ padding:12px 16px; border-bottom:1px solid var(--border); font-size:0.95rem; vertical-align:top; }
+  .page-table tr:nth-child(even) td{ background:var(--paper); }
+
+  .faq details{ border-bottom:1px solid var(--border); padding:20px 0; }
+  .faq summary{ font-family:'Fraunces',serif; font-size:1.1rem; font-weight:600; color:var(--navy-deep); cursor:pointer; list-style:none; display:flex; justify-content:space-between; align-items:center; }
+  .faq summary::-webkit-details-marker{ display:none; }
+  .faq summary::after{ content:'+'; font-family:'Inter',sans-serif; color:var(--bronze); font-size:1.4rem; font-weight:400; }
+  .faq details[open] summary::after{ content:'\2212'; }
+  .faq p{ margin-top:14px; color:var(--slate); max-width:42em; }
+
+  .step-row{ display:flex; gap:24px; margin:32px 0 48px; flex-wrap:wrap; }
+  .step-row .step{ flex:1; min-width:180px; }
+  .step-row .step .n{ font-family:'IBM Plex Mono',monospace; font-size:1.6rem; font-weight:600; color:var(--bronze-light); margin-bottom:6px; }
+  .step-row .step h3{ font-size:1rem; margin-bottom:6px; color:var(--navy-deep); }
+  .step-row .step p{ font-size:0.88rem; color:var(--slate); margin:0; }
+
+  .dont-list{ list-style:none; margin:0; padding:0; }
+  .dont-list li{ padding:8px 0; color:var(--ink); font-size:0.95rem; }
+
+  /* FOOTER */
+  footer{ border-top:1px solid var(--border); padding:56px 0 40px; margin-top:40px; }
+  .footer-grid{ display:grid; grid-template-columns:2fr 1fr 1fr; gap:32px; margin-bottom:40px; }
+  .footer-grid h4{ font-family:'IBM Plex Mono',monospace; font-size:0.72rem; text-transform:uppercase; letter-spacing:0.08em; color:var(--slate); margin-bottom:14px; }
+  .footer-grid ul{ list-style:none; padding:0; margin:0; }
+  .footer-grid li{ margin-bottom:10px; }
+  .footer-grid a{ text-decoration:none; color:var(--ink); font-size:0.92rem; }
+  .footer-grid a:hover{ color:var(--bronze); }
+  .footer-bottom{ font-size:0.82rem; color:var(--slate); border-top:1px solid var(--border); padding-top:24px; display:flex; justify-content:space-between; flex-wrap:wrap; gap:12px; }
+
+  @media (max-width:1300px){
+    .nav-links{ display:none; }
+    .nav-toggle{ display:block; }
+    .nav-right .btn-primary{ display:none; }
+    .nav-cta-mobile{ display:block; margin-top:12px; }
+    .nav-cta-mobile a{ display:inline-block; background:var(--bronze); color:var(--navy-deep); font-weight:700; padding:12px 20px; border-radius:var(--radius-md); text-decoration:none; font-size:0.92rem; }
+  }
+
+  @media (max-width:900px){
+    .navbar{ padding:14px 12px; }
+    .logo{ font-size:1rem; gap:6px; }
+    .logo-mark{ width:24px; height:24px; }
+    .nav-toggle{ padding:8px; }
+    .nav-right{ gap:8px; }
+    .hero h1{ font-size:2.2rem; }
+    .card-grid, .card-grid.two{ grid-template-columns:1fr; }
+    section{ padding:64px 0; }
+    .final-cta{ margin:0 20px; padding:36px 28px; }
+    .footer-grid{ grid-template-columns:1fr; gap:24px; }
+    .container{ padding:0 20px; }
+    .step-row{ flex-direction:column; }
+  }
+  @media (prefers-reduced-motion: reduce){
+    *{ transition:none !important; scroll-behavior:auto !important; }
+  }
+</style>
+<!-- Cookie consent (gates Google Tag Manager until accepted) -->
+<script>
+(function(){
+  var CONSENT_KEY = 'halo_cookie_consent';
+  function loadGTM(){
+    if(window.__gtmLoaded) return;
+    window.__gtmLoaded = true;
+    (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-T49HRT6J');
+  }
+  function getConsent(){ try { return localStorage.getItem(CONSENT_KEY); } catch(e){ return null; } }
+  function setConsent(v){ try { localStorage.setItem(CONSENT_KEY, v); } catch(e){} }
+  function hideBanner(){ var b=document.getElementById('halo-cookie-banner'); if(b) b.style.display='none'; }
+  window.haloConsent = {
+    get: getConsent,
+    accept: function(){ setConsent('granted'); loadGTM(); hideBanner(); },
+    reject: function(){ setConsent('denied'); hideBanner(); }
+  };
+  var existing = getConsent();
+  if(existing === 'granted'){
+    if(document.readyState === 'loading'){ document.addEventListener('DOMContentLoaded', loadGTM); }
+    else { loadGTM(); }
+  }
+  window.__haloShowBanner = (existing !== 'granted' && existing !== 'denied');
+})();
+</script>
+<!-- End cookie consent / Google Tag Manager -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "Halo Strategic",
+  "url": "https://halostrategic.com",
+  "logo": "https://halostrategic.com/android-chrome-512x512.png",
+  "sameAs": ["https://www.linkedin.com/company/halo-strategicglobal/", "https://www.facebook.com/profile.php?id=61591459224716"],
+  "contactPoint": {
+    "@type": "ContactPoint",
+    "telephone": "+19176957177",
+    "email": "hello@halostrategic.com",
+    "contactType": "customer service"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "How is this different from the $995 Commercial Diagnostic?",
+      "acceptedAnswer": { "@type": "Answer", "text": "The Clarity Session looks at one defined problem you bring to it. The Diagnostic is a broader, structured 90-minute investigation across your whole commercial journey. If you already know the single issue you want clarity on, start here. If you want a fuller picture of where your business is leaking growth, start with the Diagnostic." }
+    },
+    {
+      "@type": "Question",
+      "name": "Is the $199 session a cheaper version of the Diagnostic?",
+      "acceptedAnswer": { "@type": "Answer", "text": "No. It is a separate, narrower service, not a discounted Diagnostic. It intentionally does not include the Diagnostic's full-journey review, and does not come with the Halo Clarity Guarantee, which is specific to the Diagnostic." }
+    },
+    {
+      "@type": "Question",
+      "name": "What do I actually get?",
+      "acceptedAnswer": { "@type": "Answer", "text": "A short pre-session questionnaire, a 45-60 minute strategy session on one commercial problem you define in advance, a preliminary read on the likely constraint based on what's discussed, three prioritised next actions, and a concise written summary afterward." }
+    }
+  ]
+}
+</script>
+<script src="/pricing-config.js"></script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://halostrategic.com/" },
+    { "@type": "ListItem", "position": 2, "name": "Commercial Clarity Session", "item": "https://halostrategic.com/commercial-clarity-session" }
+  ]
+}
+</script>
+</head>
+<body>
+
+<!-- Cookie consent banner -->
+<div id="halo-cookie-banner" style="display:none;position:fixed;left:16px;right:16px;bottom:16px;z-index:9999;max-width:620px;margin:0 auto;background:var(--navy-deep,#101A30);color:#fff;border:1px solid rgba(216,190,143,0.35);border-radius:10px;padding:18px 20px;box-shadow:0 12px 32px rgba(0,0,0,0.3);font-size:14px;line-height:1.55;font-family:inherit;">
+  <p style="margin:0 0 12px;">We use cookies that are essential for the site to work, and, with your consent, analytics cookies to understand how it's used. See our <a href="/cookie-policy" style="color:#D8BE8F;text-decoration:underline;">Cookie Policy</a>.</p>
+  <div style="display:flex;gap:10px;flex-wrap:wrap;">
+    <button type="button" onclick="window.haloConsent.accept()" style="background:#B08D57;color:#101A30;border:none;padding:9px 18px;border-radius:6px;font-weight:600;font-size:14px;cursor:pointer;">Accept</button>
+    <button type="button" onclick="window.haloConsent.reject()" style="background:transparent;color:#fff;border:1px solid rgba(255,255,255,0.45);padding:9px 18px;border-radius:6px;font-size:14px;cursor:pointer;">Reject non-essential</button>
+  </div>
+</div>
+<script>
+if (window.__haloShowBanner) {
+  document.addEventListener('DOMContentLoaded', function(){
+    var b = document.getElementById('halo-cookie-banner');
+    if (b) b.style.display = 'block';
+  });
+}
+</script>
+<!-- End cookie consent banner -->
+<header>
+  <nav class="navbar">
+    <a href="/" class="logo">
+      <img src="/halo-icon-navy.svg" width="36" height="36" alt="Halo Strategic" class="logo-mark">
+      HALO STRATEGIC
+    </a>
+    <ul class="nav-links">
+      <li><a href="/#how-it-works">How Halo Works</a></li>
+      <li><a href="/#services">Services</a></li>
+      <li><a href="/commercial-diagnostic">Commercial Diagnostic</a></li>
+      <li><a href="/commercial-audit">Commercial Audit</a></li>
+      <li><a href="/product-journey">Product Journey</a></li>
+      <li><a href="/agency-partnerships">Agency Partnerships</a></li>
+      <li><a href="/insights/">Insights</a></li>
+      <li><a href="/selected-engagements">Selected Engagements</a></li>
+      <li><a href="/how-halo-thinks">How Halo Thinks</a></li>
+      <li><a href="/frameworks">Frameworks</a></li>
+      <li><a href="/about">About</a></li>
+      <li class="nav-cta-mobile"><a href="/contact?service=clarity">Request a Commercial Clarity Session</a></li>
+    </ul>
+    <div class="nav-right">
+      <a href="/contact?service=clarity" class="btn btn-primary">Request a Commercial Clarity Session</a>
+      <button class="nav-toggle" aria-label="Open menu"><span></span><span></span><span></span></button>
+    </div>
+  </nav>
+</header>
+
+<section class="hero">
+  <div class="container">
+    <div class="eyebrow" style="color:#D8BE8F;">A Focused Entry Point</div>
+    <h1 style="font-size:2.6rem;">The Commercial Clarity Session.</h1>
+    <p class="lead" style="max-width:38em;">Not every business is ready for a full commercial investigation. Sometimes the immediate priority is understanding one specific constraint and deciding what to do next. That's what this session is for.</p>
+    <a href="/contact?service=clarity" class="btn btn-bronze" style="text-decoration:none;">Request Your Commercial Clarity Session - <span data-price="clarity">$199</span></a>
+    <p style="margin-top:20px; font-size:0.92rem;"><a href="/commercial-diagnostic" style="color:#D8BE8F;">Need a deeper, full-journey investigation instead? See the Commercial Diagnostic &rarr;</a></p>
+  </div>
+</section>
+
+<section>
+  <div class="container" style="max-width:800px;">
+
+    <div class="eyebrow">What it is</div>
+    <h2 class="section-title">One problem, a focused session, a clear next step.</h2>
+    <p style="font-size:1.05rem; margin-bottom:24px;">The Commercial Clarity Session is a narrower, lower-commitment way to experience Halo's diagnostic approach. You bring one clearly defined commercial problem. We spend 45-60 minutes on it directly, then give you a preliminary read and three prioritised actions, in writing.</p>
+    <ul style="font-size:1.05rem; margin:0 0 24px; padding-left:22px;">
+      <li>A short pre-session questionnaire</li>
+      <li>Review of the one commercial challenge you bring</li>
+      <li>A 45-60 minute focused strategy session</li>
+      <li>A preliminary read on the likely constraint, based on what's discussed</li>
+      <li>Three prioritised recommended actions</li>
+      <li>A concise written summary after the session</li>
+    </ul>
+    <p style="font-size:1.05rem; margin-bottom:48px;">This is intentionally narrower than the Commercial Diagnostic. It is not a full commercial audit, an extensive multi-channel data review, an implementation engagement, or ongoing advisory. If your situation turns out to need that depth, we'll tell you directly during or after the session.</p>
+
+    <div class="eyebrow">Who this is for</div>
+    <h2 class="section-title">A good fit if you already know the question.</h2>
+    <p style="font-size:1.05rem; margin-bottom:16px;">The Clarity Session suits a business owner or decision-maker who:</p>
+    <ul style="font-size:1.05rem; margin:0 0 24px; padding-left:22px;">
+      <li>Has one specific commercial problem they want a second, expert opinion on</li>
+      <li>Isn't yet ready to commit to a full diagnostic investigation</li>
+      <li>Wants a low-risk way to see how Halo actually thinks before going deeper</li>
+      <li>Needs a prioritised next step, not a lengthy report</li>
+    </ul>
+    <p style="font-size:1.05rem; margin-bottom:48px;">If your situation spans multiple departments, or you're not sure yet what the real question even is, the <a href="/commercial-diagnostic" style="color:var(--bronze);">Commercial Diagnostic</a> or the free <a href="/commercial-health-check" style="color:var(--bronze);">Commercial Health Check</a> are better starting points.</p>
+
+    <div class="eyebrow">Clarity Session vs. Commercial Diagnostic</div>
+    <h2 class="section-title">Two different depths, on purpose.</h2>
+    <table class="page-table">
+      <tr><th></th><th>Commercial Clarity Session</th><th>Commercial Diagnostic</th></tr>
+      <tr><td>Cost</td><td data-price="clarity">$199</td><td data-price="diagnostic">$995</td></tr>
+      <tr><td>Length</td><td>45-60 minute session</td><td>One 90-minute session</td></tr>
+      <tr><td>Scope</td><td>One clearly defined problem you bring</td><td>Your full acquisition-to-revenue commercial journey</td></tr>
+      <tr><td>Output</td><td>Preliminary read, three prioritised actions, written summary</td><td>A high-level action plan and a recommendation on further work</td></tr>
+      <tr><td>Guarantee</td><td>Not included</td><td>Backed by the Halo Clarity Guarantee</td></tr>
+    </table>
+    <p style="font-size:1.05rem; margin-bottom:48px;">The Clarity Session is not the Diagnostic at a discount; it's a separate, narrower service. Some businesses will get what they need here. Others will use it to decide whether the deeper Diagnostic is worth it. To see how every Halo product fits together, see the <a href="/product-journey" style="color:var(--bronze);">Product Journey</a>.</p>
+
+    <div class="eyebrow">What it doesn't include</div>
+    <h2 class="section-title">Set honestly, not oversold.</h2>
+    <ul class="dont-list" style="margin-bottom:48px;">
+      <li>No multi-channel data analysis across CRM, tracking, and reporting</li>
+      <li>No implementation work or ongoing advisory</li>
+      <li>No promise of a specific business outcome, revenue result, or growth figure</li>
+      <li>No Halo Clarity Guarantee (that's specific to the $995 Diagnostic)</li>
+    </ul>
+
+  </div>
+</section>
+
+<section class="tight" style="background:var(--surface); border-top:1px solid var(--border); border-bottom:1px solid var(--border);">
+  <div class="container" style="max-width:800px;">
+    <div class="eyebrow">What happens</div>
+    <h2 class="section-title">A focused process, start to finish.</h2>
+    <div class="step-row">
+      <div class="step"><div class="n">01</div><h3>Request</h3><p>Send a short enquiry below, naming the one problem you want clarity on. We reply within one business day to confirm the session and send a short pre-session questionnaire.</p></div>
+      <div class="step"><div class="n">02</div><h3>Clarity Session</h3><p>45-60 minutes, focused entirely on the problem you brought.</p></div>
+      <div class="step"><div class="n">03</div><h3>Written Summary</h3><p>A concise summary with three prioritised next actions. If your situation warrants deeper work, we'll say so.</p></div>
+    </div>
+    <div class="faq" style="margin-top:8px;">
+      <details>
+        <summary>How is this different from the $995 Commercial Diagnostic?</summary>
+        <p>The Clarity Session looks at one defined problem you bring to it. The Diagnostic is a broader, structured 90-minute investigation across your whole commercial journey. If you already know the single issue you want clarity on, start here. If you want a fuller picture of where your business is leaking growth, start with the Diagnostic.</p>
+      </details>
+      <details>
+        <summary>Is the $199 session a cheaper version of the Diagnostic?</summary>
+        <p>No. It is a separate, narrower service, not a discounted Diagnostic. It intentionally does not include the Diagnostic's full-journey review, and does not come with the Halo Clarity Guarantee, which is specific to the Diagnostic.</p>
+      </details>
+      <details>
+        <summary>What if my problem turns out to be bigger than one session can cover?</summary>
+        <p>We'll tell you directly, during or after the session, and explain why, rather than stretching the session to cover something it wasn't built for. The natural next step from there is the <a href="/commercial-diagnostic" style="color:var(--bronze);">Commercial Diagnostic</a>.</p>
+      </details>
+    </div>
+  </div>
+</section>
+
+<section class="final-cta">
+  <div class="container" style="text-align:center;">
+    <h2 class="section-title" style="margin:0 auto 20px; color:#fff;">Ready to get clarity on one specific problem?</h2>
+    <a href="/contact?service=clarity" class="btn btn-bronze" style="text-decoration:none;">Request Your Commercial Clarity Session - <span data-price="clarity">$199</span></a>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <div class="logo" style="margin-bottom:10px; color:#F6F6F3;">
+          <img src="/halo-icon-light.svg" width="36" height="36" alt="Halo Strategic" class="logo-mark">
+          HALO STRATEGIC
+        </div>
+        <p style="font-size:0.92rem; color:var(--slate); max-width:26em;">A Commercial Growth Consultancy. Our job is to help leadership make better commercial decisions.</p>
+      </div>
+      <div>
+        <h4>Sitemap</h4>
+        <ul>
+          <li><a href="/#how-it-works">How Halo Works</a></li>
+          <li><a href="/#services">Services</a></li>
+          <li><a href="/commercial-health-check">Commercial Health Check</a></li>
+          <li><a href="/commercial-clarity-session">Commercial Clarity Session</a></li>
+          <li><a href="/commercial-diagnostic">Commercial Diagnostic</a></li>
+          <li><a href="/commercial-audit">Commercial Audit</a></li>
+          <li><a href="/product-journey">Product Journey</a></li>
+          <li><a href="/agency-partnerships">Agency Partnerships</a></li>
+          <li><a href="/insights/">Insights</a></li>
+          <li><a href="/selected-engagements">Selected Engagements</a></li>
+          <li><a href="/how-halo-thinks">How Halo Thinks</a></li>
+          <li><a href="/frameworks">Frameworks</a></li>
+          <li><a href="/about">About</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Contact &amp; Legal</h4>
+        <ul>
+          <li><a href="/contact">Contact</a></li>
+          <li><a href="https://www.linkedin.com/company/halo-strategicglobal/" target="_blank" rel="noopener">LinkedIn</a></li>
+          <li><a href="https://www.facebook.com/profile.php?id=61591459224716" target="_blank" rel="noopener">Facebook</a></li>
+          <li><a href="mailto:hello@halostrategic.com">hello@halostrategic.com</a></li>
+          <li><a href="tel:+19176957177">+1 917 695 7177</a></li>
+          <li><a href="/privacy-policy">Privacy Policy</a></li>
+          <li><a href="/cookie-policy">Cookie Policy</a></li>
+          <li><a href="/refund-policy">Refund Policy</a></li>
+          <li><a href="/terms-and-conditions">Terms &amp; Conditions</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 Halo Strategic Ltd. All rights reserved. Registered in England &amp; Wales, Company No. 17409402.</span>
+      <span class="mono">halostrategic.com</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  document.querySelector('.nav-toggle')?.addEventListener('click', function(){
+    var links = document.querySelector('.nav-links');
+    var visible = links.style.display === 'flex';
+    links.style.display = visible ? 'none' : 'flex';
+    links.style.flexDirection = 'column';
+    links.style.position = 'absolute';
+    links.style.top = '64px';
+    links.style.left = '0';
+    links.style.right = '0';
+    links.style.background = 'var(--paper)';
+    links.style.padding = '20px 32px';
+    links.style.borderBottom = '1px solid var(--border)';
+  });
+</script>
+
+<script src="/site-motion.js?v=3" defer></script>
+</body>
+</html>

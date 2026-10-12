@@ -1,7 +1,7 @@
 ---
 title: "Growth doesn't usually stop. It erodes."
-publish_date: 2026-07-27
-status: draft
+publish_date: 2026-10-18
+status: scheduled
 pillar: commercial-patterns
 format: observation
 weekly_theme: none

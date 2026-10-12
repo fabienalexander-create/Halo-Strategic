@@ -1,7 +1,7 @@
 ---
 title: "Would you make the same three decisions again?"
-publish_date: 2026-07-27
-status: draft
+publish_date: 2026-10-13
+status: scheduled
 pillar: leadership-decision-making
 format: question
 weekly_theme: none
