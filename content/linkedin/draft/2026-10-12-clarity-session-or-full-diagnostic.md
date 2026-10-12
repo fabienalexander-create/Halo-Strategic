@@ -9,7 +9,7 @@ word_count_target: 100-220
 hashtags: [CommercialDiagnosis, GrowthDecisions]
 website_link: https://halostrategic.com/commercial-clarity-session
 source: "New offer brief, 2026-10-12 - Commercial Clarity Session"
-image_filename: "NOT YET GENERATED - needs a comparison-template render via content/linkedin/templates/render.js before this can go out"
+image_filename: "generated/2026-10-12-clarity-session-or-full-diagnostic.png"
 ---
 
 ## LinkedIn copy
@@ -28,11 +28,11 @@ More on both: https://halostrategic.com/commercial-clarity-session
 
 ## Image prompt
 
-Not yet generated. Suggested: `comparison` template, navy/bronze brand palette, two columns ("Clarity Session - one defined problem" vs. "Diagnostic - full commercial journey"). Render via `content/linkedin/templates/render.js` before scheduling.
+Generated via `content/linkedin/templates/render.js` using the `comparison` template (navy/bronze brand palette). Two columns: "Clarity Session - $199" (one specific problem you already know, 45-60 min, three prioritised actions) vs. "Diagnostic - $995" (not sure yet where the problem sits, full commercial journey, 90 min, backed by the Halo Clarity Guarantee). Output: `generated/2026-10-12-clarity-session-or-full-diagnostic.png`.
 
 ## Notes
 
-Drafted 2026-10-12, the educational companion to the announcement post in this same batch. Deliberately doesn't name a price in the hook, keeps the focus on when each is the right call, consistent with "diagnosis before prescription." **Do not move to scheduled/ until:** (1) the live website offer is approved, (2) an image has been generated, (3) Fabien gives the go-ahead.
+Drafted 2026-10-12, the educational companion to the announcement post in this same batch. Deliberately doesn't name a price in the hook, keeps the focus on when each is the right call, consistent with "diagnosis before prescription." Image generated 2026-10-12 after the website offer was approved. **Still do not move to scheduled/ until Fabien gives the explicit go-ahead to announce** - the website offer being approved is not the same as approving this specific LinkedIn post.
 
 Self-review checklist:
 - Sounds like Halo — yes.

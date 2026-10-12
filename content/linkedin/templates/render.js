@@ -90,17 +90,23 @@ const chromeCandidates = [
   'C:/Program Files (x86)/Google/Chrome/Application/chrome.exe',
   'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe',
   'C:/Program Files/Microsoft/Edge/Application/msedge.exe',
+  '/opt/pw-browsers/chromium-1194/chrome-linux/chrome',
+  '/usr/bin/google-chrome',
+  '/usr/bin/chromium',
+  '/usr/bin/chromium-browser',
 ];
-const chromePath = chromeCandidates.find(p => fs.existsSync(p));
+const chromePath = process.env.HALO_CHROME_PATH || chromeCandidates.find(p => fs.existsSync(p));
 if (!chromePath) {
   console.error('No Chrome/Edge executable found. HTML written, PNG capture skipped.');
   process.exit(1);
 }
 
+const extraArgs = process.env.HALO_CHROME_NO_SANDBOX ? ['--no-sandbox'] : [];
 execFileSync(chromePath, [
   '--headless=new',
   '--disable-gpu',
   '--hide-scrollbars',
+  ...extraArgs,
   `--screenshot=${outPngPath}`,
   `--window-size=${size}`,
   '--virtual-time-budget=3000',
@@ -112,7 +118,9 @@ console.log(`Wrote ${outPngPath}`);
 // Also drop a copy somewhere visible — content/linkedin/generated/ lives under the
 // hidden .claude folder, which is awkward to find in a normal file picker (e.g. when
 // attaching to LinkedIn's post composer, which cannot be automated, see README).
-const visibleDir = 'C:/Users/user/Documents/Halo Strategic/09 Editorial & Content Engine/LinkedIn Images';
+const visibleDir = process.platform === 'win32'
+  ? 'C:/Users/user/Documents/Halo Strategic/09 Editorial & Content Engine/LinkedIn Images'
+  : path.join(require('os').homedir(), 'Documents', 'Halo Strategic', '09 Editorial & Content Engine', 'LinkedIn Images');
 try {
   if (!fs.existsSync(visibleDir)) fs.mkdirSync(visibleDir, { recursive: true });
   const visiblePath = path.join(visibleDir, `${outputName}.png`);

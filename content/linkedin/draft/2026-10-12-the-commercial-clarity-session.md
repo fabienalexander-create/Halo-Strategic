@@ -9,7 +9,7 @@ word_count_target: 100-220
 hashtags: [CommercialClarity, CommercialDiagnosis]
 website_link: https://halostrategic.com/commercial-clarity-session
 source: "New offer brief, 2026-10-12 - Commercial Clarity Session"
-image_filename: "NOT YET GENERATED - needs a quote-card or stat-card render via content/linkedin/templates/render.js before this can go out"
+image_filename: "generated/2026-10-12-the-commercial-clarity-session.png"
 ---
 
 ## LinkedIn copy
@@ -28,11 +28,11 @@ https://halostrategic.com/commercial-clarity-session
 
 ## Image prompt
 
-Not yet generated. Suggested: `stat-card` or `quote-card` template, navy/bronze brand palette, headline figure "$199" with the sub-line "One problem. One session. Three prioritised actions." Render via `content/linkedin/templates/render.js` before scheduling.
+Generated via `content/linkedin/templates/render.js` using the `stat-card` template (navy/bronze brand palette). Headline figure "$199", label "The Commercial Clarity Session", context line "One problem you bring. One 45-60 minute session. Three prioritised actions, in writing." Output: `generated/2026-10-12-the-commercial-clarity-session.png`.
 
 ## Notes
 
-Drafted 2026-10-12 per the Commercial Clarity Session brief. Brand-led, no founder-as-face per the brief's explicit instruction. Deliberately does not frame this as a discount or sale, per the brief's instruction not to. **Do not move to scheduled/ until:** (1) the live website offer, price and enquiry process are approved, (2) an image has been generated, (3) Fabien gives the go-ahead to announce.
+Drafted 2026-10-12 per the Commercial Clarity Session brief. Brand-led, no founder-as-face per the brief's explicit instruction. Deliberately does not frame this as a discount or sale, per the brief's instruction not to. Image generated 2026-10-12 after the website offer was approved (the render.js tool needed a Linux Chrome path and a `--no-sandbox` flag added to run in this container - see `content/linkedin/templates/render.js` diff). **Still do not move to scheduled/ until Fabien gives the explicit go-ahead to announce** - the website offer being approved is not the same as approving this specific LinkedIn post.
 
 Self-review checklist:
 - Sounds like Halo — yes.
