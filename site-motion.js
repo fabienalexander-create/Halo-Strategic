@@ -1,5 +1,5 @@
 /* Halo Strategic — shared site motion.
-   Scroll-reveal for section content + hero diagnostic-diagram draw-in.
+   Scroll-reveal for section content blocks.
    No dependencies. Respects prefers-reduced-motion. */
 (function () {
   var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -9,27 +9,10 @@
     '.reveal{opacity:0;transform:translateY(22px);transition:opacity 700ms cubic-bezier(.4,0,.2,1),transform 700ms cubic-bezier(.4,0,.2,1);}' +
     '.reveal.is-visible{opacity:1;transform:none;}' +
     '.card,.stat,.evidence-claim{transition:box-shadow 220ms cubic-bezier(.4,0,.2,1),transform 220ms cubic-bezier(.4,0,.2,1);}' +
-    '.card:hover{transform:translateY(-3px);}' +
-    '.hero-line{stroke-dasharray:900;stroke-dashoffset:900;transition:stroke-dashoffset 1300ms cubic-bezier(.4,0,.2,1);}' +
-    '.hero-line.is-drawn{stroke-dashoffset:0;}' +
-    '.hero-node{opacity:0;transform:scale(.35);transform-origin:center;transition:opacity 450ms ease,transform 450ms cubic-bezier(.34,1.56,.64,1);}' +
-    '.hero-node.is-drawn{opacity:1;transform:scale(1);}' +
-    '.hero-node-constraint.is-drawn{animation:haloPulse 2600ms ease-in-out 2200ms infinite;}' +
-    '@keyframes haloPulse{0%,100%{filter:drop-shadow(0 0 0 rgba(176,141,87,0));}50%{filter:drop-shadow(0 0 7px rgba(176,141,87,.9));}}';
+    '.card:hover{transform:translateY(-3px);}';
   document.head.appendChild(style);
 
   if (reduce) return;
-
-  // Hero diagram draw-in (setTimeout, not rAF — rAF can stall indefinitely
-  // in a backgrounded/inactive tab, which would leave the diagram undrawn)
-  var heroSvg = document.querySelector('.hero-pattern');
-  if (heroSvg) {
-    setTimeout(function () {
-      heroSvg.querySelectorAll('.hero-line, .hero-node').forEach(function (el) {
-        el.classList.add('is-drawn');
-      });
-    }, 250);
-  }
 
   // Scroll reveal for section content blocks
   var targets = document.querySelectorAll(
