@@ -113,7 +113,75 @@
   .btn:focus-visible, a:focus-visible, summary:focus-visible{ outline:2px solid var(--bronze); outline-offset:2px; }
   section[id]{ scroll-margin-top:16px; }
   @media (max-width:640px){ .card-grid{ grid-template-columns:1fr; } }
-  @media (prefers-reduced-motion: reduce){ *{ transition:none !important; scroll-behavior:auto !important; } }
+
+  /* ---- Visual upgrade: hero, visual breaks, process diagram, pilot panel, scroll reveal ---- */
+  .hero-v2{ padding:0; text-align:left; overflow:hidden; }
+  .hero-v2-grid{ display:grid; grid-template-columns:1.05fr 0.95fr; align-items:stretch; min-height:560px; }
+  .hero-v2-copy{ display:flex; flex-direction:column; justify-content:center; padding:72px 48px 72px 24px; max-width:620px; margin-left:auto; }
+  .hero-v2-copy .eyebrow{ opacity:0; transform:translateY(10px); animation:heroFadeUp 600ms var(--ease) 40ms forwards; }
+  .hero-v2-copy h1{ font-size:2.5rem; line-height:1.14; max-width:12.5em; opacity:0; transform:translateY(14px); animation:heroFadeUp 650ms var(--ease) 120ms forwards; }
+  .hero-v2-copy .lead{ font-size:1.12rem; color:var(--slate); max-width:34em; margin:20px 0 28px; opacity:0; transform:translateY(14px); animation:heroFadeUp 650ms var(--ease) 220ms forwards; }
+  .hero-v2-copy .cta-row{ opacity:0; transform:translateY(14px); animation:heroFadeUp 650ms var(--ease) 300ms forwards; }
+  .hero-v2-copy .trust-note{ font-size:0.85rem; color:var(--slate); margin-top:16px; }
+  @keyframes heroFadeUp{ to{ opacity:1; transform:translateY(0); } }
+  .hero-visual{ position:relative; background:linear-gradient(155deg, var(--navy-deep) 0%, #16233f 55%, var(--navy) 100%); overflow:hidden; }
+  .hero-visual svg{ position:absolute; inset:0; width:100%; height:100%; display:block; }
+  .hero-visual .panel-rect{ fill:#1E2D4E; stroke:rgba(216,190,143,0.22); stroke-width:1; }
+  .hero-visual .panel-sheen{ fill:url(#panelSheenGrad); }
+  .hero-visual .sun-glow{ opacity:0.85; }
+  .hero-visual .panel-group{ transform-origin:300px 280px; animation:panelDrift 22s ease-in-out infinite alternate; }
+  @keyframes panelDrift{ from{ transform:rotate(-14deg) scale(1) translateY(0); } to{ transform:rotate(-14deg) scale(1.045) translateY(-10px); } }
+  .hero-visual-caption{ position:absolute; left:24px; bottom:24px; right:24px; font-family:'IBM Plex Mono',monospace; font-size:0.72rem; letter-spacing:0.08em; text-transform:uppercase; color:rgba(237,238,240,0.72); }
+  @media (max-width:860px){
+    .hero-v2-grid{ grid-template-columns:1fr; min-height:auto; }
+    .hero-v2-copy{ max-width:none; margin:0; padding:48px 24px 36px; }
+    .hero-v2-copy h1{ max-width:none; }
+    .hero-visual{ height:260px; order:-1; }
+  }
+
+  .visual-break{ position:relative; height:300px; overflow:hidden; background:linear-gradient(120deg, var(--navy-deep), var(--navy) 60%, #233150); }
+  .visual-break svg{ position:absolute; inset:0; width:100%; height:100%; display:block; }
+  .visual-break-label{ position:absolute; inset:0; display:flex; align-items:center; justify-content:center; text-align:center; padding:0 24px; }
+  .visual-break-label span{ font-family:'Fraunces',serif; font-size:1.3rem; color:#fff; max-width:22em; text-shadow:0 2px 16px rgba(0,0,0,0.35); }
+  @media (max-width:640px){ .visual-break{ height:200px; } .visual-break-label span{ font-size:1.05rem; } }
+
+  .flow-diagram{ margin:36px 0 0; }
+  .flow-row{ display:flex; align-items:flex-start; gap:0; position:relative; }
+  .flow-node{ flex:1; min-width:0; text-align:center; padding:0 8px; opacity:0; transform:translateY(16px); transition:opacity 500ms var(--ease), transform 500ms var(--ease); }
+  .flow-node.is-visible{ opacity:1; transform:translateY(0); }
+  .flow-node .dot{ width:14px; height:14px; border-radius:50%; background:var(--bronze); margin:0 auto 14px; position:relative; z-index:2; box-shadow:0 0 0 5px rgba(176,141,87,0.15); }
+  .flow-node .k{ font-family:'IBM Plex Mono',monospace; font-size:0.7rem; letter-spacing:0.08em; text-transform:uppercase; color:var(--bronze); margin-bottom:6px; }
+  .flow-node h4{ font-size:0.95rem; margin-bottom:4px; color:var(--navy-deep); }
+  .flow-node p{ font-size:0.82rem; color:var(--slate); margin:0 auto; max-width:16em; }
+  .flow-line{ position:absolute; top:7px; left:12.5%; right:12.5%; height:1px; background:var(--border); z-index:1; overflow:hidden; }
+  .flow-line-fill{ position:absolute; inset:0; background:var(--bronze); transform:scaleX(0); transform-origin:left; transition:transform 1200ms var(--ease); }
+  .flow-line-fill.is-visible{ transform:scaleX(1); }
+  @media (max-width:700px){
+    .flow-row{ flex-direction:column; gap:28px; }
+    .flow-line{ display:none; }
+    .flow-node{ text-align:left; display:flex; align-items:flex-start; gap:14px; padding:0; }
+    .flow-node .dot{ margin:4px 0 0; flex:none; }
+    .flow-node p{ max-width:none; }
+  }
+
+  .pilot-panel-dark{ background:var(--navy-deep); border-radius:var(--radius-lg); padding:32px 28px; margin-top:24px; }
+  .pilot-panel-dark .pilot-list{ margin:0; }
+  .pilot-panel-dark .pilot-list li{ border-bottom:1px solid rgba(216,190,143,0.18); color:#EDEEF0; opacity:0; transform:translateX(-8px); transition:opacity 450ms var(--ease), transform 450ms var(--ease); }
+  .pilot-panel-dark .pilot-list li.is-visible{ opacity:1; transform:translateX(0); }
+  .pilot-panel-dark .pilot-list li:last-child{ border-bottom:none; }
+  .pilot-panel-dark .pilot-list .mono{ color:var(--bronze-light); }
+
+  [data-reveal]{ opacity:0; transform:translateY(18px); transition:opacity 600ms var(--ease), transform 600ms var(--ease); }
+  [data-reveal].is-visible{ opacity:1; transform:translateY(0); }
+  [data-reveal-group] > *{ opacity:0; transform:translateY(16px); transition:opacity 500ms var(--ease), transform 500ms var(--ease); }
+  [data-reveal-group] > *.is-visible{ opacity:1; transform:translateY(0); }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ transition:none !important; scroll-behavior:auto !important; animation:none !important; }
+    .hero-v2-copy .eyebrow, .hero-v2-copy h1, .hero-v2-copy .lead, .hero-v2-copy .cta-row,
+    [data-reveal], [data-reveal-group] > *, .flow-node, .pilot-panel-dark .pilot-list li{ opacity:1 !important; transform:none !important; }
+    .flow-line-fill{ transform:scaleX(1) !important; }
+  }
 </style>
 <!-- Cookie consent (gates Google Tag Manager until accepted) -->
 <script>
@@ -168,13 +236,65 @@ if (window.__haloShowBanner) {
 <div class="top-bar"><a href="/" class="wordmark" style="text-decoration:none;">HALO STRATEGIC</a></div>
 
 <!-- 1. HERO -->
-<section class="hero">
-  <div class="container">
-    <div class="eyebrow">Solar &amp; battery lead generation</div>
-    <h1>Solar and battery enquiries, qualified to your criteria.</h1>
-    <p class="lead">We generate homeowner enquiries for solar panel and battery installers in agreed postcodes, checked against criteria we set with you. Every pilot starts with one area, a clear definition of a valid lead and agreed terms.</p>
-    <a href="#book" class="btn btn-bronze">Discuss a Solar Lead Pilot</a>
-    <p class="trust-note">No pitch deck. Prefer to talk? <a href="https://calendar.app.google/xrkMEDqMVjFxoykL8" target="_blank" rel="noopener" style="color:var(--bronze); text-decoration:underline;">Book a 15-minute call →</a></p>
+<section class="hero hero-v2">
+  <div class="hero-v2-grid">
+    <div class="hero-v2-copy">
+      <div class="eyebrow">Solar &amp; battery lead generation</div>
+      <h1>Solar and battery enquiries, qualified to your criteria.</h1>
+      <p class="lead">We generate homeowner enquiries for solar panel and battery installers in agreed postcodes, checked against criteria we set with you. Every pilot starts with one area, a clear definition of a valid lead and agreed terms.</p>
+      <div class="cta-row">
+        <a href="#book" class="btn btn-bronze">Discuss a Solar Lead Pilot</a>
+        <p class="trust-note">No pitch deck. Prefer to talk? <a href="https://calendar.app.google/xrkMEDqMVjFxoykL8" target="_blank" rel="noopener" style="color:var(--bronze); text-decoration:underline;">Book a 15-minute call →</a></p>
+      </div>
+    </div>
+    <div class="hero-visual" aria-hidden="true">
+      <!-- PLACEHOLDER: swap this SVG panel-array for a licensed aerial photo/video of a UK residential solar install once sourced -->
+      <svg viewBox="0 0 600 560" preserveAspectRatio="xMidYMid slice" role="presentation" focusable="false">
+        <defs>
+          <linearGradient id="panelSheenGrad" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="#D8BE8F" stop-opacity="0.35"/>
+            <stop offset="45%" stop-color="#D8BE8F" stop-opacity="0.05"/>
+            <stop offset="100%" stop-color="#D8BE8F" stop-opacity="0"/>
+          </linearGradient>
+          <radialGradient id="sunGrad" cx="80%" cy="12%" r="55%">
+            <stop offset="0%" stop-color="#D8BE8F" stop-opacity="0.55"/>
+            <stop offset="100%" stop-color="#D8BE8F" stop-opacity="0"/>
+          </radialGradient>
+        </defs>
+        <rect class="sun-glow" x="0" y="0" width="600" height="560" fill="url(#sunGrad)"/>
+        <!-- 5x4 panel array, natural size 492x254, centred in the 600x560 frame then tilted about its own centre (rotation lives in CSS so the drift animation doesn't clobber an SVG transform attribute) -->
+        <g class="panel-group">
+          <g transform="translate(54,153)">
+            <rect class="panel-rect" x="0"   y="0"   width="92" height="56" rx="2"/>
+            <rect class="panel-rect" x="100" y="0"   width="92" height="56" rx="2"/>
+            <rect class="panel-rect" x="200" y="0"   width="92" height="56" rx="2"/>
+            <rect class="panel-rect" x="300" y="0"   width="92" height="56" rx="2"/>
+            <rect class="panel-rect" x="400" y="0"   width="92" height="56" rx="2"/>
+            <rect class="panel-rect" x="0"   y="66"  width="92" height="56" rx="2"/>
+            <rect class="panel-rect" x="100" y="66"  width="92" height="56" rx="2"/>
+            <rect class="panel-rect" x="200" y="66"  width="92" height="56" rx="2"/>
+            <rect class="panel-rect" x="300" y="66"  width="92" height="56" rx="2"/>
+            <rect class="panel-rect" x="400" y="66"  width="92" height="56" rx="2"/>
+            <rect class="panel-rect" x="0"   y="132" width="92" height="56" rx="2"/>
+            <rect class="panel-rect" x="100" y="132" width="92" height="56" rx="2"/>
+            <rect class="panel-rect" x="200" y="132" width="92" height="56" rx="2"/>
+            <rect class="panel-rect" x="300" y="132" width="92" height="56" rx="2"/>
+            <rect class="panel-rect" x="400" y="132" width="92" height="56" rx="2"/>
+            <rect class="panel-rect" x="0"   y="198" width="92" height="56" rx="2"/>
+            <rect class="panel-rect" x="100" y="198" width="92" height="56" rx="2"/>
+            <rect class="panel-rect" x="200" y="198" width="92" height="56" rx="2"/>
+            <rect class="panel-rect" x="300" y="198" width="92" height="56" rx="2"/>
+            <rect class="panel-rect" x="400" y="198" width="92" height="56" rx="2"/>
+            <!-- sheen highlights on a subset for texture -->
+            <rect class="panel-sheen" x="0"   y="0"   width="92" height="56" rx="2"/>
+            <rect class="panel-sheen" x="200" y="66"  width="92" height="56" rx="2"/>
+            <rect class="panel-sheen" x="400" y="132" width="92" height="56" rx="2"/>
+            <rect class="panel-sheen" x="100" y="198" width="92" height="56" rx="2"/>
+          </g>
+        </g>
+      </svg>
+      <div class="hero-visual-caption">UK residential solar &amp; battery installs</div>
+    </div>
   </div>
 </section>
 
@@ -184,13 +304,42 @@ if (window.__haloShowBanner) {
     <div class="eyebrow">The Problem</div>
     <h2 style="font-size:1.6rem; margin-bottom:16px;">More enquiries only matter when they're worth pursuing.</h2>
     <p>An enquiry outside your area, unsuitable for your installs or missing key details costs sales time without creating a real opportunity. That's why we agree what a suitable enquiry looks like before generating any.</p>
-    <div class="card-grid">
+    <div class="card-grid" data-reveal-group>
       <div class="mini-card"><div class="k">01</div><h3>Poor-fit enquiries</h3><p>Location, property or project doesn't match your business.</p></div>
       <div class="mini-card"><div class="k">02</div><h3>Missing information</h3><p>Your team can't tell whether an enquiry is worth calling.</p></div>
       <div class="mini-card"><div class="k">03</div><h3>Unclear value</h3><p>Without tracking what happens after delivery, it's hard to know what a lead source is worth.</p></div>
     </div>
   </div>
 </section>
+
+<!-- Visual break 1 -->
+<!-- PLACEHOLDER: swap for a licensed close-up photo of PV cells/glass reflections once sourced -->
+<div class="visual-break" aria-hidden="true">
+  <svg viewBox="0 0 1200 300" preserveAspectRatio="xMidYMid slice" role="presentation" focusable="false">
+    <defs>
+      <linearGradient id="cellSheen" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0%" stop-color="#D8BE8F" stop-opacity="0.3"/>
+        <stop offset="100%" stop-color="#D8BE8F" stop-opacity="0"/>
+      </linearGradient>
+    </defs>
+    <g stroke="rgba(216,190,143,0.18)" stroke-width="1" fill="#1E2D4E">
+      <rect x="-20" y="-20" width="1240" height="340" fill="#16233f"/>
+      <rect x="40" y="30" width="180" height="110" rx="3" fill="url(#cellSheen)"/>
+      <rect x="230" y="30" width="180" height="110" rx="3"/>
+      <rect x="420" y="30" width="180" height="110" rx="3" fill="url(#cellSheen)"/>
+      <rect x="610" y="30" width="180" height="110" rx="3"/>
+      <rect x="800" y="30" width="180" height="110" rx="3" fill="url(#cellSheen)"/>
+      <rect x="990" y="30" width="180" height="110" rx="3"/>
+      <rect x="40" y="150" width="180" height="110" rx="3"/>
+      <rect x="230" y="150" width="180" height="110" rx="3" fill="url(#cellSheen)"/>
+      <rect x="420" y="150" width="180" height="110" rx="3"/>
+      <rect x="610" y="150" width="180" height="110" rx="3" fill="url(#cellSheen)"/>
+      <rect x="800" y="150" width="180" height="110" rx="3"/>
+      <rect x="990" y="150" width="180" height="110" rx="3" fill="url(#cellSheen)"/>
+    </g>
+  </svg>
+  <div class="visual-break-label"><span>Every enquiry comes from a real homeowner, in a real postcode.</span></div>
+</div>
 
 <!-- 3. WHAT YOU RECEIVE -->
 <section>
@@ -214,11 +363,15 @@ if (window.__haloShowBanner) {
 <section class="band tight" id="how-it-works">
   <div class="container">
     <div class="eyebrow">How It Works</div>
-    <h2 style="font-size:1.6rem; margin-bottom:16px;">Three steps. Clear expectations.</h2>
-    <div class="step-row">
-      <div class="step"><div class="n">01</div><h4>Agree your criteria</h4><p>Your area, target customer and what counts as a valid lead.</p></div>
-      <div class="step"><div class="n">02</div><h4>Receive enquiries</h4><p>Homeowner enquiries generated through targeted campaigns and delivered to you by email.</p></div>
-      <div class="step"><div class="n">03</div><h4>Review the results</h4><p>We look at validity, contact rates and outcomes together, then decide whether to continue, adjust or stop.</p></div>
+    <h2 style="font-size:1.6rem; margin-bottom:16px;" data-reveal>From enquiry to outcome, every step agreed upfront.</h2>
+    <div class="flow-diagram">
+      <div class="flow-row" id="flow-row">
+        <div class="flow-line"><div class="flow-line-fill" id="flow-line-fill"></div></div>
+        <div class="flow-node"><div class="dot"></div><div class="k">01</div><h4>Homeowner enquiry</h4><p>Submitted through a targeted campaign in your agreed area.</p></div>
+        <div class="flow-node"><div class="dot"></div><div class="k">02</div><h4>Criteria checked</h4><p>Checked against the details and area we agreed with you.</p></div>
+        <div class="flow-node"><div class="dot"></div><div class="k">03</div><h4>Installer receives lead</h4><p>Delivered to you by email, ready to action.</p></div>
+        <div class="flow-node"><div class="dot"></div><div class="k">04</div><h4>Outcome reviewed</h4><p>We look at validity, contact rates and outcomes together.</p></div>
+      </div>
     </div>
   </div>
 </section>
@@ -227,16 +380,18 @@ if (window.__haloShowBanner) {
 <section>
   <div class="container">
     <div class="eyebrow">The Pilot</div>
-    <h2 style="font-size:1.6rem; margin-bottom:16px;">Start with one area. Agree the criteria. Measure the results.</h2>
+    <h2 style="font-size:1.6rem; margin-bottom:16px;" data-reveal>Start with one area. Agree the criteria. Measure the results.</h2>
     <p>A pilot is small enough to evaluate properly and specific enough to give you real evidence. Before anything starts, we agree:</p>
-    <ul class="pilot-list">
-      <li><span class="mono">01</span>Your target postcodes</li>
-      <li><span class="mono">02</span>What counts as a valid lead</li>
-      <li><span class="mono">03</span>How leads are delivered</li>
-      <li><span class="mono">04</span>Price per lead and payment terms</li>
-      <li><span class="mono">05</span>How invalid or duplicate leads are handled</li>
-      <li><span class="mono">06</span>The test period and how we'll review it</li>
-    </ul>
+    <div class="pilot-panel-dark">
+      <ul class="pilot-list" id="pilot-list">
+        <li><span class="mono">01</span>Your target postcodes</li>
+        <li><span class="mono">02</span>What counts as a valid lead</li>
+        <li><span class="mono">03</span>How leads are delivered</li>
+        <li><span class="mono">04</span>Price per lead and payment terms</li>
+        <li><span class="mono">05</span>How invalid or duplicate leads are handled</li>
+        <li><span class="mono">06</span>The test period and how we'll review it</li>
+      </ul>
+    </div>
     <div class="cta-block" style="text-align:left; padding-bottom:0;"><a href="#book" class="btn btn-bronze">Discuss a Solar Lead Pilot</a></div>
   </div>
 </section>
@@ -256,6 +411,27 @@ if (window.__haloShowBanner) {
     <p style="margin-top:20px;">These are combined figures across several home-improvement trades, including solar, not a solar-only case study or a result of Halo's own pilots.</p>
   </div>
 </section>
+
+<!-- Visual break 2 -->
+<!-- PLACEHOLDER: swap for a licensed photo of a real UK rooftop solar installation once sourced -->
+<div class="visual-break" aria-hidden="true">
+  <svg viewBox="0 0 1200 300" preserveAspectRatio="xMidYMid slice" role="presentation" focusable="false">
+    <rect x="-20" y="-20" width="1240" height="340" fill="#101A30"/>
+    <polygon points="0,300 180,140 380,300" fill="#1B2A4A"/>
+    <polygon points="300,300 520,110 760,300" fill="#213457"/>
+    <polygon points="650,300 880,150 1060,300" fill="#1B2A4A"/>
+    <g fill="#1E2D4E" stroke="rgba(216,190,143,0.25)" stroke-width="1">
+      <rect x="340" y="150" width="52" height="34" rx="1" transform="skewX(-6)"/>
+      <rect x="400" y="150" width="52" height="34" rx="1" transform="skewX(-6)"/>
+      <rect x="460" y="150" width="52" height="34" rx="1" transform="skewX(-6)"/>
+      <rect x="340" y="190" width="52" height="34" rx="1" transform="skewX(-6)"/>
+      <rect x="400" y="190" width="52" height="34" rx="1" transform="skewX(-6)"/>
+      <rect x="460" y="190" width="52" height="34" rx="1" transform="skewX(-6)"/>
+    </g>
+    <circle cx="1040" cy="60" r="38" fill="url(#panelSheenGrad)"/>
+  </svg>
+  <div class="visual-break-label"><span>Real homes. Real installers. Not a software dashboard.</span></div>
+</div>
 
 <!-- 7. WHO YOU'LL SPEAK TO (approved bio, as used on /hvac-leads) -->
 <section>
@@ -452,6 +628,45 @@ if (window.__haloShowBanner) {
       window.dataLayer.push({ 'event': 'form_submit_error', 'form_id': 'solar-form', 'source': 'solar-leads-landing-page' });
     });
   });
+})();
+</script>
+<script>
+(function(){
+  // Scroll-reveal motion: fades/slides elements in once, skipped entirely for prefers-reduced-motion.
+  var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (reduceMotion || typeof IntersectionObserver === 'undefined') return;
+
+  function reveal(el){ el.classList.add('is-visible'); }
+
+  var singles = document.querySelectorAll('[data-reveal]');
+  var groups = document.querySelectorAll('[data-reveal-group] > *, .pilot-panel-dark .pilot-list > li');
+  var flowNodes = document.querySelectorAll('.flow-node');
+  var flowFill = document.getElementById('flow-line-fill');
+
+  var io = new IntersectionObserver(function(entries, obs){
+    entries.forEach(function(entry){
+      if (!entry.isIntersecting) return;
+      reveal(entry.target);
+      obs.unobserve(entry.target);
+    });
+  }, { threshold: 0.2, rootMargin: '0px 0px -10% 0px' });
+
+  singles.forEach(function(el){ io.observe(el); });
+  groups.forEach(function(el, i){ el.style.transitionDelay = (i * 80) + 'ms'; io.observe(el); });
+
+  if (flowNodes.length){
+    var flowIo = new IntersectionObserver(function(entries, obs){
+      entries.forEach(function(entry){
+        if (!entry.isIntersecting) return;
+        if (flowFill) flowFill.classList.add('is-visible');
+        flowNodes.forEach(function(el, i){
+          setTimeout(function(){ el.classList.add('is-visible'); }, i * 160);
+        });
+        obs.disconnect();
+      });
+    }, { threshold: 0.3 });
+    flowIo.observe(document.getElementById('flow-row'));
+  }
 })();
 </script>
 <script src="/site-motion.js?v=3" defer></script>
