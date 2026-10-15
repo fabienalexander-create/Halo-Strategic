@@ -1,5 +1,9 @@
 # Changelog
 
+## 2026-10-15 — Contact page: add "Lead generation enquiry" as a reason option
+
+Added `lead-generation` to the "What's this about?" dropdown on `/contact`. Fixes a live bug in the process: `/lead-generation` has linked its three CTAs to `/contact?service=lead-generation` for a while, but the auto-select script only recognised `diagnostic`, `audit` and `clarity`, so those visitors landed on the contact page with no option selected and no matching option to pick — defaulting silently to nothing. The `?service=lead-generation` param now sets the hidden service field and pre-selects the new dropdown option, same as the other three service CTAs.
+
 ## 2026-10-15 — Refund policy: generalise the Pay-Per-Lead section
 
 Heading changed from "Pay-Per-Lead services (HVAC & Roofing Leads)" to "Pay-Per-Lead services", with the current verticals (HVAC, Roofing, Solar & Battery) named inline in the body instead. Adding a new lead-gen vertical no longer means an uncorrected refund-policy heading.

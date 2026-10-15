@@ -430,6 +430,7 @@ if (window.__haloShowBanner) {
           <option value="clarity-session">Request a Commercial Clarity Session ($199)</option>
           <option value="diagnostic-booking">Request a Commercial Diagnostic ($995)</option>
           <option value="audit-enquiry">Commercial Audit enquiry</option>
+          <option value="lead-generation">Lead generation enquiry</option>
           <option value="general">General enquiry (not sure yet)</option>
         </select>
       </div>
@@ -508,12 +509,12 @@ if (window.__haloShowBanner) {
   (function(){
     var params = new URLSearchParams(window.location.search);
     var service = params.get('service');
-    if (service === 'diagnostic' || service === 'audit' || service === 'clarity') {
+    if (service === 'diagnostic' || service === 'audit' || service === 'clarity' || service === 'lead-generation') {
       var serviceField = document.getElementById('cp-service');
       if (serviceField) serviceField.value = service;
       var reasonField = document.getElementById('cp-reason');
       if (reasonField && !reasonField.value) {
-        reasonField.value = service === 'diagnostic' ? 'diagnostic-booking' : service === 'audit' ? 'audit-enquiry' : 'clarity-session';
+        reasonField.value = service === 'diagnostic' ? 'diagnostic-booking' : service === 'audit' ? 'audit-enquiry' : service === 'lead-generation' ? 'lead-generation' : 'clarity-session';
       }
     }
   })();
