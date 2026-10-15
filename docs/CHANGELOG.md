@@ -1,5 +1,9 @@
 # Changelog
 
+## 2026-10-15 — Refund policy: generalise the Pay-Per-Lead section
+
+Heading changed from "Pay-Per-Lead services (HVAC & Roofing Leads)" to "Pay-Per-Lead services", with the current verticals (HVAC, Roofing, Solar & Battery) named inline in the body instead. Adding a new lead-gen vertical no longer means an uncorrected refund-policy heading.
+
 ## 2026-10-15 — `/solar-leads` hero: rooftop scene, bigger visual weight
 
 Hero visual rebuilt from a floating panel array into a recognisable rooftop scene: pitched-roof silhouette with a chimney, the panel array mounted flush on the roof's right-hand slope at a matching pitch angle, a distant rooftop skyline for depth, and a warm bronze sun-glow gradient. Hero visual column widened (0.92fr/1.18fr instead of 1.05fr/0.95fr) so it reads as the dominant element rather than a narrow side panel. Rotation moved from an SVG attribute to CSS custom properties on the inner group so the existing slow-drift animation no longer silently overwrote it. All inline SVG, no raster imagery — still no licensing dependency. Verified: no console errors, reduced-motion shows static content immediately, no layout overflow at 375px.
