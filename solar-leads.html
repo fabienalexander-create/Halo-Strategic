@@ -116,8 +116,8 @@
 
   /* ---- Visual upgrade: hero, visual breaks, process diagram, pilot panel, scroll reveal ---- */
   .hero-v2{ padding:0; text-align:left; overflow:hidden; }
-  .hero-v2-grid{ display:grid; grid-template-columns:1.05fr 0.95fr; align-items:stretch; min-height:560px; }
-  .hero-v2-copy{ display:flex; flex-direction:column; justify-content:center; padding:72px 48px 72px 24px; max-width:620px; margin-left:auto; }
+  .hero-v2-grid{ display:grid; grid-template-columns:0.92fr 1.18fr; align-items:stretch; min-height:620px; }
+  .hero-v2-copy{ display:flex; flex-direction:column; justify-content:center; padding:72px 40px 72px 24px; max-width:560px; margin-left:auto; }
   .hero-v2-copy .eyebrow{ opacity:0; transform:translateY(10px); animation:heroFadeUp 600ms var(--ease) 40ms forwards; }
   .hero-v2-copy h1{ font-size:2.5rem; line-height:1.14; max-width:12.5em; opacity:0; transform:translateY(14px); animation:heroFadeUp 650ms var(--ease) 120ms forwards; }
   .hero-v2-copy .lead{ font-size:1.12rem; color:var(--slate); max-width:34em; margin:20px 0 28px; opacity:0; transform:translateY(14px); animation:heroFadeUp 650ms var(--ease) 220ms forwards; }
@@ -129,8 +129,8 @@
   .hero-visual .panel-rect{ fill:#1E2D4E; stroke:rgba(216,190,143,0.22); stroke-width:1; }
   .hero-visual .panel-sheen{ fill:url(#panelSheenGrad); }
   .hero-visual .sun-glow{ opacity:0.85; }
-  .hero-visual .panel-group{ transform-origin:300px 280px; animation:panelDrift 22s ease-in-out infinite alternate; }
-  @keyframes panelDrift{ from{ transform:rotate(-14deg) scale(1) translateY(0); } to{ transform:rotate(-14deg) scale(1.045) translateY(-10px); } }
+  .hero-visual .panel-group{ transform-origin:0 0; animation:panelDrift 22s ease-in-out infinite alternate; }
+  @keyframes panelDrift{ from{ transform:rotate(-32deg) scale(1) translateY(0); } to{ transform:rotate(-32deg) scale(1.05) translateY(-14px); } }
   .hero-visual-caption{ position:absolute; left:24px; bottom:24px; right:24px; font-family:'IBM Plex Mono',monospace; font-size:0.72rem; letter-spacing:0.08em; text-transform:uppercase; color:rgba(237,238,240,0.72); }
   @media (max-width:860px){
     .hero-v2-grid{ grid-template-columns:1fr; min-height:auto; }
@@ -248,48 +248,70 @@ if (window.__haloShowBanner) {
       </div>
     </div>
     <div class="hero-visual" aria-hidden="true">
-      <!-- PLACEHOLDER: swap this SVG panel-array for a licensed aerial photo/video of a UK residential solar install once sourced -->
-      <svg viewBox="0 0 600 560" preserveAspectRatio="xMidYMid slice" role="presentation" focusable="false">
+      <!-- PLACEHOLDER: swap this SVG rooftop scene for a licensed aerial photo/video of a UK residential solar install once sourced -->
+      <svg viewBox="0 0 700 620" preserveAspectRatio="xMidYMid slice" role="presentation" focusable="false">
         <defs>
           <linearGradient id="panelSheenGrad" x1="0" y1="0" x2="1" y2="1">
             <stop offset="0%" stop-color="#D8BE8F" stop-opacity="0.35"/>
             <stop offset="45%" stop-color="#D8BE8F" stop-opacity="0.05"/>
             <stop offset="100%" stop-color="#D8BE8F" stop-opacity="0"/>
           </linearGradient>
-          <radialGradient id="sunGrad" cx="80%" cy="12%" r="55%">
-            <stop offset="0%" stop-color="#D8BE8F" stop-opacity="0.55"/>
+          <radialGradient id="sunGrad" cx="82%" cy="14%" r="60%">
+            <stop offset="0%" stop-color="#D8BE8F" stop-opacity="0.6"/>
             <stop offset="100%" stop-color="#D8BE8F" stop-opacity="0"/>
           </radialGradient>
+          <linearGradient id="skyGrad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#16233f"/>
+            <stop offset="100%" stop-color="#0D1526"/>
+          </linearGradient>
         </defs>
-        <rect class="sun-glow" x="0" y="0" width="600" height="560" fill="url(#sunGrad)"/>
-        <!-- 5x4 panel array, natural size 492x254, centred in the 600x560 frame then tilted about its own centre (rotation lives in CSS so the drift animation doesn't clobber an SVG transform attribute) -->
-        <g class="panel-group">
-          <g transform="translate(54,153)">
-            <rect class="panel-rect" x="0"   y="0"   width="92" height="56" rx="2"/>
-            <rect class="panel-rect" x="100" y="0"   width="92" height="56" rx="2"/>
-            <rect class="panel-rect" x="200" y="0"   width="92" height="56" rx="2"/>
-            <rect class="panel-rect" x="300" y="0"   width="92" height="56" rx="2"/>
-            <rect class="panel-rect" x="400" y="0"   width="92" height="56" rx="2"/>
-            <rect class="panel-rect" x="0"   y="66"  width="92" height="56" rx="2"/>
-            <rect class="panel-rect" x="100" y="66"  width="92" height="56" rx="2"/>
-            <rect class="panel-rect" x="200" y="66"  width="92" height="56" rx="2"/>
-            <rect class="panel-rect" x="300" y="66"  width="92" height="56" rx="2"/>
-            <rect class="panel-rect" x="400" y="66"  width="92" height="56" rx="2"/>
-            <rect class="panel-rect" x="0"   y="132" width="92" height="56" rx="2"/>
-            <rect class="panel-rect" x="100" y="132" width="92" height="56" rx="2"/>
-            <rect class="panel-rect" x="200" y="132" width="92" height="56" rx="2"/>
-            <rect class="panel-rect" x="300" y="132" width="92" height="56" rx="2"/>
-            <rect class="panel-rect" x="400" y="132" width="92" height="56" rx="2"/>
-            <rect class="panel-rect" x="0"   y="198" width="92" height="56" rx="2"/>
-            <rect class="panel-rect" x="100" y="198" width="92" height="56" rx="2"/>
-            <rect class="panel-rect" x="200" y="198" width="92" height="56" rx="2"/>
-            <rect class="panel-rect" x="300" y="198" width="92" height="56" rx="2"/>
-            <rect class="panel-rect" x="400" y="198" width="92" height="56" rx="2"/>
-            <!-- sheen highlights on a subset for texture -->
-            <rect class="panel-sheen" x="0"   y="0"   width="92" height="56" rx="2"/>
-            <rect class="panel-sheen" x="200" y="66"  width="92" height="56" rx="2"/>
-            <rect class="panel-sheen" x="400" y="132" width="92" height="56" rx="2"/>
-            <rect class="panel-sheen" x="100" y="198" width="92" height="56" rx="2"/>
+        <rect width="700" height="620" fill="url(#skyGrad)"/>
+        <rect class="sun-glow" x="0" y="0" width="700" height="620" fill="url(#sunGrad)"/>
+        <!-- distant rooftop skyline for depth -->
+        <g fill="#13203a" opacity="0.8">
+          <polygon points="0,420 60,380 120,420 120,460 0,460"/>
+          <polygon points="110,430 170,400 230,430 230,470 110,470"/>
+          <polygon points="520,410 580,375 650,410 700,400 700,470 520,470"/>
+        </g>
+        <!-- foreground house: pitched roof carrying the panel array -->
+        <g>
+          <!-- walls -->
+          <rect x="130" y="430" width="440" height="150" fill="#16233f"/>
+          <!-- roof silhouette (gable, slight perspective) -->
+          <polygon points="100,440 350,280 600,440" fill="#101A30" stroke="rgba(216,190,143,0.3)" stroke-width="1.5"/>
+          <!-- chimney, on the bare left roof-face so it doesn't collide with the panel array on the right -->
+          <rect x="215" y="300" width="22" height="80" fill="#101A30" stroke="rgba(216,190,143,0.25)" stroke-width="1"/>
+        </g>
+        <!-- 5x4 panel array, mounted flush on the right roof-face, tilted to match the pitch. Positioning/scale lives on the outer <g> (plain SVG attribute); rotation + drift live on the inner .panel-group via CSS, which replaces rather than combines with an attribute transform. -->
+        <g transform="translate(425,345) scale(0.48)">
+          <g class="panel-group">
+            <g transform="translate(-246,-127)">
+              <rect class="panel-rect" x="0"   y="0"   width="92" height="56" rx="2"/>
+              <rect class="panel-rect" x="100" y="0"   width="92" height="56" rx="2"/>
+              <rect class="panel-rect" x="200" y="0"   width="92" height="56" rx="2"/>
+              <rect class="panel-rect" x="300" y="0"   width="92" height="56" rx="2"/>
+              <rect class="panel-rect" x="400" y="0"   width="92" height="56" rx="2"/>
+              <rect class="panel-rect" x="0"   y="66"  width="92" height="56" rx="2"/>
+              <rect class="panel-rect" x="100" y="66"  width="92" height="56" rx="2"/>
+              <rect class="panel-rect" x="200" y="66"  width="92" height="56" rx="2"/>
+              <rect class="panel-rect" x="300" y="66"  width="92" height="56" rx="2"/>
+              <rect class="panel-rect" x="400" y="66"  width="92" height="56" rx="2"/>
+              <rect class="panel-rect" x="0"   y="132" width="92" height="56" rx="2"/>
+              <rect class="panel-rect" x="100" y="132" width="92" height="56" rx="2"/>
+              <rect class="panel-rect" x="200" y="132" width="92" height="56" rx="2"/>
+              <rect class="panel-rect" x="300" y="132" width="92" height="56" rx="2"/>
+              <rect class="panel-rect" x="400" y="132" width="92" height="56" rx="2"/>
+              <rect class="panel-rect" x="0"   y="198" width="92" height="56" rx="2"/>
+              <rect class="panel-rect" x="100" y="198" width="92" height="56" rx="2"/>
+              <rect class="panel-rect" x="200" y="198" width="92" height="56" rx="2"/>
+              <rect class="panel-rect" x="300" y="198" width="92" height="56" rx="2"/>
+              <rect class="panel-rect" x="400" y="198" width="92" height="56" rx="2"/>
+              <!-- sheen highlights on a subset for texture -->
+              <rect class="panel-sheen" x="0"   y="0"   width="92" height="56" rx="2"/>
+              <rect class="panel-sheen" x="200" y="66"  width="92" height="56" rx="2"/>
+              <rect class="panel-sheen" x="400" y="132" width="92" height="56" rx="2"/>
+              <rect class="panel-sheen" x="100" y="198" width="92" height="56" rx="2"/>
+            </g>
           </g>
         </g>
       </svg>
