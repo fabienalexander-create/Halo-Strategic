@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Check the Plumbing Before You Touch the Strategy</title>
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon-180x180.png">
+<link rel="manifest" href="/site.webmanifest">
+<meta name="theme-color" content="#101A30">
+<meta name="description" content="When a channel underperforms, the first question isn't strategy. It's whether the numbers can be trusted. Three real engagements show the order that works.">
+<link rel="canonical" href="https://halostrategic.com/insights/check-the-plumbing-before-you-touch-the-strategy">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://halostrategic.com/insights/check-the-plumbing-before-you-touch-the-strategy">
+<meta property="og:title" content="Check the Plumbing Before You Touch the Strategy | Halo Strategic">
+<meta property="og:description" content="When a channel underperforms, the first question isn't strategy. It's whether the numbers can be trusted. Three real engagements show the order that works.">
+<meta property="og:image" content="https://halostrategic.com/assets/og-default-1200x630.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Check the Plumbing Before You Touch the Strategy | Halo Strategic">
+<meta name="twitter:image" content="https://halostrategic.com/assets/og-default-1200x630.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#1B2A4A; --navy-deep:#101A30; --bronze:#B08D57; --bronze-light:#D8BE8F;
+    --slate:#44546A; --ink:#1A1D24; --paper:#F6F6F3; --surface:#FFFFFF; --border:#E1E3DE;
+    --green:#4B6B4F; --green-bg:#E7EDE6; --amber:#8F6E28; --amber-bg:#F2EAD9; --red:#8C4438; --red-bg:#F2E2DE;
+    --radius-sm:6px; --radius-md:8px; --radius-lg:12px;
+    --ease: cubic-bezier(0.4,0,0.2,1);
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth; overflow-x:hidden;}
+  body{
+    margin:0; background:var(--paper); color:var(--ink);
+    font-family:'Inter',sans-serif; font-size:17px; line-height:1.65;
+    -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+  }
+  ::selection{ background:var(--bronze-light); color:var(--navy-deep); }
+  h1,h2,h3{ font-family:'Fraunces',serif; font-weight:500; color:var(--navy-deep); margin:0; letter-spacing:-0.01em; }
+  a{ color:inherit; }
+  .container{ max-width:1180px; margin:0 auto; padding:0 32px; }
+  .mono{ font-family:'IBM Plex Mono',monospace; }
+
+  /* NAV */
+  header{ position:sticky; top:0; z-index:100; background:rgba(246,246,243,0.92); backdrop-filter:blur(8px); border-bottom:1px solid var(--border); }
+  .navbar{ display:flex; align-items:center; justify-content:space-between; padding:22px 32px; max-width:1320px; margin:0 auto; }
+  .logo{ font-family:'Fraunces',serif; font-size:1.35rem; font-weight:600; color:var(--navy-deep); text-decoration:none; display:flex; align-items:center; gap:12px; letter-spacing:0.01em; white-space:nowrap; }
+  .logo-mark{ width:36px; height:36px; flex:none; display:block; }
+  .nav-links{ display:flex; gap:17px; list-style:none; margin:0; padding:0; flex-wrap:wrap; }
+  .nav-links a{ text-decoration:none; font-size:0.89rem; color:var(--slate); font-weight:500; white-space:nowrap; transition:color 160ms var(--ease); }
+  .nav-links a:hover{ color:var(--navy-deep); }
+  .nav-links a.active{ color:var(--navy-deep); font-weight:600; }
+  .nav-right{ display:flex; align-items:center; gap:18px; }
+  .nav-toggle{ display:none; background:none; border:none; cursor:pointer; padding:12px; }
+  .nav-cta-mobile{ display:none; }
+  .nav-toggle span{ display:block; width:22px; height:2px; background:var(--navy-deep); margin:5px 0; }
+
+  /* BUTTONS */
+  .btn{
+    font-family:'Inter',sans-serif; font-size:0.95rem; font-weight:600; padding:13px 24px;
+    border-radius:var(--radius-md); cursor:pointer; border:1px solid transparent;
+    transition:background 160ms var(--ease), border-color 160ms var(--ease), color 160ms var(--ease);
+    text-decoration:none; display:inline-block;
+  }
+  .btn-primary{ background:var(--navy); color:#fff; }
+  .btn-primary:hover{ background:var(--navy-deep); }
+  .btn-primary:focus-visible{ outline:2px solid var(--bronze); outline-offset:2px; }
+  .btn-bronze{ background:var(--bronze); color:var(--navy-deep); font-weight:700; }
+  .btn-bronze:hover{ background:var(--bronze-light); }
+  .btn-bronze:focus-visible{ outline:2px solid #fff; outline-offset:2px; }
+
+  /* SECTIONS */
+  section{ padding:96px 0; }
+  section.tight{ padding:64px 0; }
+  .eyebrow{ font-family:'IBM Plex Mono',monospace; font-size:0.78rem; color:var(--bronze); text-transform:uppercase; letter-spacing:0.12em; margin-bottom:16px; }
+  h2.section-title{ font-size:2.1rem; line-height:1.2; max-width:16em; margin-bottom:20px; }
+  p.lead{ font-size:1.2rem; color:var(--slate); max-width:38em; margin:0 0 16px; }
+  p{ max-width:42em; }
+
+  /* HERO */
+  .hero{
+    padding:130px 0 100px; background:var(--navy-deep); position:relative; overflow:hidden;
+  }
+  .hero .container{ position:relative; z-index:2; }
+  .hero h1{ font-size:3.1rem; line-height:1.15; max-width:16em; margin-bottom:28px; color:#fff; }
+  .hero p.lead{ margin-bottom:36px; color:#C7CBD4; }
+  .hero-pattern{
+    position:absolute; top:0; right:0; height:100%; width:60%; z-index:1;
+    opacity:0.16; pointer-events:none;
+  }
+
+  /* CARDS */
+  .card-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:24px; margin-top:40px; }
+  .card-grid.two{ grid-template-columns:repeat(2,1fr); }
+  .card{ background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-lg); padding:28px; transition:box-shadow 200ms var(--ease); }
+  .card:hover{ box-shadow:0 4px 20px rgba(16,26,48,0.08); }
+  .card .k{ font-family:'IBM Plex Mono',monospace; font-size:0.72rem; color:var(--bronze); text-transform:uppercase; letter-spacing:0.08em; margin-bottom:10px; }
+  .card h3{ font-size:1.15rem; margin-bottom:10px; }
+  .card p{ font-size:0.95rem; color:var(--slate); margin:0; }
+  .card a.readmore{ display:inline-block; margin-top:14px; font-size:0.9rem; color:var(--bronze); text-decoration:underline; text-underline-offset:3px; font-weight:600; }
+
+  /* PULL / QUOTE */
+  .pull{ font-family:'Fraunces',serif; font-weight:500; font-size:1.6rem; line-height:1.4; color:var(--navy-deep); border-left:3px solid var(--bronze); padding:4px 0 4px 28px; margin:32px 0; max-width:34em; }
+
+  /* DARK BAND */
+  .band-dark{ background:var(--navy-deep); color:#EDEEF0; }
+  .band-dark h2.section-title{ color:#fff; }
+  .band-dark p{ color:#C7CBD4; }
+  .band-dark .pull{ color:#fff; border-left-color:var(--bronze-light); }
+
+  /* EVIDENCE */
+  .evidence{ background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-lg); padding:40px; margin-top:8px; }
+  .evidence-grid{ display:grid; grid-template-columns:repeat(2,1fr); gap:20px; margin:28px 0; }
+  .evidence-claim{ padding:18px 20px; background:var(--paper); border-radius:var(--radius-md); font-size:0.95rem; color:var(--ink); }
+  .evidence-claim b{ display:block; color:var(--navy-deep); font-family:'Fraunces',serif; font-size:1.4rem; margin-bottom:4px; }
+  .stat-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin:28px 0; }
+  .stat{ text-align:center; padding:16px 8px; }
+  .stat .n{ font-family:'Fraunces',serif; font-size:1.8rem; color:var(--bronze); display:block; }
+  .stat .l{ font-size:0.8rem; color:var(--slate); }
+  .evidence-more{ margin-top:8px; }
+
+  /* FINAL CTA */
+  .final-cta{ text-align:left; background:var(--navy-deep); color:#fff; border-radius:var(--radius-lg); padding:56px; margin:0 32px; }
+  .final-cta h2{ color:#fff; font-size:2rem; margin-bottom:16px; }
+  .final-cta p{ color:#C7CBD4; margin-bottom:28px; max-width:38em; }
+  section.final-cta{ background:var(--navy-deep); color:#fff; border-radius:0; margin:0; padding:96px 0; }
+  section.final-cta h2.section-title{ color:#fff; }
+
+  /* CONTACT FORM */
+  .contact-form{ max-width:560px; margin-top:8px; }
+  .form-row{ margin-bottom:18px; }
+  .form-row label{ display:block; font-size:0.85rem; font-weight:600; color:#C7CBD4; margin-bottom:6px; }
+  .form-row input, .form-row textarea, .form-row select{
+    width:100%; font-family:'Inter',sans-serif; font-size:0.95rem; color:var(--ink);
+    background:#fff; border:1px solid transparent; border-radius:var(--radius-md);
+    padding:12px 14px; transition:box-shadow 160ms var(--ease);
+  }
+  .form-row textarea{ min-height:90px; resize:vertical; }
+  .form-row input:focus, .form-row textarea:focus, .form-row select:focus{ outline:2px solid var(--bronze); outline-offset:1px; }
+  .form-note{ font-size:0.82rem; color:#93969E; margin-top:14px; }
+  .form-success{ display:none; background:var(--green-bg,#E7EDE6); color:#2f4a33; border-radius:var(--radius-md); padding:16px 18px; font-size:0.95rem; }
+
+  /* PAGE UTILITY: table / faq / steps (Diagnostic, Audit, Contact) */
+  .page-table{ width:100%; border-collapse:collapse; margin:24px 0 40px; }
+  .page-table th{ background:var(--navy-deep); color:#fff; text-align:left; padding:12px 16px; font-size:0.82rem; text-transform:uppercase; letter-spacing:0.04em; }
+  .page-table td{ padding:12px 16px; border-bottom:1px solid var(--border); font-size:0.95rem; vertical-align:top; }
+  .page-table tr:nth-child(even) td{ background:var(--paper); }
+
+  .faq details{ border-bottom:1px solid var(--border); padding:20px 0; }
+  .faq summary{ font-family:'Fraunces',serif; font-size:1.1rem; font-weight:600; color:var(--navy-deep); cursor:pointer; list-style:none; display:flex; justify-content:space-between; align-items:center; }
+  .faq summary::-webkit-details-marker{ display:none; }
+  .faq summary::after{ content:'+'; font-family:'Inter',sans-serif; color:var(--bronze); font-size:1.4rem; font-weight:400; }
+  .faq details[open] summary::after{ content:'\2212'; }
+  .faq p{ margin-top:14px; color:var(--slate); max-width:42em; }
+
+  .step-row{ display:flex; gap:24px; margin:32px 0 48px; flex-wrap:wrap; }
+  .step-row .step{ flex:1; min-width:180px; }
+  .step-row .step .n{ font-family:'IBM Plex Mono',monospace; font-size:1.6rem; font-weight:600; color:var(--bronze-light); margin-bottom:6px; }
+  .step-row .step h4{ font-size:1rem; margin-bottom:6px; color:var(--navy-deep); }
+  .step-row .step p{ font-size:0.88rem; color:var(--slate); margin:0; }
+
+  /* ABOUT PAGE */
+  .about-hero{ padding:72px 0 96px; }
+  .about-hero .container{ display:grid; grid-template-columns:0.85fr 1.15fr; gap:64px; align-items:start; }
+  .portrait-frame{
+    width:100%; aspect-ratio:4/5; background:var(--surface); border:1px solid var(--border);
+    border-radius:var(--radius-lg); display:flex; align-items:center; justify-content:center;
+    overflow:hidden; position:sticky; top:96px;
+  }
+  .portrait-frame img{ width:100%; height:100%; object-fit:cover; object-position:22% 35%; display:block; }
+  .about-intro h1{ font-size:2.6rem; line-height:1.15; margin-bottom:8px; }
+  .about-intro .role{ font-size:1.05rem; color:var(--slate); margin-bottom:20px; }
+  .about-intro .positioning{ font-family:'Fraunces',serif; font-weight:500; font-size:1.3rem; line-height:1.4; color:var(--navy-deep); margin-bottom:28px; max-width:30em; }
+  .about-intro p.lead{ margin-bottom:0; }
+  .founder-story{ max-width:42em; }
+  .founder-story p{ font-size:1.05rem; color:var(--ink); margin:0 0 22px; max-width:none; }
+  .founder-story p:last-child{ margin-bottom:0; }
+  .experience-panel{ background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-lg); padding:8px 0; margin-top:8px; }
+  .experience-panel ul{ list-style:none; margin:0; padding:0; }
+  .experience-panel li{ display:flex; align-items:baseline; gap:16px; padding:20px 32px; border-bottom:1px solid var(--border); font-size:0.98rem; color:var(--ink); }
+  .experience-panel li:last-child{ border-bottom:none; }
+  .experience-panel li::before{ content:''; flex:none; width:6px; height:6px; border-radius:50%; background:var(--bronze); margin-top:8px; }
+  .way-block{ border-left:3px solid var(--border); padding-left:28px; margin:0 0 28px; max-width:42em; }
+  .way-block p{ font-size:1.05rem; color:var(--ink); margin:0 0 18px; max-width:none; }
+  .way-block p:last-child{ margin-bottom:0; }
+  .speaking-proof{ padding-top:0; }
+  .proof-frame{ width:100%; max-width:1180px; margin:0 auto; padding:0 32px; }
+  .proof-frame img{ width:100%; height:auto; display:block; border-radius:var(--radius-lg); }
+  .signature{ margin:48px 0 0; }
+  .signature .sig-name{ font-family:'Fraunces',serif; font-size:1.3rem; font-style:italic; color:var(--navy-deep); margin-bottom:4px; }
+  .signature .sig-role{ font-size:0.9rem; color:var(--slate); }
+
+  /* SELECTED ENGAGEMENTS / HOW HALO THINKS content components */
+  .story{ background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-lg); padding:32px; margin-bottom:40px; scroll-margin-top:100px; }
+  .story-meta{ display:flex; gap:32px; font-family:'IBM Plex Mono',monospace; font-size:0.78rem; letter-spacing:0.06em; text-transform:uppercase; color:var(--slate); margin-bottom:20px; flex-wrap:wrap; }
+  .story-meta span b{ display:block; font-weight:500; color:var(--navy-deep); font-size:0.85rem; text-transform:none; letter-spacing:0; margin-top:2px; }
+  h2.story-title{ font-family:'Fraunces',serif; font-weight:500; font-size:1.4rem; line-height:1.3; color:var(--navy-deep); margin:0 0 24px; }
+  .story h3{ font-family:'Inter',sans-serif; font-weight:600; font-size:0.78rem; letter-spacing:0.08em; text-transform:uppercase; color:var(--bronze); margin:24px 0 10px; }
+  .story h3:first-of-type{ margin-top:0; }
+  .story p{ margin:0 0 16px; color:var(--ink); max-width:none; }
+  .story ul{ margin:0 0 16px; padding-left:20px; }
+  .story li{ margin-bottom:10px; color:var(--ink); }
+  .insight{ margin-top:24px; padding-left:20px; border-left:3px solid var(--bronze); font-family:'Fraunces',serif; font-size:1.1rem; font-weight:500; font-style:italic; color:var(--navy-deep); }
+  .principle{ padding:28px 0; border-bottom:1px solid var(--border); }
+  .principle:last-of-type{ border-bottom:none; }
+  .principle h2{ font-family:'Inter',sans-serif; font-weight:600; font-size:1.05rem; line-height:1.4; color:var(--navy-deep); margin:0 0 8px; }
+  .principle p{ margin:0; color:var(--slate); font-size:0.98rem; max-width:none; }
+  .closing{ margin-top:40px; padding-left:20px; border-left:3px solid var(--bronze); font-family:'Fraunces',serif; font-size:1.05rem; font-weight:500; font-style:italic; color:var(--navy-deep); max-width:42em; }
+
+  /* FOOTER */
+  footer{ border-top:1px solid var(--border); padding:56px 0 40px; margin-top:40px; }
+  .footer-grid{ display:grid; grid-template-columns:2fr 1fr 1fr; gap:32px; margin-bottom:40px; }
+  .footer-grid h4{ font-family:'IBM Plex Mono',monospace; font-size:0.72rem; text-transform:uppercase; letter-spacing:0.08em; color:var(--slate); margin-bottom:14px; }
+  .footer-grid ul{ list-style:none; padding:0; margin:0; }
+  .footer-grid li{ margin-bottom:10px; }
+  .footer-grid a{ text-decoration:none; color:var(--ink); font-size:0.92rem; }
+  .footer-grid a:hover{ color:var(--bronze); }
+  .footer-bottom{ font-size:0.82rem; color:var(--slate); border-top:1px solid var(--border); padding-top:24px; display:flex; justify-content:space-between; flex-wrap:wrap; gap:12px; }
+
+  @media (max-width:1300px){
+    .nav-links{ display:none; }
+    .nav-toggle{ display:block; }
+    .nav-right .btn-primary{ display:none; }
+    .nav-cta-mobile{ display:block; margin-top:12px; }
+    .nav-cta-mobile a{ display:inline-block; background:var(--bronze); color:var(--navy-deep); font-weight:700; padding:12px 20px; border-radius:var(--radius-md); text-decoration:none; font-size:0.92rem; }
+  }
+
+  @media (max-width:900px){
+    .navbar{ padding:14px 12px; }
+    .logo{ font-size:1rem; gap:6px; }
+    .logo-mark{ width:24px; height:24px; }
+    .nav-toggle{ padding:8px; }
+    .nav-right{ gap:8px; }
+    .hero h1{ font-size:2.2rem; }
+    .hero-pattern{ display:none; }
+    .card-grid, .card-grid.two{ grid-template-columns:1fr; }
+    section{ padding:64px 0; }
+    .final-cta{ margin:0 20px; padding:36px 28px; }
+    .footer-grid{ grid-template-columns:1fr; gap:24px; }
+    .container{ padding:0 20px; }
+    .about-hero{ padding:48px 0 64px; }
+    .about-hero .container{ grid-template-columns:1fr; gap:36px; }
+    .portrait-frame{ position:static; max-width:320px; margin:0 auto; }
+    .about-intro h1{ font-size:2rem; }
+    .step-row{ flex-direction:column; }
+    .evidence-grid, .stat-grid{ grid-template-columns:1fr 1fr; }
+  }
+  @media (prefers-reduced-motion: reduce){
+    *{ transition:none !important; scroll-behavior:auto !important; }
+  }
+</style>
+<!-- Cookie consent (gates Google Tag Manager until accepted) -->
+<script>
+(function(){
+  var CONSENT_KEY = 'halo_cookie_consent';
+  function loadGTM(){
+    if(window.__gtmLoaded) return;
+    window.__gtmLoaded = true;
+    (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-T49HRT6J');
+  }
+  function getConsent(){ try { return localStorage.getItem(CONSENT_KEY); } catch(e){ return null; } }
+  function setConsent(v){ try { localStorage.setItem(CONSENT_KEY, v); } catch(e){} }
+  function hideBanner(){ var b=document.getElementById('halo-cookie-banner'); if(b) b.style.display='none'; }
+  window.haloConsent = {
+    get: getConsent,
+    accept: function(){ setConsent('granted'); loadGTM(); hideBanner(); },
+    reject: function(){ setConsent('denied'); hideBanner(); }
+  };
+  var existing = getConsent();
+  if(existing === 'granted'){
+    if(document.readyState === 'loading'){ document.addEventListener('DOMContentLoaded', loadGTM); }
+    else { loadGTM(); }
+  }
+  window.__haloShowBanner = (existing !== 'granted' && existing !== 'denied');
+})();
+</script>
+<!-- End cookie consent / Google Tag Manager -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "Halo Strategic",
+  "url": "https://halostrategic.com",
+  "logo": "https://halostrategic.com/android-chrome-512x512.png",
+  "sameAs": ["https://www.linkedin.com/company/halo-strategicglobal/", "https://www.facebook.com/profile.php?id=61591459224716"],
+  "contactPoint": {
+    "@type": "ContactPoint",
+    "telephone": "+19176957177",
+    "email": "hello@halostrategic.com",
+    "contactType": "customer service"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Check the Plumbing Before You Touch the Strategy",
+  "description": "When a channel underperforms, the first question isn't strategy. It's whether the numbers can be trusted. Three real engagements show the order that works.",
+  "image": "https://halostrategic.com/assets/og-default-1200x630.png",
+  "datePublished": "2026-10-26",
+  "dateModified": "2026-10-26",
+  "author": { "@type": "Organization", "name": "Halo Strategic", "url": "https://halostrategic.com" },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Halo Strategic",
+    "logo": { "@type": "ImageObject", "url": "https://halostrategic.com/android-chrome-512x512.png" }
+  },
+  "mainEntityOfPage": { "@type": "WebPage", "@id": "https://halostrategic.com/insights/check-the-plumbing-before-you-touch-the-strategy" }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://halostrategic.com/" },
+    { "@type": "ListItem", "position": 2, "name": "Insights", "item": "https://halostrategic.com/insights/" },
+    { "@type": "ListItem", "position": 3, "name": "Check the Plumbing Before You Touch the Strategy", "item": "https://halostrategic.com/insights/check-the-plumbing-before-you-touch-the-strategy" }
+  ]
+}
+</script>
+</head>
+<body>
+
+<!-- Cookie consent banner -->
+<div id="halo-cookie-banner" style="display:none;position:fixed;left:16px;right:16px;bottom:16px;z-index:9999;max-width:620px;margin:0 auto;background:var(--navy-deep,#101A30);color:#fff;border:1px solid rgba(216,190,143,0.35);border-radius:10px;padding:18px 20px;box-shadow:0 12px 32px rgba(0,0,0,0.3);font-size:14px;line-height:1.55;font-family:inherit;">
+  <p style="margin:0 0 12px;">We use cookies that are essential for the site to work, and, with your consent, analytics cookies to understand how it's used. See our <a href="/cookie-policy" style="color:#D8BE8F;text-decoration:underline;">Cookie Policy</a>.</p>
+  <div style="display:flex;gap:10px;flex-wrap:wrap;">
+    <button type="button" onclick="window.haloConsent.accept()" style="background:#B08D57;color:#101A30;border:none;padding:9px 18px;border-radius:6px;font-weight:600;font-size:14px;cursor:pointer;">Accept</button>
+    <button type="button" onclick="window.haloConsent.reject()" style="background:transparent;color:#fff;border:1px solid rgba(255,255,255,0.45);padding:9px 18px;border-radius:6px;font-size:14px;cursor:pointer;">Reject non-essential</button>
+  </div>
+</div>
+<script>
+if (window.__haloShowBanner) {
+  document.addEventListener('DOMContentLoaded', function(){
+    var b = document.getElementById('halo-cookie-banner');
+    if (b) b.style.display = 'block';
+  });
+}
+</script>
+<!-- End cookie consent banner -->
+<header>
+  <nav class="navbar">
+    <a href="/" class="logo">
+      <img src="/halo-icon-navy.svg" width="36" height="36" alt="Halo Strategic" class="logo-mark">
+      HALO STRATEGIC
+    </a>
+    <ul class="nav-links">
+      <li><a href="/#how-it-works">How Halo Works</a></li>
+      <li><a href="/#services">Services</a></li>
+      <li><a href="/commercial-audit">Commercial Audit</a></li>
+      <li><a href="/product-journey">Product Journey</a></li>
+      <li><a href="/agency-partnerships">Agency Partnerships</a></li>
+      <li><a href="/insights/" class="active">Insights</a></li>
+      <li><a href="/selected-engagements">Selected Engagements</a></li>
+      <li><a href="/how-halo-thinks">How Halo Thinks</a></li>
+      <li><a href="/frameworks">Frameworks</a></li>
+      <li><a href="/about">About</a></li>
+      <li class="nav-cta-mobile"><a href="/commercial-diagnostic">Start with a Commercial Diagnostic</a></li>
+    </ul>
+    <div class="nav-right">
+      <a href="/commercial-diagnostic" class="btn btn-primary">Start with a Commercial Diagnostic</a>
+      <button class="nav-toggle" aria-label="Open menu"><span></span><span></span><span></span></button>
+    </div>
+  </nav>
+</header>
+
+<main>
+
+  <section class="hero" style="padding:96px 0 64px;">
+    <div class="container">
+      <div class="eyebrow" style="color:#D8BE8F;">Insights</div>
+      <h1 style="font-size:2.4rem;">Check the Plumbing Before You Touch the Strategy</h1>
+    </div>
+  </section>
+
+  <section>
+    <div class="container" style="max-width:720px;">
+<p style="font-size:1.05rem;">When a new channel or market underperforms, the conversation almost always jumps straight to strategy. Wrong audience? Wrong creative? Wrong budget split? Everyone has a theory, and every theory is about what to change next. Almost nobody starts with the question that has to be answered first: can the numbers that started the conversation actually be trusted?</p>
+
+<p style="font-size:1.05rem;">It's an unglamorous question, which is partly why it gets skipped. It's also the first one Halo asks. A performance problem and a trust-in-the-data problem look the same from the outside: a number is disappointing, and someone wants to fix it. The difference only shows up once the plumbing has been checked, and by then it's expensive to have acted on the wrong one.</p>
+
+<h2 class="section-title" style="font-size:1.5rem; margin-top:36px;">Same symptom, three different faults</h2>
+
+<p style="font-size:1.05rem;">A regional placement and in-home care provider had just launched a second market, and it was underperforming. The relationship with the account had narrowed to launching campaigns and reacting to issues. The usual reading was available: ordinary growing pains, the kind more spend or sharper creative is supposed to fix. Instead, the first piece of work was checking whether the numbers meant anything. They didn't, yet. Tracking parameters were passing placeholder values. Form-to-CRM data was inconsistent. Scripts were interfering with attribution. Tracking was fixed before any performance call was made, because optimising against numbers that can't be trusted isn't optimisation. It's guesswork with a dashboard. Full story on <a href="/selected-engagements#reacting-to-leading" style="color:var(--bronze); text-decoration:underline;">From Reacting to Leading</a>.</p>
+
+<p style="font-size:1.05rem;">A specialist architecture firm's search campaign had the opposite fault. Instead of hiding good news, the data was manufacturing it. A CAPTCHA-related tracking bug had been counting conversions that weren't real. Correcting the record meant admitting the channel was performing worse than it looked, which is never a comfortable conversation, but the alternative was building a strategy on results that hadn't happened. The full story is on <a href="/selected-engagements#market-too-small" style="color:var(--bronze); text-decoration:underline;">We Told the Client the Market Was Too Small</a>, and the "good number" side of it is covered in <a href="/insights/some-of-your-best-numbers-might-not-be-real" style="color:var(--bronze); text-decoration:underline;">Some of Your Best Numbers Might Not Be Real</a>.</p>
+
+<p style="font-size:1.05rem;">A high-spend rehabilitation facility had a third version. Nothing was broken. The data simply hadn't been read. The client had been sending structured verification and admission data every month, and nobody had turned it into anything a decision could rest on. Once someone did, the picture reversed the obvious call: some of the expensive campaigns were producing verified admissions, while some of the cheaper leads stalled at the first verification step. That's the story behind <a href="/insights/we-dont-have-the-data-is-a-claim-worth-checking" style="color:var(--bronze); text-decoration:underline;">"We Don't Have the Data" Is a Claim Worth Checking</a>.</p>
+
+<p style="font-size:1.05rem;">Three businesses, three different faults: numbers that meant nothing yet, numbers that flattered, numbers that had never been read. What they shared was the order of work. In each case the first move was to find out what the measurement could honestly support, and only then to judge the performance sitting on top of it.</p>
+
+<h2 class="section-title" style="font-size:1.5rem; margin-top:36px;">Why the order matters</h2>
+
+<p style="font-size:1.05rem;">This is the first stage of <a href="/frameworks#master-framework" style="color:var(--bronze); text-decoration:underline;">Halo's Master Framework</a> doing what it says. Observe comes before Diagnose for a reason: you can't diagnose friction in a system you're only seeing through a distorted lens. In the language of the <a href="/frameworks#leakage-framework" style="color:var(--bronze); text-decoration:underline;">Commercial Leakage Framework</a>, the diagnostic question for Decision & Reporting Systems is whether leadership has one trusted number per key metric, or several versions of the same one. If the honest answer is "several," then every conversation about performance is really a conversation about which version to believe.</p>
+
+<p style="font-size:1.05rem;">Getting the order wrong doesn't just waste effort. It can push a business to act on the wrong problem with real confidence. Cut the campaign that was actually producing the best admissions. Scale the channel whose conversions weren't real. Replace a strategy that was never the problem. Each of those decisions would have looked reasonable against the number in front of everyone, which is exactly the danger.</p>
+
+<p style="font-size:1.05rem;">The same discipline shows up in what the placement provider engagement chose <em>not</em> to do. Once the tracking could be trusted, the client's own parallel test platform was assessed just as honestly, and scaling onto it was held off until its maturity problems were resolved. That's the logic from <a href="/insights/fixing-the-first-constraint-isnt-the-finish-line" style="color:var(--bronze); text-decoration:underline;">Fixing the First Constraint Isn't the Finish Line</a> applied in advance: don't scale onto anything you haven't checked.</p>
+
+<h2 class="section-title" style="font-size:1.5rem; margin-top:36px;">A short pre-check before judging any channel</h2>
+
+<p style="font-size:1.05rem;">Before anyone decides a channel, market, or campaign is failing (or succeeding), these are worth asking:</p>
+
+<ul style="font-size:1.05rem; padding-left:22px;">
+  <li style="margin-bottom:10px;"><strong>Can you trace one lead from click to CRM to outcome?</strong> If a single, real example can't be followed end to end without someone saying "it should be in there somewhere," the chain isn't trustworthy yet.</li>
+  <li style="margin-bottom:10px;"><strong>Do the fields hold real values?</strong> Placeholder text, blank parameters, and inconsistent form-to-CRM entries are quiet signs the numbers are describing the tracking, not the customers.</li>
+  <li style="margin-bottom:10px;"><strong>Is any good news too good?</strong> A sudden run of conversions deserves the same scrutiny as a sudden drop. Both can be artefacts.</li>
+  <li style="margin-bottom:10px;"><strong>What data is already arriving, unread?</strong> Before asking for new tracking, check what a client, partner, or system already sends on a regular cadence and whether anyone has actually read it closely.</li>
+  <li style="margin-bottom:10px;"><strong>What would you decide differently if the number were wrong?</strong> If the answer is "a lot," that's the number to verify first.</li>
+</ul>
+
+<p class="pull">Checking the plumbing isn't a delay before the real work. It's the first piece of it.</p>
+
+<p style="font-size:1.05rem;">None of this means strategy doesn't matter. It means strategy is only as good as the evidence it's reacting to. This is the same test Halo applies to reporting in general, covered in <a href="/insights/reporting-only-earns-its-place-if-it-changes-a-decision" style="color:var(--bronze); text-decoration:underline;">Does Your Reporting Actually Change Any Decisions?</a>: a number that can't be trusted can't change a decision well, however carefully it's presented. And it's why a disappointing result is often the right time to ask the unexciting question first, as in <a href="/insights/marketing-problem-or-commercial-problem" style="color:var(--bronze); text-decoration:underline;">Marketing Problem vs. Commercial Problem</a>. The sequence Halo follows is laid out in <a href="/insights/the-seven-stage-system-behind-every-diagnostic" style="color:var(--bronze); text-decoration:underline;">The Seven-Stage System Behind Every Halo Commercial Diagnostic</a>.</p>
+
+<p style="font-size:1.05rem;">If a channel in your own business is underperforming and nobody has yet checked whether the numbers describing it are real, a <a href="/commercial-diagnostic" style="color:var(--bronze); text-decoration:underline;">Commercial Diagnostic</a> is a focused way to find out which kind of problem you actually have before anything gets changed. A <a href="/commercial-audit" style="color:var(--bronze); text-decoration:underline;">Commercial Audit</a> goes further and scores every commercial pillar on evidence quality, performance gap, and commercial leverage. More on the thinking behind this is on <a href="/about" style="color:var(--bronze); text-decoration:underline;">About</a>, or <a href="/contact" style="color:var(--bronze); text-decoration:underline;">get in touch</a> directly.</p>
+
+<div class="eyebrow">FAQ</div>
+<h2 class="section-title">What people ask about trusting their numbers.</h2>
+<div class="faq" style="margin-bottom:48px;">
+  <details>
+    <summary>How do I tell a performance problem from a tracking problem?</summary>
+    <p>Check the plumbing before changing the strategy. Follow a real lead from the ad click through the form and the CRM to its eventual outcome. If that path can't be traced, or the fields along it hold placeholder or inconsistent values, the number you're worried about may be describing the tracking rather than your customers.</p>
+  </details>
+  <details>
+    <summary>Can a tracking problem make results look better than they are?</summary>
+    <p>Yes. A bug that counts conversions that never happened inflates results rather than hiding them, which makes it harder to spot because nobody goes looking for a fault in good news. Good numbers deserve the same scrutiny as bad ones.</p>
+  </details>
+  <details>
+    <summary>Do I need new tracking before I can make a decision?</summary>
+    <p>Not always. Sometimes the data already exists and has simply never been read closely. Before commissioning anything new, check what already arrives on a regular basis from a client, a partner, or another system, and whether anyone has turned it into something a decision can rest on.</p>
+  </details>
+  <details>
+    <summary>Should I pause spending while the tracking is being checked?</summary>
+    <p>That depends on the business, and it's a judgement call worth making deliberately. What matters is not making a big performance call, cutting or scaling, on numbers you haven't yet verified. Holding the decision briefly is usually cheaper than acting on the wrong one.</p>
+  </details>
+  <details>
+    <summary>Isn't checking the data just a slower way of getting to the same answer?</summary>
+    <p>It can feel that way, but it changes which answer you reach. In some cases the strategy was fine and the measurement was the problem. In others the channel was weaker than reported. Either way, a decision made on verified numbers is one you can defend later.</p>
+  </details>
+</div>
+
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <div class="logo" style="margin-bottom:10px; color:#F6F6F3;">
+          <img src="/halo-icon-light.svg" width="36" height="36" alt="Halo Strategic" class="logo-mark">
+          HALO STRATEGIC
+        </div>
+        <p style="font-size:0.92rem; color:var(--slate); max-width:26em;">A Commercial Growth Consultancy. Our job is to help leadership make better commercial decisions.</p>
+      </div>
+      <div>
+        <h4>Sitemap</h4>
+        <ul>
+          <li><a href="/#how-it-works">How Halo Works</a></li>
+          <li><a href="/#services">Services</a></li>
+          <li><a href="/commercial-health-check">Commercial Health Check</a></li>
+          <li><a href="/commercial-diagnostic">Commercial Diagnostic</a></li>
+          <li><a href="/commercial-audit">Commercial Audit</a></li>
+          <li><a href="/product-journey">Product Journey</a></li>
+          <li><a href="/agency-partnerships">Agency Partnerships</a></li>
+          <li><a href="/insights/">Insights</a></li>
+          <li><a href="/selected-engagements">Selected Engagements</a></li>
+          <li><a href="/how-halo-thinks">How Halo Thinks</a></li>
+          <li><a href="/frameworks">Frameworks</a></li>
+          <li><a href="/about">About</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Contact &amp; Legal</h4>
+        <ul>
+          <li><a href="/contact">Contact</a></li>
+          <li><a href="https://www.linkedin.com/company/halo-strategicglobal/" target="_blank" rel="noopener">LinkedIn</a></li>
+          <li><a href="https://www.facebook.com/profile.php?id=61591459224716" target="_blank" rel="noopener">Facebook</a></li>
+          <li><a href="mailto:hello@halostrategic.com">hello@halostrategic.com</a></li>
+          <li><a href="tel:+19176957177">+1 917 695 7177</a></li>
+          <li><a href="/privacy-policy">Privacy Policy</a></li>
+          <li><a href="/cookie-policy">Cookie Policy</a></li>
+          <li><a href="/refund-policy">Refund Policy</a></li>
+          <li><a href="/terms-and-conditions">Terms &amp; Conditions</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 Halo Strategic Ltd. All rights reserved. Registered in England &amp; Wales, Company No. 17409402.</span>
+      <span class="mono">halostrategic.com</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+
+  document.querySelector('.nav-toggle')?.addEventListener('click', function(){
+    var links = document.querySelector('.nav-links');
+    var visible = links.style.display === 'flex';
+    links.style.display = visible ? 'none' : 'flex';
+    links.style.flexDirection = 'column';
+    links.style.position = 'absolute';
+    links.style.top = '64px';
+    links.style.left = '0';
+    links.style.right = '0';
+    links.style.background = 'var(--paper)';
+    links.style.padding = '20px 32px';
+    links.style.borderBottom = '1px solid var(--border)';
+  });
+</script>
+
+<script src="/site-motion.js?v=3" defer></script>
+</body>
+</html>
