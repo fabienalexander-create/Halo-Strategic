@@ -1,5 +1,9 @@
 # Changelog
 
+## 2026-10-27 — Swap site-wide phone number from US to UK
+
+Replaced every `tel:+19176957177` link, displayed `+1 917 695 7177` text and `"telephone": "+19176957177"` structured-data field across the site (67 files) with the new UK number, `+44 20 3769 8950` / `tel:+442037698950`. Per the Halo Phone Numbers rollout brief: the UK number is now Halo's default for the website, LinkedIn, Facebook and Google Business Profile; the US number is reserved for US-facing outreach (e.g. the HVAC pay-per-lead pilot) and no longer appears on the site. Also added a tap-to-call UK number next to the main CTA on `/solar-leads/`, which previously had no phone number at all — installers are more likely to pick up a call than fill in a form.
+
 ## 2026-10-15 — Contact page: add "Lead generation enquiry" as a reason option
 
 Added `lead-generation` to the "What's this about?" dropdown on `/contact`. Fixes a live bug in the process: `/lead-generation` has linked its three CTAs to `/contact?service=lead-generation` for a while, but the auto-select script only recognised `diagnostic`, `audit` and `clarity`, so those visitors landed on the contact page with no option selected and no matching option to pick — defaulting silently to nothing. The `?service=lead-generation` param now sets the hidden service field and pre-selects the new dropdown option, same as the other three service CTAs.
