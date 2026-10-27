@@ -1,5 +1,9 @@
 # Changelog
 
+## 2026-10-27 — Show both UK and US numbers site-wide
+
+Follow-up to the US→UK swap below: per Fabien's request, the site now shows both numbers rather than UK-only. Footer on every general page lists "UK: +44 20 3769 8950" and "US: +1 917 695 7177" as separate tap-to-call links; the Organization structured data now carries two `contactPoint` entries (`areaServed: "GB"` and `"US"`) instead of one; the dedicated "Call" card on `/contact` now mentions the US number alongside the existing UK heading. `/solar-leads/` deliberately stays UK-only — it's the UK installer pilot's CTA, so a US number there would misdirect installers rather than help them.
+
 ## 2026-10-27 — Swap site-wide phone number from US to UK
 
 Replaced every `tel:+19176957177` link, displayed `+1 917 695 7177` text and `"telephone": "+19176957177"` structured-data field across the site (67 files) with the new UK number, `+44 20 3769 8950` / `tel:+442037698950`. Per the Halo Phone Numbers rollout brief: the UK number is now Halo's default for the website, LinkedIn, Facebook and Google Business Profile; the US number is reserved for US-facing outreach (e.g. the HVAC pay-per-lead pilot) and no longer appears on the site. Also added a tap-to-call UK number next to the main CTA on `/solar-leads/`, which previously had no phone number at all — installers are more likely to pick up a call than fill in a form.
