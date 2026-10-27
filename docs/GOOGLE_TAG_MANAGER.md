@@ -38,7 +38,7 @@ For each event below: Trigger type "Custom Event", Event name matching exactly, 
 
 One further click-based event from the original brief remains genuinely not possible yet: `linkedin_clicked` (the LinkedIn Page link in the footer would need a Click - Just Links trigger filtered to `linkedin.com` — buildable, just not done in this pass, low priority next to the form events above).
 
-**Correction (2026-10-12):** `phone_clicked` was previously listed here as blocked on "no `tel:` link exists anywhere on the site." That's no longer true — `tel:+19176957177` links are live in contact.html and the footer of every other page. No `dataLayer.push` for `phone_clicked` exists in the code, so the event still isn't firing, but not because the link is missing. Two ways to close it:
+**Correction (2026-10-12):** `phone_clicked` was previously listed here as blocked on "no `tel:` link exists anywhere on the site." That's no longer true — `tel:+442037698950` links are live in contact.html and the footer of every other page. No `dataLayer.push` for `phone_clicked` exists in the code, so the event still isn't firing, but not because the link is missing. Two ways to close it:
 - **No code change needed:** a GTM-native trigger, type "Click - Just Links", fire condition `Click URL contains tel:` → GA4 Event tag, Event Name `phone_clicked`. Buildable directly in tagmanager.google.com.
 - **Or**, to match how the other three events are implemented, add a small `dataLayer.push({event: 'phone_clicked'})` on click in the site code, then wire a Custom Event trigger the same way as the others above.
 
