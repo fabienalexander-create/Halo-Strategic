@@ -1,5 +1,9 @@
 # Changelog
 
+## 2026-11-02 — Add homeowner (B2C) solar/battery landing page, draft only
+
+New page at `/get-a-solar-quote`, separate from the existing `/solar-leads` (which stays B2B/installer-facing and is untouched). This one is for UK homeowners to submit a solar/battery enquiry: hero, how-it-works, solar/battery explainers, suitability section, FAQ, qualification form (name, email, mobile, postcode, ownership status, property type, existing solar, interest, timeframe, preferred contact method) and a privacy/consent section that separates "contact me" consent from "share with an installer" consent from the Privacy Policy acceptance — no bundled consent. No invented reviews, testimonials, case studies, named customers or accreditations; the "why homeowners explore this" and FAQ sections explain the process instead. Form captures a generated enquiry ID, submission timestamp, consent version, campaign source/ID and UTM params as hidden fields, ready for a future Make.com integration, but currently only submits to the site's existing Netlify form handling — no data goes to any external service yet. Marked `noindex, nofollow` with a visible "Draft — not yet approved for live traffic" banner; not linked from site navigation. Not to be published or sent live traffic without explicit sign-off.
+
 ## 2026-10-27 — Show both UK and US numbers site-wide
 
 Follow-up to the US→UK swap below: per Fabien's request, the site now shows both numbers rather than UK-only. Footer on every general page lists "UK: +44 20 3769 8950" and "US: +1 917 695 7177" as separate tap-to-call links; the Organization structured data now carries two `contactPoint` entries (`areaServed: "GB"` and `"US"`) instead of one; the dedicated "Call" card on `/contact` now mentions the US number alongside the existing UK heading. `/solar-leads/` deliberately stays UK-only — it's the UK installer pilot's CTA, so a US number there would misdirect installers rather than help them.
