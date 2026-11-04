@@ -34,11 +34,11 @@ function SelectField({
 }
 
 function Checkbox({
-  label, name, checked, onChange,
-}: { label: React.ReactNode; name: string; checked: boolean; onChange: (v: boolean) => void }) {
+  label, name, checked, onChange, required,
+}: { label: React.ReactNode; name: string; checked: boolean; onChange: (v: boolean) => void; required?: boolean }) {
   return (
     <div className="form-row" style={{ display: 'flex', alignItems: 'flex-start', gap: 8 }}>
-      <input type="checkbox" id={name} name={name} checked={checked} onChange={(e) => onChange(e.target.checked)} style={{ width: 'auto', marginTop: 3 }} />
+      <input type="checkbox" id={name} name={name} required={required} checked={checked} onChange={(e) => onChange(e.target.checked)} style={{ width: 'auto', marginTop: 3 }} />
       <label htmlFor={name} style={{ fontWeight: 400, fontSize: '0.9rem', marginBottom: 0 }}>{label}</label>
     </div>
   );
@@ -200,12 +200,14 @@ export default function RequestQuoteForm() {
       <Checkbox
         label="I'm happy for Halo Strategic to contact me about this enquiry, using the details above."
         name="consent_contact"
+        required
         checked={bool('consent_contact')}
         onChange={(v) => set('consent_contact', v)}
       />
       <Checkbox
         label="I'm happy for my details to be shared with a suitable spray foam removal business, so they can contact me about this enquiry, if Halo Strategic identifies one as a genuine fit."
         name="consent_share_buyer"
+        required
         checked={bool('consent_share_buyer')}
         onChange={(v) => set('consent_share_buyer', v)}
       />
@@ -217,6 +219,7 @@ export default function RequestQuoteForm() {
           </>
         }
         name="privacy_consent"
+        required
         checked={bool('privacy_consent')}
         onChange={(v) => set('privacy_consent', v)}
       />
