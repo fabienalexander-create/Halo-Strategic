@@ -25,6 +25,11 @@ export async function DELETE(req: NextRequest) {
     }
 
     const buyerId = existing[0].id;
+    // buyer_review_notes.buyer_id has a foreign key with no cascade -- added in the Priority 2
+    // migration after this route was first written, so it must be cleared explicitly or the
+    // buyers delete below fails with a foreign key violation the moment a test application has
+    // any notes on it (exactly what Fabien's test sequence is about to do).
+    await db.sql`DELETE FROM buyer_review_notes WHERE buyer_id = ${buyerId}`;
     await db.sql`DELETE FROM buyer_notification_preferences WHERE buyer_id = ${buyerId}`;
     await db.sql`DELETE FROM buyers WHERE id = ${buyerId}`;
     await db.sql`
