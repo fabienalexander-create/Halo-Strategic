@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { apiPath } from '../../lib/basePath';
 
 export default function ContactForm() {
   const [name, setName] = useState('');
@@ -16,7 +17,7 @@ export default function ContactForm() {
     setError(null);
     setSubmitting(true);
     try {
-      const res = await fetch('/api/contact', {
+      const res = await fetch(apiPath('/api/contact'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name, email, message, bot_field: botField }),

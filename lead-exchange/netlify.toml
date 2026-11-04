@@ -4,3 +4,12 @@
 
 [[plugins]]
   package = "@netlify/plugin-nextjs"
+
+# Convenience redirect: the app's basePath is /leads-exchange, so a bare visit to this site's own
+# Netlify URL (halo-lead-exchange.netlify.app/) would otherwise 404. Sends it to the real homepage
+# under the basePath instead of leaving a dead root URL.
+[[redirects]]
+  from = "/"
+  to = "/leads-exchange"
+  status = 301
+  force = true

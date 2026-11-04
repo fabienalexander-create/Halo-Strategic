@@ -1,4 +1,11 @@
-﻿/index.html                  /                            301!
+﻿# Reverse proxy into the separate Lead Exchange Next.js app/deployment. Status 200 makes this a
+# transparent proxy, not a redirect -- the browser URL bar stays on halostrategic.com throughout.
+# Both the exact section root and the wildcard are needed: Netlify's "/*" splat rule does not match
+# the bare "/leads-exchange" path with no trailing segment.
+/leads-exchange        https://halo-lead-exchange.netlify.app/leads-exchange        200
+/leads-exchange/*       https://halo-lead-exchange.netlify.app/leads-exchange/:splat 200
+
+/index.html                  /                            301!
 /about.html                  /about                       301!
 /contact.html                /contact                     301!
 /commercial-audit.html       /commercial-audit             301!

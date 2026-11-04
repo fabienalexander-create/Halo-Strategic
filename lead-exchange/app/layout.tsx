@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import Link from 'next/link';
 import './globals.css';
 import DraftBanner from './components/DraftBanner';
 
@@ -23,29 +24,29 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body>
         <DraftBanner />
         <div className="top-bar">
-          <a href="/" className="wordmark">
+          <Link href="/" className="wordmark">
             HALO STRATEGIC
-          </a>
+          </Link>
           <span className="division-tag">Lead Exchange</span>
         </div>
         <nav className="main-nav">
-          <a href="/">Home</a>
-          <a href="/spray-foam-removal">Spray Foam Removal</a>
-          <a href="/how-it-works">How It Works</a>
-          <a href="/become-a-buyer">Become a Buyer</a>
-          <a href="/insights">Insights</a>
-          <a href="/about">About</a>
-          <a href="/contact">Contact</a>
+          <Link href="/">Home</Link>
+          <Link href="/spray-foam-removal">Spray Foam Removal</Link>
+          <Link href="/how-it-works">How It Works</Link>
+          <Link href="/become-a-buyer">Become a Buyer</Link>
+          <Link href="/insights">Insights</Link>
+          <Link href="/about">About</Link>
+          <Link href="/contact">Contact</Link>
         </nav>
         <main>{children}</main>
         <footer>
           <div className="container">
             &copy; 2026 Halo Strategic Ltd. A division of{' '}
             <a href="https://halostrategic.com">Halo Strategic</a>. &middot;{' '}
-            <a href="/privacy-policy">Privacy Policy</a> &middot;{' '}
-            <a href="/buyer-terms">Buyer Terms</a> &middot;{' '}
-            <a href="/lead-purchase-terms">Lead Purchase &amp; Delivery Terms</a> &middot;{' '}
-            <a href="/refund-policy">Refund &amp; Replacement Policy</a>
+            <Link href="/privacy-policy">Privacy Policy</Link> &middot;{' '}
+            <Link href="/buyer-terms">Buyer Terms</Link> &middot;{' '}
+            <Link href="/lead-purchase-terms">Lead Purchase &amp; Delivery Terms</Link> &middot;{' '}
+            <Link href="/refund-policy">Refund &amp; Replacement Policy</Link>
           </div>
         </footer>
       </body>

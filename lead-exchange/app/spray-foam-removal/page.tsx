@@ -1,3 +1,5 @@
+import Link from 'next/link';
+
 export default function SprayFoamRemovalPage() {
   return (
     <>
@@ -10,9 +12,9 @@ export default function SprayFoamRemovalPage() {
             criteria before any enquiry reaches a buyer. This is a pilot market &mdash; built properly
             before we expand to others.
           </p>
-          <a href="/become-a-buyer" className="btn btn-bronze">
+          <Link href="/become-a-buyer" className="btn btn-bronze">
             Apply to Become a Buyer
-          </a>
+          </Link>
         </div>
       </section>
 
@@ -74,9 +76,9 @@ export default function SprayFoamRemovalPage() {
             equivalent lead at no additional charge. This is a <strong>replacement, not an automatic cash
             refund</strong>. A lead that simply doesn&rsquo;t convert into a sale, or a homeowner who
             changes their mind after being reached, doesn&rsquo;t on its own qualify &mdash; see our{' '}
-            <a href="/refund-policy" style={{ color: 'var(--bronze)' }}>
+            <Link href="/refund-policy" style={{ color: 'var(--bronze)' }}>
               full Refund &amp; Replacement Policy
-            </a>{' '}
+            </Link>{' '}
             for the exact criteria.
           </p>
         </div>
@@ -101,9 +103,9 @@ export default function SprayFoamRemovalPage() {
             Every buyer applies and is reviewed before getting access to lead inventory &mdash; we
             don&rsquo;t give unverified applicants automatic access.
           </p>
-          <a href="/become-a-buyer" className="btn btn-bronze" style={{ marginTop: 12 }}>
+          <Link href="/become-a-buyer" className="btn btn-bronze" style={{ marginTop: 12 }}>
             Apply to Become a Buyer
-          </a>
+          </Link>
         </div>
       </section>
     </>

@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import Link from 'next/link';
 
 export const metadata: Metadata = {
   title: 'What Halo Strategic’s Background Means for Spray Foam Removal Leads | Halo Lead Exchange',
@@ -62,9 +63,9 @@ export default function Article() {
           </p>
 
           <p style={{ marginTop: 32 }}>
-            <a href="/become-a-buyer" className="btn btn-bronze">
+            <Link href="/become-a-buyer" className="btn btn-bronze">
               Apply to Become a Buyer
-            </a>
+            </Link>
           </p>
         </div>
       </section>
