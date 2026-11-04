@@ -1,6 +1,8 @@
 import { getDatabase } from '@netlify/database';
 import { NextRequest, NextResponse } from 'next/server';
 import { randomUUID } from 'crypto';
+import { attemptSend } from '../../../lib/email';
+import { applicationReceivedEmail } from '../../../lib/emailTemplates';
 
 // Current versions of the documents a buyer agrees to during self-service application.
 // Bump these strings whenever the underlying policy/terms content changes, so historical
@@ -265,7 +267,26 @@ export async function POST(req: NextRequest) {
       [applicationReference, buyerId, JSON.stringify({ application_status: 'PENDING_REVIEW', suitability_score: score })]
     );
 
+    // The outbox row is created in the SAME transaction as the application itself, before
+    // commit -- so "the application saved but the email event was never recorded" can't happen,
+    // whatever happens to the process between commit and the send attempt below.
+    const outboxInsert = await client.query(
+      `INSERT INTO transactional_emails (buyer_id, email_type, recipient, status)
+       VALUES ($1, 'APPLICATION_RECEIVED', $2, 'PENDING')
+       ON CONFLICT (buyer_id, email_type) DO NOTHING
+       RETURNING id`,
+      [buyerId, body.contact_email]
+    );
+
     await client.query('COMMIT');
+
+    // Sent after commit, and never allowed to throw -- a failed email must never undo an
+    // already-saved application. attemptSend logs the outcome itself and only returns; if the
+    // outbox row already existed (duplicate request), outboxInsert.rows is empty and there's
+    // nothing to attempt here -- a later retry, if ever needed, works off the existing row.
+    if (outboxInsert.rows.length > 0) {
+      await attemptSend(db, outboxInsert.rows[0].id, applicationReceivedEmail(body.contact_name));
+    }
 
     return NextResponse.json(
       {
