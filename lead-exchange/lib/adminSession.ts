@@ -1,5 +1,6 @@
 import { createHmac, timingSafeEqual } from 'crypto';
 import { NextRequest } from 'next/server';
+import { BASE_PATH } from './basePath';
 
 export const SESSION_COOKIE_NAME = 'halo_admin_session';
 const SESSION_TTL_SECONDS = 12 * 60 * 60; // 12 hours
@@ -80,6 +81,10 @@ export const SESSION_COOKIE_OPTIONS = {
   httpOnly: true,
   secure: true,
   sameSite: 'strict' as const,
-  path: '/',
+  // Scoped to BASE_PATH, not '/', so the admin session cookie is never sent to requests outside
+  // the Lead Exchange section once it's served under halostrategic.com/leads-exchange -- it
+  // shouldn't be attached to every request to the main marketing site just because they share an
+  // origin under the reverse-proxy setup.
+  path: BASE_PATH,
   maxAge: SESSION_TTL_SECONDS,
 };

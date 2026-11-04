@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { apiPath } from '../../lib/basePath';
 
 type Answers = Record<string, string | boolean | number | string[] | undefined>;
 
@@ -130,7 +131,7 @@ export default function BuyerApplicationForm() {
         avg_revenue_per_completed_job: a.avg_revenue_per_completed_job ? Number(a.avg_revenue_per_completed_job) : undefined,
       };
 
-      const res = await fetch('/api/buyer-applications', {
+      const res = await fetch(apiPath('/api/buyer-applications'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),

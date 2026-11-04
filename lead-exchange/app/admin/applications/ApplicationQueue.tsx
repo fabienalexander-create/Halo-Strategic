@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { apiPath } from '../../../lib/basePath';
 
 interface AppRow {
   application_reference: string;
@@ -29,7 +30,7 @@ export default function ApplicationQueue() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    fetch('/api/admin/applications')
+    fetch(apiPath('/api/admin/applications'))
       .then(async (r) => {
         if (!r.ok) throw new Error((await r.json()).error ?? 'Failed to load.');
         return r.json();

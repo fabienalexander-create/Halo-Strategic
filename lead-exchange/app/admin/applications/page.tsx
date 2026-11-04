@@ -2,6 +2,7 @@ import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { verifySessionToken, SESSION_COOKIE_NAME } from '../../../lib/adminSession';
 import ApplicationQueue from './ApplicationQueue';
+import AdminLogoutButton from '../AdminLogoutButton';
 
 export default function ApplicationsQueuePage() {
   const token = cookies().get(SESSION_COOKIE_NAME)?.value;
@@ -16,6 +17,7 @@ export default function ApplicationsQueuePage() {
         <div className="eyebrow">Admin</div>
         <h1 style={{ fontSize: '1.6rem', marginBottom: 20 }}>Buyer Applications</h1>
         <ApplicationQueue />
+        <AdminLogoutButton />
       </div>
     </section>
   );

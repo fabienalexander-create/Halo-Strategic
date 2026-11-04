@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import Link from 'next/link';
 
 export const metadata: Metadata = {
   title: 'The Halo Strategic Approach to Solar and Battery Lead Qualification | Halo Lead Exchange',
@@ -65,9 +66,9 @@ export default function Article() {
           <p style={{ marginTop: 32 }}>
             Solar is the Lead Exchange&rsquo;s next vertical, after spray foam removal. If you&rsquo;re a
             solar or battery installer and want to register interest ahead of that launch,{' '}
-            <a href="/contact" style={{ color: 'var(--bronze)' }}>
+            <Link href="/contact" style={{ color: 'var(--bronze)' }}>
               get in touch
-            </a>
+            </Link>
             .
           </p>
         </div>

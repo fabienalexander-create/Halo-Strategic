@@ -1,3 +1,5 @@
+import Link from 'next/link';
+
 export default function HomePage() {
   return (
     <>
@@ -10,9 +12,9 @@ export default function HomePage() {
             home-improvement services. We focus on qualification, transparent lead information, and a
             controlled purchasing and delivery process.
           </p>
-          <a href="/become-a-buyer" className="btn btn-bronze">
+          <Link href="/become-a-buyer" className="btn btn-bronze">
             Apply to Become a Buyer
-          </a>
+          </Link>
         </div>
       </section>
 
@@ -39,9 +41,9 @@ export default function HomePage() {
             existing spray foam insulation, qualified against agreed criteria before any enquiry reaches
             a buyer.
           </p>
-          <a href="/spray-foam-removal" className="btn btn-bronze" style={{ marginTop: 12 }}>
+          <Link href="/spray-foam-removal" className="btn btn-bronze" style={{ marginTop: 12 }}>
             See the Spray Foam Removal Market
-          </a>
+          </Link>
         </div>
       </section>
 
@@ -49,7 +51,7 @@ export default function HomePage() {
         <div className="container">
           <div className="eyebrow">How It Works</div>
           <h2 style={{ fontSize: '1.5rem', marginBottom: 16 }}>Six stages, from enquiry to delivery.</h2>
-          <div className="card-grid" style={{ gridTemplateColumns: 'repeat(3, 1fr)' }}>
+          <div className="card-grid">
             <div className="mini-card">
               <div className="k">01&ndash;02</div>
               <h3>Generate &amp; qualify</h3>
@@ -66,9 +68,9 @@ export default function HomePage() {
               <p>Payment is independently verified, then full contact details are released.</p>
             </div>
           </div>
-          <a href="/how-it-works" className="btn btn-bronze" style={{ marginTop: 24 }}>
+          <Link href="/how-it-works" className="btn btn-bronze" style={{ marginTop: 24 }}>
             Read the Full Process
-          </a>
+          </Link>
         </div>
       </section>
 

@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import Link from 'next/link';
 
 export const metadata: Metadata = {
   title: 'Why We Qualify Every Spray Foam Removal Enquiry | Halo Lead Exchange',
@@ -64,9 +65,9 @@ export default function Article() {
           </p>
 
           <p style={{ marginTop: 32 }}>
-            <a href="/spray-foam-removal" className="btn btn-bronze">
+            <Link href="/spray-foam-removal" className="btn btn-bronze">
               See the Spray Foam Removal Market
-            </a>
+            </Link>
           </p>
         </div>
       </section>

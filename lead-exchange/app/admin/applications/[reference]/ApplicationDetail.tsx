@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState, useCallback } from 'react';
+import { apiPath } from '../../../../lib/basePath';
 
 type Buyer = Record<string, unknown>;
 interface Note { id: number; admin_email: string; note: string; created_at: string; }
@@ -125,7 +126,7 @@ export default function ApplicationDetail({ reference }: { reference: string }) 
   });
 
   const load = useCallback(() => {
-    fetch(`/api/admin/applications/${reference}`)
+    fetch(apiPath(`/api/admin/applications/${reference}`))
       .then(async (r) => {
         if (!r.ok) throw new Error((await r.json()).error ?? 'Failed to load.');
         return r.json();
@@ -143,7 +144,7 @@ export default function ApplicationDetail({ reference }: { reference: string }) 
 
   async function runDecision(action: 'approve' | 'reject' | 'request_info') {
     setActionMessage(null);
-    const res = await fetch(`/api/admin/applications/${reference}/decision`, {
+    const res = await fetch(apiPath(`/api/admin/applications/${reference}/decision`), {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ action, reason: reason || undefined }),
@@ -157,7 +158,7 @@ export default function ApplicationDetail({ reference }: { reference: string }) 
 
   async function submitNote() {
     if (!newNote.trim()) return;
-    const res = await fetch(`/api/admin/applications/${reference}/notes`, {
+    const res = await fetch(apiPath(`/api/admin/applications/${reference}/notes`), {
       method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ note: newNote }),
     });
     if (res.ok) { setNewNote(''); load(); }
@@ -173,7 +174,7 @@ export default function ApplicationDetail({ reference }: { reference: string }) 
     if (commercials.payment_arrangement_notes) payload.payment_arrangement_notes = commercials.payment_arrangement_notes;
     if (commercials.agreed_pricing_notes) payload.agreed_pricing_notes = commercials.agreed_pricing_notes;
 
-    const res = await fetch(`/api/admin/applications/${reference}/commercials`, {
+    const res = await fetch(apiPath(`/api/admin/applications/${reference}/commercials`), {
       method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload),
     });
     const data = await res.json();
@@ -183,7 +184,7 @@ export default function ApplicationDetail({ reference }: { reference: string }) 
 
   async function activate() {
     setActionMessage(null);
-    const res = await fetch(`/api/admin/applications/${reference}/activate`, { method: 'POST' });
+    const res = await fetch(apiPath(`/api/admin/applications/${reference}/activate`), { method: 'POST' });
     const data = await res.json();
     setActionMessage(res.ok ? 'Buyer is now ACTIVE.' : `Error: ${data.error}${data.missing_fields ? ` (missing: ${data.missing_fields.join(', ')})` : ''}`);
     if (res.ok) load();

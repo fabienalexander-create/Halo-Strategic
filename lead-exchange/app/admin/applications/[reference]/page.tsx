@@ -2,6 +2,7 @@ import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { verifySessionToken, SESSION_COOKIE_NAME } from '../../../../lib/adminSession';
 import ApplicationDetail from './ApplicationDetail';
+import AdminLogoutButton from '../../AdminLogoutButton';
 
 export default function ApplicationDetailPage({ params }: { params: { reference: string } }) {
   const token = cookies().get(SESSION_COOKIE_NAME)?.value;
@@ -16,6 +17,7 @@ export default function ApplicationDetailPage({ params }: { params: { reference:
         <div className="eyebrow">Admin &middot; Application</div>
         <h1 style={{ fontSize: '1.6rem', marginBottom: 20 }}>{params.reference}</h1>
         <ApplicationDetail reference={params.reference} />
+        <AdminLogoutButton />
       </div>
     </section>
   );
