@@ -5,11 +5,7 @@ export default function RefundPolicyPage() {
         <div className="eyebrow">Spray Foam Removal &mdash; Pilot Policy</div>
         <h1 style={{ fontSize: '1.8rem', marginBottom: 20 }}>Refund &amp; Replacement Policy</h1>
 
-        <div className="disclaimer-box" style={{ marginBottom: 28 }}>
-          <strong>Draft, not yet legally reviewed.</strong> This policy has been confirmed commercially
-          by Halo Strategic but has not yet been reviewed by a solicitor. It is not active or enforceable
-          against any buyer, and must not be relied upon as final, until that review is complete.
-        </div>
+        <p className="form-note" style={{ marginBottom: 24 }}>Version 2026-11-04-v0.1. Last updated 4 November 2026.</p>
 
         <h2 style={{ fontSize: '1.2rem', margin: '24px 0 10px' }}>1. Replacement, not automatic refund</h2>
         <p>
