@@ -16,10 +16,14 @@ export default function SprayFoamRemovalPage() {
             <Link href="/become-a-buyer" className="btn btn-bronze">
               Apply to Become a Buyer
             </Link>
-            <Link href="/spray-foam-removal/request-a-quote" className="btn btn-bronze">
-              Homeowner? Request a Quote
-            </Link>
           </div>
+          <p className="form-note" style={{ marginTop: 12 }}>
+            Homeowner looking to have spray foam removed?{' '}
+            <Link href="/spray-foam-removal/request-a-quote" style={{ color: 'var(--bronze)' }}>
+              Request a quote here
+            </Link>
+            .
+          </p>
         </div>
       </section>
 
