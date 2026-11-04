@@ -51,7 +51,7 @@ export default function HomePage() {
         <div className="container">
           <div className="eyebrow">How It Works</div>
           <h2 style={{ fontSize: '1.5rem', marginBottom: 16 }}>Six stages, from enquiry to delivery.</h2>
-          <div className="card-grid" style={{ gridTemplateColumns: 'repeat(3, 1fr)' }}>
+          <div className="card-grid">
             <div className="mini-card">
               <div className="k">01&ndash;02</div>
               <h3>Generate &amp; qualify</h3>
