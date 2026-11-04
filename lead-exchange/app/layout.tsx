@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import './globals.css';
+import DraftBanner from './components/DraftBanner';
 
 export const metadata: Metadata = {
   title: 'Halo Lead Exchange',
@@ -20,20 +21,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         />
       </head>
       <body>
-        <div
-          style={{
-            background: 'var(--navy-deep)',
-            color: '#edeef0',
-            textAlign: 'center',
-            padding: '10px 16px',
-            fontFamily: "'IBM Plex Mono', monospace",
-            fontSize: '0.75rem',
-            letterSpacing: '0.06em',
-            textTransform: 'uppercase',
-          }}
-        >
-          Draft — Phase 2 build, not approved for live traffic or real buyers
-        </div>
+        <DraftBanner />
         <div className="top-bar">
           <a href="/" className="wordmark">
             HALO STRATEGIC
@@ -45,6 +33,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <a href="/spray-foam-removal">Spray Foam Removal</a>
           <a href="/how-it-works">How It Works</a>
           <a href="/become-a-buyer">Become a Buyer</a>
+          <a href="/insights">Insights</a>
           <a href="/about">About</a>
           <a href="/contact">Contact</a>
         </nav>
