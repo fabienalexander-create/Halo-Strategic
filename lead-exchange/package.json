@@ -10,12 +10,14 @@
   },
   "dependencies": {
     "@netlify/database": "^1.0.0",
+    "bcryptjs": "2.4.3",
     "next": "14.2.35",
     "react": "18.3.1",
     "react-dom": "18.3.1"
   },
   "devDependencies": {
     "@netlify/plugin-nextjs": "5.7.3",
+    "@types/bcryptjs": "2.4.6",
     "@types/node": "20.14.10",
     "@types/react": "18.3.3",
     "@types/react-dom": "18.3.0",
