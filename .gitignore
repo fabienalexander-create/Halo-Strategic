@@ -1,1 +1,6 @@
 .claude/
+
+# Lead Exchange (lead-exchange/) — separate Next.js app, own Netlify site
+lead-exchange/node_modules/
+lead-exchange/.next/
+lead-exchange/next-env.d.ts
