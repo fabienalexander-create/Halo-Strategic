@@ -4,24 +4,24 @@ A separate Next.js application living inside the `Halo-Strategic` repository, de
 Netlify site** (not mixed with the main halostrategic.com deploy). This keeps the marketing site's
 build and deploy completely untouched while this app grows independently.
 
-Status: **Phase 2 (public pages) only.** No database, no authentication, no payment integration yet —
-those are Phase 3/4, not started. The "Become a Buyer" and "Contact" forms currently submit via Netlify
-Forms (same mechanism as the rest of halostrategic.com), with no backend processing beyond that.
+Status (updated 2026-11-04): **deployed and live** at https://halo-lead-exchange.netlify.app — linked
+to this repo's `main` branch, base directory `lead-exchange`. Admin authentication, a real
+database-backed buyer application, and a Netlify DB (Postgres) production database all exist and are
+confirmed working via live production testing (not just a local build). `leads.halostrategic.com` is
+**not yet set up** — no Cloudflare DNS record exists for it. Use the `.netlify.app` URL below until
+that custom domain is actually added under Domain management on this Netlify site.
 
-## Linking this to the `halo-lead-exchange` Netlify site (one-time, manual — do this in the Netlify dashboard)
+## Linking this to the `halo-lead-exchange` Netlify site — already done
 
-A new Netlify project called `halo-lead-exchange` already exists in your account
-(https://app.netlify.com/projects/halo-lead-exchange), but it has no deploy yet because linking a site
-to a Git repository + subfolder isn't something available through this session's tools. From the
-Netlify dashboard, on the `halo-lead-exchange` project:
+The site is linked and deploying automatically on every push to `main`. The steps below are kept for
+reference only, in case the link ever needs to be redone:
 
 1. **Site settings → Build & deploy → Link site to Git** → choose the `Halo-Strategic` GitHub repo.
 2. **Base directory:** `lead-exchange`
-3. **Build command:** `npm run build` (already set in `netlify.toml`, Netlify should pick this up automatically once the base directory is set)
-4. **Publish directory:** `.next` (also already set in `netlify.toml`)
-5. Deploy. Netlify will install dependencies, build, and serve the app.
-6. Once you're ready for a custom domain, add `leads.halostrategic.com` under **Domain management** on
-   this site — Netlify will give you the exact DNS record to add in Cloudflare.
+3. **Build command:** `npm run build` (set in `netlify.toml`)
+4. **Publish directory:** `.next` (set in `netlify.toml`)
+5. Once ready for a custom domain, add `leads.halostrategic.com` under **Domain management** on this
+   site — Netlify will give the exact DNS record to add in Cloudflare.
 
 ## Required environment variables (set in Netlify dashboard → Site settings → Environment variables)
 
@@ -40,17 +40,50 @@ Mark both as **secret** values when adding them in Netlify.
 
 ## Creating the first (and only, for now) admin account
 
-Once the site is deployed with the env vars above set, run this once (replace the placeholders):
+Once `ADMIN_SESSION_SECRET` and `ADMIN_SETUP_TOKEN` are set as env vars on the Netlify site (and a new
+deploy has run since setting them — env var changes need a redeploy to take effect), run this once
+(replace the placeholders):
 
 ```
-curl -X POST https://leads.halostrategic.com/api/admin/setup \
+curl -X POST https://halo-lead-exchange.netlify.app/api/admin/setup \
   -H "Content-Type: application/json" \
   -H "x-admin-setup-token: <your ADMIN_SETUP_TOKEN value>" \
   -d '{"email":"you@halostrategic.com","password":"<a real password, 12+ characters>"}'
 ```
 
-This only works once — a second call returns 409 once any admin account exists. After this, sign in
-at `/admin/login`.
+(Once `leads.halostrategic.com` is set up as a custom domain, this URL changes to that — not before.)
+
+**What this does, exactly:**
+- Checks the `x-admin-setup-token` header against your `ADMIN_SETUP_TOKEN` env var, using a
+  constant-time comparison (not a plain string equality check, which would leak timing information
+  about how much of the token matched).
+- Refuses outright (503) if `ADMIN_SETUP_TOKEN` isn't set at all on this deployment.
+- Checks whether any row already exists in the `admin_users` table. If one does, it returns 409 and
+  does nothing — **this is what makes it one-time**, not a time-based lock.
+- If the token is valid and no admin exists yet, it hashes your password with bcrypt (12 rounds) and
+  creates exactly one admin account with the `owner` role, then logs the creation in the audit log.
+
+**Can it be used more than once?** No — not because of the token, but because of the `admin_users`
+row-count check. Even with a valid token, a second call always returns 409 once the first admin exists.
+
+**Does it create the account securely?** Yes, as far as the account-creation step itself goes: the
+token check is constant-time, the password is bcrypt-hashed (never stored in plaintext), and the
+resulting session cookie (once you log in) is HMAC-signed and httpOnly. The weakest link is the
+password you choose — use something genuinely strong, this account can approve buyers and will
+eventually gate real homeowner data.
+
+**If the bootstrap fails (wrong token, weak password, network error):** nothing is created — the
+`admin_users` table stays empty and you can just retry the same command. The failure modes that return
+an error (400, 403, 503) never insert a row.
+
+**If you succeed but then lose the password:** there's no password-reset flow yet (not built). Recovery
+right now means deleting that one row from the `admin_users` table directly (via `netlify database
+connect` from a machine with the Netlify CLI authenticated, or ask me once I have equivalent access)
+and running the bootstrap command again — it only refuses while a row exists, so removing it reopens
+the one-time window. This is a real gap worth closing (a proper password-reset flow) before this
+account becomes load-bearing for daily operation.
+
+After a successful bootstrap, sign in at `/admin/login`.
 
 ## Local development
 

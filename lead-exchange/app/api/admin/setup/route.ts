@@ -1,6 +1,14 @@
 import { getDatabase } from '@netlify/database';
 import bcrypt from 'bcryptjs';
+import { timingSafeEqual } from 'crypto';
 import { NextRequest, NextResponse } from 'next/server';
+
+function constantTimeEquals(a: string, b: string): boolean {
+  const bufA = Buffer.from(a);
+  const bufB = Buffer.from(b);
+  if (bufA.length !== bufB.length) return false;
+  return timingSafeEqual(bufA, bufB);
+}
 
 /**
  * One-time bootstrap: creates the first admin account. No public registration exists anywhere
@@ -15,7 +23,7 @@ export async function POST(req: NextRequest) {
   }
 
   const providedToken = req.headers.get('x-admin-setup-token');
-  if (!providedToken || providedToken !== setupToken) {
+  if (!providedToken || !constantTimeEquals(providedToken, setupToken)) {
     return NextResponse.json({ error: 'Invalid or missing setup token.' }, { status: 403 });
   }
 
