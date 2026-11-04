@@ -1,4 +1,4 @@
-﻿# Reverse proxy into the separate Lead Exchange Next.js app/deployment. Status 200 makes this a
+# Reverse proxy into the separate Lead Exchange Next.js app/deployment. Status 200 makes this a
 # transparent proxy, not a redirect -- the browser URL bar stays on halostrategic.com throughout.
 # Both the exact section root and the wildcard are needed: Netlify's "/*" splat rule does not match
 # the bare "/leads-exchange" path with no trailing segment.
