@@ -1,5 +1,6 @@
 import { getDatabase } from '@netlify/database';
 import { NextRequest, NextResponse } from 'next/server';
+import { randomUUID } from 'crypto';
 
 // Current versions of the documents a buyer agrees to during self-service application.
 // Bump these strings whenever the underlying policy/terms content changes, so historical
@@ -213,7 +214,7 @@ export async function POST(req: NextRequest) {
         $26,$27,$28,$29,$30,$31,$32,$33,$34,
         $35,$36,$37,$38,$39,$40,$41,$42,
         $43,$44,$45,$46,$47,$48,$49,$50,$51,
-        'PENDING_REVIEW', 'PENDING', $52, $53
+        $52, 'PENDING_REVIEW', $53, $54, $55
       )
       RETURNING id`,
       [
@@ -234,8 +235,15 @@ export async function POST(req: NextRequest) {
         now, BUYER_TERMS_VERSION,
         now, REPLACEMENT_POLICY_VERSION,
         body.confirmed_payment_before_release_understanding, body.agreed_pii_handling,
-        body.agreed_account_notifications, body.marketing_consent ?? false,
-        score, notes.join(' '),
+        body.agreed_account_notifications,
+        body.marketing_consent ?? false,
+        // Temporary unique placeholder for application_reference (NOT NULL UNIQUE) until the
+        // real HLX-BYR-xxxxxx reference is computed from the serial id below. A fixed literal
+        // here (the original bug) would collide under the UNIQUE constraint on a second
+        // concurrent application.
+        `PENDING-${randomUUID()}`,
+        score,
+        notes.join(' '),
       ]
     );
 
