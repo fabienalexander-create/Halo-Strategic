@@ -1,5 +1,6 @@
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
+import Link from 'next/link';
 import { verifySessionToken, SESSION_COOKIE_NAME } from '../../lib/adminSession';
 import AdminLogoutButton from './AdminLogoutButton';
 
@@ -20,10 +21,14 @@ export default function AdminHomePage() {
         <div className="eyebrow">Admin</div>
         <h1 style={{ fontSize: '1.6rem', marginBottom: 12 }}>Signed in as {session.email}</h1>
         <p style={{ color: 'var(--slate)' }}>Role: {session.role}</p>
+        <p style={{ marginTop: 20 }}>
+          <Link href="/admin/applications" className="btn btn-bronze">
+            Buyer Applications
+          </Link>
+        </p>
         <div className="disclaimer-box" style={{ marginTop: 20 }}>
-          Priority 1 (admin authentication) is working. Application review, lead management, buyer
-          profiles, and inventory controls (Priorities 2&ndash;5) are not built yet &mdash; this page
-          is intentionally just a signed-in landing spot for now.
+          Priority 2 (application review) is working. Lead management, buyer commercial profiles
+          beyond the review queue, and inventory controls (Priorities 3&ndash;5) are not built yet.
         </div>
         <AdminLogoutButton />
       </div>
