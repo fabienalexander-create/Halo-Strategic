@@ -3,13 +3,9 @@
 # Both the exact section root and the wildcard are needed: Netlify's "/*" splat rule does not match
 # the bare "/leads-exchange" path with no trailing segment.
 #
-# TEMPORARY FOR THIS PR'S TESTING ONLY: pointed at this PR's own Lead Exchange deploy preview
-# (deploy-preview-40--halo-lead-exchange.netlify.app) rather than the production
-# halo-lead-exchange.netlify.app, because production doesn't have this branch's basePath changes
-# yet -- proxying to it would test nothing. Will be switched back to the production URL below in a
-# follow-up commit before this PR is merged.
-/leads-exchange        https://deploy-preview-40--halo-lead-exchange.netlify.app/leads-exchange        200
-/leads-exchange/*       https://deploy-preview-40--halo-lead-exchange.netlify.app/leads-exchange/:splat 200
+# Proxies to the production Lead Exchange deployment (halo-lead-exchange.netlify.app).
+/leads-exchange        https://halo-lead-exchange.netlify.app/leads-exchange        200
+/leads-exchange/*       https://halo-lead-exchange.netlify.app/leads-exchange/:splat 200
 
 /index.html                  /                            301!
 /about.html                  /about                       301!
