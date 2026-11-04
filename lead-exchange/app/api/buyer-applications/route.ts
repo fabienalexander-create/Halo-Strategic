@@ -5,7 +5,10 @@ import { randomUUID } from 'crypto';
 // Current versions of the documents a buyer agrees to during self-service application.
 // Bump these strings whenever the underlying policy/terms content changes, so historical
 // agreements stay tied to the version actually shown at the time (Phase 1 §10/§7).
-const BUYER_TERMS_VERSION = '2026-11-04-draft';
+const BUYER_TERMS_VERSION = '2026-11-04-v0.1';
+// Replacement Policy is unaffected by today's Buyer Terms/Privacy Policy approval -- the
+// refund-policy page itself still says "confirmed commercially... not yet reviewed by a
+// solicitor", so this stays a draft version until that review happens separately.
 const REPLACEMENT_POLICY_VERSION = '2026-11-04-draft';
 
 const CURRENT_INDUSTRY_SLUG = 'spray_foam_removal';
