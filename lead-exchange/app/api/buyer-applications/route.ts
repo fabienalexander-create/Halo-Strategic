@@ -1,6 +1,8 @@
 import { getDatabase } from '@netlify/database';
 import { NextRequest, NextResponse } from 'next/server';
 import { randomUUID } from 'crypto';
+import { sendBuyerEmail } from '../../../lib/email';
+import { applicationReceivedEmail } from '../../../lib/emailTemplates';
 
 // Current versions of the documents a buyer agrees to during self-service application.
 // Bump these strings whenever the underlying policy/terms content changes, so historical
@@ -266,6 +268,15 @@ export async function POST(req: NextRequest) {
     );
 
     await client.query('COMMIT');
+
+    // Sent after commit, and never allowed to throw -- a failed email must never undo an
+    // already-saved application. sendBuyerEmail logs the attempt itself and only returns.
+    await sendBuyerEmail(db, {
+      buyerId,
+      emailType: 'APPLICATION_RECEIVED',
+      to: body.contact_email,
+      ...applicationReceivedEmail(body.contact_name),
+    });
 
     return NextResponse.json(
       {

@@ -1,6 +1,8 @@
 import { getDatabase } from '@netlify/database';
 import { NextRequest, NextResponse } from 'next/server';
 import { requireAdmin } from '../../../../../../lib/requireAdmin';
+import { sendBuyerEmail } from '../../../../../../lib/email';
+import { applicationApprovedForCommercialReviewEmail } from '../../../../../../lib/emailTemplates';
 
 type Action = 'approve' | 'reject' | 'request_info';
 
@@ -37,7 +39,7 @@ export async function POST(req: NextRequest, { params }: { params: { reference: 
 
   try {
     const db = getDatabase();
-    const buyers = await db.sql`SELECT id, application_status FROM buyers WHERE application_reference = ${params.reference}`;
+    const buyers = await db.sql`SELECT id, application_status, contact_name, contact_email FROM buyers WHERE application_reference = ${params.reference}`;
     if (buyers.length === 0) {
       return NextResponse.json({ error: 'No matching application found.' }, { status: 404 });
     }
@@ -67,6 +69,19 @@ export async function POST(req: NextRequest, { params }: { params: { reference: 
         ${JSON.stringify({ application_status: transition.to, reason: body.reason ?? null })}
       )
     `;
+
+    // Sent after the decision is already recorded, and never allowed to throw -- a failed email
+    // must never undo an admin decision. Only the approve action triggers this; reject and
+    // request_info stay fully manual, per Fabien's brief. The wording deliberately does not say
+    // the buyer is active -- approval here means approved to proceed to commercial discussion.
+    if (body.action === 'approve') {
+      await sendBuyerEmail(db, {
+        buyerId: buyer.id,
+        emailType: 'APPLICATION_APPROVED_FOR_COMMERCIAL_REVIEW',
+        to: buyer.contact_email,
+        ...applicationApprovedForCommercialReviewEmail(buyer.contact_name),
+      });
+    }
 
     return NextResponse.json({ application_status: transition.to });
   } catch (err) {
