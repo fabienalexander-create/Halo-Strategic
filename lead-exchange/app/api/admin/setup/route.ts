@@ -10,13 +10,27 @@ function constantTimeEquals(a: string, b: string): boolean {
   return timingSafeEqual(bufA, bufB);
 }
 
+// Explicit allowlist, checked against the request's own Host header -- not Netlify's CONTEXT
+// build variable, whose availability inside a running serverless function at request time isn't
+// something this route should assume without direct verification. Deploy previews and branch
+// deploys get distinct subdomains (e.g. <deploy-id>--halo-lead-exchange.netlify.app), so they're
+// excluded by construction, not by trusting an env var. Add leads.halostrategic.com here once that
+// custom domain is actually configured -- it is NOT live yet (see README).
+const ALLOWED_SETUP_HOSTS = ['halo-lead-exchange.netlify.app'];
+
 /**
  * One-time bootstrap: creates the first admin account. No public registration exists anywhere
  * else in this application. This endpoint refuses to run a second time (once any admin_users
- * row exists) and requires a bootstrap token set as an env var — never committed, never
- * guessable from the client.
+ * row exists), requires a bootstrap token set as an env var — never committed, never guessable
+ * from the client — and refuses to run anywhere except the real production hostname, so a deploy
+ * preview or branch deploy can never be used to bootstrap a rogue admin account.
  */
 export async function POST(req: NextRequest) {
+  const host = req.headers.get('host');
+  if (!host || !ALLOWED_SETUP_HOSTS.includes(host)) {
+    return NextResponse.json({ error: 'Admin setup is not available on this deployment.' }, { status: 403 });
+  }
+
   const setupToken = process.env.ADMIN_SETUP_TOKEN;
   if (!setupToken) {
     return NextResponse.json({ error: 'Admin setup is not configured on this deployment.' }, { status: 503 });
