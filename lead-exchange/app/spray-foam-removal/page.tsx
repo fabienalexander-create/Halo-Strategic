@@ -12,9 +12,14 @@ export default function SprayFoamRemovalPage() {
             criteria before any enquiry reaches a buyer. This is a pilot market &mdash; built properly
             before we expand to others.
           </p>
-          <Link href="/become-a-buyer" className="btn btn-bronze">
-            Apply to Become a Buyer
-          </Link>
+          <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
+            <Link href="/become-a-buyer" className="btn btn-bronze">
+              Apply to Become a Buyer
+            </Link>
+            <Link href="/spray-foam-removal/request-a-quote" className="btn btn-bronze">
+              Homeowner? Request a Quote
+            </Link>
+          </div>
         </div>
       </section>
 
