@@ -344,3 +344,261 @@ nav.main-nav a:hover {
     flex-direction: column;
   }
 }
+
+/* ------------------------------------------------------------------------------------------
+   Homepage visual refinement (illustrated hero, illustrated process, gentle reveals).
+   All selectors below are new and homepage-only; nothing above is changed.
+   Motion follows the Design Bible: 120-160ms hover, ~300ms reveals, ease-out, no bounce,
+   and nothing moves for visitors who prefer reduced motion.
+   ------------------------------------------------------------------------------------------ */
+
+.hero-split {
+  text-align: left;
+  padding: 48px 0 40px;
+}
+
+.hero-grid {
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: 40px;
+  align-items: center;
+}
+
+.hero-split h1 {
+  margin: 0 0 20px;
+}
+
+.hero-split .lead {
+  margin: 0 0 28px;
+}
+
+.hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px 24px;
+}
+
+.hero-homeowner-link {
+  color: var(--navy);
+  font-weight: 600;
+  font-size: 0.95rem;
+  text-decoration: none;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 2px;
+  transition: border-color 140ms ease-out, color 140ms ease-out;
+}
+
+.hero-homeowner-link:hover {
+  color: var(--navy-deep);
+  border-color: var(--navy);
+}
+
+.hero-split .btn:focus-visible,
+.hero-homeowner-link:focus-visible,
+.process + .btn:focus-visible {
+  outline: 2px solid var(--bronze);
+  outline-offset: 2px;
+}
+
+.hero-art {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 20px 16px 8px;
+}
+
+.loft-xsection {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* Illustrated process: same three stage groups, icons on a connecting line */
+.process {
+  list-style: none;
+  margin: 28px 0 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  position: relative;
+}
+
+.process-line {
+  position: absolute;
+  top: 28px;
+  left: calc(100% / 6);
+  right: calc(100% / 6);
+  height: 1px;
+  background: var(--bronze);
+  transform-origin: left center;
+}
+
+.process-step {
+  position: relative;
+  text-align: center;
+  padding: 0 8px;
+}
+
+.process-icon {
+  width: 56px;
+  height: 56px;
+  margin: 0 auto 16px;
+  border-radius: 50%;
+  background: var(--surface);
+  border: 1px solid var(--navy);
+  color: var(--navy);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.process-icon svg {
+  width: 26px;
+  height: 26px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.process-step .k {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.75rem;
+  color: var(--slate);
+  letter-spacing: 0.08em;
+  margin-bottom: 6px;
+}
+
+.process-step h3 {
+  font-size: 1.1rem;
+  margin-bottom: 6px;
+}
+
+.process-step p {
+  font-size: 0.95rem;
+  color: var(--slate);
+  margin: 0 auto;
+  max-width: 22em;
+}
+
+/* Scroll reveals: only active once JS has run (html.reveal-ready) */
+.reveal-ready [data-reveal] {
+  opacity: 0;
+  transform: translateY(12px);
+  transition: opacity 300ms ease-out, transform 300ms ease-out;
+}
+
+.reveal-ready [data-reveal].is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+.reveal-ready .hero-art .xs-foam {
+  opacity: 0;
+  transition: opacity 320ms ease-out 240ms;
+}
+
+.reveal-ready .hero-art.is-visible .xs-foam {
+  opacity: 1;
+}
+
+.reveal-ready .process .process-line {
+  transform: scaleX(0);
+  transition: transform 320ms ease-out 120ms;
+}
+
+.reveal-ready .process.is-visible .process-line {
+  transform: scaleX(1);
+}
+
+.reveal-ready .process .process-step {
+  opacity: 0;
+  transition: opacity 300ms ease-out;
+  transition-delay: calc(var(--i, 0) * 120ms + 200ms);
+}
+
+.reveal-ready .process.is-visible .process-step {
+  opacity: 1;
+}
+
+@media (max-width: 760px) {
+  .hero-grid {
+    grid-template-columns: 1fr;
+    gap: 28px;
+  }
+  .hero-split {
+    padding: 24px 0 32px;
+  }
+  .hero-split h1 {
+    margin-bottom: 14px;
+  }
+  .hero-split .lead {
+    font-size: 1rem;
+    margin: 20px 0 0;
+  }
+  /* phones: calls to action straight after the headline, intro paragraph below them */
+  .hero-copy {
+    display: flex;
+    flex-direction: column;
+  }
+  .hero-copy .eyebrow { order: 1; }
+  .hero-copy h1 { order: 2; }
+  .hero-copy .hero-actions { order: 3; }
+  .hero-copy .lead { order: 4; }
+  .hero-art {
+    max-width: 420px;
+  }
+
+  /* process becomes a vertical timeline: icon left, text right, line down the icons */
+  .process {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  .process-line {
+    top: 28px;
+    bottom: 28px;
+    left: 28px;
+    right: auto;
+    width: 1px;
+    height: auto;
+    transform-origin: center top;
+  }
+  .reveal-ready .process .process-line {
+    transform: scaleY(0);
+  }
+  .reveal-ready .process.is-visible .process-line {
+    transform: scaleY(1);
+  }
+  .process-step {
+    display: grid;
+    grid-template-columns: 56px 1fr;
+    column-gap: 16px;
+    text-align: left;
+    padding: 0;
+  }
+  .process-icon {
+    grid-row: 1 / span 3;
+    margin: 0;
+  }
+  .process-step p {
+    margin: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal-ready [data-reveal],
+  .reveal-ready .hero-art .xs-foam,
+  .reveal-ready .process .process-line,
+  .reveal-ready .process .process-step {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+  .hero-homeowner-link {
+    transition: none;
+  }
+}
