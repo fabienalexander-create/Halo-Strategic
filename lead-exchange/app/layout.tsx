@@ -1,7 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import './globals.css';
-import DraftBanner from './components/DraftBanner';
 
 export const metadata: Metadata = {
   title: 'Halo Lead Exchange',
@@ -22,7 +21,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         />
       </head>
       <body>
-        <DraftBanner />
         <div className="top-bar">
           <Link href="/" className="wordmark">
             HALO STRATEGIC
