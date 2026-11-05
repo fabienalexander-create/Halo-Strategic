@@ -525,7 +525,59 @@ nav.main-nav a:hover {
   opacity: 1;
 }
 
+/* "More from Halo Strategic" link cards (clickable, so they may lift on hover) */
+.site-links {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  margin-top: 24px;
+}
+
+.site-link {
+  display: block;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  text-decoration: none;
+  transition: box-shadow 160ms ease-out, border-color 160ms ease-out, transform 160ms ease-out;
+}
+
+.site-link:hover {
+  border-color: var(--slate);
+  box-shadow: 0 6px 18px rgba(16, 26, 48, 0.08);
+  transform: translateY(-2px);
+}
+
+.site-link:focus-visible {
+  outline: 2px solid var(--bronze);
+  outline-offset: 2px;
+}
+
+.site-link-title {
+  display: block;
+  font-family: 'Fraunces', serif;
+  font-weight: 500;
+  font-size: 1.1rem;
+  color: var(--navy-deep);
+  margin-bottom: 6px;
+}
+
+.site-link-title::after {
+  content: ' \2192';
+  color: var(--bronze);
+}
+
+.site-link-body {
+  display: block;
+  font-size: 0.95rem;
+  color: var(--slate);
+}
+
 @media (max-width: 760px) {
+  .site-links {
+    grid-template-columns: 1fr;
+  }
   .hero-grid {
     grid-template-columns: 1fr;
     gap: 28px;
@@ -598,7 +650,11 @@ nav.main-nav a:hover {
     transform: none !important;
     transition: none !important;
   }
-  .hero-homeowner-link {
+  .hero-homeowner-link,
+  .site-link {
     transition: none;
+  }
+  .site-link:hover {
+    transform: none;
   }
 }
