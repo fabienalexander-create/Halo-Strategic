@@ -74,11 +74,25 @@ export default function HomePage() {
 
       <section>
         <div className="container" data-reveal>
-          <div className="disclaimer-box">
-            <strong>A note on the numbers you&rsquo;ll see here.</strong> This platform is in its pilot
-            phase. We do not publish invented customer reviews, fabricated lead volumes, or performance
-            claims we can&rsquo;t evidence from our own platform records. Where we don&rsquo;t yet have
-            real data to show, we say so rather than make something up.
+          <div className="eyebrow">More From Halo Strategic</div>
+          <h2 style={{ fontSize: '1.5rem', marginBottom: 16 }}>Behind the Lead Exchange.</h2>
+          <div className="site-links">
+            <a className="site-link" href="https://halostrategic.com">
+              <span className="site-link-title">Halo Strategic</span>
+              <span className="site-link-body">The commercial growth consultancy that runs the Lead Exchange.</span>
+            </a>
+            <a className="site-link" href="https://halostrategic.com/about">
+              <span className="site-link-title">About Fabien</span>
+              <span className="site-link-body">Who is behind Halo Strategic and how we work.</span>
+            </a>
+            <a className="site-link" href="https://halostrategic.com/insights/">
+              <span className="site-link-title">Halo Insights</span>
+              <span className="site-link-body">Articles on finding what is really holding a business back.</span>
+            </a>
+            <Link className="site-link" href="/insights">
+              <span className="site-link-title">Lead Exchange Insights</span>
+              <span className="site-link-body">Articles for spray foam removal and solar contractors.</span>
+            </Link>
           </div>
         </div>
       </section>
