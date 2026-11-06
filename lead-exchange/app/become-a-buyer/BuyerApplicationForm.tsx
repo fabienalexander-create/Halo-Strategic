@@ -5,6 +5,12 @@ import { apiPath } from '../../lib/basePath';
 
 type Answers = Record<string, string | boolean | number | string[] | undefined>;
 
+const INDUSTRY_LABELS: Record<string, string> = {
+  spray_foam_removal: 'Spray Foam Removal',
+  solar_battery: 'Solar & Battery',
+  roofing: 'Roofing',
+};
+
 function TextField({
   label, name, type = 'text', required, hint, value, onChange,
 }: { label: string; name: string; type?: string; required?: boolean; hint?: string; value: string; onChange: (v: string) => void }) {
@@ -181,9 +187,9 @@ export default function BuyerApplicationForm() {
         label="Which industry are you applying for?"
         name="industry_slug"
         required
-        options={['Spray Foam Removal', 'Solar & Battery']}
-        value={str('industry_slug') === 'spray_foam_removal' ? 'Spray Foam Removal' : str('industry_slug') === 'solar_battery' ? 'Solar & Battery' : ''}
-        onChange={(v) => set('industry_slug', v === 'Spray Foam Removal' ? 'spray_foam_removal' : v === 'Solar & Battery' ? 'solar_battery' : '')}
+        options={Object.values(INDUSTRY_LABELS)}
+        value={INDUSTRY_LABELS[str('industry_slug')] ?? ''}
+        onChange={(v) => set('industry_slug', Object.keys(INDUSTRY_LABELS).find((slug) => INDUSTRY_LABELS[slug] === v) ?? '')}
       />
       <TextField label="Company name" name="company_name" required value={str('company_name')} onChange={(v) => set('company_name', v)} />
       <TextField label="Contact name" name="contact_name" required value={str('contact_name')} onChange={(v) => set('contact_name', v)} />

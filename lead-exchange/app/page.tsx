@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import LoftCrossSection from './components/LoftCrossSection';
 import SolarBatteryIllustration from './components/SolarBatteryIllustration';
+import RoofingIllustration from './components/RoofingIllustration';
 import ProcessSteps from './components/ProcessSteps';
 import Reveal from './components/Reveal';
 
@@ -83,19 +84,15 @@ export default function HomePage() {
               </Link>
             </div>
             <div className="industry-card">
-              <svg className="industry-card-art" viewBox="0 0 480 380" role="img" aria-label="Roofing, coming soon">
-                <g fill="none" stroke="var(--border)" strokeWidth="2" strokeLinejoin="round">
-                  <polyline points="56,206 240,52 424,206" />
-                  <line x1="92" y1="206" x2="92" y2="340" />
-                  <line x1="388" y1="206" x2="388" y2="340" />
-                  <line x1="20" y1="340" x2="460" y2="340" />
-                </g>
-              </svg>
-              <span className="industry-card-badge industry-card-badge--soon">Coming soon</span>
+              <RoofingIllustration />
+              <span className="industry-card-badge">New market</span>
               <h3>Roofing</h3>
-              <p>Roofing repairs, replacement and related work &mdash; opening once Solar &amp; Battery is established.</p>
+              <p>
+                Homeowners needing a roof repair or replacement, qualified before any enquiry reaches a
+                buyer.
+              </p>
               <Link href="/roofing" className="btn btn-bronze">
-                Learn More
+                Explore Roofing
               </Link>
             </div>
           </div>

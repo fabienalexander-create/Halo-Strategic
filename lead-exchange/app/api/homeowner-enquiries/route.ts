@@ -40,6 +40,10 @@ interface HomeownerEnquiryPayload {
   interest_type?: string;
   roof_type?: string;
   existing_solar?: string;
+  // Roofing fields
+  work_type?: string;
+  urgency?: string;
+  issue_description?: string;
   consent_contact: boolean;
   consent_share_buyer: boolean;
   privacy_consent: boolean;
@@ -70,11 +74,13 @@ const REQUIRED_FIELDS: (keyof HomeownerEnquiryPayload)[] = [
 const QUALIFICATION_FIELDS: Record<string, (keyof HomeownerEnquiryPayload)[]> = {
   spray_foam_removal: ['foam_location', 'foam_type', 'reason_for_removal', 'timeframe', 'roof_access', 'previous_quotes'],
   solar_battery: ['interest_type', 'roof_type', 'existing_solar', 'timeframe'],
+  roofing: ['work_type', 'roof_type', 'urgency', 'issue_description', 'timeframe'],
 };
 
 const SERVICE_REQUIREMENT_LABEL: Record<string, string> = {
   spray_foam_removal: 'Spray Foam Removal',
   solar_battery: 'Solar & Battery Installation',
+  roofing: 'Roofing',
 };
 
 export async function POST(req: NextRequest) {
