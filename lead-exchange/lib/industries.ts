@@ -25,8 +25,13 @@ export interface BuyerReplacementPolicyConfig {
   // the applicant as if it were an approved policy.
   version: string;
   // When false, the applicant is shown honest "terms agreed individually, no published policy
-  // yet" wording instead of a reference to the (spray-foam-only) Refund & Replacement Policy page.
+  // yet" wording instead of a reference to a published policy page.
   hasPublishedPolicy: boolean;
+  // Which published policy page this industry's acknowledgement refers to. Only meaningful when
+  // hasPublishedPolicy is true -- Spray Foam Removal and Solar & Battery/Roofing deliberately
+  // point at two different pages, since they are two different approved policies, not one shared
+  // document silently reused across industries.
+  policyUrl?: string;
 }
 
 export const HOMEOWNER_CONSENT_CONFIG: Record<IndustrySlug, HomeownerConsentConfig> = {
@@ -52,14 +57,19 @@ export const HOMEOWNER_CONSENT_CONFIG: Record<IndustrySlug, HomeownerConsentConf
 
 // Per Fabien's explicit instruction: do not reuse the Spray Foam Removal Refund & Replacement
 // Policy's version string for any other industry. That policy's own §4 scopes it to Spray Foam
-// Removal only. Until a Solar & Battery (or Roofing) policy is drafted and approved, a buyer
-// application in that industry records this literal marker instead of a real version.
+// Removal only. Until an industry's own policy is drafted and approved, a buyer application in
+// that industry records this literal marker instead of a real version.
 export const NOT_YET_PUBLISHED_REPLACEMENT_POLICY = 'NOT_YET_PUBLISHED';
 
+// Solar & Battery and Roofing moved onto the standard Lead Replacement Policy (solicitor-approved,
+// effective 1 January 2027) -- a separate, dedicated page from Spray Foam Removal's own Refund &
+// Replacement Policy, not a reuse of its version string or content. Spray Foam Removal keeps its
+// existing, separately approved policy unchanged: adopting the standard policy for Spray Foam too
+// is a deliberate future decision, not something this change makes silently.
 export const BUYER_REPLACEMENT_POLICY_CONFIG: Record<IndustrySlug, BuyerReplacementPolicyConfig> = {
-  spray_foam_removal: { version: '2026-11-04-v0.1', hasPublishedPolicy: true },
-  solar_battery: { version: NOT_YET_PUBLISHED_REPLACEMENT_POLICY, hasPublishedPolicy: false },
-  roofing: { version: NOT_YET_PUBLISHED_REPLACEMENT_POLICY, hasPublishedPolicy: false },
+  spray_foam_removal: { version: '2026-11-04-v0.1', hasPublishedPolicy: true, policyUrl: '/refund-policy' },
+  solar_battery: { version: '2027-01-01-v1.0', hasPublishedPolicy: true, policyUrl: '/lead-replacement-policy' },
+  roofing: { version: '2027-01-01-v1.0', hasPublishedPolicy: true, policyUrl: '/lead-replacement-policy' },
 };
 
 export function isConfiguredIndustrySlug(slug: unknown): slug is IndustrySlug {

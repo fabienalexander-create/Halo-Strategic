@@ -83,12 +83,19 @@ export default function SolarBatteryPage() {
       <section>
         <div className="container">
           <div className="eyebrow">Lead Acceptance &amp; Replacement</div>
-          <h2 style={{ fontSize: '1.5rem', marginBottom: 16 }}>Replacement terms, agreed individually for now.</h2>
+          <h2 style={{ fontSize: '1.5rem', marginBottom: 16 }}>Our Lead Replacement Policy.</h2>
           <p>
-            Solar &amp; Battery is a new market on the Lead Exchange, and we don&rsquo;t yet have a
-            published replacement policy for it the way Spray Foam Removal does. Until one exists, lead
-            acceptance and replacement terms are agreed individually with each approved buyer as part of
-            onboarding, not assumed from another vertical&rsquo;s policy.
+            From 1 January 2027, if a lead doesn&rsquo;t meet the agreed qualification criteria &mdash;
+            invalid contact details, no genuine interest, the wrong service, or a duplicate &mdash; it&rsquo;s
+            replaced with an equivalent lead at no additional charge, if reported within 3 calendar days of
+            delivery. This is a <strong>replacement, not an automatic cash refund</strong>. A lead that
+            simply doesn&rsquo;t convert into a sale, or a homeowner who changes their mind after being
+            reached, doesn&rsquo;t on its own qualify &mdash; see our{' '}
+            <Link href="/lead-replacement-policy" style={{ color: 'var(--bronze)' }}>
+              full Lead Replacement Policy
+            </Link>{' '}
+            for the exact criteria and effective date. This policy is Solar &amp; Battery and Roofing&rsquo;s
+            own standard policy, separate from Spray Foam Removal&rsquo;s.
           </p>
         </div>
       </section>

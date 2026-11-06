@@ -1,7 +1,9 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 import { apiPath } from '../../lib/basePath';
+import { BUYER_REPLACEMENT_POLICY_CONFIG, isConfiguredIndustrySlug } from '../../lib/industries';
 
 type Answers = Record<string, string | boolean | number | string[] | undefined>;
 
@@ -76,6 +78,41 @@ function Checkbox({
     <div className="form-row" style={{ display: 'flex', alignItems: 'flex-start', gap: 8 }}>
       <input type="checkbox" id={name} name={name} checked={checked} onChange={(e) => onChange(e.target.checked)} style={{ width: 'auto', marginTop: 3 }} />
       <label htmlFor={name} style={{ fontWeight: 400, fontSize: '0.9rem', marginBottom: 0 }}>{label}</label>
+    </div>
+  );
+}
+
+// Industry-aware, since each industry's acknowledgement can point at a different published
+// policy (or none yet) -- never the same wording or link reused across industries.
+function ReplacementPolicyAcknowledgement({
+  industrySlug, checked, onChange,
+}: { industrySlug: string; checked: boolean; onChange: (v: boolean) => void }) {
+  const config = isConfiguredIndustrySlug(industrySlug) ? BUYER_REPLACEMENT_POLICY_CONFIG[industrySlug] : undefined;
+  const label = config?.hasPublishedPolicy
+    ? (
+      <>
+        I acknowledge the{' '}
+        <Link href={config.policyUrl ?? '#'} style={{ color: 'var(--bronze)' }}>
+          Lead Replacement Policy
+        </Link>
+        .
+      </>
+    )
+    : 'I understand that, for this industry, lead acceptance and replacement terms are agreed individually during onboarding, as there is no published Replacement Policy for it yet.';
+
+  return (
+    <div className="form-row" style={{ display: 'flex', alignItems: 'flex-start', gap: 8 }}>
+      <input
+        type="checkbox"
+        id="acknowledged_replacement_policy"
+        name="acknowledged_replacement_policy"
+        checked={checked}
+        onChange={(e) => onChange(e.target.checked)}
+        style={{ width: 'auto', marginTop: 3 }}
+      />
+      <label htmlFor="acknowledged_replacement_policy" style={{ fontWeight: 400, fontSize: '0.9rem', marginBottom: 0 }}>
+        {label}
+      </label>
     </div>
   );
 }
@@ -249,13 +286,8 @@ export default function BuyerApplicationForm() {
       <Checkbox label="I confirm the business information provided is accurate." name="confirmed_info_accurate" checked={bool('confirmed_info_accurate') ?? false} onChange={(v) => set('confirmed_info_accurate', v)} />
       <Checkbox label="I confirm the business can provide the advertised services." name="confirmed_can_deliver_services" checked={bool('confirmed_can_deliver_services') ?? false} onChange={(v) => set('confirmed_can_deliver_services', v)} />
       <Checkbox label="I agree to the Buyer Terms." name="agreed_buyer_terms" checked={bool('agreed_buyer_terms') ?? false} onChange={(v) => set('agreed_buyer_terms', v)} />
-      <Checkbox
-        label={
-          str('industry_slug') === 'spray_foam_removal'
-            ? 'I acknowledge the Lead Replacement Policy.'
-            : 'I understand that, for this industry, lead acceptance and replacement terms are agreed individually during onboarding, as there is no published Replacement Policy for it yet.'
-        }
-        name="acknowledged_replacement_policy"
+      <ReplacementPolicyAcknowledgement
+        industrySlug={str('industry_slug')}
         checked={bool('acknowledged_replacement_policy') ?? false}
         onChange={(v) => set('acknowledged_replacement_policy', v)}
       />
