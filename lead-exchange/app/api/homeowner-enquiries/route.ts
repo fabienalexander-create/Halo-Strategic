@@ -96,21 +96,15 @@ export async function POST(req: NextRequest) {
   }
 
   // The server is authoritative on which industries exist and are open to submissions -- never
-  // trust the frontend's own routing to have picked a valid, live industry. Two independent
-  // checks: the slug must be one this route actually has consent/qualification config for, AND
-  // the database row for it must currently be enabled (so a configured-but-not-yet-launched
-  // industry, or one later paused, is still rejected).
+  // trust the frontend's own routing to have picked a valid, live industry. This first check is
+  // the cheap, no-database one: the slug must be one this route actually has consent/
+  // qualification config for. The second, database-backed check (industries.is_enabled) runs
+  // below, after the equally cheap field/consent checks -- so a malformed or incomplete request
+  // is rejected without a database round-trip at all, same ordering as /api/buyer-applications.
   if (!isConfiguredIndustrySlug(body.industry_slug)) {
     return NextResponse.json({ error: 'Unknown or unsupported industry.' }, { status: 400 });
   }
   const industrySlug = body.industry_slug;
-
-  const db = getDatabase();
-  const industryRows = await db.sql`SELECT id, is_enabled FROM industries WHERE slug = ${industrySlug}`;
-  if (industryRows.length === 0 || industryRows[0].is_enabled !== true) {
-    return NextResponse.json({ error: 'This industry is not currently accepting enquiries.' }, { status: 400 });
-  }
-  const industryId = industryRows[0].id as number;
 
   for (const field of REQUIRED_FIELDS) {
     if (!body[field]) {
@@ -132,6 +126,16 @@ export async function POST(req: NextRequest) {
   if (body.privacy_consent !== true) {
     return NextResponse.json({ error: 'You must confirm you have read the Privacy Policy.' }, { status: 400 });
   }
+
+  // Second, database-backed gate: the industry must currently be enabled (so a
+  // configured-but-not-yet-launched industry, or one later paused, is still rejected regardless
+  // of what the frontend offered).
+  const db = getDatabase();
+  const industryRows = await db.sql`SELECT id, is_enabled FROM industries WHERE slug = ${industrySlug}`;
+  if (industryRows.length === 0 || industryRows[0].is_enabled !== true) {
+    return NextResponse.json({ error: 'This industry is not currently accepting enquiries.' }, { status: 400 });
+  }
+  const industryId = industryRows[0].id as number;
 
   const consentConfig = HOMEOWNER_CONSENT_CONFIG[industrySlug];
   const qualificationFields = QUALIFICATION_FIELDS[industrySlug];
