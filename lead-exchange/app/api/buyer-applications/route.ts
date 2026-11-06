@@ -2,8 +2,14 @@ import { getDatabase } from '@netlify/database';
 import { NextRequest, NextResponse } from 'next/server';
 import { randomUUID } from 'crypto';
 import { attemptSend } from '../../../lib/email';
-import { applicationReceivedEmail } from '../../../lib/emailTemplates';
+import { adminNewApplicationEmail, applicationReceivedEmail } from '../../../lib/emailTemplates';
 import { BUYER_REPLACEMENT_POLICY_CONFIG, isConfiguredIndustrySlug } from '../../../lib/industries';
+
+const INDUSTRY_LABELS: Record<string, string> = {
+  spray_foam_removal: 'Spray Foam Removal',
+  solar_battery: 'Solar & Battery',
+  roofing: 'Roofing',
+};
 
 // Current version of the Buyer Terms every applicant agrees to, regardless of industry -- it
 // describes Halo's admin-mediated process generally (applications, payment-before-release, data
@@ -291,6 +297,22 @@ export async function POST(req: NextRequest) {
       [buyerId, body.contact_email]
     );
 
+    // Admin notification -- every admin_users address, same outbox/idempotency pattern as the
+    // applicant-facing email above, just a different email_type so the two can't collide under
+    // the (buyer_id, email_type) uniqueness constraint. Looked up from admin_users rather than a
+    // hardcoded address, so it stays correct as admins are added or changed.
+    const adminRows = await client.query(`SELECT email FROM admin_users ORDER BY id`);
+    const adminRecipient = adminRows.rows.map((row: { email: string }) => row.email).join(',');
+    const adminOutboxInsert = adminRecipient
+      ? await client.query(
+          `INSERT INTO transactional_emails (buyer_id, email_type, recipient, status)
+           VALUES ($1, 'ADMIN_NEW_APPLICATION', $2, 'PENDING')
+           ON CONFLICT (buyer_id, email_type) DO NOTHING
+           RETURNING id`,
+          [buyerId, adminRecipient]
+        )
+      : null;
+
     await client.query('COMMIT');
 
     // Sent after commit, and never allowed to throw -- a failed email must never undo an
@@ -299,6 +321,18 @@ export async function POST(req: NextRequest) {
     // nothing to attempt here -- a later retry, if ever needed, works off the existing row.
     if (outboxInsert.rows.length > 0) {
       await attemptSend(db, outboxInsert.rows[0].id, applicationReceivedEmail(body.contact_name));
+    }
+    if (adminOutboxInsert && adminOutboxInsert.rows.length > 0) {
+      await attemptSend(
+        db,
+        adminOutboxInsert.rows[0].id,
+        adminNewApplicationEmail({
+          companyName: body.company_name,
+          contactName: body.contact_name,
+          industryLabel: INDUSTRY_LABELS[industrySlug] ?? industrySlug,
+          applicationReference,
+        })
+      );
     }
 
     return NextResponse.json(
