@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { apiPath } from '../../../lib/basePath';
+import { HOMEOWNER_CONSENT_CONFIG } from '../../../lib/industries';
 
 type Answers = Record<string, string | boolean | undefined>;
 
@@ -76,7 +77,7 @@ export default function RequestQuoteForm() {
       const res = await fetch(apiPath('/api/homeowner-enquiries'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...a, bot_field: botField }),
+        body: JSON.stringify({ ...a, industry_slug: 'spray_foam_removal', bot_field: botField }),
       });
       const data = await res.json();
       if (!res.ok) {
@@ -205,7 +206,7 @@ export default function RequestQuoteForm() {
         onChange={(v) => set('consent_contact', v)}
       />
       <Checkbox
-        label="I'm happy for my details to be shared with a suitable spray foam removal business, so they can contact me about this enquiry, if Halo Strategic identifies one as a genuine fit."
+        label={HOMEOWNER_CONSENT_CONFIG.spray_foam_removal.shareBuyerLabel}
         name="consent_share_buyer"
         required
         checked={bool('consent_share_buyer')}

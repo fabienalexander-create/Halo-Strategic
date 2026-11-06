@@ -3,18 +3,16 @@ import { NextRequest, NextResponse } from 'next/server';
 import { randomUUID } from 'crypto';
 import { attemptSend } from '../../../lib/email';
 import { applicationReceivedEmail } from '../../../lib/emailTemplates';
+import { BUYER_REPLACEMENT_POLICY_CONFIG, isConfiguredIndustrySlug } from '../../../lib/industries';
 
-// Current versions of the documents a buyer agrees to during self-service application.
-// Bump these strings whenever the underlying policy/terms content changes, so historical
-// agreements stay tied to the version actually shown at the time (Phase 1 §10/§7).
+// Current version of the Buyer Terms every applicant agrees to, regardless of industry -- it
+// describes Halo's admin-mediated process generally (applications, payment-before-release, data
+// protection, liability) and isn't Spray-Foam-specific. Bump whenever its content changes, so
+// historical agreements stay tied to the wording actually shown at the time (Phase 1 §10/§7).
 const BUYER_TERMS_VERSION = '2026-11-04-v0.1';
-// Per Fabien's separate confirmation that solicitor review of the Replacement Policy is
-// complete too (alongside Buyer Terms and Privacy Policy), this now matches that approved version.
-const REPLACEMENT_POLICY_VERSION = '2026-11-04-v0.1';
-
-const CURRENT_INDUSTRY_SLUG = 'spray_foam_removal';
 
 interface BuyerApplicationPayload {
+  industry_slug?: string;
   company_name: string;
   website?: string;
   contact_name: string;
@@ -163,14 +161,28 @@ export async function POST(req: NextRequest) {
     );
   }
 
+  // The server is authoritative on which industries exist and are open to buyer applications --
+  // never trust the frontend's own industry dropdown to have offered only valid, live options.
+  if (!isConfiguredIndustrySlug(body.industry_slug)) {
+    return NextResponse.json({ error: 'Unknown or unsupported industry.' }, { status: 400 });
+  }
+  const industrySlug = body.industry_slug;
+
   const db = getDatabase();
 
+  const industryRows = await db.sql`SELECT id, is_enabled FROM industries WHERE slug = ${industrySlug}`;
+  if (industryRows.length === 0 || industryRows[0].is_enabled !== true) {
+    return NextResponse.json({ error: 'This industry is not currently accepting applications.' }, { status: 400 });
+  }
+
   // Prevent duplicate applications from the same business email for the same industry
-  // (brief §3: "Prevent duplicate applications and duplicate accounts.")
+  // (brief §3: "Prevent duplicate applications and duplicate accounts.") -- same business can
+  // apply once per industry, since this release keeps buyer identity single-industry (deferred:
+  // the buyer_industries migration for a true multi-industry buyer account).
   const existing = await db.sql`
     SELECT id, application_reference, application_status FROM buyers
     WHERE contact_email = ${body.contact_email}
-      AND industry_id = (SELECT id FROM industries WHERE slug = ${CURRENT_INDUSTRY_SLUG})
+      AND industry_id = (SELECT id FROM industries WHERE slug = ${industrySlug})
   `;
   if (existing.length > 0) {
     return NextResponse.json(
@@ -185,6 +197,7 @@ export async function POST(req: NextRequest) {
 
   const { score, notes } = computeSuitabilityScore(body);
   const now = new Date().toISOString();
+  const replacementPolicy = BUYER_REPLACEMENT_POLICY_CONFIG[industrySlug];
 
   const client = await db.pool.connect();
   try {
@@ -224,7 +237,7 @@ export async function POST(req: NextRequest) {
       [
         body.company_name, body.website ?? null, body.contact_name, body.contact_email, body.telephone,
         body.company_registration_number ?? null, body.years_operating ?? null, body.business_location ?? null,
-        CURRENT_INDUSTRY_SLUG,
+        industrySlug,
         JSON.stringify(body.services_offered ?? []), body.does_own_fulfilment ?? null, body.has_required_insurance_and_quals ?? null,
         JSON.stringify(body.counties_covered ?? []), JSON.stringify(body.postcodes_covered ?? []), body.coverage_type ?? null, body.excluded_areas ?? null, body.max_travel_distance_miles ?? null,
         body.weekly_lead_capacity ?? null, body.preferred_monthly_volume ?? null, body.volume_preference ?? null, body.accepts_long_term_prospects ?? null,
@@ -237,7 +250,7 @@ export async function POST(req: NextRequest) {
         body.typical_qualified_to_job_conversion_pct ?? null, body.avg_revenue_per_completed_job ?? null,
         body.confirmed_info_accurate, body.confirmed_can_deliver_services,
         now, BUYER_TERMS_VERSION,
-        now, REPLACEMENT_POLICY_VERSION,
+        now, replacementPolicy.version,
         body.confirmed_payment_before_release_understanding, body.agreed_pii_handling,
         body.agreed_account_notifications,
         body.marketing_consent ?? false,
