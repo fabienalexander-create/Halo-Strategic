@@ -1,28 +1,36 @@
 import Link from 'next/link';
+import SolarBatteryIllustration from '../components/SolarBatteryIllustration';
+import Reveal from '../components/Reveal';
 
 export default function SolarBatteryPage() {
   return (
     <>
-      <section className="hero">
-        <div className="container">
-          <div className="eyebrow">Solar &amp; Battery &mdash; New Market</div>
-          <h1>Qualified solar and battery storage enquiries for UK installers.</h1>
-          <p className="lead" style={{ margin: '0 auto 28px' }}>
-            Homeowners exploring solar panels, battery storage, or both, qualified against agreed
-            criteria before any enquiry reaches a buyer.
-          </p>
-          <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
-            <Link href="/become-a-buyer" className="btn btn-bronze">
-              Apply to Become a Buyer
-            </Link>
+      <Reveal />
+      <section className="hero hero-split">
+        <div className="container hero-grid">
+          <div className="hero-copy">
+            <div className="eyebrow">Solar &amp; Battery &mdash; New Market</div>
+            <h1>Qualified solar and battery storage enquiries for UK installers.</h1>
+            <p className="lead">
+              Homeowners exploring solar panels, battery storage, or both, qualified against agreed
+              criteria before any enquiry reaches a buyer.
+            </p>
+            <div className="hero-actions">
+              <Link href="/become-a-buyer" className="btn btn-bronze">
+                Apply to Become a Buyer
+              </Link>
+            </div>
+            <p className="form-note" style={{ marginTop: 12 }}>
+              Homeowner looking into solar or battery storage?{' '}
+              <Link href="/solar-battery/request-a-quote" style={{ color: 'var(--bronze)' }}>
+                Request a quote here
+              </Link>
+              .
+            </p>
           </div>
-          <p className="form-note" style={{ marginTop: 12 }}>
-            Homeowner looking into solar or battery storage?{' '}
-            <Link href="/solar-battery/request-a-quote" style={{ color: 'var(--bronze)' }}>
-              Request a quote here
-            </Link>
-            .
-          </p>
+          <div className="hero-art" data-reveal>
+            <SolarBatteryIllustration />
+          </div>
         </div>
       </section>
 

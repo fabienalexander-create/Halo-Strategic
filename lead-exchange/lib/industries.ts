@@ -10,7 +10,7 @@
 // the second, independent gate: an industry must be BOTH enabled in the database AND configured
 // here before either route will accept a submission for it.
 
-export type IndustrySlug = 'spray_foam_removal' | 'solar_battery';
+export type IndustrySlug = 'spray_foam_removal' | 'solar_battery' | 'roofing';
 
 export interface HomeownerConsentConfig {
   consentVersion: string;
@@ -42,6 +42,12 @@ export const HOMEOWNER_CONSENT_CONFIG: Record<IndustrySlug, HomeownerConsentConf
     shareBuyerLabel: "I'm happy for my details to be shared with a suitable Solar & Battery installer, so they can contact me about this enquiry, if Halo Strategic identifies one as a genuine fit.",
     namedRecipientOrCategory: 'An approved Solar & Battery installer in the Halo Lead Exchange, only if judged a genuine fit',
   },
+  roofing: {
+    consentVersion: '2026-11-07-v0.1',
+    source: 'roofing_homeowner_form',
+    shareBuyerLabel: "I'm happy for my details to be shared with a suitable roofing contractor, so they can contact me about this enquiry, if Halo Strategic identifies one as a genuine fit.",
+    namedRecipientOrCategory: 'An approved Roofing buyer (contractor) in the Halo Lead Exchange, only if judged a genuine fit',
+  },
 };
 
 // Per Fabien's explicit instruction: do not reuse the Spray Foam Removal Refund & Replacement
@@ -53,8 +59,9 @@ export const NOT_YET_PUBLISHED_REPLACEMENT_POLICY = 'NOT_YET_PUBLISHED';
 export const BUYER_REPLACEMENT_POLICY_CONFIG: Record<IndustrySlug, BuyerReplacementPolicyConfig> = {
   spray_foam_removal: { version: '2026-11-04-v0.1', hasPublishedPolicy: true },
   solar_battery: { version: NOT_YET_PUBLISHED_REPLACEMENT_POLICY, hasPublishedPolicy: false },
+  roofing: { version: NOT_YET_PUBLISHED_REPLACEMENT_POLICY, hasPublishedPolicy: false },
 };
 
 export function isConfiguredIndustrySlug(slug: unknown): slug is IndustrySlug {
-  return slug === 'spray_foam_removal' || slug === 'solar_battery';
+  return slug === 'spray_foam_removal' || slug === 'solar_battery' || slug === 'roofing';
 }
