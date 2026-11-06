@@ -36,6 +36,40 @@ Halo Strategic`,
   };
 }
 
+// Internal notification to admin_users -- never sent to the applicant. Deliberately minimal:
+// just enough to prompt a login and review, not a substitute for actually reading the
+// application in /admin/applications/[reference].
+export function adminNewApplicationEmail(params: {
+  companyName: string;
+  contactName: string;
+  industryLabel: string;
+  applicationReference: string;
+}): EmailContent {
+  const company = escapeHtml(params.companyName);
+  const contact = escapeHtml(params.contactName);
+  const industry = escapeHtml(params.industryLabel);
+  const reference = escapeHtml(params.applicationReference);
+  return {
+    subject: `New ${params.industryLabel} buyer application: ${params.companyName}`,
+    text: `A new buyer application has been submitted.
+
+Company: ${params.companyName}
+Contact: ${params.contactName}
+Industry: ${params.industryLabel}
+Application reference: ${params.applicationReference}
+
+Review it in the admin panel under Applications.`,
+    html: `<p>A new buyer application has been submitted.</p>
+<p>
+Company: ${company}<br>
+Contact: ${contact}<br>
+Industry: ${industry}<br>
+Application reference: ${reference}
+</p>
+<p>Review it in the admin panel under Applications.</p>`,
+  };
+}
+
 // Deliberately does not say the buyer is active -- approval here means approved to proceed
 // to commercial discussion, not activation. Activation is a separate, later step.
 export function applicationApprovedForCommercialReviewEmail(contactName: string): EmailContent {

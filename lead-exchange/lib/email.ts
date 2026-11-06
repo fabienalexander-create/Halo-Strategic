@@ -7,7 +7,10 @@ export interface SqlDb {
   sql: (strings: TemplateStringsArray, ...values: unknown[]) => PromiseLike<Array<Record<string, unknown>>>;
 }
 
-export type EmailType = 'APPLICATION_RECEIVED' | 'APPLICATION_APPROVED_FOR_COMMERCIAL_REVIEW';
+export type EmailType =
+  | 'APPLICATION_RECEIVED'
+  | 'APPLICATION_APPROVED_FOR_COMMERCIAL_REVIEW'
+  | 'ADMIN_NEW_APPLICATION';
 export type OutboxStatus = 'PENDING' | 'SENT' | 'FAILED' | 'DELIVERED';
 
 export interface OutboxRow {
@@ -100,9 +103,15 @@ export async function attemptSend(
   }
 
   try {
+    // recipient is normally a single address; ADMIN_NEW_APPLICATION may store several
+    // admin_users addresses as a comma-separated list, since Resend's `to` accepts an array.
+    const to = row.recipient.includes(',')
+      ? row.recipient.split(',').map((address) => address.trim())
+      : row.recipient;
+
     const { data, error } = await resend.emails.send({
       from: DEFAULT_FROM_ADDRESS,
-      to: row.recipient,
+      to,
       subject: content.subject,
       html: content.html,
       text: content.text,
