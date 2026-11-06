@@ -1,17 +1,21 @@
 import Link from 'next/link';
+import RoofingIllustration from '../components/RoofingIllustration';
+import Reveal from '../components/Reveal';
 
 export default function RoofingPage() {
   return (
     <>
-      <section className="hero">
-        <div className="container">
+      <Reveal />
+      <section className="hero hero-split">
+        <div className="container hero-grid">
+          <div className="hero-copy">
           <div className="eyebrow">Roofing &mdash; New Market</div>
           <h1>Qualified roofing enquiries for UK roofing contractors.</h1>
-          <p className="lead" style={{ margin: '0 auto 28px' }}>
+          <p className="lead">
             Homeowners needing a roof repair or replacement, qualified against agreed criteria before
             any enquiry reaches a buyer.
           </p>
-          <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
+          <div className="hero-actions">
             <Link href="/become-a-buyer" className="btn btn-bronze">
               Apply to Become a Buyer
             </Link>
@@ -23,6 +27,10 @@ export default function RoofingPage() {
             </Link>
             .
           </p>
+          </div>
+          <div className="hero-art" data-reveal>
+            <RoofingIllustration />
+          </div>
         </div>
       </section>
 
