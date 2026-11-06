@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import LoftCrossSection from './components/LoftCrossSection';
+import SolarBatteryIllustration from './components/SolarBatteryIllustration';
 import ProcessSteps from './components/ProcessSteps';
 import Reveal from './components/Reveal';
 
@@ -21,9 +22,9 @@ export default function HomePage() {
             <Link href="/become-a-buyer" className="btn btn-bronze">
               Apply to Become a Buyer
             </Link>
-            <Link href="/spray-foam-removal/request-a-quote" className="hero-homeowner-link">
-              Homeowner? Request a spray foam removal quote &rarr;
-            </Link>
+            <a href="#industries" className="hero-homeowner-link">
+              Homeowner? See what we cover &rarr;
+            </a>
           </div>
           </div>
           <div className="hero-art" data-reveal>
@@ -46,18 +47,58 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section>
+      <section id="industries">
         <div className="container" data-reveal>
-          <div className="eyebrow">Initial Market</div>
-          <h2 style={{ fontSize: '1.5rem', marginBottom: 16 }}>Spray Foam Removal</h2>
-          <p>
-            Our first specialist market is UK spray foam removal — homeowners exploring removal of
-            existing spray foam insulation, qualified against agreed criteria before any enquiry reaches
-            a buyer.
+          <div className="eyebrow">Find the Right Specialist</div>
+          <h2 style={{ fontSize: '1.5rem', marginBottom: 12 }}>
+            Find the right specialist for your home improvement project.
+          </h2>
+          <p style={{ marginBottom: 0 }}>
+            Tell us what you need help with and we&rsquo;ll connect your enquiry with a suitable
+            specialist operating in your area.
           </p>
-          <Link href="/spray-foam-removal" className="btn btn-bronze" style={{ marginTop: 12 }}>
-            See the Spray Foam Removal Market
-          </Link>
+          <div className="industry-cards">
+            <div className="industry-card">
+              <LoftCrossSection />
+              <span className="industry-card-badge">Existing market</span>
+              <h3>Spray Foam Removal</h3>
+              <p>
+                Homeowners exploring removal of existing spray foam insulation, qualified before any
+                enquiry reaches a buyer.
+              </p>
+              <Link href="/spray-foam-removal" className="btn btn-bronze">
+                Explore Spray Foam Removal
+              </Link>
+            </div>
+            <div className="industry-card">
+              <SolarBatteryIllustration />
+              <span className="industry-card-badge">New market</span>
+              <h3>Solar &amp; Battery</h3>
+              <p>
+                Homeowners exploring solar panels, battery storage, or both, qualified before any
+                enquiry reaches a buyer.
+              </p>
+              <Link href="/solar-battery" className="btn btn-bronze">
+                Explore Solar &amp; Battery
+              </Link>
+            </div>
+            <div className="industry-card">
+              <svg className="industry-card-art" viewBox="0 0 480 380" role="img" aria-label="Roofing, coming soon">
+                <g fill="none" stroke="var(--border)" strokeWidth="2" strokeLinejoin="round">
+                  <polyline points="56,206 240,52 424,206" />
+                  <line x1="92" y1="206" x2="92" y2="340" />
+                  <line x1="388" y1="206" x2="388" y2="340" />
+                  <line x1="20" y1="340" x2="460" y2="340" />
+                </g>
+              </svg>
+              <span className="industry-card-badge industry-card-badge--soon">Coming soon</span>
+              <h3>Roofing</h3>
+              <p>Roofing repairs, replacement and related work &mdash; opening once Solar &amp; Battery is established.</p>
+              <Link href="/roofing" className="btn btn-bronze">
+                Learn More
+              </Link>
+            </div>
+          </div>
         </div>
       </section>
 

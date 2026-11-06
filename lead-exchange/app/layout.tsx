@@ -30,6 +30,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <nav className="main-nav">
           <Link href="/">Home</Link>
           <Link href="/spray-foam-removal">Spray Foam Removal</Link>
+          <Link href="/solar-battery">Solar &amp; Battery</Link>
           <Link href="/how-it-works">How It Works</Link>
           <Link href="/become-a-buyer">Become a Buyer</Link>
           <Link href="/insights">Insights</Link>

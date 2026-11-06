@@ -89,11 +89,11 @@ export default function BuyerApplicationForm() {
     setError(null);
 
     const required = [
-      'company_name', 'contact_name', 'contact_email', 'telephone',
+      'industry_slug', 'company_name', 'contact_name', 'contact_email', 'telephone',
     ];
     for (const f of required) {
       if (!str(f)) {
-        setError('Please fill in all business profile fields before submitting.');
+        setError('Please fill in all business profile fields before submitting, including which industry you’re applying for.');
         return;
       }
     }
@@ -177,6 +177,14 @@ export default function BuyerApplicationForm() {
       )}
 
       <h3 style={{ fontSize: '1.05rem', marginBottom: 12 }}>1. Business profile</h3>
+      <SelectField
+        label="Which industry are you applying for?"
+        name="industry_slug"
+        required
+        options={['Spray Foam Removal', 'Solar & Battery']}
+        value={str('industry_slug') === 'spray_foam_removal' ? 'Spray Foam Removal' : str('industry_slug') === 'solar_battery' ? 'Solar & Battery' : ''}
+        onChange={(v) => set('industry_slug', v === 'Spray Foam Removal' ? 'spray_foam_removal' : v === 'Solar & Battery' ? 'solar_battery' : '')}
+      />
       <TextField label="Company name" name="company_name" required value={str('company_name')} onChange={(v) => set('company_name', v)} />
       <TextField label="Contact name" name="contact_name" required value={str('contact_name')} onChange={(v) => set('contact_name', v)} />
       <TextField label="Business email" name="contact_email" type="email" required value={str('contact_email')} onChange={(v) => set('contact_email', v)} />
@@ -235,7 +243,16 @@ export default function BuyerApplicationForm() {
       <Checkbox label="I confirm the business information provided is accurate." name="confirmed_info_accurate" checked={bool('confirmed_info_accurate') ?? false} onChange={(v) => set('confirmed_info_accurate', v)} />
       <Checkbox label="I confirm the business can provide the advertised services." name="confirmed_can_deliver_services" checked={bool('confirmed_can_deliver_services') ?? false} onChange={(v) => set('confirmed_can_deliver_services', v)} />
       <Checkbox label="I agree to the Buyer Terms." name="agreed_buyer_terms" checked={bool('agreed_buyer_terms') ?? false} onChange={(v) => set('agreed_buyer_terms', v)} />
-      <Checkbox label="I acknowledge the Lead Replacement Policy." name="acknowledged_replacement_policy" checked={bool('acknowledged_replacement_policy') ?? false} onChange={(v) => set('acknowledged_replacement_policy', v)} />
+      <Checkbox
+        label={
+          str('industry_slug') === 'spray_foam_removal'
+            ? 'I acknowledge the Lead Replacement Policy.'
+            : 'I understand that, for this industry, lead acceptance and replacement terms are agreed individually during onboarding, as there is no published Replacement Policy for it yet.'
+        }
+        name="acknowledged_replacement_policy"
+        checked={bool('acknowledged_replacement_policy') ?? false}
+        onChange={(v) => set('acknowledged_replacement_policy', v)}
+      />
       <Checkbox label="I understand leads are paid for before contact details are released (payment-before-release model)." name="confirmed_payment_before_release_understanding" checked={bool('confirmed_payment_before_release_understanding') ?? false} onChange={(v) => set('confirmed_payment_before_release_understanding', v)} />
       <Checkbox label="I agree to appropriate handling of homeowner personal information." name="agreed_pii_handling" checked={bool('agreed_pii_handling') ?? false} onChange={(v) => set('agreed_pii_handling', v)} />
       <Checkbox label="I agree to receive relevant account and lead notifications." name="agreed_account_notifications" checked={bool('agreed_account_notifications') ?? false} onChange={(v) => set('agreed_account_notifications', v)} />

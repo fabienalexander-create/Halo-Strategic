@@ -1,12 +1,6 @@
 import { getDatabase } from '@netlify/database';
 import { NextRequest, NextResponse } from 'next/server';
-
-// The consent wording version shown to homeowners on the spray foam removal enquiry form.
-// Bump this string whenever the consent copy on the form changes, so historical consent
-// records stay tied to the wording actually shown at the time (matches the Privacy Policy's
-// "consent version" column in its homeowner data table).
-const CONSENT_VERSION = '2026-11-04-v0.1';
-const CURRENT_INDUSTRY_SLUG = 'spray_foam_removal';
+import { HOMEOWNER_CONSENT_CONFIG, isConfiguredIndustrySlug } from '../../../lib/industries';
 
 // Minimal in-memory rate limiting per Netlify Function instance — same floor as /api/contact
 // and /api/admin/login, not a replacement for a real rate-limiter.
@@ -26,6 +20,7 @@ function isRateLimited(key: string): boolean {
 }
 
 interface HomeownerEnquiryPayload {
+  industry_slug?: string;
   first_name: string;
   last_name: string;
   email: string;
@@ -34,12 +29,17 @@ interface HomeownerEnquiryPayload {
   postcode: string;
   ownership_status: string;
   property_type: string;
+  // Spray Foam Removal fields
   foam_location?: string;
   foam_type?: string;
   reason_for_removal?: string;
   timeframe?: string;
   roof_access?: string;
   previous_quotes?: string;
+  // Solar & Battery fields
+  interest_type?: string;
+  roof_type?: string;
+  existing_solar?: string;
   consent_contact: boolean;
   consent_share_buyer: boolean;
   privacy_consent: boolean;
@@ -50,6 +50,9 @@ interface HomeownerEnquiryPayload {
   bot_field?: string;
 }
 
+// Universal required fields -- the same across every industry (brief §5: "reuse shared
+// components... contact information, postcode, consent handling"). Industry-specific questions
+// (foam_location, interest_type, etc.) are all optional, same as Spray Foam Removal's always were.
 const REQUIRED_FIELDS: (keyof HomeownerEnquiryPayload)[] = [
   'first_name',
   'last_name',
@@ -59,6 +62,20 @@ const REQUIRED_FIELDS: (keyof HomeownerEnquiryPayload)[] = [
   'ownership_status',
   'property_type',
 ];
+
+// Which body keys become this industry's qualification_answers, beyond the universal fields
+// above (which get their own dedicated columns/handling). Keeping this list explicit, rather than
+// spreading the whole body into qualification_answers, means a field submitted for the wrong
+// industry is simply dropped, not silently stored against the wrong vertical's lead.
+const QUALIFICATION_FIELDS: Record<string, (keyof HomeownerEnquiryPayload)[]> = {
+  spray_foam_removal: ['foam_location', 'foam_type', 'reason_for_removal', 'timeframe', 'roof_access', 'previous_quotes'],
+  solar_battery: ['interest_type', 'roof_type', 'existing_solar', 'timeframe'],
+};
+
+const SERVICE_REQUIREMENT_LABEL: Record<string, string> = {
+  spray_foam_removal: 'Spray Foam Removal',
+  solar_battery: 'Solar & Battery Installation',
+};
 
 export async function POST(req: NextRequest) {
   const ip = req.headers.get('x-nf-client-connection-ip') ?? req.headers.get('x-forwarded-for') ?? 'unknown';
@@ -77,6 +94,23 @@ export async function POST(req: NextRequest) {
   if (body.bot_field) {
     return NextResponse.json({ error: 'Submission rejected.' }, { status: 400 });
   }
+
+  // The server is authoritative on which industries exist and are open to submissions -- never
+  // trust the frontend's own routing to have picked a valid, live industry. Two independent
+  // checks: the slug must be one this route actually has consent/qualification config for, AND
+  // the database row for it must currently be enabled (so a configured-but-not-yet-launched
+  // industry, or one later paused, is still rejected).
+  if (!isConfiguredIndustrySlug(body.industry_slug)) {
+    return NextResponse.json({ error: 'Unknown or unsupported industry.' }, { status: 400 });
+  }
+  const industrySlug = body.industry_slug;
+
+  const db = getDatabase();
+  const industryRows = await db.sql`SELECT id, is_enabled FROM industries WHERE slug = ${industrySlug}`;
+  if (industryRows.length === 0 || industryRows[0].is_enabled !== true) {
+    return NextResponse.json({ error: 'This industry is not currently accepting enquiries.' }, { status: 400 });
+  }
+  const industryId = industryRows[0].id as number;
 
   for (const field of REQUIRED_FIELDS) {
     if (!body[field]) {
@@ -99,19 +133,30 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'You must confirm you have read the Privacy Policy.' }, { status: 400 });
   }
 
-  const db = getDatabase();
+  const consentConfig = HOMEOWNER_CONSENT_CONFIG[industrySlug];
+  const qualificationFields = QUALIFICATION_FIELDS[industrySlug];
+  const qualificationAnswers: Record<string, unknown> = { ownership_status: body.ownership_status };
+  for (const field of qualificationFields) {
+    qualificationAnswers[field] = body[field] ?? null;
+  }
+  qualificationAnswers.consent_contact = body.consent_contact;
+  qualificationAnswers.consent_share_buyer = body.consent_share_buyer;
+  qualificationAnswers.privacy_consent = body.privacy_consent;
+  qualificationAnswers.marketing_consent = body.marketing_consent ?? false;
+  qualificationAnswers.consent_version = consentConfig.consentVersion;
+  qualificationAnswers.utm_source = body.utm_source ?? null;
+  qualificationAnswers.utm_medium = body.utm_medium ?? null;
+  qualificationAnswers.utm_campaign = body.utm_campaign ?? null;
+
   const client = await db.pool.connect();
   try {
     await client.query('BEGIN');
 
     const consentResult = await client.query(
       `INSERT INTO consent_records (wording_version, source, purpose, named_recipient_or_category)
-       VALUES ($1, 'spray_foam_removal_homeowner_form', 'Contact about enquiry and share with one suitable buyer', $2)
+       VALUES ($1, $2, 'Contact about enquiry and share with one suitable buyer', $3)
        RETURNING id`,
-      [
-        CONSENT_VERSION,
-        'An approved Spray Foam Removal buyer (installer) in the Halo Lead Exchange, only if judged a genuine fit',
-      ]
+      [consentConfig.consentVersion, consentConfig.source, consentConfig.namedRecipientOrCategory]
     );
     const consentRecordId = consentResult.rows[0].id;
 
@@ -121,36 +166,21 @@ export async function POST(req: NextRequest) {
         property_type, postcode, qualification_answers, consent_record_id,
         source, acquisition_campaign, status
       ) VALUES (
-        (SELECT id FROM industries WHERE slug = $1),
-        'Spray Foam Removal', $2, $3,
-        $4, $5, $6, $7,
-        'spray_foam_removal_homeowner_form', $8, 'NEW'
+        $1, $2, $3, $4,
+        $5, $6, $7, $8,
+        $9, $10, 'NEW'
       )
       RETURNING id`,
       [
-        CURRENT_INDUSTRY_SLUG,
+        industryId,
+        SERVICE_REQUIREMENT_LABEL[industrySlug],
         `${body.first_name} ${body.last_name}`,
         JSON.stringify({ email: body.email, mobile: body.mobile, preferred_contact_method: body.preferred_contact_method ?? null }),
         body.property_type,
         body.postcode,
-        JSON.stringify({
-          ownership_status: body.ownership_status,
-          foam_location: body.foam_location ?? null,
-          foam_type: body.foam_type ?? null,
-          reason_for_removal: body.reason_for_removal ?? null,
-          timeframe: body.timeframe ?? null,
-          roof_access: body.roof_access ?? null,
-          previous_quotes: body.previous_quotes ?? null,
-          consent_contact: body.consent_contact,
-          consent_share_buyer: body.consent_share_buyer,
-          privacy_consent: body.privacy_consent,
-          marketing_consent: body.marketing_consent ?? false,
-          consent_version: CONSENT_VERSION,
-          utm_source: body.utm_source ?? null,
-          utm_medium: body.utm_medium ?? null,
-          utm_campaign: body.utm_campaign ?? null,
-        }),
+        JSON.stringify(qualificationAnswers),
         consentRecordId,
+        consentConfig.source,
         body.utm_campaign ?? null,
       ]
     );
@@ -162,7 +192,11 @@ export async function POST(req: NextRequest) {
     await client.query(
       `INSERT INTO audit_log (actor, action, entity_type, entity_id, new_state)
        VALUES ($1, 'HOMEOWNER_LEAD_SUBMITTED', 'lead', $2, $3)`,
-      [leadReference, leadId, JSON.stringify({ status: 'NEW', postcode: body.postcode, consent_version: CONSENT_VERSION })]
+      [
+        leadReference,
+        leadId,
+        JSON.stringify({ status: 'NEW', industry: industrySlug, postcode: body.postcode, consent_version: consentConfig.consentVersion }),
+      ]
     );
 
     await client.query('COMMIT');
