@@ -1,6 +1,16 @@
 import { getDatabase } from '@netlify/database';
 import { NextRequest, NextResponse } from 'next/server';
 import { HOMEOWNER_CONSENT_CONFIG, isConfiguredIndustrySlug } from '../../../lib/industries';
+import { attemptSync, buildLeadRowValues } from '../../../lib/sheetsSync';
+
+// Matches the "Industry" wording already used elsewhere (become-a-buyer's selector, the homepage
+// cards) and in the operational sheet's own existing rows -- not SERVICE_REQUIREMENT_LABEL below,
+// which is wording for the lead's own service_requirement field, not a column of industry names.
+const INDUSTRY_LABELS: Record<string, string> = {
+  spray_foam_removal: 'Spray Foam Removal',
+  solar_battery: 'Solar & Battery',
+  roofing: 'Roofing',
+};
 
 // Minimal in-memory rate limiting per Netlify Function instance — same floor as /api/contact
 // and /api/admin/login, not a replacement for a real rate-limiter.
@@ -209,7 +219,35 @@ export async function POST(req: NextRequest) {
       ]
     );
 
+    // The sheet-sync outbox row is created in the SAME transaction as the lead itself -- so "the
+    // enquiry saved but the sync was never recorded" can't happen, whatever happens to the process
+    // between commit and the sync attempt below. lead_id is UNIQUE, so this can never create a
+    // second row for the same lead even if this request were somehow retried.
+    const syncInsert = await client.query(
+      `INSERT INTO lead_sheet_syncs (lead_id, status) VALUES ($1, 'PENDING')
+       ON CONFLICT (lead_id) DO NOTHING
+       RETURNING id`,
+      [leadId]
+    );
+
     await client.query('COMMIT');
+
+    // Sent after commit, and never allowed to throw -- a failed sync must never undo an
+    // already-saved enquiry. attemptSync logs the outcome itself and only returns.
+    if (syncInsert.rows.length > 0) {
+      const rowValues = buildLeadRowValues({
+        leadReference,
+        industryLabel: INDUSTRY_LABELS[industrySlug] ?? industrySlug,
+        campaignOrSource: body.utm_campaign ?? 'Website form',
+        receivedAt: new Date().toISOString(),
+        fullName: `${body.first_name} ${body.last_name}`,
+        phone: body.mobile,
+        email: body.email,
+        postcode: body.postcode,
+        consentSummary: `${consentConfig.consentVersion} via ${consentConfig.source}`,
+      });
+      await attemptSync(db, syncInsert.rows[0].id, leadReference, rowValues);
+    }
 
     return NextResponse.json(
       {
