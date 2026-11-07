@@ -13,7 +13,7 @@ export default function PrivacyPolicyPage() {
       <div className="container">
         <div className="eyebrow">Legal</div>
         <h1 style={{ fontSize: '1.8rem', marginBottom: 20 }}>Privacy Policy</h1>
-        <p className="form-note" style={{ marginBottom: 24 }}>Version 2026-11-04-v0.1. Last updated 4 November 2026.</p>
+        <p className="form-note" style={{ marginBottom: 24 }}>Version 2026-11-07-v0.2. Last updated 7 November 2026.</p>
 
         <h2 style={{ fontSize: '1.2rem', margin: '24px 0 10px' }}>1. Who we are</h2>
         <p>Halo Strategic Ltd is the controller of the personal information described in this policy. We are registered in England and Wales (company number 17409402), registered office 71-75 Shelton Street, London WC2H 9JQ.</p>
@@ -95,7 +95,8 @@ export default function PrivacyPolicyPage() {
           <thead><tr><th style={{ textAlign: 'left', padding: '4px 8px' }}>Provider</th><th style={{ textAlign: 'left', padding: '4px 8px' }}>What they do</th><th style={{ textAlign: 'left', padding: '4px 8px' }}>Where</th></tr></thead>
           <tbody>
             <tr><td style={{ padding: '4px 8px' }}>Netlify</td><td style={{ padding: '4px 8px' }}>Website hosting, form submissions, Lead Exchange application and database</td><td style={{ padding: '4px 8px' }}>United States</td></tr>
-            <tr><td style={{ padding: '4px 8px' }}>Google</td><td style={{ padding: '4px 8px' }}>Fonts (loaded on every page), Google Analytics 4 via Tag Manager only if you accept analytics cookies, and Google Workspace for our email</td><td style={{ padding: '4px 8px' }}>United States</td></tr>
+            <tr><td style={{ padding: '4px 8px' }}>Resend</td><td style={{ padding: '4px 8px' }}>Sends our automated emails (e.g. confirming a buyer application has been received)</td><td style={{ padding: '4px 8px' }}>United States</td></tr>
+            <tr><td style={{ padding: '4px 8px' }}>Google</td><td style={{ padding: '4px 8px' }}>Fonts (loaded on every page), Google Analytics 4 via Tag Manager only if you accept analytics cookies, Google Workspace for our email, and Google Sheets, where we keep an internal operational copy of homeowner enquiry details (name, contact details, postcode, enquiry answers) to track and action them</td><td style={{ padding: '4px 8px' }}>United States</td></tr>
             <tr><td style={{ padding: '4px 8px' }}>Tide</td><td style={{ padding: '4px 8px' }}>Business banking and buyer payment links</td><td style={{ padding: '4px 8px' }}>United Kingdom</td></tr>
           </tbody>
         </table>
