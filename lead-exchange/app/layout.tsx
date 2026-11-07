@@ -46,7 +46,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <Link href="/privacy-policy">Privacy Policy</Link> &middot;{' '}
             <Link href="/buyer-terms">Buyer Terms</Link> &middot;{' '}
             <Link href="/lead-purchase-terms">Lead Purchase &amp; Delivery Terms</Link> &middot;{' '}
-            <Link href="/refund-policy">Refund &amp; Replacement Policy</Link>
+            <Link href="/refund-policy">Refund &amp; Replacement Policy</Link> &middot;{' '}
+            <Link href="/lead-replacement-policy">Lead Replacement Policy</Link>
           </div>
         </footer>
       </body>
