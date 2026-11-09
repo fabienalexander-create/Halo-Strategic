@@ -8,22 +8,22 @@ import { estimateRemovalCost, isPostcodeInServiceArea, GENERIC_INDUSTRY_ESTIMATE
 
 type Answers = Record<string, string | boolean | undefined>;
 
-// Calculator question steps, then a results screen, then the lead-capture step. Kept as a plain
-// index rather than named states so "Back" is just step - 1 -- no separate per-step history stack
-// needed, since every step before CAPTURE is answer-only (nothing async, nothing to undo).
+// Calculator question steps, then the lead-capture step -- the estimate/results only come back
+// AFTER details are submitted (Fabien's explicit call: capture first, deliver the assessment as
+// what they get in return, rather than showing it free before asking for anything). Kept as a
+// plain index rather than named states so "Back" is just step - 1 -- no separate per-step history
+// stack needed, since every step before CAPTURE is answer-only (nothing async, nothing to undo).
 const STEP = {
   POSTCODE: 0,
   PROPERTY_TYPE: 1,
   BEDROOMS: 2,
   ROOF_LOFT: 3,
   REASON: 4,
-  RESULTS: 5,
-  CAPTURE: 6,
+  CAPTURE: 5,
 } as const;
-const TOTAL_QUESTION_STEPS = 5; // POSTCODE..REASON, for the progress indicator
+const TOTAL_QUESTION_STEPS = 6; // POSTCODE..CAPTURE, for the progress indicator
 
 function ProgressBar({ step }: { step: number }) {
-  if (step > STEP.REASON) return null;
   const pct = Math.round(((step + 1) / TOTAL_QUESTION_STEPS) * 100);
   return (
     <div style={{ marginBottom: 20 }}>
@@ -145,15 +145,68 @@ export default function SprayFoamCalculator() {
   }
 
   if (result) {
+    const inArea = isPostcodeInServiceArea(str('postcode'));
+    const estimate = estimateRemovalCost(toBedroomsKey(str('bedrooms')));
+    const estimateLine = estimate.specific
+      ? `Based on confirmed pricing for properties like yours, removal typically falls in the range of £${estimate.range.low}–£${estimate.range.high}.`
+      : `Typical UK spray foam removal costs around £${GENERIC_INDUSTRY_ESTIMATE.perM2.low}–£${GENERIC_INDUSTRY_ESTIMATE.perM2.high} per m², with most full loft jobs costing £${GENERIC_INDUSTRY_ESTIMATE.totalJob.low.toLocaleString()}–£${GENERIC_INDUSTRY_ESTIMATE.totalJob.high.toLocaleString()} in total.`;
+
     return (
-      <div className="form-card" style={{ textAlign: 'center' }}>
-        <h2 style={{ fontSize: '1.3rem', marginBottom: 12 }}>Enquiry received</h2>
-        <p>
+      <div className="form-card">
+        <h2 style={{ fontSize: '1.3rem', marginBottom: 4 }}>Enquiry received</h2>
+        <p style={{ marginBottom: 16 }}>
           Your reference: <strong>{result.reference}</strong>
         </p>
+
+        <h3 style={{ fontSize: '1.05rem', marginBottom: 12 }}>Your Initial Spray Foam Removal Assessment</h3>
+
+        <div className="disclaimer-box" style={{ marginBottom: 16 }}>
+          <p style={{ margin: 0 }}>{estimateLine}</p>
+          {!estimate.specific && (
+            <p style={{ margin: '8px 0 0', fontSize: '0.82rem' }}>
+              This is a general UK industry guide, not a quote from us or from a specific removal
+              specialist &mdash; your actual price depends on your property, and we&rsquo;ll help you
+              get a specific figure after a proper assessment. Source:{' '}
+              {GENERIC_INDUSTRY_ESTIMATE.sources.map((s, i) => (
+                <span key={s.url}>
+                  {i > 0 && ', '}
+                  <a href={s.url} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--bronze)' }}>
+                    {s.name}
+                  </a>
+                </span>
+              ))}
+              .
+            </p>
+          )}
+        </div>
+
         <p style={{ color: 'var(--slate)' }}>
-          We only share your details with a suitable business if you asked us to, and only after we
-          judge your enquiry a genuine fit. We&rsquo;ll be in touch using the details you provided.
+          {inArea
+            ? "Good news — your postcode is within our current service area for Spray Foam Removal."
+            : "Your postcode is currently outside the area we have a vetted specialist for. We'll still review your enquiry, but we can't promise an immediate match."}
+        </p>
+
+        <h3 style={{ fontSize: '0.95rem', margin: '20px 0 8px' }}>What you told us</h3>
+        <ul className="dont-list">
+          <li>Postcode: {str('postcode') || '—'}</li>
+          <li>Property: {str('property_type') || '—'}, {str('bedrooms') || '—'}</li>
+          <li>Foam: {str('foam_extent') || '—'}, {str('foam_type') || '—'}</li>
+          <li>Loft size: {str('loft_size_estimate') || '—'}, access: {str('roof_access') || '—'}</li>
+          <li>Reason: {str('reason_for_removal') || '—'}</li>
+        </ul>
+
+        <h3 style={{ fontSize: '0.95rem', margin: '20px 0 8px' }}>What could change the final cost</h3>
+        <ul className="dont-list">
+          <li>The true extent and type of foam, confirmed on survey</li>
+          <li>Roof pitch, loft access and how the foam was originally applied</li>
+          <li>Any additional work the survey identifies (e.g. ventilation or decking repair)</li>
+        </ul>
+
+        <p className="form-note" style={{ textAlign: 'left' }}>
+          This is an initial assessment only, not a confirmed quote. A proper survey is needed before
+          any firm price can be given. We only share your details with a suitable business if you
+          asked us to, and only after we judge your enquiry a genuine fit. We&rsquo;ll be in touch
+          using the details you provided.
         </p>
       </div>
     );
@@ -264,86 +317,7 @@ export default function SprayFoamCalculator() {
           value={str('reason_for_removal')}
           onChange={(v) => set('reason_for_removal', v)}
         />
-        <BackNext canAdvance={str('reason_for_removal').length > 0} nextLabel="See my estimate" />
-      </div>
-    );
-  }
-
-  // --- Results screen --------------------------------------------------------------------------
-  if (step === STEP.RESULTS) {
-    const inArea = isPostcodeInServiceArea(str('postcode'));
-    const estimate = estimateRemovalCost(toBedroomsKey(str('bedrooms')));
-    // Recorded (not just computed) so the actual lead capture, a step later, stores exactly what
-    // this homeowner was shown -- not a value re-derived afterwards that could silently drift.
-    if (a.calculator_in_area === undefined) set('calculator_in_area', inArea);
-    // Records whether this homeowner was shown a Halo/James-specific confirmed price (true) or
-    // only the generic published UK industry range (false, the only case possible today).
-    if (a.calculator_estimate_available === undefined) set('calculator_estimate_available', estimate.specific);
-
-    const estimateLine = estimate.specific
-      ? `Based on confirmed pricing for properties like yours, removal typically falls in the range of £${estimate.range.low}–£${estimate.range.high}.`
-      : `Typical UK spray foam removal costs around £${GENERIC_INDUSTRY_ESTIMATE.perM2.low}–£${GENERIC_INDUSTRY_ESTIMATE.perM2.high} per m², with most full loft jobs costing £${GENERIC_INDUSTRY_ESTIMATE.totalJob.low.toLocaleString()}–£${GENERIC_INDUSTRY_ESTIMATE.totalJob.high.toLocaleString()} in total.`;
-    if (a.calculator_estimate_shown === undefined) set('calculator_estimate_shown', estimateLine);
-
-    return (
-      <div className="form-card">
-        <h2 style={{ fontSize: '1.3rem', marginBottom: 12 }}>Your Initial Spray Foam Removal Assessment</h2>
-
-        <div className="disclaimer-box" style={{ marginBottom: 16 }}>
-          <p style={{ margin: 0 }}>{estimateLine}</p>
-          {!estimate.specific && (
-            <p style={{ margin: '8px 0 0', fontSize: '0.82rem' }}>
-              This is a general UK industry guide, not a quote from us or from a specific removal
-              specialist &mdash; your actual price depends on your property, and we&rsquo;ll help you
-              get a specific figure after a proper assessment. Source:{' '}
-              {GENERIC_INDUSTRY_ESTIMATE.sources.map((s, i) => (
-                <span key={s.url}>
-                  {i > 0 && ', '}
-                  <a href={s.url} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--bronze)' }}>
-                    {s.name}
-                  </a>
-                </span>
-              ))}
-              .
-            </p>
-          )}
-        </div>
-
-        <p style={{ color: 'var(--slate)' }}>
-          {inArea
-            ? "Good news — your postcode is within our current service area for Spray Foam Removal."
-            : "Your postcode is currently outside the area we have a vetted specialist for. We'll still record your enquiry, but we can't promise an immediate match."}
-        </p>
-
-        <h3 style={{ fontSize: '0.95rem', margin: '20px 0 8px' }}>What you told us</h3>
-        <ul className="dont-list">
-          <li>Postcode: {str('postcode') || '—'}</li>
-          <li>Property: {str('property_type') || '—'}, {str('bedrooms') || '—'}</li>
-          <li>Foam: {str('foam_extent') || '—'}, {str('foam_type') || '—'}</li>
-          <li>Loft size: {str('loft_size_estimate') || '—'}, access: {str('roof_access') || '—'}</li>
-          <li>Reason: {str('reason_for_removal') || '—'}</li>
-        </ul>
-
-        <h3 style={{ fontSize: '0.95rem', margin: '20px 0 8px' }}>What could change the final cost</h3>
-        <ul className="dont-list">
-          <li>The true extent and type of foam, confirmed on survey</li>
-          <li>Roof pitch, loft access and how the foam was originally applied</li>
-          <li>Any additional work the survey identifies (e.g. ventilation or decking repair)</li>
-        </ul>
-
-        <p className="form-note" style={{ textAlign: 'left' }}>
-          This is an initial assessment only, not a confirmed quote. A proper survey is needed before
-          any firm price can be given.
-        </p>
-
-        <button type="button" className="btn btn-bronze" style={{ marginTop: 16 }} onClick={next}>
-          Request a personalised assessment
-        </button>
-        <div style={{ marginTop: 8 }}>
-          <button type="button" className="btn" style={{ background: 'var(--surface)', border: '1px solid var(--border)', color: 'var(--ink)' }} onClick={back}>
-            Back
-          </button>
-        </div>
+        <BackNext canAdvance={str('reason_for_removal').length > 0} nextLabel="Continue" />
       </div>
     );
   }
@@ -365,12 +339,27 @@ export default function SprayFoamCalculator() {
       return;
     }
 
+    // Computed here (not stored via set() first) so the POST body reflects it immediately --
+    // set() only takes effect on the next render, and there is no next render before this fetch.
+    const inArea = isPostcodeInServiceArea(str('postcode'));
+    const estimate = estimateRemovalCost(toBedroomsKey(str('bedrooms')));
+    const estimateLine = estimate.specific
+      ? `Based on confirmed pricing for properties like yours, removal typically falls in the range of £${estimate.range.low}–£${estimate.range.high}.`
+      : `Typical UK spray foam removal costs around £${GENERIC_INDUSTRY_ESTIMATE.perM2.low}–£${GENERIC_INDUSTRY_ESTIMATE.perM2.high} per m², with most full loft jobs costing £${GENERIC_INDUSTRY_ESTIMATE.totalJob.low.toLocaleString()}–£${GENERIC_INDUSTRY_ESTIMATE.totalJob.high.toLocaleString()} in total.`;
+
     setSubmitting(true);
     try {
       const res = await fetch(apiPath('/api/homeowner-enquiries'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...a, industry_slug: 'spray_foam_removal', bot_field: botField }),
+        body: JSON.stringify({
+          ...a,
+          industry_slug: 'spray_foam_removal',
+          bot_field: botField,
+          calculator_in_area: inArea,
+          calculator_estimate_available: estimate.specific,
+          calculator_estimate_shown: estimateLine,
+        }),
       });
       const data = await res.json();
       if (!res.ok) {
@@ -401,10 +390,11 @@ export default function SprayFoamCalculator() {
         </label>
       </p>
 
-      <h3 style={{ fontSize: '1.05rem', marginBottom: 8 }}>Request a personalised assessment</h3>
+      <ProgressBar step={step} />
+      <h3 style={{ fontSize: '1.05rem', marginBottom: 8 }}>Get your estimate</h3>
       <p className="form-note" style={{ textAlign: 'left', marginBottom: 16 }}>
-        We&rsquo;ll use these details to give you a more accurate assessment, and, only with your
-        consent below, pass your enquiry to a vetted removal specialist.
+        Add your details below and we&rsquo;ll show you your initial assessment straight away. Only
+        with your consent below will we pass your enquiry to a vetted removal specialist.
       </p>
 
       <TextField label="First name" name="first_name" required value={str('first_name')} onChange={(v) => set('first_name', v)} />
