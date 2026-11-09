@@ -4,3 +4,4 @@
 lead-exchange/node_modules/
 lead-exchange/.next/
 lead-exchange/next-env.d.ts
+lead-exchange/tsconfig.tsbuildinfo
