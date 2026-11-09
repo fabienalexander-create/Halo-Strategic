@@ -1,15 +1,20 @@
 import { describe, expect, it } from 'vitest';
-import { estimateRemovalCost, isPostcodeInServiceArea } from './sprayFoamEstimate';
+import { GENERIC_INDUSTRY_ESTIMATE, estimateRemovalCost, isPostcodeInServiceArea } from './sprayFoamEstimate';
 
 describe('spray foam removal estimate', () => {
-  it('never returns a price while PRICING_TABLE has no confirmed figures, for every bedroom band', () => {
+  it('falls back to the generic (non-specific) industry estimate while PRICING_TABLE has no confirmed figures, for every bedroom band', () => {
     for (const bedrooms of ['1-2', '3', '4', '5+', 'not_sure'] as const) {
-      expect(estimateRemovalCost(bedrooms)).toEqual({ available: false });
+      expect(estimateRemovalCost(bedrooms)).toEqual({ available: true, specific: false });
     }
   });
 
-  it('returns unavailable when no bedroom answer was given at all', () => {
-    expect(estimateRemovalCost(undefined)).toEqual({ available: false });
+  it('falls back to the generic estimate when no bedroom answer was given at all', () => {
+    expect(estimateRemovalCost(undefined)).toEqual({ available: true, specific: false });
+  });
+
+  it('the generic estimate is never presented as specific to this property, Halo or James', () => {
+    expect(GENERIC_INDUSTRY_ESTIMATE.perM2.low).toBeGreaterThan(0);
+    expect(GENERIC_INDUSTRY_ESTIMATE.sources.length).toBeGreaterThan(0);
   });
 
   it('matches Essex & Suffolk outward codes discussed with James, case- and space-insensitively', () => {

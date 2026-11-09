@@ -4,7 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { apiPath } from '../../../lib/basePath';
 import { HOMEOWNER_CONSENT_CONFIG } from '../../../lib/industries';
-import { estimateRemovalCost, isPostcodeInServiceArea, type Bedrooms } from '../../../lib/sprayFoamEstimate';
+import { estimateRemovalCost, isPostcodeInServiceArea, GENERIC_INDUSTRY_ESTIMATE, type Bedrooms } from '../../../lib/sprayFoamEstimate';
 
 type Answers = Record<string, string | boolean | undefined>;
 
@@ -276,11 +276,13 @@ export default function SprayFoamCalculator() {
     // Recorded (not just computed) so the actual lead capture, a step later, stores exactly what
     // this homeowner was shown -- not a value re-derived afterwards that could silently drift.
     if (a.calculator_in_area === undefined) set('calculator_in_area', inArea);
-    if (a.calculator_estimate_available === undefined) set('calculator_estimate_available', estimate.available);
+    // Records whether this homeowner was shown a Halo/James-specific confirmed price (true) or
+    // only the generic published UK industry range (false, the only case possible today).
+    if (a.calculator_estimate_available === undefined) set('calculator_estimate_available', estimate.specific);
 
-    const estimateLine = estimate.available
-      ? `Based on similar properties, removal typically falls in the range of £${estimate.range.low}–£${estimate.range.high}.`
-      : "We don't yet have enough confirmed pricing data to give a number for this. Your property details have been received, and we'll review them and help you establish the likely cost of removal.";
+    const estimateLine = estimate.specific
+      ? `Based on confirmed pricing for properties like yours, removal typically falls in the range of £${estimate.range.low}–£${estimate.range.high}.`
+      : `Typical UK spray foam removal costs around £${GENERIC_INDUSTRY_ESTIMATE.perM2.low}–£${GENERIC_INDUSTRY_ESTIMATE.perM2.high} per m², with most full loft jobs costing £${GENERIC_INDUSTRY_ESTIMATE.totalJob.low.toLocaleString()}–£${GENERIC_INDUSTRY_ESTIMATE.totalJob.high.toLocaleString()} in total.`;
     if (a.calculator_estimate_shown === undefined) set('calculator_estimate_shown', estimateLine);
 
     return (
@@ -289,6 +291,22 @@ export default function SprayFoamCalculator() {
 
         <div className="disclaimer-box" style={{ marginBottom: 16 }}>
           <p style={{ margin: 0 }}>{estimateLine}</p>
+          {!estimate.specific && (
+            <p style={{ margin: '8px 0 0', fontSize: '0.82rem' }}>
+              This is a general UK industry guide, not a quote from us or from a specific removal
+              specialist &mdash; your actual price depends on your property, and we&rsquo;ll help you
+              get a specific figure after a proper assessment. Source:{' '}
+              {GENERIC_INDUSTRY_ESTIMATE.sources.map((s, i) => (
+                <span key={s.url}>
+                  {i > 0 && ', '}
+                  <a href={s.url} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--bronze)' }}>
+                    {s.name}
+                  </a>
+                </span>
+              ))}
+              .
+            </p>
+          )}
         </div>
 
         <p style={{ color: 'var(--slate)' }}>
