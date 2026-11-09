@@ -1,11 +1,11 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import RequestQuoteForm from './RequestQuoteForm';
+import SprayFoamCalculator from './SprayFoamCalculator';
 
 export const metadata: Metadata = {
-  title: 'Spray Foam Removal Quotes | Halo Lead Exchange',
+  title: 'Spray Foam Removal Cost Calculator | Halo Lead Exchange',
   description:
-    'Thinking about having spray foam insulation removed? Tell us about your property and we will connect you with a suitable, vetted removal specialist in your area.',
+    'Get an initial estimate for removing spray foam insulation from your roof. Answer a few simple questions about your property and we will help you understand the likely next steps.',
   robots: 'index, follow',
 };
 
@@ -15,13 +15,17 @@ export default function RequestQuotePage() {
       <section className="hero">
         <div className="container">
           <div className="eyebrow">Homeowners &mdash; Spray Foam Removal</div>
-          <h1>Thinking about having spray foam insulation removed?</h1>
+          <h1>How Much Could Spray Foam Removal Cost?</h1>
           <p className="lead" style={{ margin: '0 auto 0' }}>
-            Tell us about your property and the spray foam you&rsquo;re looking to have removed. We check
-            your enquiry against agreed criteria and, only with your consent, connect you with one
-            suitable, vetted removal specialist covering your area &mdash; not a list sold to several
-            companies at once.
+            Get an initial estimate for removing spray foam insulation from your roof. Answer a few
+            simple questions about your property and we&rsquo;ll help you understand the likely next
+            steps.
           </p>
+          <div className="hero-actions" style={{ marginTop: 20 }}>
+            <Link href="#calculator" className="btn btn-bronze">
+              Calculate My Estimate
+            </Link>
+          </div>
         </div>
       </section>
 
@@ -69,11 +73,11 @@ export default function RequestQuotePage() {
         </div>
       </section>
 
-      <section>
+      <section id="calculator">
         <div className="container">
-          <div className="eyebrow">Request a Quote</div>
+          <div className="eyebrow">Spray Foam Removal Cost Calculator</div>
           <h2 style={{ fontSize: '1.5rem', marginBottom: 16 }}>Tell us about your property.</h2>
-          <RequestQuoteForm />
+          <SprayFoamCalculator />
         </div>
       </section>
     </>
