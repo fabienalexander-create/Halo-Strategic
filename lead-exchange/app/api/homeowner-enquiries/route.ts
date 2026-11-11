@@ -46,6 +46,16 @@ interface HomeownerEnquiryPayload {
   timeframe?: string;
   roof_access?: string;
   previous_quotes?: string;
+  // Spray Foam Removal cost calculator fields (components/SprayFoamCalculator.tsx) -- bedrooms/
+  // foam_extent/loft_size_estimate are calculator inputs; the calculator_* fields record what the
+  // homeowner was actually shown as a result, for admin visibility only, never a price promise.
+  bedrooms?: string;
+  foam_extent?: string;
+  loft_size_estimate?: string;
+  calculator_in_area?: boolean;
+  calculator_estimate_available?: boolean;
+  calculator_estimate_shown?: string;
+  house_number_or_name?: string;
   // Solar & Battery fields
   interest_type?: string;
   roof_type?: string;
@@ -82,7 +92,11 @@ const REQUIRED_FIELDS: (keyof HomeownerEnquiryPayload)[] = [
 // spreading the whole body into qualification_answers, means a field submitted for the wrong
 // industry is simply dropped, not silently stored against the wrong vertical's lead.
 const QUALIFICATION_FIELDS: Record<string, (keyof HomeownerEnquiryPayload)[]> = {
-  spray_foam_removal: ['foam_location', 'foam_type', 'reason_for_removal', 'timeframe', 'roof_access', 'previous_quotes'],
+  spray_foam_removal: [
+    'foam_location', 'foam_type', 'reason_for_removal', 'timeframe', 'roof_access', 'previous_quotes',
+    'bedrooms', 'foam_extent', 'loft_size_estimate', 'house_number_or_name',
+    'calculator_in_area', 'calculator_estimate_available', 'calculator_estimate_shown',
+  ],
   solar_battery: ['interest_type', 'roof_type', 'existing_solar', 'timeframe'],
   roofing: ['work_type', 'roof_type', 'urgency', 'issue_description', 'timeframe'],
 };
