@@ -110,6 +110,35 @@ export default function RoofingPage() {
         </div>
       </section>
 
+      <section className="band">
+        <div className="container">
+          <div className="eyebrow">Real Home-Improvement Lead Generation Experience</div>
+          <h2 style={{ fontSize: '1.5rem', marginBottom: 16 }}>Built on real numbers, not a pitch.</h2>
+          <p>
+            Halo&rsquo;s founder ran paid-social lead generation across solar, conservatory roofs,
+            kitchens, double glazing and other home-improvement trades for six years. Real, documented
+            figures from that work (UK market):
+          </p>
+          <div className="disclaimer-box" style={{ marginTop: 16 }}>
+            <ul className="dont-list" style={{ margin: 0 }}>
+              <li>&pound;102,663.59 combined ad spend across home-improvement campaigns</li>
+              <li>15,797 leads generated at a blended &pound;6.50 cost-per-lead</li>
+              <li>&pound;2&ndash;&pound;20 real cost-per-lead range across different verticals and audiences</li>
+              <li>10x cost-per-lead swing observed on the same day, same trade, different targeting</li>
+            </ul>
+          </div>
+          <p style={{ marginTop: 16 }}>
+            This is home-improvement lead-generation experience, not a claim of results in Roofing
+            specifically. Roofing is a configured industry within the Lead Exchange, but we&rsquo;re not
+            yet actively building buyer coverage here &mdash;{' '}
+            <Link href="/become-a-buyer/register-interest" style={{ color: 'var(--bronze)' }}>
+              register your interest
+            </Link>{' '}
+            and we&rsquo;ll be in touch once we are.
+          </p>
+        </div>
+      </section>
+
       <section>
         <div className="container">
           <div className="eyebrow">Becoming a Buyer</div>

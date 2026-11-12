@@ -279,3 +279,136 @@ Halo Strategic`,
 <p>Kind regards,<br>Halo Strategic</p>`,
   };
 }
+
+// Five-step buyer prospect nurture sequence (lib/buyerProspectEmail.ts). Each step is a pure
+// function of its position, taking only what it needs to personalise the greeting and the
+// application link -- no pricing, volume or verification claims anywhere in this sequence,
+// consistent with the rest of this file's "wording is Fabien's, never invented" discipline.
+// Steps exit this sequence entirely once a prospect converts (see nurture_status = 'CONVERTED'),
+// so there is no "stop emailing me, I already applied" message to write -- it's structurally
+// impossible to receive step 3+ after converting.
+
+export function prospectWelcomeEmail(params: { contactName: string; applyUrl: string }): EmailContent {
+  const name = escapeHtml(params.contactName);
+  return {
+    subject: 'Thanks for your interest in the Halo Lead Exchange',
+    text: `Hi ${params.contactName},
+
+Thanks for registering your interest in the Halo Lead Exchange.
+
+We connect businesses with relevant homeowner enquiries through a structured marketplace: enquiries are generated through targeted acquisition campaigns, checked against agreed criteria, and only offered to approved buyers.
+
+Over the next few emails we'll walk through how the marketplace works, how enquiries are qualified, and what the application and onboarding process involves.
+
+If you'd rather go straight to the full application, you can do that any time here: ${params.applyUrl}
+
+Kind regards,
+Halo Strategic`,
+    html: `<p>Hi ${name},</p>
+<p>Thanks for registering your interest in the Halo Lead Exchange.</p>
+<p>We connect businesses with relevant homeowner enquiries through a structured marketplace: enquiries are generated through targeted acquisition campaigns, checked against agreed criteria, and only offered to approved buyers.</p>
+<p>Over the next few emails we'll walk through how the marketplace works, how enquiries are qualified, and what the application and onboarding process involves.</p>
+<p>If you'd rather go straight to the full application, you can do that any time here: <a href="${params.applyUrl}" style="color:#B08D57;">${params.applyUrl}</a></p>
+<p>Kind regards,<br>Halo Strategic</p>`,
+  };
+}
+
+export function prospectModelExplainerEmail(params: { contactName: string; applyUrl: string }): EmailContent {
+  const name = escapeHtml(params.contactName);
+  return {
+    subject: 'How the Halo Lead Exchange actually works',
+    text: `Hi ${params.contactName},
+
+A quick explanation of the model behind the Lead Exchange.
+
+A lead is an input into a commercial system, not the outcome on its own. That's why enquiries are checked against criteria agreed with each buyer before anything is offered, rather than sold as raw, unqualified volume.
+
+Enquiries are only ever offered to a buyer whose approved coverage area and criteria match, and only once an application has been reviewed and an onboarding call completed.
+
+Ready to apply? ${params.applyUrl}
+
+Kind regards,
+Halo Strategic`,
+    html: `<p>Hi ${name},</p>
+<p>A quick explanation of the model behind the Lead Exchange.</p>
+<p>A lead is an input into a commercial system, not the outcome on its own. That's why enquiries are checked against criteria agreed with each buyer before anything is offered, rather than sold as raw, unqualified volume.</p>
+<p>Enquiries are only ever offered to a buyer whose approved coverage area and criteria match, and only once an application has been reviewed and an onboarding call completed.</p>
+<p>Ready to apply? <a href="${params.applyUrl}" style="color:#B08D57;">${params.applyUrl}</a></p>
+<p>Kind regards,<br>Halo Strategic</p>`,
+  };
+}
+
+export function prospectQualityApproachEmail(params: { contactName: string; applyUrl: string }): EmailContent {
+  const name = escapeHtml(params.contactName);
+  return {
+    subject: 'How enquiries are qualified before they reach a buyer',
+    text: `Hi ${params.contactName},
+
+Before any enquiry reaches a buyer, it's checked against the criteria agreed with that buyer: things like coverage area, property type and the qualification questions relevant to that industry.
+
+Buyers only ever see enquiries that are a genuine fit for their business. If there isn't a suitable match, the enquiry isn't shared with anyone.
+
+This is also why onboarding matters: the criteria that make an enquiry a "fit" for your business are agreed with you directly, not assumed.
+
+Apply here when you're ready: ${params.applyUrl}
+
+Kind regards,
+Halo Strategic`,
+    html: `<p>Hi ${name},</p>
+<p>Before any enquiry reaches a buyer, it's checked against the criteria agreed with that buyer: things like coverage area, property type and the qualification questions relevant to that industry.</p>
+<p>Buyers only ever see enquiries that are a genuine fit for their business. If there isn't a suitable match, the enquiry isn't shared with anyone.</p>
+<p>This is also why onboarding matters: the criteria that make an enquiry a &ldquo;fit&rdquo; for your business are agreed with you directly, not assumed.</p>
+<p>Apply here when you're ready: <a href="${params.applyUrl}" style="color:#B08D57;">${params.applyUrl}</a></p>
+<p>Kind regards,<br>Halo Strategic</p>`,
+  };
+}
+
+export function prospectApplicationEmail(params: { contactName: string; applyUrl: string }): EmailContent {
+  const name = escapeHtml(params.contactName);
+  return {
+    subject: 'Ready to apply to the Halo Lead Exchange?',
+    text: `Hi ${params.contactName},
+
+If the Lead Exchange looks like a fit so far, the next step is the full buyer application: your business details, coverage area and service capability.
+
+Applications are reviewed individually -- access isn't automatic, and every approved applicant completes a mandatory onboarding call before any account is activated.
+
+Start the application here: ${params.applyUrl}
+
+Kind regards,
+Halo Strategic`,
+    html: `<p>Hi ${name},</p>
+<p>If the Lead Exchange looks like a fit so far, the next step is the full buyer application: your business details, coverage area and service capability.</p>
+<p>Applications are reviewed individually &mdash; access isn't automatic, and every approved applicant completes a mandatory onboarding call before any account is activated.</p>
+<p>Start the application here: <a href="${params.applyUrl}" style="color:#B08D57;">${params.applyUrl}</a></p>
+<p>Kind regards,<br>Halo Strategic</p>`,
+  };
+}
+
+export function prospectNextStepsEmail(params: { contactName: string; applyUrl: string }): EmailContent {
+  const name = escapeHtml(params.contactName);
+  return {
+    subject: 'What happens after you apply',
+    text: `Hi ${params.contactName},
+
+A quick summary of what happens once you submit the full application:
+
+1. Halo reviews your application against agreed criteria.
+2. If approved, you'll be invited to a mandatory onboarding call to agree coverage, criteria and commercial terms.
+3. Once terms are agreed, your account is activated.
+
+This is the last email in this introductory sequence. If you're ready, you can apply here: ${params.applyUrl}
+
+Kind regards,
+Halo Strategic`,
+    html: `<p>Hi ${name},</p>
+<p>A quick summary of what happens once you submit the full application:</p>
+<ol>
+<li>Halo reviews your application against agreed criteria.</li>
+<li>If approved, you'll be invited to a mandatory onboarding call to agree coverage, criteria and commercial terms.</li>
+<li>Once terms are agreed, your account is activated.</li>
+</ol>
+<p>This is the last email in this introductory sequence. If you're ready, you can apply here: <a href="${params.applyUrl}" style="color:#B08D57;">${params.applyUrl}</a></p>
+<p>Kind regards,<br>Halo Strategic</p>`,
+  };
+}
