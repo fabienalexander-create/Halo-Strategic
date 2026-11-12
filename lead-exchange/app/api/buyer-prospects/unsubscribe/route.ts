@@ -1,6 +1,6 @@
 import { getDatabase } from '@netlify/database';
 import { NextRequest, NextResponse } from 'next/server';
-import { recordUnsubscribe, UnsubscribeScope } from '../../../../lib/prospectUnsubscribe';
+import { recordUnsubscribe, UnsubscribeMethod, UnsubscribeScope } from '../../../../lib/prospectUnsubscribe';
 
 const VALID_SCOPES: UnsubscribeScope[] = ['intro', 'marketing', 'all'];
 
@@ -22,6 +22,7 @@ export async function POST(req: NextRequest) {
   const contentType = req.headers.get('content-type') ?? '';
   let token: unknown;
   let scope: unknown;
+  let method: UnsubscribeMethod = 'link';
 
   if (contentType.includes('application/x-www-form-urlencoded')) {
     const text = await req.text();
@@ -29,6 +30,7 @@ export async function POST(req: NextRequest) {
     if (params.get('List-Unsubscribe') === 'One-Click') {
       token = new URL(req.url).searchParams.get('token');
       scope = 'intro';
+      method = 'one_click';
     } else {
       return NextResponse.json({ error: 'Unrecognised form submission.' }, { status: 400 });
     }
@@ -52,7 +54,7 @@ export async function POST(req: NextRequest) {
 
   try {
     const db = getDatabase();
-    const result = await recordUnsubscribe(db, token, scope as UnsubscribeScope);
+    const result = await recordUnsubscribe(db, token, scope as UnsubscribeScope, method);
     if (!result.found) {
       // Deliberately generic -- this is a public, unauthenticated endpoint. A malformed or unknown
       // token gets the same response either way; nothing here reveals whether a token almost

@@ -73,7 +73,7 @@ describe('POST /api/buyer-prospects/unsubscribe', () => {
 
     expect(res.status).toBe(200);
     expect(data).toEqual({ scope: 'intro', alreadyApplied: false });
-    expect(recordUnsubscribeMock).toHaveBeenCalledWith(expect.anything(), VALID_TOKEN, 'intro');
+    expect(recordUnsubscribeMock).toHaveBeenCalledWith(expect.anything(), VALID_TOKEN, 'intro', 'link');
   });
 
   it('a repeated unsubscribe is idempotent (200, alreadyApplied true), never an error', async () => {
@@ -94,7 +94,7 @@ describe('POST /api/buyer-prospects/unsubscribe', () => {
     const res = await POST(oneClickRequest(VALID_TOKEN));
 
     expect(res.status).toBe(200);
-    expect(recordUnsubscribeMock).toHaveBeenCalledWith(expect.anything(), VALID_TOKEN, 'intro');
+    expect(recordUnsubscribeMock).toHaveBeenCalledWith(expect.anything(), VALID_TOKEN, 'intro', 'one_click');
   });
 
   it('a one-click request never applies scope=marketing or scope=all', async () => {
@@ -103,8 +103,8 @@ describe('POST /api/buyer-prospects/unsubscribe', () => {
 
     await POST(oneClickRequest(VALID_TOKEN));
 
-    expect(recordUnsubscribeMock).toHaveBeenCalledWith(expect.anything(), VALID_TOKEN, 'intro');
-    expect(recordUnsubscribeMock).not.toHaveBeenCalledWith(expect.anything(), VALID_TOKEN, 'marketing');
-    expect(recordUnsubscribeMock).not.toHaveBeenCalledWith(expect.anything(), VALID_TOKEN, 'all');
+    expect(recordUnsubscribeMock).toHaveBeenCalledWith(expect.anything(), VALID_TOKEN, 'intro', 'one_click');
+    expect(recordUnsubscribeMock).not.toHaveBeenCalledWith(expect.anything(), VALID_TOKEN, 'marketing', expect.anything());
+    expect(recordUnsubscribeMock).not.toHaveBeenCalledWith(expect.anything(), VALID_TOKEN, 'all', expect.anything());
   });
 });

@@ -228,40 +228,78 @@ export async function markProspectEmailDelivered(db: SqlDb, providerMessageId: s
 }
 
 /**
- * Marks the specific outbox row BOUNCED and, separately, suppresses the prospect's address going
- * forward (email_bounced_at) -- a hard bounce means the address itself doesn't work, so this blocks
- * every future send to that prospect via lib/buyerProspectEmail.ts's suppression check and the
- * database guard trigger, not just this one outbox row. Idempotent: COALESCE means a repeated
- * bounce webhook for the same address never overwrites the original bounce time.
+ * Marks the specific outbox row BOUNCED, suppresses the prospect's address going forward
+ * (email_bounced_at) -- a hard bounce means the address itself doesn't work, so this blocks every
+ * future send to that prospect via the suppression check above and the database guard trigger, not
+ * just this one outbox row -- and records the transition to audit_log, all in one atomic statement.
+ *
+ * The CTE locks the outbox row (FOR UPDATE OF e) and only proceeds if it's still SENT/PENDING, so
+ * two concurrent deliveries of the same webhook event serialise on that lock: whichever commits
+ * first moves the row to BOUNCED and writes the one audit entry; the second finds the row no longer
+ * matches, so every CTE arm is empty and it is a safe, silent no-op -- no second audit entry, no
+ * double-processing. The audit entry's previous_state is the outbox row's own prior status (what
+ * actually changed), not the prospect-level suppression state, which may already have been set by an
+ * earlier bounce on a different step.
  */
 export async function markProspectEmailBounced(db: SqlDb, providerMessageId: string): Promise<void> {
-  const rows = await db.sql`
-    UPDATE buyer_prospect_emails SET status = 'BOUNCED', updated_at = now()
-    WHERE provider_message_id = ${providerMessageId} AND status IN ('SENT', 'PENDING')
-    RETURNING prospect_id
-  `;
-  if (rows.length === 0) return;
-  const prospectId = (rows[0] as { prospect_id: number }).prospect_id;
   await db.sql`
-    UPDATE buyer_prospects SET email_bounced_at = COALESCE(email_bounced_at, now()) WHERE id = ${prospectId}
+    WITH prev AS (
+      SELECT e.id, e.status AS prev_status, e.prospect_id, p.prospect_reference
+      FROM buyer_prospect_emails e
+      JOIN buyer_prospects p ON p.id = e.prospect_id
+      WHERE e.provider_message_id = ${providerMessageId} AND e.status IN ('SENT', 'PENDING')
+      FOR UPDATE OF e
+    ), updated_email AS (
+      UPDATE buyer_prospect_emails SET status = 'BOUNCED', updated_at = now()
+      FROM prev WHERE buyer_prospect_emails.id = prev.id
+      RETURNING buyer_prospect_emails.id
+    ), updated_prospect AS (
+      UPDATE buyer_prospects SET email_bounced_at = COALESCE(email_bounced_at, now())
+      FROM prev WHERE buyer_prospects.id = prev.prospect_id
+      RETURNING buyer_prospects.id
+    ), logged AS (
+      INSERT INTO audit_log (actor, action, entity_type, entity_id, previous_state, new_state)
+      SELECT 'system:resend_webhook', 'BUYER_PROSPECT_EMAIL_BOUNCED', 'buyer_prospect', prev.prospect_id,
+        jsonb_build_object('outbox_status', prev.prev_status),
+        jsonb_build_object('outbox_status', 'BOUNCED', 'provider_message_id', ${providerMessageId}::text)
+      FROM prev
+      RETURNING id
+    )
+    SELECT 1
   `;
 }
 
 /**
  * Same as markProspectEmailBounced, for a spam complaint. A complaint is a stronger signal than a
  * bounce (the recipient actively marked this as spam) but is handled identically: suppress the
- * prospect's address for every future send, keep the original audit trail on the outbox row.
+ * prospect's address for every future send, and record the transition atomically with the state
+ * change.
  */
 export async function markProspectEmailComplained(db: SqlDb, providerMessageId: string): Promise<void> {
-  const rows = await db.sql`
-    UPDATE buyer_prospect_emails SET status = 'COMPLAINED', updated_at = now()
-    WHERE provider_message_id = ${providerMessageId} AND status IN ('SENT', 'PENDING')
-    RETURNING prospect_id
-  `;
-  if (rows.length === 0) return;
-  const prospectId = (rows[0] as { prospect_id: number }).prospect_id;
   await db.sql`
-    UPDATE buyer_prospects SET email_complained_at = COALESCE(email_complained_at, now()) WHERE id = ${prospectId}
+    WITH prev AS (
+      SELECT e.id, e.status AS prev_status, e.prospect_id, p.prospect_reference
+      FROM buyer_prospect_emails e
+      JOIN buyer_prospects p ON p.id = e.prospect_id
+      WHERE e.provider_message_id = ${providerMessageId} AND e.status IN ('SENT', 'PENDING')
+      FOR UPDATE OF e
+    ), updated_email AS (
+      UPDATE buyer_prospect_emails SET status = 'COMPLAINED', updated_at = now()
+      FROM prev WHERE buyer_prospect_emails.id = prev.id
+      RETURNING buyer_prospect_emails.id
+    ), updated_prospect AS (
+      UPDATE buyer_prospects SET email_complained_at = COALESCE(email_complained_at, now())
+      FROM prev WHERE buyer_prospects.id = prev.prospect_id
+      RETURNING buyer_prospects.id
+    ), logged AS (
+      INSERT INTO audit_log (actor, action, entity_type, entity_id, previous_state, new_state)
+      SELECT 'system:resend_webhook', 'BUYER_PROSPECT_EMAIL_COMPLAINED', 'buyer_prospect', prev.prospect_id,
+        jsonb_build_object('outbox_status', prev.prev_status),
+        jsonb_build_object('outbox_status', 'COMPLAINED', 'provider_message_id', ${providerMessageId}::text)
+      FROM prev
+      RETURNING id
+    )
+    SELECT 1
   `;
 }
 
