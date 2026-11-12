@@ -119,12 +119,14 @@ describe('buyer prospect nurture outbox', () => {
   beforeEach(async () => {
     sendMock.mockReset();
     process.env.RESEND_API_KEY = 'test-key';
+    process.env.HALO_STRATEGIC_POSTAL_ADDRESS = '123 Example Street, London, EC1A 1AA'; // test fixture only, not the real address
     const { resetBuyerProspectEmailClientCacheForTests } = await import('./buyerProspectEmail');
     resetBuyerProspectEmailClientCacheForTests();
   });
 
   afterEach(() => {
     delete process.env.RESEND_API_KEY;
+    delete process.env.HALO_STRATEGIC_POSTAL_ADDRESS;
   });
 
   it('createProspectEmailEntry is idempotent per (prospect, step)', async () => {
@@ -159,6 +161,31 @@ describe('buyer prospect nurture outbox', () => {
     expect(result.sent).toBe(false);
     expect(sendMock).not.toHaveBeenCalled();
     expect(rows[0].status).toBe('FAILED');
+  });
+
+  it('refuses to send a real email with a placeholder compliance footer when HALO_STRATEGIC_POSTAL_ADDRESS is missing', async () => {
+    delete process.env.HALO_STRATEGIC_POSTAL_ADDRESS;
+    const { sendProspectNurtureEmail } = await import('./buyerProspectEmail');
+    const { db, rows } = fakeProspectEmailDb();
+
+    const result = await sendProspectNurtureEmail(db, { prospectId: 1, nurtureStep: 1, to: 'buyer@example.com', ...content });
+
+    expect(result.sent).toBe(false);
+    expect(sendMock).not.toHaveBeenCalled();
+    expect(rows[0].status).toBe('FAILED');
+    expect(rows[0].error_message).toContain('HALO_STRATEGIC_POSTAL_ADDRESS');
+  });
+
+  it('checks the postal address BEFORE contacting the provider, not after (both missing: provider is never called)', async () => {
+    delete process.env.RESEND_API_KEY;
+    delete process.env.HALO_STRATEGIC_POSTAL_ADDRESS;
+    const { sendProspectNurtureEmail } = await import('./buyerProspectEmail');
+    const { rows, db } = fakeProspectEmailDb();
+
+    await sendProspectNurtureEmail(db, { prospectId: 1, nurtureStep: 1, to: 'buyer@example.com', ...content });
+
+    expect(sendMock).not.toHaveBeenCalled();
+    expect(rows[0].error_message).toContain('HALO_STRATEGIC_POSTAL_ADDRESS');
   });
 
   it('a later step for the same prospect is a separate row, not a duplicate', async () => {

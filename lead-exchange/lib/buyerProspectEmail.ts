@@ -132,6 +132,19 @@ export async function attemptSendProspectEmail(
     return { sent: false, skipped: true, error: reason };
   }
 
+  // Every one of these five templates carries the compliance footer (legal identity, postal
+  // address, unsubscribe link) -- see lib/emailTemplates.ts. A missing postal address degrades
+  // that footer to a visible placeholder string, which is fine for local/preview testing but must
+  // never go out as a real send: this is the one centralised point that gates every prospect
+  // nurture send, so a future scheduler can never forget to check it. Same fail-closed pattern as
+  // the missing-RESEND_API_KEY case below.
+  if (!process.env.HALO_STRATEGIC_POSTAL_ADDRESS?.trim()) {
+    const message = 'HALO_STRATEGIC_POSTAL_ADDRESS is not configured -- refusing to send a real email with a placeholder compliance footer';
+    console.error(`Prospect nurture email not sent (${message}): step ${row.nurture_step} for prospect ${row.prospect_id} (outbox #${id})`);
+    await markOutcome(db, id, { status: 'FAILED', errorMessage: message });
+    return { sent: false, skipped: false, error: message };
+  }
+
   const resend = getClient();
   if (!resend) {
     const message = 'RESEND_API_KEY is not configured';
