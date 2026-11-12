@@ -1,8 +1,24 @@
 'use client';
 
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import Link from 'next/link';
+import Script from 'next/script';
 import { apiPath } from '../../../lib/basePath';
+
+// Exposed to the browser only when Fabien has actually configured a site key (Next.js inlines
+// NEXT_PUBLIC_ vars at build time) -- the widget simply doesn't render without one, so the form
+// keeps working exactly as before (honeypot + rate limiting only) until Turnstile is deliberately
+// turned on. See lib/turnstile.ts for the matching server-side soft-disable behaviour.
+const TURNSTILE_SITE_KEY = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
+
+declare global {
+  interface Window {
+    turnstile?: {
+      render: (container: string | HTMLElement, options: { sitekey: string; callback: (token: string) => void }) => string;
+      reset: (widgetId?: string) => void;
+    };
+  }
+}
 
 type Answers = Record<string, string | boolean | undefined>;
 
@@ -58,6 +74,17 @@ export default function RegisterInterestForm() {
   const [submitting, setSubmitting] = useState(false);
   const [result, setResult] = useState<{ reference: string } | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [turnstileToken, setTurnstileToken] = useState('');
+  const turnstileContainerRef = useRef<HTMLDivElement>(null);
+  const turnstileWidgetId = useRef<string | undefined>(undefined);
+
+  function renderTurnstile() {
+    if (!TURNSTILE_SITE_KEY || !turnstileContainerRef.current || !window.turnstile) return;
+    turnstileWidgetId.current = window.turnstile.render(turnstileContainerRef.current, {
+      sitekey: TURNSTILE_SITE_KEY,
+      callback: (token: string) => setTurnstileToken(token),
+    });
+  }
 
   const set = (key: string, value: Answers[string]) => setA((prev) => ({ ...prev, [key]: value }));
   const str = (key: string) => (typeof a[key] === 'string' ? (a[key] as string) : '');
@@ -96,12 +123,17 @@ export default function RegisterInterestForm() {
           utm_source: new URLSearchParams(typeof window !== 'undefined' ? window.location.search : '').get('utm_source') ?? undefined,
           utm_medium: new URLSearchParams(typeof window !== 'undefined' ? window.location.search : '').get('utm_medium') ?? undefined,
           utm_campaign: new URLSearchParams(typeof window !== 'undefined' ? window.location.search : '').get('utm_campaign') ?? undefined,
+          turnstile_token: turnstileToken || undefined,
         }),
       });
       const data = await res.json();
       if (!res.ok) {
         setError(data.error ?? 'Submission failed. Please try again.');
         setSubmitting(false);
+        if (TURNSTILE_SITE_KEY && window.turnstile && turnstileWidgetId.current) {
+          window.turnstile.reset(turnstileWidgetId.current);
+          setTurnstileToken('');
+        }
         return;
       }
       setResult({ reference: data.reference });
@@ -163,14 +195,14 @@ export default function RegisterInterestForm() {
 
       <h3 style={{ fontSize: '1.05rem', margin: '24px 0 12px' }}>Your consent</h3>
       <Checkbox
-        label="I'm happy for Halo Strategic to contact me about the Lead Exchange, using the details above."
+        label="I'm happy for Halo Strategic to send me a short series of emails (up to 5) about registering interest in the Halo Lead Exchange, including how it works and how to apply. I can unsubscribe at any time."
         name="consent_contact"
         required
         checked={bool('consent_contact')}
         onChange={(v) => set('consent_contact', v)}
       />
       <Checkbox
-        label="(Optional) I'd also like to receive occasional marketing updates from Halo Strategic by email."
+        label="(Optional) I'd also like to receive ongoing marketing updates from Halo Strategic by email, separate from the registration series above."
         name="marketing_consent"
         checked={bool('marketing_consent')}
         onChange={(v) => set('marketing_consent', v)}
@@ -182,7 +214,23 @@ export default function RegisterInterestForm() {
         from being contacted about this registration.
       </p>
 
-      <button type="submit" className="btn btn-bronze" disabled={submitting} style={{ marginTop: 20 }}>
+      {TURNSTILE_SITE_KEY && (
+        <>
+          <Script
+            src="https://challenges.cloudflare.com/turnstile/v0/api.js"
+            strategy="afterInteractive"
+            onLoad={renderTurnstile}
+          />
+          <div ref={turnstileContainerRef} style={{ marginTop: 16 }} />
+        </>
+      )}
+
+      <button
+        type="submit"
+        className="btn btn-bronze"
+        disabled={submitting || (!!TURNSTILE_SITE_KEY && !turnstileToken)}
+        style={{ marginTop: 20 }}
+      >
         {submitting ? 'Submitting…' : 'Register your interest'}
       </button>
     </form>
