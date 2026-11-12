@@ -18,7 +18,7 @@ const TRANSITIONS: Record<Action, { from: string[]; to: string; auditAction: str
 };
 
 export async function POST(req: NextRequest, { params }: { params: { reference: string } }) {
-  const auth = requireAdmin(req);
+  const auth = await requireAdmin(req);
   if ('response' in auth) return auth.response;
 
   let body: { action?: Action; reason?: string };

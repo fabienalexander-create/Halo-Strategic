@@ -24,7 +24,7 @@ const LIVE_ALLOCATION_STATUSES = ['OFFERED', 'ACCEPTED', 'PURCHASED'];
 // this route takes transaction_reference and amount_received as the admin's own typed-in record
 // of what they saw in Tide, not anything supplied by or trusted from the buyer's browser.
 export async function POST(req: NextRequest, { params }: { params: { id: string } }) {
-  const auth = requireAdmin(req);
+  const auth = await requireAdmin(req);
   if ('response' in auth) return auth.response;
 
   const paymentId = Number(params.id);

@@ -16,7 +16,7 @@ const INDUSTRY_LABELS: Record<string, string> = {
 // days later still reflects reality (e.g. if a price were ever corrected -- though nothing in this
 // codebase does that today).
 export async function POST(req: NextRequest, { params }: { params: { id: string } }) {
-  const auth = requireAdmin(req);
+  const auth = await requireAdmin(req);
   if ('response' in auth) return auth.response;
 
   const id = Number(params.id);

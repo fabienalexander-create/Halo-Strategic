@@ -6,7 +6,7 @@ import { requireAdmin } from '../../../../lib/requireAdmin';
 // transactional-emails admin view -- so a failed sync into the operational Google Sheet is
 // visible without digging through function logs.
 export async function GET(req: NextRequest) {
-  const auth = requireAdmin(req);
+  const auth = await requireAdmin(req);
   if ('response' in auth) return auth.response;
 
   const db = getDatabase();

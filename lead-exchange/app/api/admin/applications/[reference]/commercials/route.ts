@@ -14,7 +14,7 @@ interface CommercialsPayload {
 // Only valid while PENDING_COMMERCIALS -- configuring terms is not itself approval to go live;
 // that's the separate ../activate step, which checks these fields are actually set before firing.
 export async function POST(req: NextRequest, { params }: { params: { reference: string } }) {
-  const auth = requireAdmin(req);
+  const auth = await requireAdmin(req);
   if ('response' in auth) return auth.response;
 
   let body: CommercialsPayload;

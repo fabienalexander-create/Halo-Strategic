@@ -39,7 +39,7 @@ export async function POST(req: NextRequest) {
 
   const db = getDatabase();
   const rows = await db.sql`
-    SELECT id, email, password_hash, role FROM admin_users WHERE email = ${body.email}
+    SELECT id, email, password_hash, role, session_version FROM admin_users WHERE email = ${body.email}
   `;
 
   // Same generic error whether the email doesn't exist or the password is wrong — never reveal
@@ -53,7 +53,12 @@ export async function POST(req: NextRequest) {
 
   await db.sql`UPDATE admin_users SET last_login_at = now() WHERE id = ${admin.id}`;
 
-  const token = createSessionToken({ id: admin.id, email: admin.email, role: admin.role });
+  const token = createSessionToken({
+    id: admin.id,
+    email: admin.email,
+    role: admin.role,
+    sessionVersion: admin.session_version,
+  });
   const res = NextResponse.json({ email: admin.email, role: admin.role });
   res.cookies.set(SESSION_COOKIE_NAME, token, SESSION_COOKIE_OPTIONS);
   return res;

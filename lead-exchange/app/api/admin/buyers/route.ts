@@ -9,7 +9,7 @@ import { requireAdmin } from '../../../../lib/requireAdmin';
  * admin authentication rather than the one-time setup token.
  */
 export async function DELETE(req: NextRequest) {
-  const auth = requireAdmin(req);
+  const auth = await requireAdmin(req);
   if ('response' in auth) return auth.response;
 
   const reference = req.nextUrl.searchParams.get('reference');

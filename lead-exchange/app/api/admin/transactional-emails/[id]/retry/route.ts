@@ -9,7 +9,7 @@ import { applicationReceivedEmail, applicationApprovedForCommercialReviewEmail }
 // that's already SENT/DELIVERED is a safe no-op (attemptSend skips it), so retrying twice, or
 // retrying something that actually succeeded just before this request landed, never double-sends.
 export async function POST(req: NextRequest, { params }: { params: { id: string } }) {
-  const auth = requireAdmin(req);
+  const auth = await requireAdmin(req);
   if ('response' in auth) return auth.response;
 
   const outboxId = Number(params.id);
