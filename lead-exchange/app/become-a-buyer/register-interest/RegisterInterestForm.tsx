@@ -123,6 +123,7 @@ export default function RegisterInterestForm() {
           utm_source: new URLSearchParams(typeof window !== 'undefined' ? window.location.search : '').get('utm_source') ?? undefined,
           utm_medium: new URLSearchParams(typeof window !== 'undefined' ? window.location.search : '').get('utm_medium') ?? undefined,
           utm_campaign: new URLSearchParams(typeof window !== 'undefined' ? window.location.search : '').get('utm_campaign') ?? undefined,
+          fbclid: new URLSearchParams(typeof window !== 'undefined' ? window.location.search : '').get('fbclid') ?? undefined,
           turnstile_token: turnstileToken || undefined,
         }),
       });

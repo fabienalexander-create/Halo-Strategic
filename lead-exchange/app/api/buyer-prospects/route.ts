@@ -1,9 +1,11 @@
 import { getDatabase } from '@netlify/database';
 import { NextRequest, NextResponse } from 'next/server';
 import { isConfiguredIndustrySlug } from '../../../lib/industries';
-import { generateUnsubscribeToken, sendProspectNurtureEmail } from '../../../lib/buyerProspectEmail';
+import { sendProspectNurtureEmail } from '../../../lib/buyerProspectEmail';
 import { prospectWelcomeEmail } from '../../../lib/emailTemplates';
 import { verifyTurnstileToken } from '../../../lib/turnstile';
+import { buildAttributionQuery } from '../../../lib/attribution';
+import { captureBuyerProspectTouch } from '../../../lib/buyerProspectCapture';
 
 // Minimal in-memory rate limiting per Netlify Function instance -- same floor as every other
 // public form in this app (/api/contact, /api/admin/login, /api/homeowner-enquiries).
@@ -35,6 +37,7 @@ interface BuyerProspectPayload {
   utm_source?: string;
   utm_medium?: string;
   utm_campaign?: string;
+  fbclid?: string;
   referrer?: string;
   bot_field?: string;
   turnstile_token?: string;
@@ -46,18 +49,6 @@ const REQUIRED_FIELDS: (keyof BuyerProspectPayload)[] = [
   'contact_email',
   'telephone',
 ];
-
-// Best-effort source attribution from UTM parameters and referrer -- never presented as more
-// precise than it actually is (see migration comment). Meta and Instantly links are expected to
-// carry a recognisable utm_source; anything else with no referrer is organic, anything with an
-// external referrer but no recognised utm_source is a direct referral.
-function deriveSource(params: { utmSource?: string; referrer?: string }): string {
-  const utm = params.utmSource?.toLowerCase() ?? '';
-  if (utm.includes('facebook') || utm.includes('meta') || utm.includes('instagram')) return 'meta';
-  if (utm.includes('instantly')) return 'instantly';
-  if (params.referrer && !params.referrer.includes('halostrategic.com')) return 'direct_referral';
-  return 'organic_website';
-}
 
 export async function POST(req: NextRequest) {
   const ip = req.headers.get('x-nf-client-connection-ip') ?? req.headers.get('x-forwarded-for') ?? 'unknown';
@@ -107,48 +98,51 @@ export async function POST(req: NextRequest) {
     }
     const industryId = industryRows[0].id as number;
 
-    const source = deriveSource({ utmSource: body.utm_source, referrer: body.referrer });
-    const unsubscribeToken = generateUnsubscribeToken();
-
-    const inserted = await db.sql`
-      INSERT INTO buyer_prospects (
-        prospect_reference, industry_id, company_name, contact_name, contact_email, telephone,
-        postcodes_covered, approx_monthly_lead_requirement,
-        source, utm_source, utm_medium, utm_campaign,
-        consent_contact, marketing_consent, unsubscribe_token
-      ) VALUES (
-        ${`PENDING-${Date.now()}-${Math.random().toString(36).slice(2)}`}, ${industryId}, ${body.company_name}, ${body.contact_name}, ${body.contact_email}, ${body.telephone},
-        ${body.postcodes_covered ?? null}, ${body.approx_monthly_lead_requirement ?? null},
-        ${source}, ${body.utm_source ?? null}, ${body.utm_medium ?? null}, ${body.utm_campaign ?? null},
-        ${body.consent_contact}, ${body.marketing_consent ?? false}, ${unsubscribeToken}
-      )
-      RETURNING id
-    `;
-    const prospectId = inserted[0].id as number;
-    const prospectReference = `HLX-PROSPECT-${String(prospectId).padStart(6, '0')}`;
-    await db.sql`UPDATE buyer_prospects SET prospect_reference = ${prospectReference} WHERE id = ${prospectId}`;
-
-    await db.sql`
-      INSERT INTO audit_log (actor, action, entity_type, entity_id, new_state)
-      VALUES (
-        ${prospectReference}, 'BUYER_PROSPECT_REGISTERED', 'buyer_prospect', ${prospectId},
-        ${JSON.stringify({ industry: industrySlug, source, company_name: body.company_name })}
-      )
-    `;
-
-    // The first nurture email is sent after commit, and never allowed to throw -- a failed send
-    // must never undo an already-recorded prospect. The scheduled function (not yet built) picks
-    // up steps 2-5 on its own cadence; this just sends step 1 immediately so there's no needless
-    // delay on the welcome email specifically.
-    const applyUrl = 'https://halostrategic.com/leads-exchange/become-a-buyer/apply';
-    const unsubscribeUrl = `https://halostrategic.com/leads-exchange/become-a-buyer/unsubscribe?token=${unsubscribeToken}`;
-    await sendProspectNurtureEmail(db, {
-      prospectId,
-      nurtureStep: 1,
-      to: body.contact_email,
-      ...prospectWelcomeEmail({ contactName: body.contact_name, applyUrl, unsubscribeUrl }),
+    const { prospectId, prospectReference, isNewProspect } = await captureBuyerProspectTouch(db, {
+      channel: 'website',
+      industryId,
+      industrySlug,
+      companyName: body.company_name,
+      contactName: body.contact_name,
+      contactEmail: body.contact_email,
+      telephone: body.telephone,
+      postcodesCovered: body.postcodes_covered,
+      approxMonthlyLeadRequirement: body.approx_monthly_lead_requirement,
+      consentContact: body.consent_contact,
+      marketingConsent: body.marketing_consent,
+      utmSource: body.utm_source,
+      utmMedium: body.utm_medium,
+      utmCampaign: body.utm_campaign,
+      fbclid: body.fbclid,
+      referrer: body.referrer,
     });
-    await db.sql`UPDATE buyer_prospects SET nurture_step = 1, last_nurture_sent_at = now() WHERE id = ${prospectId}`;
+
+    // Lookup used for the unsubscribe token needed below -- captureBuyerProspectTouch generates
+    // and stores it on first creation, but a repeat touch doesn't get a new one (nor should it:
+    // the same unsubscribe link must keep working for a prospect who touches twice).
+    const tokenRows = await db.sql`SELECT unsubscribe_token FROM buyer_prospects WHERE id = ${prospectId}`;
+    const unsubscribeToken = (tokenRows[0] as { unsubscribe_token: string }).unsubscribe_token;
+
+    // Only the FIRST touch gets a welcome email -- a repeat touch (already-active prospect
+    // registering again) must not restart or duplicate the nurture sequence.
+    if (isNewProspect) {
+      // The apply link carries the prospect's own reference and first-touch attribution forward,
+      // so a prospect who applies via this email (same session or days later) can be linked back
+      // deterministically in /api/buyer-applications, rather than relying on email-match alone.
+      const attributionQuery = buildAttributionQuery(
+        { utm_source: body.utm_source, utm_medium: body.utm_medium, utm_campaign: body.utm_campaign, fbclid: body.fbclid },
+        { ref: prospectReference }
+      );
+      const applyUrl = `https://halostrategic.com/leads-exchange/become-a-buyer/apply${attributionQuery ? `?${attributionQuery}` : ''}`;
+      const unsubscribeUrl = `https://halostrategic.com/leads-exchange/become-a-buyer/unsubscribe?token=${unsubscribeToken}`;
+      await sendProspectNurtureEmail(db, {
+        prospectId,
+        nurtureStep: 1,
+        to: body.contact_email,
+        ...prospectWelcomeEmail({ contactName: body.contact_name, applyUrl, unsubscribeUrl }),
+      });
+      await db.sql`UPDATE buyer_prospects SET nurture_step = 1, last_nurture_sent_at = now() WHERE id = ${prospectId}`;
+    }
 
     return NextResponse.json(
       {

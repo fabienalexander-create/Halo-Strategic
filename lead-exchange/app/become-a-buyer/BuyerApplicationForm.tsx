@@ -4,6 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { apiPath } from '../../lib/basePath';
 import { BUYER_REPLACEMENT_POLICY_CONFIG, isConfiguredIndustrySlug } from '../../lib/industries';
+import { pickAttributionParams } from '../../lib/attribution';
 
 type Answers = Record<string, string | boolean | number | string[] | undefined>;
 
@@ -122,6 +123,17 @@ export default function BuyerApplicationForm() {
   const [submitting, setSubmitting] = useState(false);
   const [result, setResult] = useState<{ reference: string; status: string } | null>(null);
   const [error, setError] = useState<string | null>(null);
+  // Whatever attribution is on THIS page's URL at the moment of applying -- this is the
+  // application's own last-touch, distinct from (and possibly different to) whatever the
+  // prospect's original registration first-touch was. `ref` (the prospect reference, from the
+  // nurture email link) is the deterministic hint the API uses to link back to that prospect,
+  // corroborated server-side against the contact email before anything is actually linked.
+  // Read directly from window.location.search (not the useSearchParams hook) so this form
+  // doesn't force the page into a Suspense boundary -- same approach already used by
+  // RegisterInterestForm for the same reason.
+  const pageSearch = new URLSearchParams(typeof window !== 'undefined' ? window.location.search : '');
+  const attribution = pickAttributionParams(pageSearch);
+  const prospectReferenceHint = pageSearch.get('ref') ?? undefined;
 
   const set = (key: string, value: Answers[string]) => setA((prev) => ({ ...prev, [key]: value }));
   const str = (key: string) => (typeof a[key] === 'string' ? (a[key] as string) : '');
@@ -172,6 +184,11 @@ export default function BuyerApplicationForm() {
         surveys_per_week_capacity: a.surveys_per_week_capacity ? Number(a.surveys_per_week_capacity) : undefined,
         typical_qualified_to_job_conversion_pct: a.typical_qualified_to_job_conversion_pct ? Number(a.typical_qualified_to_job_conversion_pct) : undefined,
         avg_revenue_per_completed_job: a.avg_revenue_per_completed_job ? Number(a.avg_revenue_per_completed_job) : undefined,
+        prospect_reference: prospectReferenceHint,
+        utm_source: attribution.utm_source,
+        utm_medium: attribution.utm_medium,
+        utm_campaign: attribution.utm_campaign,
+        fbclid: attribution.fbclid,
       };
 
       const res = await fetch(apiPath('/api/buyer-applications'), {

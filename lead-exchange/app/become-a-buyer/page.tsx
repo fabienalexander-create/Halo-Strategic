@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import { buildAttributionQuery, pickAttributionParams } from '../../lib/attribution';
 
 export const metadata: Metadata = {
   title: 'Halo Lead Exchange for Businesses | Halo Strategic',
@@ -12,7 +13,19 @@ export const metadata: Metadata = {
 // the short interest registration or the full application. Deliberately carries no pricing,
 // volume, verification or guaranteed-supply claims anywhere on it (Fabien's explicit instruction);
 // every commercial detail is pushed to "agreed during onboarding" rather than stated here.
-export default function BecomeABuyerLandingPage() {
+//
+// This is the page the Meta ad actually lands traffic on. Next's <Link> does NOT forward the
+// current query string on its own, so without this, any utm_*/fbclid on the ad's destination URL
+// would be silently dropped the moment someone clicks through to register -- next.js/register-
+// interest's own UTM capture only reads ITS OWN page's query string, which would then be empty.
+export default function BecomeABuyerLandingPage({
+  searchParams,
+}: {
+  searchParams: { [key: string]: string | string[] | undefined };
+}) {
+  const attributionQuery = buildAttributionQuery(pickAttributionParams(searchParams));
+  const withAttribution = (path: string) => (attributionQuery ? `${path}?${attributionQuery}` : path);
+
   return (
     <>
       <section className="hero">
@@ -24,7 +37,7 @@ export default function BecomeABuyerLandingPage() {
             businesses with potential customers in their operating areas.
           </p>
           <div className="hero-actions" style={{ marginTop: 20 }}>
-            <Link href="/become-a-buyer/register-interest" className="btn btn-bronze">
+            <Link href={withAttribution('/become-a-buyer/register-interest')} className="btn btn-bronze">
               Register Your Interest
             </Link>
           </div>
@@ -151,12 +164,12 @@ export default function BecomeABuyerLandingPage() {
         <div className="container" style={{ textAlign: 'center' }}>
           <div className="eyebrow" style={{ color: 'var(--bronze-light)' }}>Interested in Becoming a Buyer?</div>
           <h2 className="section-title" style={{ color: '#fff' }}>Register your business interest to receive further information.</h2>
-          <Link href="/become-a-buyer/register-interest" className="btn btn-bronze" style={{ marginTop: 16, display: 'inline-block' }}>
+          <Link href={withAttribution('/become-a-buyer/register-interest')} className="btn btn-bronze" style={{ marginTop: 16, display: 'inline-block' }}>
             Register Your Interest
           </Link>
           <p style={{ marginTop: 16, color: '#C7CBD4' }}>
             Already know you&rsquo;re ready?{' '}
-            <Link href="/become-a-buyer/apply" style={{ color: '#fff', textDecoration: 'underline' }}>Go straight to the full application</Link>.
+            <Link href={withAttribution('/become-a-buyer/apply')} style={{ color: '#fff', textDecoration: 'underline' }}>Go straight to the full application</Link>.
           </p>
         </div>
       </section>
