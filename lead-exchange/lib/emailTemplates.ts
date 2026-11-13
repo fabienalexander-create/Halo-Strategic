@@ -11,6 +11,52 @@ export interface EmailContent {
   subject: string;
   html: string;
   text: string;
+  headers?: Record<string, string>;
+}
+
+// The postal address is a CONFIGURATION PLACEHOLDER. Fabien has confirmed the business/legal
+// identity is "Halo Strategic", but not yet the exact legally applicable UK postal address -- it
+// must be the correct registered/legally applicable address, not simply one associated with the
+// brand, and he asked that it be confirmed before anything goes to production. Nothing here invents
+// one. Once HALO_STRATEGIC_POSTAL_ADDRESS is set as an environment variable, it appears in every
+// nurture email footer automatically, with no further code change.
+function footerAddressLine(): string {
+  return (
+    process.env.HALO_STRATEGIC_POSTAL_ADDRESS?.trim() ||
+    '[Postal address not yet configured — set HALO_STRATEGIC_POSTAL_ADDRESS before sending in production]'
+  );
+}
+
+// Shared footer for the five-email prospect nurture sequence: legal/business identity, the postal
+// address placeholder above, why the recipient is getting this, and an unsubscribe link -- plus the
+// List-Unsubscribe / List-Unsubscribe-Post headers (RFC 8058) that let mail clients render a native
+// one-click "Unsubscribe" button without the recipient having to open the email at all. This is
+// deliberately the ONLY unsubscribe surface for the bounded introductory sequence; it says nothing
+// about "marketing" because withdrawing from this sequence and withdrawing optional ongoing
+// marketing consent are two separate permissions (see lib/prospectUnsubscribe.ts) -- this link
+// only ever stops the bounded sequence itself.
+function prospectFooter(unsubscribeUrl: string): { html: string; text: string; headers: Record<string, string> } {
+  const address = footerAddressLine();
+  return {
+    text: `
+
+--
+Halo Strategic
+${address}
+
+You're receiving this because you registered interest in the Halo Lead Exchange. This is part of a bounded series of up to 5 emails.
+Unsubscribe from this series: ${unsubscribeUrl}`,
+    html: `<hr style="margin-top:24px;border:none;border-top:1px solid #ddd;">
+<p style="color:#888;font-size:0.8rem;">
+Halo Strategic<br>${escapeHtml(address)}<br><br>
+You're receiving this because you registered interest in the Halo Lead Exchange. This is part of a bounded series of up to 5 emails.<br>
+<a href="${unsubscribeUrl}" style="color:#888;">Unsubscribe from this series</a>
+</p>`,
+    headers: {
+      'List-Unsubscribe': `<${unsubscribeUrl}>`,
+      'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click',
+    },
+  };
 }
 
 // Wording is Fabien's, verbatim -- not paraphrased or extended here.
@@ -288,8 +334,9 @@ Halo Strategic`,
 // so there is no "stop emailing me, I already applied" message to write -- it's structurally
 // impossible to receive step 3+ after converting.
 
-export function prospectWelcomeEmail(params: { contactName: string; applyUrl: string }): EmailContent {
+export function prospectWelcomeEmail(params: { contactName: string; applyUrl: string; unsubscribeUrl: string }): EmailContent {
   const name = escapeHtml(params.contactName);
+  const footer = prospectFooter(params.unsubscribeUrl);
   return {
     subject: 'Thanks for your interest in the Halo Lead Exchange',
     text: `Hi ${params.contactName},
@@ -298,23 +345,25 @@ Thanks for registering your interest in the Halo Lead Exchange.
 
 We connect businesses with relevant homeowner enquiries through a structured marketplace: enquiries are generated through targeted acquisition campaigns, checked against agreed criteria, and only offered to approved buyers.
 
-Over the next few emails we'll walk through how the marketplace works, how enquiries are qualified, and what the application and onboarding process involves.
+This is the first of up to 5 emails explaining how the marketplace works, how enquiries are qualified, and what the application and onboarding process involves.
 
 If you'd rather go straight to the full application, you can do that any time here: ${params.applyUrl}
 
 Kind regards,
-Halo Strategic`,
+Halo Strategic${footer.text}`,
     html: `<p>Hi ${name},</p>
 <p>Thanks for registering your interest in the Halo Lead Exchange.</p>
 <p>We connect businesses with relevant homeowner enquiries through a structured marketplace: enquiries are generated through targeted acquisition campaigns, checked against agreed criteria, and only offered to approved buyers.</p>
-<p>Over the next few emails we'll walk through how the marketplace works, how enquiries are qualified, and what the application and onboarding process involves.</p>
+<p>This is the first of up to 5 emails explaining how the marketplace works, how enquiries are qualified, and what the application and onboarding process involves.</p>
 <p>If you'd rather go straight to the full application, you can do that any time here: <a href="${params.applyUrl}" style="color:#B08D57;">${params.applyUrl}</a></p>
-<p>Kind regards,<br>Halo Strategic</p>`,
+<p>Kind regards,<br>Halo Strategic</p>${footer.html}`,
+    headers: footer.headers,
   };
 }
 
-export function prospectModelExplainerEmail(params: { contactName: string; applyUrl: string }): EmailContent {
+export function prospectModelExplainerEmail(params: { contactName: string; applyUrl: string; unsubscribeUrl: string }): EmailContent {
   const name = escapeHtml(params.contactName);
+  const footer = prospectFooter(params.unsubscribeUrl);
   return {
     subject: 'How the Halo Lead Exchange actually works',
     text: `Hi ${params.contactName},
@@ -328,18 +377,20 @@ Enquiries are only ever offered to a buyer whose approved coverage area and crit
 Ready to apply? ${params.applyUrl}
 
 Kind regards,
-Halo Strategic`,
+Halo Strategic${footer.text}`,
     html: `<p>Hi ${name},</p>
 <p>A quick explanation of the model behind the Lead Exchange.</p>
 <p>A lead is an input into a commercial system, not the outcome on its own. That's why enquiries are checked against criteria agreed with each buyer before anything is offered, rather than sold as raw, unqualified volume.</p>
 <p>Enquiries are only ever offered to a buyer whose approved coverage area and criteria match, and only once an application has been reviewed and an onboarding call completed.</p>
 <p>Ready to apply? <a href="${params.applyUrl}" style="color:#B08D57;">${params.applyUrl}</a></p>
-<p>Kind regards,<br>Halo Strategic</p>`,
+<p>Kind regards,<br>Halo Strategic</p>${footer.html}`,
+    headers: footer.headers,
   };
 }
 
-export function prospectQualityApproachEmail(params: { contactName: string; applyUrl: string }): EmailContent {
+export function prospectQualityApproachEmail(params: { contactName: string; applyUrl: string; unsubscribeUrl: string }): EmailContent {
   const name = escapeHtml(params.contactName);
+  const footer = prospectFooter(params.unsubscribeUrl);
   return {
     subject: 'How enquiries are qualified before they reach a buyer',
     text: `Hi ${params.contactName},
@@ -353,18 +404,20 @@ This is also why onboarding matters: the criteria that make an enquiry a "fit" f
 Apply here when you're ready: ${params.applyUrl}
 
 Kind regards,
-Halo Strategic`,
+Halo Strategic${footer.text}`,
     html: `<p>Hi ${name},</p>
 <p>Before any enquiry reaches a buyer, it's checked against the criteria agreed with that buyer: things like coverage area, property type and the qualification questions relevant to that industry.</p>
 <p>Buyers only ever see enquiries that are a genuine fit for their business. If there isn't a suitable match, the enquiry isn't shared with anyone.</p>
 <p>This is also why onboarding matters: the criteria that make an enquiry a &ldquo;fit&rdquo; for your business are agreed with you directly, not assumed.</p>
 <p>Apply here when you're ready: <a href="${params.applyUrl}" style="color:#B08D57;">${params.applyUrl}</a></p>
-<p>Kind regards,<br>Halo Strategic</p>`,
+<p>Kind regards,<br>Halo Strategic</p>${footer.html}`,
+    headers: footer.headers,
   };
 }
 
-export function prospectApplicationEmail(params: { contactName: string; applyUrl: string }): EmailContent {
+export function prospectApplicationEmail(params: { contactName: string; applyUrl: string; unsubscribeUrl: string }): EmailContent {
   const name = escapeHtml(params.contactName);
+  const footer = prospectFooter(params.unsubscribeUrl);
   return {
     subject: 'Ready to apply to the Halo Lead Exchange?',
     text: `Hi ${params.contactName},
@@ -376,17 +429,19 @@ Applications are reviewed individually -- access isn't automatic, and every appr
 Start the application here: ${params.applyUrl}
 
 Kind regards,
-Halo Strategic`,
+Halo Strategic${footer.text}`,
     html: `<p>Hi ${name},</p>
 <p>If the Lead Exchange looks like a fit so far, the next step is the full buyer application: your business details, coverage area and service capability.</p>
 <p>Applications are reviewed individually &mdash; access isn't automatic, and every approved applicant completes a mandatory onboarding call before any account is activated.</p>
 <p>Start the application here: <a href="${params.applyUrl}" style="color:#B08D57;">${params.applyUrl}</a></p>
-<p>Kind regards,<br>Halo Strategic</p>`,
+<p>Kind regards,<br>Halo Strategic</p>${footer.html}`,
+    headers: footer.headers,
   };
 }
 
-export function prospectNextStepsEmail(params: { contactName: string; applyUrl: string }): EmailContent {
+export function prospectNextStepsEmail(params: { contactName: string; applyUrl: string; unsubscribeUrl: string }): EmailContent {
   const name = escapeHtml(params.contactName);
+  const footer = prospectFooter(params.unsubscribeUrl);
   return {
     subject: 'What happens after you apply',
     text: `Hi ${params.contactName},
@@ -400,7 +455,7 @@ A quick summary of what happens once you submit the full application:
 This is the last email in this introductory sequence. If you're ready, you can apply here: ${params.applyUrl}
 
 Kind regards,
-Halo Strategic`,
+Halo Strategic${footer.text}`,
     html: `<p>Hi ${name},</p>
 <p>A quick summary of what happens once you submit the full application:</p>
 <ol>
@@ -409,6 +464,7 @@ Halo Strategic`,
 <li>Once terms are agreed, your account is activated.</li>
 </ol>
 <p>This is the last email in this introductory sequence. If you're ready, you can apply here: <a href="${params.applyUrl}" style="color:#B08D57;">${params.applyUrl}</a></p>
-<p>Kind regards,<br>Halo Strategic</p>`,
+<p>Kind regards,<br>Halo Strategic</p>${footer.html}`,
+    headers: footer.headers,
   };
 }
