@@ -5,7 +5,7 @@ import { requireAdmin } from '../../../../lib/requireAdmin';
 // Read-only visibility into the email outbox -- "you can see exactly which applicants received
 // notifications" (Fabien's brief). No send/retry action here; see [id]/retry for that.
 export async function GET(req: NextRequest) {
-  const auth = requireAdmin(req);
+  const auth = await requireAdmin(req);
   if ('response' in auth) return auth.response;
 
   const db = getDatabase();

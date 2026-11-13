@@ -25,7 +25,7 @@ const REQUIRED_FIELDS: (keyof Body)[] = [
 // Until an SMS flow exists, this is always ADMIN_AFTER_CALL: an admin took the call and is
 // recording it here, with notes required (also enforced by the DB check).
 export async function POST(req: NextRequest) {
-  const auth = requireAdmin(req);
+  const auth = await requireAdmin(req);
   if ('response' in auth) return auth.response;
 
   let body: Body;

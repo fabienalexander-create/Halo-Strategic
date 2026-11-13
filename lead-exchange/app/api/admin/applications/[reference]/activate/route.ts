@@ -1,15 +1,15 @@
 import { getDatabase } from '@netlify/database';
 import { NextRequest, NextResponse } from 'next/server';
-import { requireAdmin } from '../../../../../../lib/requireAdmin';
+import { requireOwner } from '../../../../../../lib/requireAdmin';
 
-// Explicit, separate go-live step. Refuses to fire unless the key commercial fields are actually
-// set -- this is the enforcement point for "approval must not automatically make the buyer
+// Explicit, separate go-live step. OWNER ONLY: reviewers can assess applications but only the owner authorises revenue-generating accounts. Refuses to fire unless the mandatory onboarding call has been
+// recorded and the key commercial fields are actually set -- this is the enforcement point for "approval must not automatically make the buyer
 // ACTIVE" (Fabien's brief). Configuring commercials and activating are deliberately two different
 // admin actions, each independently audit-logged.
 const REQUIRED_FIELDS = ['agreed_price_per_lead', 'exclusivity_arrangement', 'agreed_weekly_capacity', 'payment_arrangement_notes'] as const;
 
 export async function POST(req: NextRequest, { params }: { params: { reference: string } }) {
-  const auth = requireAdmin(req);
+  const auth = await requireOwner(req);
   if ('response' in auth) return auth.response;
 
   try {
@@ -27,6 +27,18 @@ export async function POST(req: NextRequest, { params }: { params: { reference: 
           current_status: buyer.application_status,
         },
         { status: 409 }
+      );
+    }
+
+    // The mandatory onboarding call must be recorded before activation. A database trigger
+    // enforces the same rule as a backstop; this check gives a clear error first.
+    if (!buyer.onboarding_call_completed_at) {
+      return NextResponse.json(
+        {
+          error: 'Cannot activate: the mandatory onboarding call has not been recorded.',
+          missing_requirements: ['onboarding_call'],
+        },
+        { status: 422 }
       );
     }
 
