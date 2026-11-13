@@ -34,6 +34,17 @@ export interface BuyerReplacementPolicyConfig {
   policyUrl?: string;
 }
 
+// Transparency notice shown beside the mobile number field (not a tick box). Wording approved by
+// Fabien. A one-off administrative SMS to confirm the number; no marketing content.
+export const SMS_VERIFICATION_NOTICE = {
+  heading: 'Phone number verification',
+  paragraphs: [
+    'We may send you a one-time SMS to verify your mobile number and confirm that we can contact you about your enquiry. This message is solely for verification and will not contain marketing material.',
+    'Your phone number and verification status will be processed by Halo Strategic and our service providers for this purpose, in accordance with our Privacy Policy.',
+    'Reply YES to confirm your number. You can reply STOP to prevent further verification messages.',
+  ],
+} as const;
+
 export const HOMEOWNER_CONSENT_CONFIG: Record<IndustrySlug, HomeownerConsentConfig> = {
   spray_foam_removal: {
     consentVersion: '2026-11-04-v0.1',
@@ -42,7 +53,7 @@ export const HOMEOWNER_CONSENT_CONFIG: Record<IndustrySlug, HomeownerConsentConf
     namedRecipientOrCategory: 'An approved Spray Foam Removal buyer (installer) in the Halo Lead Exchange, only if judged a genuine fit',
   },
   solar_battery: {
-    consentVersion: '2026-11-06-v0.1',
+    consentVersion: '2026-11-13-v0.2',
     source: 'solar_battery_homeowner_form',
     shareBuyerLabel: "I'm happy for my details to be shared with a suitable Solar & Battery installer, so they can contact me about this enquiry, if Halo Strategic identifies one as a genuine fit.",
     namedRecipientOrCategory: 'An approved Solar & Battery installer in the Halo Lead Exchange, only if judged a genuine fit',

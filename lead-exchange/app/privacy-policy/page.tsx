@@ -13,7 +13,7 @@ export default function PrivacyPolicyPage() {
       <div className="container">
         <div className="eyebrow">Legal</div>
         <h1 style={{ fontSize: '1.8rem', marginBottom: 20 }}>Privacy Policy</h1>
-        <p className="form-note" style={{ marginBottom: 24 }}>Version 2026-11-07-v0.2. Last updated 7 November 2026.</p>
+        <p className="form-note" style={{ marginBottom: 24 }}>Version 2026-11-13-v0.3. Last updated 13 November 2026.</p>
 
         <h2 style={{ fontSize: '1.2rem', margin: '24px 0 10px' }}>1. Who we are</h2>
         <p>Halo Strategic Ltd is the controller of the personal information described in this policy. We are registered in England and Wales (company number 17409402), registered office 71-75 Shelton Street, London WC2H 9JQ.</p>
@@ -49,10 +49,12 @@ export default function PrivacyPolicyPage() {
           <tbody>
             <tr><td style={{ padding: '4px 8px' }}>Contact you about your enquiry and check it is a genuine fit</td><td style={{ padding: '4px 8px' }}>Your consent (&ldquo;happy for Halo Strategic to contact me&rdquo;) and our legitimate interest in handling enquiries</td></tr>
             <tr><td style={{ padding: '4px 8px' }}>Share your details with one suitable business</td><td style={{ padding: '4px 8px' }}>Your separate, specific consent to sharing. Not bundled with anything else</td></tr>
+            <tr><td style={{ padding: '4px 8px' }}>Send you a one-time SMS to verify your mobile number for your enquiry (administrative only, no marketing)</td><td style={{ padding: '4px 8px' }}>Our legitimate interest in confirming that contact details are correct and that we can reach you about your enquiry</td></tr>
             <tr><td style={{ padding: '4px 8px' }}>Keep a record of what you agreed to and when</td><td style={{ padding: '4px 8px' }}>Legitimate interest and legal obligation (to show consent was given)</td></tr>
             <tr><td style={{ padding: '4px 8px' }}>Optional email tips and updates</td><td style={{ padding: '4px 8px' }}>Your separate marketing consent, only if you tick that box</td></tr>
           </tbody>
         </table>
+        <p><strong>Phone number verification.</strong> We may send you one text message asking you to reply YES to confirm your mobile number. It contains no marketing. We store the number, a reference, whether you replied and when. If you reply STOP, we will not send you further verification messages and we keep your number on a do-not-text list for that purpose. We use Make (workflow automation) and TextMagic (SMS delivery) to send and receive these messages; they act on our instructions, and the transfer safeguards in section 7 apply.</p>
         <p>You can withdraw consent at any time (section 10). Withdrawing does not undo sharing that has already happened, but we will tell the business you have withdrawn.</p>
 
         <h2 style={{ fontSize: '1.2rem', margin: '24px 0 10px' }}>4. Sharing homeowner information</h2>
@@ -108,6 +110,7 @@ export default function PrivacyPolicyPage() {
           <tbody>
             <tr><td style={{ padding: '4px 8px' }}>Homeowner enquiry not shared with anyone</td><td style={{ padding: '4px 8px' }}>6 months from submission, then deleted</td></tr>
             <tr><td style={{ padding: '4px 8px' }}>Homeowner enquiry shared with a buyer</td><td style={{ padding: '4px 8px' }}>2 years from sharing, so we can handle replacements, disputes and complaints</td></tr>
+            <tr><td style={{ padding: '4px 8px' }}>Phone verification record</td><td style={{ padding: '4px 8px' }}>Kept with the enquiry it relates to. A STOP entry is kept until you ask us to remove it, so we honour your request</td></tr>
             <tr><td style={{ padding: '4px 8px' }}>Record of your consents</td><td style={{ padding: '4px 8px' }}>As long as we hold the related data, plus 2 years</td></tr>
             <tr><td style={{ padding: '4px 8px' }}>Declined buyer applications</td><td style={{ padding: '4px 8px' }}>12 months from decision</td></tr>
             <tr><td style={{ padding: '4px 8px' }}>Active buyer accounts</td><td style={{ padding: '4px 8px' }}>While the account is open, plus 2 years</td></tr>

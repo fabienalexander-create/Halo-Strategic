@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { apiPath } from '../../../lib/basePath';
-import { HOMEOWNER_CONSENT_CONFIG } from '../../../lib/industries';
+import { HOMEOWNER_CONSENT_CONFIG, SMS_VERIFICATION_NOTICE } from '../../../lib/industries';
 
 type Answers = Record<string, string | boolean | undefined>;
 
@@ -128,6 +128,12 @@ export default function RequestQuoteForm() {
       <TextField label="Last name" name="last_name" required value={str('last_name')} onChange={(v) => set('last_name', v)} />
       <TextField label="Email" name="email" type="email" required value={str('email')} onChange={(v) => set('email', v)} />
       <TextField label="Mobile number" name="mobile" type="tel" required value={str('mobile')} onChange={(v) => set('mobile', v)} />
+      <div className="form-note" style={{ margin: '-4px 0 16px', fontSize: '0.9rem' }}>
+        <p style={{ margin: '0 0 4px' }}><strong>{SMS_VERIFICATION_NOTICE.heading}</strong></p>
+        {SMS_VERIFICATION_NOTICE.paragraphs.map((t) => (
+          <p key={t} style={{ margin: '0 0 4px' }}>{t}</p>
+        ))}
+      </div>
       <SelectField
         label="Preferred contact method"
         name="preferred_contact_method"

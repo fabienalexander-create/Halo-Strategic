@@ -4,7 +4,7 @@ import { createHmac } from 'node:crypto';
 import { readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { NextRequest } from 'next/server';
-import { SMS_COVERED_CONSENT_VERSIONS, handleInboundReply, queueVerification, recordDelivery, type SqlDb } from './smsVerification';
+import { SMS_NOTICE_VERSIONS, handleInboundReply, queueVerification, recordDelivery, type SqlDb } from './smsVerification';
 import { sendPendingVerifications } from './smsSender';
 
 // Real-Postgres tests for homeowner SMS verification. Skipped unless TEST_PG_ADMIN_URL is set;
@@ -33,7 +33,7 @@ const db: SqlDb = {
     return (await holder.db.query(text, values)).rows;
   },
 };
-const covered = SMS_COVERED_CONSENT_VERSIONS as Set<string>;
+const covered = SMS_NOTICE_VERSIONS as Set<string>;
 const CV = 'test-sms-v1';
 
 describe.skipIf(!adminUrl)('sms verification (real Postgres)', () => {
@@ -50,7 +50,7 @@ describe.skipIf(!adminUrl)('sms verification (real Postgres)', () => {
     return (await holder.db.query(`INSERT INTO leads (industry_id, homeowner_name) VALUES ($1,'T') RETURNING id`, [industryId])).rows[0].id;
   }
   async function queue(mobile: string, leadId?: number) {
-    return queueVerification(db, { leadId: leadId ?? (await newLead()), mobile, consentVersion: CV });
+    return queueVerification(db, { leadId: leadId ?? (await newLead()), mobile, noticeVersion: CV });
   }
   const status = async (id: number) => (await holder.db.query(`SELECT status FROM lead_phone_verifications WHERE id=$1`, [id])).rows[0].status;
   const markSent = (id: number) => holder.db.query(`UPDATE lead_phone_verifications SET status='SENT', sent_at=now() WHERE id=$1`, [id]);
@@ -87,16 +87,17 @@ describe.skipIf(!adminUrl)('sms verification (real Postgres)', () => {
     covered.add(CV);
   });
 
-  it('queues nothing unless enabled AND the consent version covers SMS', async () => {
+  it('queues nothing unless enabled AND the form version showed the notice', async () => {
     const lead = await newLead();
     process.env.SMS_VERIFICATION_ENABLED = 'false';
-    expect(await queueVerification(db, { leadId: lead, mobile: newPhone(), consentVersion: CV })).toEqual({ queued: false, reason: 'NOT_ENABLED' });
+    expect(await queueVerification(db, { leadId: lead, mobile: newPhone(), noticeVersion: CV })).toEqual({ queued: false, reason: 'NOT_ENABLED' });
     process.env.SMS_VERIFICATION_ENABLED = 'true';
-    expect(await queueVerification(db, { leadId: lead, mobile: newPhone(), consentVersion: '2026-11-06-v0.1' })).toEqual({ queued: false, reason: 'CONSENT_NOT_COVERED' });
+    expect(await queueVerification(db, { leadId: lead, mobile: newPhone(), noticeVersion: '2026-11-06-v0.1' })).toEqual({ queued: false, reason: 'NOTICE_NOT_SHOWN' });
     expect((await holder.db.query(`SELECT count(*)::int n FROM lead_phone_verifications WHERE lead_id=$1`, [lead])).rows[0].n).toBe(0);
-    // The shipped default covers no version at all.
+    // The shipped default covers only the solar notice version.
+    expect([...SMS_NOTICE_VERSIONS]).toEqual(['2026-11-13-v0.2', CV]);
     covered.delete(CV);
-    expect(await queueVerification(db, { leadId: lead, mobile: newPhone(), consentVersion: CV })).toEqual({ queued: false, reason: 'CONSENT_NOT_COVERED' });
+    expect(await queueVerification(db, { leadId: lead, mobile: newPhone(), noticeVersion: CV })).toEqual({ queued: false, reason: 'NOTICE_NOT_SHOWN' });
   });
 
   it('queues a request with a 6 character reference, 48h expiry, and an audit entry with no personal data', async () => {

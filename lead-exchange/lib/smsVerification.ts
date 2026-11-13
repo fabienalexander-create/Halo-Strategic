@@ -17,11 +17,11 @@ export function sqlFromClient(client: { query: (text: string, values: unknown[])
   };
 }
 
-// Consent wording versions that explicitly cover a one-off verification text message. EMPTY on
-// purpose: the current wording does not mention SMS. A version is added here only after the new
-// wording is signed off by Fabien's legal review and shipped on the form. Until then nothing is
-// ever queued, even with SMS_VERIFICATION_ENABLED set.
-export const SMS_COVERED_CONSENT_VERSIONS: ReadonlySet<string> = new Set<string>();
+// Form wording versions that show the approved phone verification notice (SMS_VERIFICATION_NOTICE
+// in lib/industries.ts). Only leads captured under one of these can ever be queued. Spray foam,
+// roofing and earlier solar leads are never texted. Even then nothing is sent unless
+// SMS_VERIFICATION_ENABLED=true, which stays unset until Fabien activates it.
+export const SMS_NOTICE_VERSIONS: ReadonlySet<string> = new Set<string>(['2026-11-13-v0.2']);
 
 export const VERIFICATION_EXPIRY_HOURS = 48;
 export const PER_NUMBER_CAP_24H = 2;
@@ -54,7 +54,7 @@ function audit(db: SqlDb, action: string, verificationId: number, reference: str
 
 export type QueueResult =
   | { queued: true; verificationId: number; reference: string }
-  | { queued: false; reason: 'NOT_ENABLED' | 'CONSENT_NOT_COVERED' | 'INVALID_NUMBER' | 'SUPPRESSED' | 'NUMBER_CAPPED' | 'CIRCUIT_BREAKER' | 'ALREADY_OPEN' };
+  | { queued: false; reason: 'NOT_ENABLED' | 'NOTICE_NOT_SHOWN' | 'INVALID_NUMBER' | 'SUPPRESSED' | 'NUMBER_CAPPED' | 'CIRCUIT_BREAKER' | 'ALREADY_OPEN' };
 
 /**
  * Queues one verification request for a lead. Never throws for business reasons; returns why
@@ -63,10 +63,10 @@ export type QueueResult =
  */
 export async function queueVerification(
   db: SqlDb,
-  params: { leadId: number; mobile: unknown; consentVersion: string }
+  params: { leadId: number; mobile: unknown; noticeVersion: string }
 ): Promise<QueueResult> {
   if (process.env.SMS_VERIFICATION_ENABLED !== 'true') return { queued: false, reason: 'NOT_ENABLED' };
-  if (!SMS_COVERED_CONSENT_VERSIONS.has(params.consentVersion)) return { queued: false, reason: 'CONSENT_NOT_COVERED' };
+  if (!SMS_NOTICE_VERSIONS.has(params.noticeVersion)) return { queued: false, reason: 'NOTICE_NOT_SHOWN' };
 
   const phone = normaliseUkMobile(params.mobile);
   if (!phone) {

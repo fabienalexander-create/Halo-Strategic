@@ -247,8 +247,8 @@ export async function POST(req: NextRequest) {
     );
 
     // Phone verification request, in the same transaction as the lead so it cannot be lost. It is
-    // gated off unless SMS_VERIFICATION_ENABLED is set AND the lead's consent version explicitly
-    // covers a verification text (none does yet). Wrapped in a savepoint: whatever happens here,
+    // gated off unless SMS_VERIFICATION_ENABLED is set AND the lead's form version showed the
+    // phone verification notice. Wrapped in a savepoint: whatever happens here,
     // the enquiry itself is saved.
     let verificationQueued = false;
     await client.query('SAVEPOINT sms_verification');
@@ -256,7 +256,7 @@ export async function POST(req: NextRequest) {
       const queued = await queueVerification(sqlFromClient(client), {
         leadId,
         mobile: body.mobile,
-        consentVersion: consentConfig.consentVersion,
+        noticeVersion: consentConfig.consentVersion,
       });
       verificationQueued = queued.queued;
       await client.query('RELEASE SAVEPOINT sms_verification');

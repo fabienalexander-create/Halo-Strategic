@@ -4,7 +4,7 @@ Status: built and tested locally. Not deployed. Nothing is live: no Make scenari
 
 ## Safety gates (all must be true before a single text can be queued)
 1. `SMS_VERIFICATION_ENABLED=true` (unset by default).
-2. The lead's consent wording version is listed in `SMS_COVERED_CONSENT_VERSIONS` (lib/smsVerification.ts). It is EMPTY. The current wording does not mention SMS, so nothing queues. Add a version only after the new wording is signed off by legal and shipped on the form.
+2. The lead's form version is in `SMS_NOTICE_VERSIONS` (lib/smsVerification.ts), i.e. it showed the approved phone verification notice. Only Solar & Battery version `2026-11-13-v0.2` qualifies. Spray foam, roofing and older solar leads are never texted. The notice is a transparency notice, not a tick box; the lawful basis is documented in the privacy policy (legitimate interest). Wording is approved by Fabien; a UK data-protection solicitor review of the final wording and processor arrangements is still recommended before activation.
 3. For sending: `MAKE_SMS_OUT_WEBHOOK_URL` and `MAKE_SMS_OUT_SECRET` are set.
 
 ## Environment variables (set by Fabien, none set yet)
