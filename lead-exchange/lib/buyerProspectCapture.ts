@@ -30,8 +30,12 @@ export interface CaptureBuyerProspectParams {
   metaFormId?: string | null;
   metaFormName?: string | null;
   metaSubmittedAt?: Date | null;
+  // Deliberately NOT a generic "whatever Meta sent" blob -- see meta-lead-ads/route.ts. This is
+  // only ever the specific consent question/answer pair (plus the wording version), never the
+  // full set of Instant Form answers, so storage here stays limited to what buyer_prospects
+  // actually needs to justify a contact-consent claim later.
   consentWordingVersion?: string | null;
-  rawFormAnswers?: unknown;
+  consentEvidence?: unknown;
 }
 
 export interface CaptureBuyerProspectResult {
@@ -51,22 +55,42 @@ interface PgClient {
   release(): void;
 }
 
+// Comparisons only -- never rewrites what's actually stored in contact_email, so a prospect's
+// record keeps their email exactly as they typed it (for display, and for sending to it), while
+// "is this the same person" is judged the way email addresses actually work: case-insensitive,
+// no leading/trailing whitespace from a copy-paste or a sloppy Make mapping.
+function normaliseEmail(email: string): string {
+  return email.trim().toLowerCase();
+}
+
 /**
  * The single write path for a qualifying buyer-prospect submission, used by both the website
  * register-interest route and the Meta Instant Form ingestion route, so the two channels can
  * never apply different dedup/first-touch/last-touch rules.
  *
  * - A Meta lead_id already seen before (retried webhook, re-run Make scenario) is a true no-op:
- *   no new prospect, no new touch row, same reference returned.
- * - Otherwise, one ACTIVE (unconverted) prospect per (contact_email, industry) is enforced at the
- *   database level (uq_buyer_prospects_active_email_industry). The first qualifying submission
- *   creates the row and becomes BOTH first-touch and last-touch. A later qualifying submission
- *   for the same email+industry, from either channel, updates ONLY last-touch fields -- it never
- *   rewrites first-touch, and never touches the profile fields (company/contact/phone) captured
- *   on the original submission, so a sloppier repeat submission can't clobber good data.
+ *   no new prospect, no new touch row, same reference returned. This check happens BEFORE the
+ *   row lock below, so a retry never even waits on it.
+ * - Otherwise, this looks for an existing ACTIVE (unconverted) prospect for the same normalised
+ *   email + industry, row-locked (FOR UPDATE) for the rest of the transaction. Found -> only
+ *   last-touch fields are updated; first-touch, consent evidence, and profile fields
+ *   (company/contact/phone) from the original submission are never overwritten by a repeat
+ *   touch, however sloppy. Not found -> a new prospect is created, which becomes both its own
+ *   first-touch and last-touch.
+ * - KNOWN LIMITATION, accepted deliberately rather than silently: there is currently no database
+ *   constraint enforcing "one active prospect per email+industry" (see
+ *   docs/BUYER_PROSPECT_ATTRIBUTION_ROLLBACK.md for why that's being held back until a read-only
+ *   duplicate report against real production data has been reviewed). Two truly concurrent first
+ *   submissions for the same brand-new email+industry could each find no existing row and both
+ *   insert -- there is nothing yet to lock before either row exists. This is a real, if narrow,
+ *   race window; closing it is exactly what adding the partial unique index (a later, separate
+ *   migration) will do, after which this function's SELECT-then-branch logic should be replaced
+ *   with the atomic INSERT ... ON CONFLICT upsert this previously used.
  * - Every call that isn't a deduped Meta retry writes exactly one row to buyer_prospect_touches,
  *   first or repeat, so the full per-touch history (and every Meta lead_id ever received) is
- *   always recoverable regardless of what the summary row currently shows.
+ *   always recoverable regardless of what the summary row currently shows. This insert, the
+ *   prospect insert/update, and the audit_log entry are all one transaction -- the prospect can
+ *   never change without its touch and audit record being written too.
  */
 export async function captureBuyerProspectTouch(
   db: NetlifyDb,
@@ -95,69 +119,83 @@ export async function captureBuyerProspectTouch(
     }
 
     const source = deriveSource({ utmSource: p.utmSource ?? undefined, fbclid: p.fbclid ?? undefined, referrer: p.referrer ?? undefined });
-    const tempReference = `PENDING-${Date.now()}-${Math.random().toString(36).slice(2)}`;
-    const unsubscribeToken = generateUnsubscribeToken();
+    const normalisedEmail = normaliseEmail(p.contactEmail);
 
-    const upsert = await client.query(
-      `INSERT INTO buyer_prospects (
-        prospect_reference, industry_id, company_name, contact_name, contact_email, telephone,
-        postcodes_covered, approx_monthly_lead_requirement,
-        source, utm_source, utm_medium, utm_campaign, fbclid,
-        capture_channel, last_touch_channel, last_touch_utm_source, last_touch_utm_medium,
-        last_touch_utm_campaign, last_touch_fbclid, last_touch_at,
-        meta_lead_id, meta_campaign_id, meta_campaign_name, meta_adset_id, meta_adset_name,
-        meta_ad_id, meta_ad_name, meta_form_id, meta_form_name, meta_submitted_at,
-        consent_wording_version, raw_form_answers,
-        consent_contact, marketing_consent, unsubscribe_token
-      ) VALUES (
-        $1, $2, $3, $4, $5, $6,
-        $7, $8,
-        $9, $10, $11, $12, $13,
-        $14, $14, $10, $11,
-        $12, $13, now(),
-        $15, $16, $17, $18, $19,
-        $20, $21, $22, $23, $24,
-        $25, $26,
-        $27, $28, $29
-      )
-      ON CONFLICT (contact_email, industry_id) WHERE converted_buyer_id IS NULL
-      DO UPDATE SET
-        source = EXCLUDED.source,
-        last_touch_channel = EXCLUDED.capture_channel,
-        last_touch_utm_source = EXCLUDED.utm_source,
-        last_touch_utm_medium = EXCLUDED.utm_medium,
-        last_touch_utm_campaign = EXCLUDED.utm_campaign,
-        last_touch_fbclid = EXCLUDED.fbclid,
-        last_touch_at = now(),
-        meta_lead_id = EXCLUDED.meta_lead_id,
-        meta_campaign_id = EXCLUDED.meta_campaign_id,
-        meta_campaign_name = EXCLUDED.meta_campaign_name,
-        meta_adset_id = EXCLUDED.meta_adset_id,
-        meta_adset_name = EXCLUDED.meta_adset_name,
-        meta_ad_id = EXCLUDED.meta_ad_id,
-        meta_ad_name = EXCLUDED.meta_ad_name,
-        meta_form_id = EXCLUDED.meta_form_id,
-        meta_form_name = EXCLUDED.meta_form_name,
-        meta_submitted_at = EXCLUDED.meta_submitted_at
-      RETURNING id, prospect_reference, (xmax = 0) AS inserted`,
-      [
-        tempReference, p.industryId, p.companyName, p.contactName, p.contactEmail, p.telephone,
-        p.postcodesCovered ?? null, p.approxMonthlyLeadRequirement ?? null,
-        source, p.utmSource ?? null, p.utmMedium ?? null, p.utmCampaign ?? null, p.fbclid ?? null,
-        p.channel,
-        p.metaLeadId ?? null, p.metaCampaignId ?? null, p.metaCampaignName ?? null, p.metaAdsetId ?? null, p.metaAdsetName ?? null,
-        p.metaAdId ?? null, p.metaAdName ?? null, p.metaFormId ?? null, p.metaFormName ?? null, p.metaSubmittedAt ?? null,
-        p.consentWordingVersion ?? null, p.rawFormAnswers !== undefined ? JSON.stringify(p.rawFormAnswers) : null,
-        p.consentContact, p.marketingConsent ?? false, unsubscribeToken,
-      ]
+    const existingActive = await client.query(
+      `SELECT id, prospect_reference FROM buyer_prospects
+       WHERE lower(trim(contact_email)) = $1 AND industry_id = $2 AND converted_buyer_id IS NULL
+       FOR UPDATE`,
+      [normalisedEmail, p.industryId]
     );
 
-    const prospectId = upsert.rows[0].id as number;
-    const isNewProspect = upsert.rows[0].inserted as boolean;
-    let prospectReference = upsert.rows[0].prospect_reference as string;
+    let prospectId: number;
+    let prospectReference: string;
+    let isNewProspect: boolean;
 
-    if (isNewProspect) {
+    if (existingActive.rows.length > 0) {
+      // Repeat touch: only last-touch attribution and the Meta-specific "latest touch" summary
+      // columns move. Profile fields, first-touch, and consent evidence are untouched.
+      prospectId = existingActive.rows[0].id as number;
+      prospectReference = existingActive.rows[0].prospect_reference as string;
+      isNewProspect = false;
+      await client.query(
+        `UPDATE buyer_prospects SET
+          source = $1,
+          last_touch_channel = $2, last_touch_utm_source = $3, last_touch_utm_medium = $4,
+          last_touch_utm_campaign = $5, last_touch_fbclid = $6, last_touch_at = now(),
+          meta_lead_id = $7, meta_campaign_id = $8, meta_campaign_name = $9, meta_adset_id = $10,
+          meta_adset_name = $11, meta_ad_id = $12, meta_ad_name = $13, meta_form_id = $14,
+          meta_form_name = $15, meta_submitted_at = $16
+        WHERE id = $17`,
+        [
+          source,
+          p.channel, p.utmSource ?? null, p.utmMedium ?? null, p.utmCampaign ?? null, p.fbclid ?? null,
+          p.metaLeadId ?? null, p.metaCampaignId ?? null, p.metaCampaignName ?? null, p.metaAdsetId ?? null,
+          p.metaAdsetName ?? null, p.metaAdId ?? null, p.metaAdName ?? null, p.metaFormId ?? null,
+          p.metaFormName ?? null, p.metaSubmittedAt ?? null,
+          prospectId,
+        ]
+      );
+    } else {
+      const unsubscribeToken = generateUnsubscribeToken();
+      const tempReference = `PENDING-${Date.now()}-${Math.random().toString(36).slice(2)}`;
+      const inserted = await client.query(
+        `INSERT INTO buyer_prospects (
+          prospect_reference, industry_id, company_name, contact_name, contact_email, telephone,
+          postcodes_covered, approx_monthly_lead_requirement,
+          source, utm_source, utm_medium, utm_campaign, fbclid,
+          capture_channel, last_touch_channel, last_touch_utm_source, last_touch_utm_medium,
+          last_touch_utm_campaign, last_touch_fbclid, last_touch_at,
+          meta_lead_id, meta_campaign_id, meta_campaign_name, meta_adset_id, meta_adset_name,
+          meta_ad_id, meta_ad_name, meta_form_id, meta_form_name, meta_submitted_at,
+          consent_wording_version, raw_form_answers,
+          consent_contact, marketing_consent, unsubscribe_token
+        ) VALUES (
+          $1,$2,$3,$4,$5,$6,
+          $7,$8,
+          $9,$10,$11,$12,$13,
+          $14,$14,$10,$11,
+          $12,$13,now(),
+          $15,$16,$17,$18,$19,
+          $20,$21,$22,$23,$24,
+          $25,$26,
+          $27,$28,$29
+        )
+        RETURNING id`,
+        [
+          tempReference, p.industryId, p.companyName, p.contactName, p.contactEmail, p.telephone,
+          p.postcodesCovered ?? null, p.approxMonthlyLeadRequirement ?? null,
+          source, p.utmSource ?? null, p.utmMedium ?? null, p.utmCampaign ?? null, p.fbclid ?? null,
+          p.channel,
+          p.metaLeadId ?? null, p.metaCampaignId ?? null, p.metaCampaignName ?? null, p.metaAdsetId ?? null, p.metaAdsetName ?? null,
+          p.metaAdId ?? null, p.metaAdName ?? null, p.metaFormId ?? null, p.metaFormName ?? null, p.metaSubmittedAt ?? null,
+          p.consentWordingVersion ?? null, p.consentEvidence !== undefined ? JSON.stringify(p.consentEvidence) : null,
+          p.consentContact, p.marketingConsent ?? false, unsubscribeToken,
+        ]
+      );
+      prospectId = inserted.rows[0].id as number;
       prospectReference = `HLX-PROSPECT-${String(prospectId).padStart(6, '0')}`;
+      isNewProspect = true;
       await client.query(`UPDATE buyer_prospects SET prospect_reference = $1 WHERE id = $2`, [prospectReference, prospectId]);
     }
 
@@ -172,7 +210,7 @@ export async function captureBuyerProspectTouch(
         prospectId, p.channel, p.utmSource ?? null, p.utmMedium ?? null, p.utmCampaign ?? null, p.fbclid ?? null,
         p.metaLeadId ?? null, p.metaCampaignId ?? null, p.metaCampaignName ?? null, p.metaAdsetId ?? null, p.metaAdsetName ?? null,
         p.metaAdId ?? null, p.metaAdName ?? null, p.metaFormId ?? null, p.metaFormName ?? null, p.metaSubmittedAt ?? null,
-        p.consentWordingVersion ?? null, p.rawFormAnswers !== undefined ? JSON.stringify(p.rawFormAnswers) : null,
+        p.consentWordingVersion ?? null, p.consentEvidence !== undefined ? JSON.stringify(p.consentEvidence) : null,
       ]
     );
 

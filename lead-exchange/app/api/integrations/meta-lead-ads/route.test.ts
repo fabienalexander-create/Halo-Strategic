@@ -30,6 +30,8 @@ const validBody = {
     contact_email: 'jo@acme.test',
     telephone: '07700900000',
     consent_contact: true,
+    consent_wording_version: '2026-11-meta-instant-form-v1',
+    consent_evidence: { question: 'May we contact you about this enquiry?', answer: 'Yes' },
   },
 };
 
@@ -80,6 +82,34 @@ describe('POST /api/integrations/meta-lead-ads', () => {
     const res = await POST(
       req({ ...validBody, mapped: { ...validBody.mapped, consent_contact: false } }, { 'x-halo-integration-secret': 'test-secret' })
     );
+    expect(res.status).toBe(400);
+    expect(captureMock).not.toHaveBeenCalled();
+  });
+
+  it('rejects consent_contact=true with no consent_evidence -- a boolean alone is not enough', async () => {
+    const { POST } = await import('./route');
+    const { consent_evidence, ...mappedWithoutEvidence } = validBody.mapped;
+    const res = await POST(req({ ...validBody, mapped: mappedWithoutEvidence }, { 'x-halo-integration-secret': 'test-secret' }));
+    expect(res.status).toBe(400);
+    expect(captureMock).not.toHaveBeenCalled();
+  });
+
+  it('rejects consent_evidence missing an actual answer', async () => {
+    const { POST } = await import('./route');
+    const res = await POST(
+      req(
+        { ...validBody, mapped: { ...validBody.mapped, consent_evidence: { question: 'May we contact you?', answer: '' } } },
+        { 'x-halo-integration-secret': 'test-secret' }
+      )
+    );
+    expect(res.status).toBe(400);
+    expect(captureMock).not.toHaveBeenCalled();
+  });
+
+  it('rejects a missing consent_wording_version', async () => {
+    const { POST } = await import('./route');
+    const { consent_wording_version, ...mappedWithoutVersion } = validBody.mapped;
+    const res = await POST(req({ ...validBody, mapped: mappedWithoutVersion }, { 'x-halo-integration-secret': 'test-secret' }));
     expect(res.status).toBe(400);
     expect(captureMock).not.toHaveBeenCalled();
   });

@@ -1,10 +1,11 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { captureBuyerProspectTouch, type CaptureBuyerProspectParams } from './buyerProspectCapture';
 
-// A minimal fake Postgres client that understands just enough of the three statements this
-// module issues (the meta_lead_id dedup lookup, the upsert, the touch insert, the audit insert)
-// to exercise the real control flow, without a real database. Keyed off recognisable fragments
-// of the SQL text, same convention as the fakeDb used in prospectUnsubscribe.test.ts.
+// A minimal fake Postgres client that understands just enough of the statements this module
+// issues (the meta_lead_id dedup lookup, the active-prospect lookup, the insert/update branch,
+// the touch insert, the audit insert) to exercise the real control flow, without a real
+// database. Keyed off recognisable fragments of the SQL text, same convention as the fakeDb used
+// in prospectUnsubscribe.test.ts.
 function fakeDb(options: { existingMetaLeadProspectId?: number } = {}) {
   const prospects: Record<number, Record<string, unknown>> = {};
   const touches: Record<string, unknown>[] = [];
@@ -22,32 +23,42 @@ function fakeDb(options: { existingMetaLeadProspectId?: number } = {}) {
       if (text.includes('BEGIN') || text.includes('COMMIT') || text.includes('ROLLBACK')) {
         return { rows: [] };
       }
-      if (text.startsWith('INSERT INTO buyer_prospects')) {
-        const [, industryId, companyName, contactName, contactEmail, , , , , utmSource, utmMedium, utmCampaign, fbclid, channel] = values;
-        // Simulate ON CONFLICT (contact_email, industry_id) WHERE converted_buyer_id IS NULL.
+      if (text.includes('SELECT id, prospect_reference FROM buyer_prospects')) {
+        const [normalisedEmail, industryId] = values as [string, number];
         const existing = Object.values(prospects).find(
-          (p) => p.contact_email === contactEmail && p.industry_id === industryId && p.converted_buyer_id == null
+          (p) => p.normalisedEmail === normalisedEmail && p.industry_id === industryId && p.converted_buyer_id == null
         );
-        if (existing) {
-          existing.last_touch_channel = channel;
-          existing.last_touch_utm_source = utmSource;
-          existing.last_touch_utm_campaign = utmCampaign;
-          existing.last_touch_fbclid = fbclid;
-          return { rows: [{ id: existing.id, prospect_reference: existing.prospect_reference, inserted: false }] };
-        }
-        const id = nextId++;
-        const row = {
-          id, contact_email: contactEmail, industry_id: industryId, company_name: companyName, contact_name: contactName,
-          prospect_reference: `PENDING-${id}`, capture_channel: channel, utm_source: utmSource, utm_medium: utmMedium,
-          utm_campaign: utmCampaign, fbclid, converted_buyer_id: null,
-        };
-        prospects[id] = row;
-        return { rows: [{ id, prospect_reference: row.prospect_reference, inserted: true }] };
+        return existing ? { rows: [{ id: existing.id, prospect_reference: existing.prospect_reference }] } : { rows: [] };
       }
       if (text.startsWith('UPDATE buyer_prospects SET prospect_reference')) {
         const [reference, id] = values as [string, number];
         prospects[id].prospect_reference = reference;
         return { rows: [] };
+      }
+      if (text.startsWith('UPDATE buyer_prospects SET')) {
+        // Repeat-touch update: last_touch_* / meta_* fields only, by design -- see the 17th
+        // placeholder (id) and the SET list order in buyerProspectCapture.ts.
+        const [source, channel, utmSource, , utmCampaign, fbclid, metaLeadId, , metaCampaignName, , , , , , , , id] = values as (string | number | null)[];
+        const row = prospects[id as number];
+        row.last_touch_channel = channel;
+        row.last_touch_utm_source = utmSource;
+        row.last_touch_utm_campaign = utmCampaign;
+        row.last_touch_fbclid = fbclid;
+        row.meta_lead_id = metaLeadId;
+        row.meta_campaign_name = metaCampaignName;
+        row.source = source;
+        return { rows: [] };
+      }
+      if (text.startsWith('INSERT INTO buyer_prospects')) {
+        const [, industryId, companyName, contactName, contactEmail, , , , , utmSource, utmMedium, utmCampaign, fbclid, channel] = values;
+        const id = nextId++;
+        const row = {
+          id, contact_email: contactEmail, normalisedEmail: (contactEmail as string).trim().toLowerCase(), industry_id: industryId,
+          company_name: companyName, contact_name: contactName, prospect_reference: `PENDING-${id}`, capture_channel: channel,
+          utm_source: utmSource, utm_medium: utmMedium, utm_campaign: utmCampaign, fbclid, converted_buyer_id: null,
+        };
+        prospects[id] = row;
+        return { rows: [{ id }] };
       }
       if (text.startsWith('INSERT INTO buyer_prospect_touches')) {
         touches.push({ prospectId: values[0], channel: values[1] });
@@ -105,6 +116,15 @@ describe('captureBuyerProspectTouch', () => {
 
     expect(prospects[first.prospectId].capture_channel).toBe('website');
     expect(prospects[first.prospectId].company_name).toBe('Original Name Ltd');
+  });
+
+  it('matches on email case-insensitively and ignoring surrounding whitespace', async () => {
+    const { db, prospects } = fakeDb();
+    const first = await captureBuyerProspectTouch(db, { ...base, contactEmail: '  Jo@Acme.test ' });
+    const second = await captureBuyerProspectTouch(db, { ...base, contactEmail: 'jo@acme.test', channel: 'meta_instant_form' });
+
+    expect(second.prospectId).toBe(first.prospectId);
+    expect(Object.keys(prospects)).toHaveLength(1);
   });
 
   it('a meta_lead_id already recorded is a true no-op -- no new prospect, no new touch', async () => {

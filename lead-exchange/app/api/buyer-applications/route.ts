@@ -241,13 +241,18 @@ export async function POST(req: NextRequest) {
     }
     let matchedProspect: MatchedProspect | null = null;
 
+    // Normalised the same way lib/buyerProspectCapture.ts normalises for its own dedup lookup --
+    // 'Fabien@x.com' and 'fabien@x.com ' must be treated as the same person for matching, even
+    // though the stored contact_email values themselves are never rewritten.
+    const normalisedApplicantEmail = body.contact_email.trim().toLowerCase();
+
     if (body.prospect_reference) {
       const byRef = await client.query(
         `SELECT id, contact_email, utm_source, utm_medium, utm_campaign, fbclid, capture_channel
          FROM buyer_prospects WHERE prospect_reference = $1 AND converted_buyer_id IS NULL FOR UPDATE`,
         [body.prospect_reference]
       );
-      if (byRef.rows.length > 0 && (byRef.rows[0].contact_email as string).toLowerCase() === body.contact_email.toLowerCase()) {
+      if (byRef.rows.length > 0 && (byRef.rows[0].contact_email as string).trim().toLowerCase() === normalisedApplicantEmail) {
         matchedProspect = byRef.rows[0] as unknown as MatchedProspect;
       }
     }
@@ -255,9 +260,9 @@ export async function POST(req: NextRequest) {
       const byEmail = await client.query(
         `SELECT id, utm_source, utm_medium, utm_campaign, fbclid, capture_channel
          FROM buyer_prospects
-         WHERE contact_email = $1 AND industry_id = (SELECT id FROM industries WHERE slug = $2) AND converted_buyer_id IS NULL
+         WHERE lower(trim(contact_email)) = $1 AND industry_id = (SELECT id FROM industries WHERE slug = $2) AND converted_buyer_id IS NULL
          ORDER BY created_at DESC LIMIT 1 FOR UPDATE`,
-        [body.contact_email, industrySlug]
+        [normalisedApplicantEmail, industrySlug]
       );
       if (byEmail.rows.length > 0) {
         matchedProspect = byEmail.rows[0] as unknown as MatchedProspect;

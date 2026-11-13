@@ -11,13 +11,24 @@ import { captureBuyerProspectTouch } from '../../../../lib/buyerProspectCapture'
 //
 // `mapped` is deliberately the only part of the payload this endpoint tries to interpret as
 // structured data -- Make's own visual field-mapper is where Meta's arbitrary Instant Form
-// question labels get turned into Halo's fixed fields, not here. The raw `field_data` Meta
-// returned is stored as-is (raw_form_answers) regardless of whether mapping succeeded, so nothing
-// is ever lost even if a future form adds a question this endpoint doesn't yet expect.
+// question labels get turned into Halo's fixed fields, not here.
+//
+// Consent is NOT assumed just because a lead arrived: `consent_contact` must be explicitly true,
+// AND it must be backed by `consent_evidence` -- the actual question/disclaimer text shown on the
+// form and the actual answer given, not a boolean Make invented because "a lead came through".
+// Deliberately NOT a generic "whole form's raw answers" passthrough -- only the consent question
+// and answer are stored, not whatever else the Instant Form happened to ask, so this stays
+// limited to what buyer_prospects actually needs to justify a contact-consent claim later.
 //
 // Writes to buyer_prospects only, via the same captureBuyerProspectTouch helper the website route
 // uses -- never homeowner_enquiries or any homeowner-side table. These are prospective buyers
 // (installers), not homeowners, and must never be conflated with the homeowner lead pipeline.
+interface ConsentEvidence {
+  question: string;
+  answer: string;
+  presented_at?: string;
+}
+
 interface MetaLeadAdsPayload {
   meta_lead_id: string;
   campaign_id?: string;
@@ -29,7 +40,6 @@ interface MetaLeadAdsPayload {
   form_id?: string;
   form_name?: string;
   created_time?: string;
-  field_data?: unknown;
   mapped: {
     industry_slug?: string;
     company_name?: string;
@@ -38,6 +48,7 @@ interface MetaLeadAdsPayload {
     telephone?: string;
     consent_contact?: boolean;
     consent_wording_version?: string;
+    consent_evidence?: ConsentEvidence;
     marketing_consent?: boolean;
     postcodes_covered?: string;
     approx_monthly_lead_requirement?: string;
@@ -45,7 +56,7 @@ interface MetaLeadAdsPayload {
 }
 
 const REQUIRED_MAPPED_FIELDS: (keyof MetaLeadAdsPayload['mapped'])[] = [
-  'industry_slug', 'company_name', 'contact_name', 'contact_email', 'telephone',
+  'industry_slug', 'company_name', 'contact_name', 'contact_email', 'telephone', 'consent_wording_version',
 ];
 
 export async function POST(req: NextRequest) {
@@ -84,6 +95,16 @@ export async function POST(req: NextRequest) {
   if (body.mapped.consent_contact !== true) {
     return NextResponse.json({ error: 'Consent to be contacted is required.' }, { status: 400 });
   }
+  // AND that consent must be backed by the actual question/answer shown to the installer, not a
+  // value Make set on the assumption that submitting the form implies consent. See the module
+  // comment above -- this is the single most important check in this endpoint.
+  const evidence = body.mapped.consent_evidence;
+  if (!evidence || !evidence.question || !evidence.answer) {
+    return NextResponse.json(
+      { error: 'consent_evidence (the actual question and answer shown on the form) is required alongside consent_contact.' },
+      { status: 400 }
+    );
+  }
 
   const industrySlug = body.mapped.industry_slug;
 
@@ -105,7 +126,7 @@ export async function POST(req: NextRequest) {
       telephone: body.mapped.telephone!,
       postcodesCovered: body.mapped.postcodes_covered,
       approxMonthlyLeadRequirement: body.mapped.approx_monthly_lead_requirement,
-      consentContact: true,
+      consentContact: body.mapped.consent_contact,
       marketingConsent: body.mapped.marketing_consent,
       metaLeadId: body.meta_lead_id,
       metaCampaignId: body.campaign_id,
@@ -118,7 +139,7 @@ export async function POST(req: NextRequest) {
       metaFormName: body.form_name,
       metaSubmittedAt: body.created_time ? new Date(body.created_time) : undefined,
       consentWordingVersion: body.mapped.consent_wording_version,
-      rawFormAnswers: body.field_data,
+      consentEvidence: evidence,
     });
 
     return NextResponse.json(

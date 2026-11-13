@@ -2,25 +2,44 @@
 
 Covers `20261113120000_buyer_prospect_attribution.sql` and `20261113130000_buyer_application_attribution.sql`.
 
-## The one irreversible part
+## This migration is purely additive — no merge, no delete
 
-`20261113120000` merges any pre-existing duplicate **active** (unconverted) `buyer_prospects`
-rows for the same `(contact_email, industry_id)` before creating the new uniqueness rule —
-production had no such rule before this migration, so duplicates may genuinely exist from real
-repeated registrations. The merge keeps the earliest row, folds the later row's attribution into
-that survivor's `last_touch_*` columns, and **deletes** the later row (and its
-`buyer_prospect_emails` rows) after logging the merge to `audit_log`.
+Earlier drafts of this migration auto-merged pre-existing duplicate (`contact_email`,
+`industry_id`) **active** (unconverted) `buyer_prospects` rows before adding a uniqueness rule.
+Fabien asked for that to stop: resolving real duplicates is his decision, made from a read-only
+report, not something a migration should do on his behalf. This migration now only adds columns
+and the new `buyer_prospect_touches` table — nothing existing is changed, merged, or deleted.
 
-**Rolling back the column/table changes does not undo this.** The deleted duplicate rows and their
-original separate identities are gone. If this matters before deploying, take a snapshot or export
-of `buyer_prospects` first. This was a deliberate choice, not an oversight: leaving the duplicates
-in place would have meant the new `uq_buyer_prospects_active_email_industry` index could never be
-created without the migration failing outright on production's real data.
+**There is currently no database-level uniqueness constraint** enforcing "one active prospect per
+email+industry". That rule is enforced in application code instead (`lib/buyerProspectCapture.ts`,
+via an explicit row lock), which has one accepted, documented limitation: two genuinely concurrent
+*first* submissions for the same brand-new email+industry could both succeed, since there's
+nothing to lock before either row exists. This is a narrow race window, not a data-loss risk — at
+worst it recreates the exact "a duplicate might already exist" situation this migration was
+written to avoid making worse, and it gets closed once the unique index below is added.
+
+## Before adding a uniqueness constraint
+
+Run `netlify/database/reports/buyer_prospects_duplicate_check.sql` (read-only) against production
+first. It reports:
+- how many duplicate groups and rows exist under case-insensitive, trimmed email matching,
+- the details of each group (ids, channels, attribution, time span between touches),
+- same email registered under different industries (not a duplicate under this rule, but worth a
+  look), and
+- a sanity check for null/empty emails.
+
+Only once Fabien has reviewed that report and decided how (or whether) to resolve any real
+duplicates should a follow-up migration add the partial unique index
+(`ON buyer_prospects (lower(trim(contact_email)), industry_id) WHERE converted_buyer_id IS NULL`)
+and the application code be switched from its current SELECT-then-branch logic back to an atomic
+`INSERT ... ON CONFLICT` upsert (which is simpler and closes the race window, but requires the
+index to exist first).
 
 ## Mechanical rollback (columns, table, indexes)
 
 Verified against a local throwaway database with real pre-existing duplicate data (see
-`lib/buyerProspectAttribution.integration.test.ts`):
+`lib/buyerProspectAttribution.integration.test.ts`), which also confirms the migration leaves
+that seeded duplicate pair completely untouched:
 
 ```sql
 -- 20261113130000_buyer_application_attribution.sql
@@ -33,7 +52,7 @@ ALTER TABLE buyers
 
 -- 20261113120000_buyer_prospect_attribution.sql
 DROP TABLE buyer_prospect_touches;
-DROP INDEX uq_buyer_prospects_active_email_industry;
+DROP INDEX idx_buyer_prospects_email_industry_active;
 ALTER TABLE buyer_prospects
   DROP COLUMN fbclid, DROP COLUMN capture_channel, DROP COLUMN last_touch_channel,
   DROP COLUMN last_touch_utm_source, DROP COLUMN last_touch_utm_medium,
@@ -46,14 +65,15 @@ ALTER TABLE buyer_prospects
 
 Rolling back `20261113120000` after `20261113130000` has already been applied is fine — the two
 migrations don't depend on each other's columns, only on table order (both come after
-`buyer_prospects` and `buyers` already existing).
+`buyer_prospects` and `buyers` already existing). Since nothing is merged or deleted, this rollback
+is fully symmetric — unlike the earlier draft of this migration.
 
 ## What rolling back does NOT undo
 
 - Any `converted_buyer_id`/`converted_at` links already written by `/api/buyer-applications` stay
   on `buyer_prospects` (those columns pre-date this migration) — rolling back only removes the
   attribution columns, not the link itself.
-- The `audit_log` entries for `BUYER_PROSPECT_DUPLICATES_MERGED`, `BUYER_PROSPECT_REPEAT_TOUCH`,
-  and `BUYER_PROSPECT_CONVERTED` are untouched, as `audit_log` is append-only by design (see
-  `20261112140000_audit_log_append_only.sql`). They'll reference columns/tables that no longer
-  exist after a rollback — expected, same as every other historical audit entry in this schema.
+- The `audit_log` entries for `BUYER_PROSPECT_REPEAT_TOUCH` and `BUYER_PROSPECT_CONVERTED` are
+  untouched, as `audit_log` is append-only by design (see `20261112140000_audit_log_append_only.sql`).
+  They'll reference columns/tables that no longer exist after a rollback — expected, same as every
+  other historical audit entry in this schema.

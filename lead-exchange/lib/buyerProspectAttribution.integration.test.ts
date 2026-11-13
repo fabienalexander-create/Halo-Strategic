@@ -7,15 +7,20 @@ import { captureBuyerProspectTouch } from './buyerProspectCapture';
 // Proves, against a real local Postgres, that:
 //   1. All migrations (including the two new attribution ones) apply in order on top of existing
 //      production-shaped data.
-//   2. A pre-existing pair of duplicate ACTIVE prospects (the exact situation real production may
-//      already be in, since there was never a uniqueness rule before this) is safely merged by
-//      the migration, preserving the earlier row's first-touch and the later row's data as
-//      last-touch, with no orphaned buyer_prospect_emails rows left behind.
+//   2. The new migration is genuinely additive: a pre-existing pair of duplicate ACTIVE prospects
+//      (the exact situation real production may already be in, since there was never a
+//      uniqueness rule before this) is left completely untouched -- no merge, no delete, no row
+//      count change. Resolving duplicates is a decision for Fabien, made from the read-only
+//      report in netlify/database/reports/buyer_prospects_duplicate_check.sql, not something a
+//      migration does on his behalf.
 //   3. The shared capture helper, exercised against the real schema (not a fake), produces the
-//      same first-touch/last-touch/dedup behaviour the unit tests assert against a fake client.
+//      same first-touch/last-touch/dedup/email-normalisation behaviour the unit tests assert
+//      against a fake client -- including the "one active prospect per email+industry" rule that
+//      is currently enforced in application code (row lock), not yet by a database constraint.
 //   4. The prospect-to-application linking query (the same shape used in
 //      app/api/buyer-applications/route.ts) correctly finds, locks, and converts a matching
-//      prospect -- and correctly finds nothing for an email+industry with no active prospect.
+//      prospect using normalised email comparison -- and correctly finds nothing for an
+//      email+industry with no active prospect.
 //
 // Local throwaway database only (skipped unless TEST_PG_ADMIN_URL is set; refuses non-local hosts).
 const adminUrl = process.env.TEST_PG_ADMIN_URL;
@@ -52,11 +57,12 @@ describe.skipIf(!adminUrl)('buyer prospect attribution (website + Meta Instant F
       INSERT INTO buyer_prospects (prospect_reference, industry_id, company_name, contact_name, contact_email, telephone, source, utm_source, utm_campaign, consent_contact, unsubscribe_token, created_at)
       VALUES
         ('HLX-PROSPECT-900001', (SELECT id FROM industries WHERE slug='solar_battery'), 'Dup Co', 'Dup Person', 'dup@example.test', '07700900999', 'organic_website', NULL, NULL, true, encode(gen_random_bytes(32),'hex'), now() - interval '5 days'),
-        ('HLX-PROSPECT-900002', (SELECT id FROM industries WHERE slug='solar_battery'), 'Dup Co', 'Dup Person', 'dup@example.test', '07700900999', 'meta', 'meta_paid', 'retarget', true, encode(gen_random_bytes(32),'hex'), now() - interval '1 day')
+        ('HLX-PROSPECT-900002', (SELECT id FROM industries WHERE slug='solar_battery'), 'Dup Co', 'Dup Person', 'DUP@Example.test', '07700900999', 'meta', 'meta_paid', 'retarget', true, encode(gen_random_bytes(32),'hex'), now() - interval '1 day')
     `);
     await setupClient.end();
 
-    // Now apply the two new migrations -- this is the merge-under-real-data moment.
+    // Now apply the two new migrations -- purely additive, so this must not touch the seeded
+    // duplicate rows at all.
     const applyClient = new Client({ connectionString: url.toString() });
     await applyClient.connect();
     await applyClient.query(readFileSync(join(dir, '20261113120000_buyer_prospect_attribution.sql'), 'utf8'));
@@ -82,22 +88,27 @@ describe.skipIf(!adminUrl)('buyer prospect attribution (website + Meta Instant F
     await admin.end();
   });
 
-  it('merged the pre-existing duplicate into one row, preserving first-touch and capturing last-touch', async () => {
-    const rows = await db.sql`SELECT * FROM buyer_prospects WHERE contact_email = ${'dup@example.test'}`;
-    expect(rows).toHaveLength(1);
-    expect(rows[0].prospect_reference).toBe('HLX-PROSPECT-900001'); // the earlier row survives
-    expect(rows[0].utm_source).toBeNull(); // original first-touch preserved exactly
-    expect(rows[0].last_touch_utm_source).toBe('meta_paid'); // later duplicate's data became last-touch
-    expect(rows[0].last_touch_utm_campaign).toBe('retarget');
+  it('is purely additive: the pre-existing duplicate rows are untouched -- no merge, no delete', async () => {
+    const rows = await db.sql`SELECT * FROM buyer_prospects WHERE lower(contact_email) = ${'dup@example.test'} ORDER BY created_at`;
+    expect(rows).toHaveLength(2); // both rows still exist, exactly as before
+    expect(rows[0].prospect_reference).toBe('HLX-PROSPECT-900001');
+    expect(rows[1].prospect_reference).toBe('HLX-PROSPECT-900002');
+    // Backfilled last-touch = its own first-touch for each row (no cross-row merge happened).
+    expect(rows[0].last_touch_utm_source).toBeNull();
+    expect(rows[1].last_touch_utm_source).toBe('meta_paid');
   });
 
-  it('left no orphaned buyer_prospect_emails row for the removed duplicate', async () => {
-    const orphans = await db.sql`
-      SELECT e.id FROM buyer_prospect_emails e
-      LEFT JOIN buyer_prospects p ON p.id = e.prospect_id
-      WHERE p.id IS NULL
+  it('the read-only duplicate report query finds exactly the seeded duplicate group', async () => {
+    const groups = await db.sql`
+      SELECT lower(trim(contact_email)) AS email, industry_id, count(*) AS group_size
+      FROM buyer_prospects
+      WHERE converted_buyer_id IS NULL
+      GROUP BY 1, 2
+      HAVING count(*) > 1
     `;
-    expect(orphans).toHaveLength(0);
+    expect(groups).toHaveLength(1);
+    expect(groups[0].email).toBe('dup@example.test');
+    expect(Number(groups[0].group_size)).toBe(2);
   });
 
   it('a brand new website registration creates one prospect, first-touch = last-touch', async () => {
@@ -110,6 +121,22 @@ describe.skipIf(!adminUrl)('buyer prospect attribution (website + Meta Instant F
     const rows = await db.sql`SELECT * FROM buyer_prospects WHERE id = ${result.prospectId}`;
     expect(rows[0].utm_source).toBe('google');
     expect(rows[0].last_touch_utm_source).toBe('google');
+  });
+
+  it('matches on email case-insensitively, ignoring whitespace, for the application-code dedup rule', async () => {
+    const first = await captureBuyerProspectTouch(db, {
+      channel: 'website', industryId, industrySlug: 'solar_battery',
+      companyName: 'Case Co', contactName: 'Case Person', contactEmail: '  Case@Example.TEST ', telephone: '07700900006',
+      consentContact: true, utmSource: 'organic',
+    });
+    const second = await captureBuyerProspectTouch(db, {
+      channel: 'meta_instant_form', industryId, industrySlug: 'solar_battery',
+      companyName: 'Case Co', contactName: 'Case Person', contactEmail: 'case@example.test', telephone: '07700900006',
+      consentContact: true, metaLeadId: 'lead_case_1',
+    });
+    expect(second.prospectId).toBe(first.prospectId);
+    const rows = await db.sql`SELECT id FROM buyer_prospects WHERE lower(trim(contact_email)) = ${'case@example.test'}`;
+    expect(rows).toHaveLength(1);
   });
 
   it('a later Meta Instant Form touch for the same email+industry updates last-touch only, same row', async () => {
@@ -151,10 +178,10 @@ describe.skipIf(!adminUrl)('buyer prospect attribution (website + Meta Instant F
     expect(touches).toHaveLength(1);
   });
 
-  it('the prospect-to-application matching query finds and locks an active prospect by email+industry', async () => {
+  it('the prospect-to-application matching query finds and locks an active prospect by normalised email+industry', async () => {
     const created = await captureBuyerProspectTouch(db, {
       channel: 'website', industryId, industrySlug: 'solar_battery',
-      companyName: 'Match Co', contactName: 'Match Person', contactEmail: 'match@example.test', telephone: '07700900004',
+      companyName: 'Match Co', contactName: 'Match Person', contactEmail: 'Match@Example.test', telephone: '07700900004',
       consentContact: true, utmSource: 'meta', fbclid: 'fbclid_match_1',
     });
 
@@ -163,7 +190,7 @@ describe.skipIf(!adminUrl)('buyer prospect attribution (website + Meta Instant F
       await client.query('BEGIN');
       const match = await client.query(
         `SELECT id, utm_source, fbclid, capture_channel FROM buyer_prospects
-         WHERE contact_email = $1 AND industry_id = (SELECT id FROM industries WHERE slug = $2) AND converted_buyer_id IS NULL
+         WHERE lower(trim(contact_email)) = $1 AND industry_id = (SELECT id FROM industries WHERE slug = $2) AND converted_buyer_id IS NULL
          ORDER BY created_at DESC LIMIT 1 FOR UPDATE`,
         ['match@example.test', 'solar_battery']
       );
@@ -198,7 +225,7 @@ describe.skipIf(!adminUrl)('buyer prospect attribution (website + Meta Instant F
     // same email+industry finds nothing (correctly treated as a direct application).
     const noMatch = await db.sql`
       SELECT id FROM buyer_prospects
-      WHERE contact_email = ${'match@example.test'} AND industry_id = ${industryId} AND converted_buyer_id IS NULL
+      WHERE lower(trim(contact_email)) = ${'match@example.test'} AND industry_id = ${industryId} AND converted_buyer_id IS NULL
     `;
     expect(noMatch).toHaveLength(0);
   });
