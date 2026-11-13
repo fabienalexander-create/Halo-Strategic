@@ -20,9 +20,28 @@ interface FakeRow {
   attempt_count: number;
 }
 
-function fakeProspectEmailDb(seed: FakeRow[] = []): { db: SqlDb; rows: FakeRow[] } {
+interface FakeProspect {
+  id: number;
+  nurture_status: string;
+  email_bounced_at: string | null;
+  email_complained_at: string | null;
+}
+
+function fakeProspectEmailDb(
+  seed: FakeRow[] = [],
+  prospects: FakeProspect[] = []
+): { db: SqlDb; rows: FakeRow[]; prospects: FakeProspect[] } {
   const rows: FakeRow[] = seed.map((r) => ({ ...r }));
+  const prospectRows: FakeProspect[] = prospects.map((p) => ({ ...p }));
   let nextId = rows.reduce((max, r) => Math.max(max, r.id), 0) + 1;
+
+  function prospectFor(prospectId: number): FakeProspect {
+    return (
+      prospectRows.find((p) => p.id === prospectId) ?? {
+        id: prospectId, nurture_status: 'ACTIVE', email_bounced_at: null, email_complained_at: null,
+      }
+    );
+  }
 
   const db: SqlDb = {
     sql: vi.fn(async (strings: TemplateStringsArray, ...values: unknown[]) => {
@@ -46,6 +65,20 @@ function fakeProspectEmailDb(seed: FakeRow[] = []): { db: SqlDb; rows: FakeRow[]
         return row ? [{ id: row.id, prospect_id: row.prospect_id, nurture_step: row.nurture_step, recipient: row.recipient, status: row.status }] : [];
       }
 
+      // The real query joins buyer_prospects for suppression fields; this covers that shape.
+      if (text.includes('JOIN buyer_prospects') && text.includes('WHERE e.id')) {
+        const [id] = values as [number];
+        const row = rows.find((r) => r.id === id);
+        if (!row) return [];
+        const prospect = prospectFor(row.prospect_id);
+        return [{
+          id: row.id, prospect_id: row.prospect_id, nurture_step: row.nurture_step, recipient: row.recipient, status: row.status,
+          prospect_nurture_status: prospect.nurture_status,
+          prospect_email_bounced_at: prospect.email_bounced_at,
+          prospect_email_complained_at: prospect.email_complained_at,
+        }];
+      }
+
       if (text.includes('SELECT') && text.includes('WHERE id')) {
         const [id] = values as [number];
         const row = rows.find((r) => r.id === id);
@@ -56,6 +89,13 @@ function fakeProspectEmailDb(seed: FakeRow[] = []): { db: SqlDb; rows: FakeRow[]
         const [providerMessageId, id] = values as [string | null, number];
         const row = rows.find((r) => r.id === id);
         if (row) { row.status = 'SENT'; row.provider_message_id = providerMessageId; row.error_message = null; row.attempt_count += 1; }
+        return [];
+      }
+
+      if (text.includes("SET status = 'SUPPRESSED'")) {
+        const [errorMessage, id] = values as [string | null, number];
+        const row = rows.find((r) => r.id === id);
+        if (row) { row.status = 'SUPPRESSED'; row.error_message = errorMessage; }
         return [];
       }
 
@@ -70,7 +110,7 @@ function fakeProspectEmailDb(seed: FakeRow[] = []): { db: SqlDb; rows: FakeRow[]
     }),
   };
 
-  return { db, rows };
+  return { db, rows, prospects: prospectRows };
 }
 
 const content = { subject: 'Subject', html: '<p>Body</p>', text: 'Body' };
@@ -79,12 +119,14 @@ describe('buyer prospect nurture outbox', () => {
   beforeEach(async () => {
     sendMock.mockReset();
     process.env.RESEND_API_KEY = 'test-key';
+    process.env.HALO_STRATEGIC_POSTAL_ADDRESS = '123 Example Street, London, EC1A 1AA'; // test fixture only, not the real address
     const { resetBuyerProspectEmailClientCacheForTests } = await import('./buyerProspectEmail');
     resetBuyerProspectEmailClientCacheForTests();
   });
 
   afterEach(() => {
     delete process.env.RESEND_API_KEY;
+    delete process.env.HALO_STRATEGIC_POSTAL_ADDRESS;
   });
 
   it('createProspectEmailEntry is idempotent per (prospect, step)', async () => {
@@ -121,6 +163,31 @@ describe('buyer prospect nurture outbox', () => {
     expect(rows[0].status).toBe('FAILED');
   });
 
+  it('refuses to send a real email with a placeholder compliance footer when HALO_STRATEGIC_POSTAL_ADDRESS is missing', async () => {
+    delete process.env.HALO_STRATEGIC_POSTAL_ADDRESS;
+    const { sendProspectNurtureEmail } = await import('./buyerProspectEmail');
+    const { db, rows } = fakeProspectEmailDb();
+
+    const result = await sendProspectNurtureEmail(db, { prospectId: 1, nurtureStep: 1, to: 'buyer@example.com', ...content });
+
+    expect(result.sent).toBe(false);
+    expect(sendMock).not.toHaveBeenCalled();
+    expect(rows[0].status).toBe('FAILED');
+    expect(rows[0].error_message).toContain('HALO_STRATEGIC_POSTAL_ADDRESS');
+  });
+
+  it('checks the postal address BEFORE contacting the provider, not after (both missing: provider is never called)', async () => {
+    delete process.env.RESEND_API_KEY;
+    delete process.env.HALO_STRATEGIC_POSTAL_ADDRESS;
+    const { sendProspectNurtureEmail } = await import('./buyerProspectEmail');
+    const { rows, db } = fakeProspectEmailDb();
+
+    await sendProspectNurtureEmail(db, { prospectId: 1, nurtureStep: 1, to: 'buyer@example.com', ...content });
+
+    expect(sendMock).not.toHaveBeenCalled();
+    expect(rows[0].error_message).toContain('HALO_STRATEGIC_POSTAL_ADDRESS');
+  });
+
   it('a later step for the same prospect is a separate row, not a duplicate', async () => {
     sendMock.mockResolvedValue({ data: { id: 'msg_1' }, error: null });
     const { sendProspectNurtureEmail } = await import('./buyerProspectEmail');
@@ -142,5 +209,76 @@ describe('buyer prospect nurture outbox', () => {
 
     expect(result).toEqual({ sent: false, skipped: true });
     expect(sendMock).not.toHaveBeenCalled();
+  });
+
+  describe('suppression, checked immediately before sending', () => {
+    it('refuses to send to a prospect unsubscribed from the introductory sequence', async () => {
+      const { attemptSendProspectEmail } = await import('./buyerProspectEmail');
+      const { db, rows } = fakeProspectEmailDb(
+        [{ id: 1, prospect_id: 1, nurture_step: 2, recipient: 'buyer@example.com', status: 'PENDING', provider_message_id: null, error_message: null, attempt_count: 0 }],
+        [{ id: 1, nurture_status: 'UNSUBSCRIBED', email_bounced_at: null, email_complained_at: null }]
+      );
+
+      const result = await attemptSendProspectEmail(db, 1, content);
+
+      expect(result.sent).toBe(false);
+      expect(result.skipped).toBe(true);
+      expect(sendMock).not.toHaveBeenCalled();
+      expect(rows[0].status).toBe('SUPPRESSED');
+    });
+
+    it('refuses to send to a recipient that previously bounced', async () => {
+      const { attemptSendProspectEmail } = await import('./buyerProspectEmail');
+      const { db, rows } = fakeProspectEmailDb(
+        [{ id: 1, prospect_id: 1, nurture_step: 2, recipient: 'buyer@example.com', status: 'PENDING', provider_message_id: null, error_message: null, attempt_count: 0 }],
+        [{ id: 1, nurture_status: 'ACTIVE', email_bounced_at: '2026-11-13T00:00:00Z', email_complained_at: null }]
+      );
+
+      const result = await attemptSendProspectEmail(db, 1, content);
+
+      expect(sendMock).not.toHaveBeenCalled();
+      expect(rows[0].status).toBe('SUPPRESSED');
+    });
+
+    it('refuses to send to a recipient that previously complained', async () => {
+      const { attemptSendProspectEmail } = await import('./buyerProspectEmail');
+      const { db, rows } = fakeProspectEmailDb(
+        [{ id: 1, prospect_id: 1, nurture_step: 2, recipient: 'buyer@example.com', status: 'PENDING', provider_message_id: null, error_message: null, attempt_count: 0 }],
+        [{ id: 1, nurture_status: 'ACTIVE', email_bounced_at: null, email_complained_at: '2026-11-13T00:00:00Z' }]
+      );
+
+      const result = await attemptSendProspectEmail(db, 1, content);
+
+      expect(sendMock).not.toHaveBeenCalled();
+      expect(rows[0].status).toBe('SUPPRESSED');
+    });
+
+    it('a marketing-only unsubscribe does NOT suppress the introductory sequence', async () => {
+      sendMock.mockResolvedValue({ data: { id: 'msg_1' }, error: null });
+      const { attemptSendProspectEmail } = await import('./buyerProspectEmail');
+      // nurture_status stays ACTIVE -- only marketing consent was withdrawn, which this function
+      // never even sees (it's not part of the suppression query), by design.
+      const { db, rows } = fakeProspectEmailDb(
+        [{ id: 1, prospect_id: 1, nurture_step: 2, recipient: 'buyer@example.com', status: 'PENDING', provider_message_id: null, error_message: null, attempt_count: 0 }],
+        [{ id: 1, nurture_status: 'ACTIVE', email_bounced_at: null, email_complained_at: null }]
+      );
+
+      const result = await attemptSendProspectEmail(db, 1, content);
+
+      expect(result).toEqual({ sent: true, skipped: false });
+      expect(sendMock).toHaveBeenCalledTimes(1);
+      expect(rows[0].status).toBe('SENT');
+    });
+
+    it('a normal ACTIVE prospect with no suppression markers sends as before (regression check)', async () => {
+      sendMock.mockResolvedValue({ data: { id: 'msg_1' }, error: null });
+      const { sendProspectNurtureEmail } = await import('./buyerProspectEmail');
+      const { db, rows } = fakeProspectEmailDb();
+
+      const result = await sendProspectNurtureEmail(db, { prospectId: 1, nurtureStep: 1, to: 'buyer@example.com', ...content });
+
+      expect(result).toEqual({ sent: true, skipped: false });
+      expect(rows[0].status).toBe('SENT');
+    });
   });
 });
