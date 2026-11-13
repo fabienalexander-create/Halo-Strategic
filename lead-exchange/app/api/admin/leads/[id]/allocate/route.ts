@@ -30,7 +30,7 @@ interface Body {
 // as a clearer error than the database trigger's own exception, which still applies as the final
 // backstop.
 export async function POST(req: NextRequest, { params }: { params: { id: string } }) {
-  const auth = requireAdmin(req);
+  const auth = await requireAdmin(req);
   if ('response' in auth) return auth.response;
 
   const leadId = Number(params.id);

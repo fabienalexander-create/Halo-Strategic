@@ -14,7 +14,7 @@ const INDUSTRY_LABELS: Record<string, string> = {
 // SYNCED, and separately checks the sheet itself by lead reference before appending, so retrying
 // something that actually succeeded just before this request landed never creates a duplicate row.
 export async function POST(req: NextRequest, { params }: { params: { id: string } }) {
-  const auth = requireAdmin(req);
+  const auth = await requireAdmin(req);
   if ('response' in auth) return auth.response;
 
   const syncId = Number(params.id);

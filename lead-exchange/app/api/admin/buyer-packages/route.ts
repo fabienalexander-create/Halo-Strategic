@@ -18,7 +18,7 @@ interface Body {
 // based on a configured definition. leads_used starts at 0 and from here on is maintained only by
 // the lead_allocations guard trigger (buyer_packages_guard_leads_used) -- this route never sets it.
 export async function POST(req: NextRequest) {
-  const auth = requireAdmin(req);
+  const auth = await requireAdmin(req);
   if ('response' in auth) return auth.response;
 
   let body: Body;

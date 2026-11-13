@@ -107,6 +107,7 @@ const FIELD_GROUPS: { title: string; fields: [string, string][] }[] = [
       ['exclusivity_arrangement', 'Exclusivity arrangement'], ['agreed_weekly_capacity', 'Agreed weekly capacity'],
       ['payment_arrangement_notes', 'Payment arrangement notes'], ['agreed_pricing_notes', 'Pricing notes'],
       ['commercials_configured_by', 'Commercials configured by'], ['commercials_configured_at', 'Commercials configured at'],
+      ['onboarding_call_completed_at', 'Onboarding call completed at'], ['onboarding_call_conducted_by', 'Onboarding call conducted by'],
       ['went_active_by', 'Activated by'], ['went_active_at', 'Activated at'],
     ],
   },
@@ -120,6 +121,13 @@ export default function ApplicationDetail({ reference }: { reference: string }) 
   const [actionMessage, setActionMessage] = useState<string | null>(null);
   const [reason, setReason] = useState('');
   const [newNote, setNewNote] = useState('');
+  const [me, setMe] = useState<{ email: string; role: string } | null>(null);
+  const [callPanelOpen, setCallPanelOpen] = useState(false);
+  const [callConductor, setCallConductor] = useState('');
+  const [callConfirmed, setCallConfirmed] = useState(false);
+  const [fixPanelOpen, setFixPanelOpen] = useState(false);
+  const [fixReason, setFixReason] = useState('');
+  const [fixConfirmed, setFixConfirmed] = useState(false);
   const [commercials, setCommercials] = useState({
     agreed_price_per_lead: '', agreed_currency: 'GBP', exclusivity_arrangement: '',
     agreed_weekly_capacity: '', payment_arrangement_notes: '', agreed_pricing_notes: '',
@@ -141,6 +149,13 @@ export default function ApplicationDetail({ reference }: { reference: string }) 
   }, [reference]);
 
   useEffect(() => { load(); }, [load]);
+
+  useEffect(() => {
+    fetch(apiPath('/api/admin/me'))
+      .then((r) => (r.ok ? r.json() : null))
+      .then((data) => { if (data) { setMe(data); setCallConductor(data.email); } })
+      .catch(() => {});
+  }, []);
 
   async function runDecision(action: 'approve' | 'reject' | 'request_info') {
     setActionMessage(null);
@@ -180,6 +195,30 @@ export default function ApplicationDetail({ reference }: { reference: string }) 
     const data = await res.json();
     setActionMessage(res.ok ? 'Commercials saved.' : `Error: ${data.error}`);
     if (res.ok) load();
+  }
+
+  async function recordOnboardingCall() {
+    setActionMessage(null);
+    const res = await fetch(apiPath(`/api/admin/applications/${reference}/onboarding-call`), {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ conducted_by: callConductor, confirm_call_took_place: callConfirmed }),
+    });
+    const data = await res.json();
+    setActionMessage(res.ok ? 'Onboarding call recorded.' : `Error: ${data.error}`);
+    if (res.ok) { setCallPanelOpen(false); setCallConfirmed(false); load(); }
+  }
+
+  async function correctOnboardingCall() {
+    setActionMessage(null);
+    const res = await fetch(apiPath(`/api/admin/applications/${reference}/onboarding-call/correct`), {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ reason: fixReason, confirm_correction: fixConfirmed }),
+    });
+    const data = await res.json();
+    setActionMessage(res.ok ? 'Onboarding call record cleared and the correction logged. Record the call again when ready.' : `Error: ${data.error}`);
+    if (res.ok) { setFixPanelOpen(false); setFixConfirmed(false); setFixReason(''); load(); }
   }
 
   async function activate() {
@@ -262,12 +301,68 @@ export default function ApplicationDetail({ reference }: { reference: string }) 
           <button className="btn" style={{ border: '1px solid var(--border)', marginRight: 10 }} onClick={submitCommercials}>
             Save Commercials
           </button>
-          <button className="btn btn-bronze" onClick={activate}>
+          <button className="btn" style={{ border: '1px solid var(--border)', marginRight: 10 }}
+            disabled={me?.role !== 'owner' || !!buyer.onboarding_call_completed_at}
+            onClick={() => setCallPanelOpen(true)}>
+            {buyer.onboarding_call_completed_at ? 'Onboarding Call Recorded' : 'Record Onboarding Call Completed'}
+          </button>
+          {me?.role === 'owner' && !!buyer.onboarding_call_completed_at && (
+            <button className="btn" style={{ border: '1px solid var(--border)', marginRight: 10 }} onClick={() => setFixPanelOpen(true)}>
+              Correct Call Record
+            </button>
+          )}
+          <button className="btn btn-bronze" disabled={me?.role !== 'owner'} onClick={activate}>
             Activate Buyer
           </button>
           <p className="form-note" style={{ textAlign: 'left' }}>
-            Activation is refused until price, exclusivity, capacity and payment notes are all set.
+            Activation is refused until the onboarding call is recorded and price, exclusivity, capacity and payment notes are all set. Recording the call, correcting it and activating are owner-only.
           </p>
+        </div>
+      )}
+
+      {callPanelOpen && status === 'PENDING_COMMERCIALS' && (
+        <div className="disclaimer-box" style={{ marginBottom: 16 }}>
+          <h3 style={{ fontSize: '1rem', marginBottom: 8 }}>Record onboarding call for {String(buyer.company_name)}</h3>
+          <p style={{ marginBottom: 8 }}>
+            This is a permanent record and the final sign-off before activation. Only record it once the call has actually taken place.
+          </p>
+          <div className="form-row">
+            <label>Call conducted by</label>
+            <input type="text" value={callConductor} maxLength={100} onChange={(e) => setCallConductor(e.target.value)} />
+          </div>
+          <label style={{ display: 'block', margin: '8px 0 12px' }}>
+            <input type="checkbox" checked={callConfirmed} onChange={(e) => setCallConfirmed(e.target.checked)} />{' '}
+            I confirm the onboarding call with {String(buyer.company_name)} has taken place.
+          </label>
+          <button className="btn btn-bronze" disabled={!callConfirmed || callConductor.trim().length < 2} onClick={recordOnboardingCall}>
+            Confirm and record
+          </button>{' '}
+          <button className="btn" style={{ border: '1px solid var(--border)' }} onClick={() => { setCallPanelOpen(false); setCallConfirmed(false); }}>
+            Cancel
+          </button>
+        </div>
+      )}
+
+      {fixPanelOpen && status === 'PENDING_COMMERCIALS' && (
+        <div className="disclaimer-box" style={{ marginBottom: 16 }}>
+          <h3 style={{ fontSize: '1rem', marginBottom: 8 }}>Correct onboarding call record for {String(buyer.company_name)}</h3>
+          <p style={{ marginBottom: 8 }}>
+            This clears the current call record and writes the previous details and your reason to the permanent audit log. The original entry is kept. You will need to record the call again before activation.
+          </p>
+          <div className="form-row">
+            <label>Reason for correction (required, 10 to 500 characters)</label>
+            <textarea value={fixReason} maxLength={500} onChange={(e) => setFixReason(e.target.value)} />
+          </div>
+          <label style={{ display: 'block', margin: '8px 0 12px' }}>
+            <input type="checkbox" checked={fixConfirmed} onChange={(e) => setFixConfirmed(e.target.checked)} />{' '}
+            I confirm I want to clear the onboarding call record for {String(buyer.company_name)}.
+          </label>
+          <button className="btn btn-bronze" disabled={!fixConfirmed || fixReason.trim().length < 10} onClick={correctOnboardingCall}>
+            Confirm correction
+          </button>{' '}
+          <button className="btn" style={{ border: '1px solid var(--border)' }} onClick={() => { setFixPanelOpen(false); setFixConfirmed(false); }}>
+            Cancel
+          </button>
         </div>
       )}
 

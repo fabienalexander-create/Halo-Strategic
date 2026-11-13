@@ -9,6 +9,8 @@ export interface AdminSessionPayload {
   adminId: number;
   email: string;
   role: 'owner' | 'reviewer';
+  /** admin_users.session_version at issue time. A mismatch with the database invalidates the cookie. */
+  sessionVersion: number;
   issuedAt: number;
   expiresAt: number;
 }
@@ -31,12 +33,18 @@ function sign(payloadB64: string): string {
   return createHmac('sha256', getSecret()).update(payloadB64).digest('base64url');
 }
 
-export function createSessionToken(admin: { id: number; email: string; role: 'owner' | 'reviewer' }): string {
+export function createSessionToken(admin: {
+  id: number;
+  email: string;
+  role: 'owner' | 'reviewer';
+  sessionVersion: number;
+}): string {
   const now = Math.floor(Date.now() / 1000);
   const payload: AdminSessionPayload = {
     adminId: admin.id,
     email: admin.email,
     role: admin.role,
+    sessionVersion: admin.sessionVersion,
     issuedAt: now,
     expiresAt: now + SESSION_TTL_SECONDS,
   };
@@ -67,6 +75,8 @@ export function verifySessionToken(token: string | undefined | null): AdminSessi
     if (typeof payload.expiresAt !== 'number' || payload.expiresAt < Math.floor(Date.now() / 1000)) {
       return null;
     }
+    // Cookies without a version (issued before session versions existed) are not accepted.
+    if (!Number.isInteger(payload.sessionVersion)) return null;
     return payload;
   } catch {
     return null;

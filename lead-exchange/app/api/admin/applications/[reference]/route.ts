@@ -6,7 +6,7 @@ import { requireAdmin } from '../../../../../lib/requireAdmin';
 // configuration state, and review notes history. Admin-only -- this is the one place the
 // internal_suitability_score and internal_suitability_notes are actually meant to be seen.
 export async function GET(req: NextRequest, { params }: { params: { reference: string } }) {
-  const auth = requireAdmin(req);
+  const auth = await requireAdmin(req);
   if ('response' in auth) return auth.response;
 
   try {

@@ -26,7 +26,7 @@ import { requireAdmin } from '../../../../lib/requireAdmin';
  * beyond test verification.
  */
 export async function GET(req: NextRequest) {
-  const auth = requireAdmin(req);
+  const auth = await requireAdmin(req);
   if ('response' in auth) return auth.response;
 
   const reference = req.nextUrl.searchParams.get('reference');

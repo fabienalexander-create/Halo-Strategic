@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { requireAdmin } from '../../../../../../lib/requireAdmin';
 
 export async function POST(req: NextRequest, { params }: { params: { reference: string } }) {
-  const auth = requireAdmin(req);
+  const auth = await requireAdmin(req);
   if ('response' in auth) return auth.response;
 
   let body: { note?: string };

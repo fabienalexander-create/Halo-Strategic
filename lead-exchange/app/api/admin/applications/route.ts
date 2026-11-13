@@ -7,7 +7,7 @@ import { requireAdmin } from '../../../../lib/requireAdmin';
 // shown here, unlike the buyer-facing lookup endpoint -- it's "internal" meaning not shown to the
 // applicant, not meaning hidden from the admin it exists to help.
 export async function GET(req: NextRequest) {
-  const auth = requireAdmin(req);
+  const auth = await requireAdmin(req);
   if ('response' in auth) return auth.response;
 
   try {
