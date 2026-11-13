@@ -2,6 +2,8 @@ import { getDatabase } from '@netlify/database';
 import { NextRequest, NextResponse } from 'next/server';
 import { HOMEOWNER_CONSENT_CONFIG, isConfiguredIndustrySlug } from '../../../lib/industries';
 import { attemptSync, buildLeadRowValues } from '../../../lib/sheetsSync';
+import { queueVerification, sqlFromClient } from '../../../lib/smsVerification';
+import { sendPendingVerifications } from '../../../lib/smsSender';
 
 // Matches the "Industry" wording already used elsewhere (become-a-buyer's selector, the homepage
 // cards) and in the operational sheet's own existing rows -- not SERVICE_REQUIREMENT_LABEL below,
@@ -244,7 +246,35 @@ export async function POST(req: NextRequest) {
       [leadId]
     );
 
+    // Phone verification request, in the same transaction as the lead so it cannot be lost. It is
+    // gated off unless SMS_VERIFICATION_ENABLED is set AND the lead's consent version explicitly
+    // covers a verification text (none does yet). Wrapped in a savepoint: whatever happens here,
+    // the enquiry itself is saved.
+    let verificationQueued = false;
+    await client.query('SAVEPOINT sms_verification');
+    try {
+      const queued = await queueVerification(sqlFromClient(client), {
+        leadId,
+        mobile: body.mobile,
+        consentVersion: consentConfig.consentVersion,
+      });
+      verificationQueued = queued.queued;
+      await client.query('RELEASE SAVEPOINT sms_verification');
+    } catch (smsErr) {
+      await client.query('ROLLBACK TO SAVEPOINT sms_verification');
+      console.error('SMS verification queue failed', smsErr instanceof Error ? smsErr.message : 'unknown');
+    }
+
     await client.query('COMMIT');
+
+    // Best-effort first send after commit; the retry route covers any failure.
+    if (verificationQueued) {
+      try {
+        await sendPendingVerifications(db, { limit: 1, leadId });
+      } catch (sendErr) {
+        console.error('SMS verification send failed', sendErr instanceof Error ? sendErr.message : 'unknown');
+      }
+    }
 
     // Sent after commit, and never allowed to throw -- a failed sync must never undo an
     // already-saved enquiry. attemptSync logs the outcome itself and only returns.
