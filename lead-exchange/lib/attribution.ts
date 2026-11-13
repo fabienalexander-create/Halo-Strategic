@@ -44,6 +44,16 @@ export function buildAttributionQuery(params: AttributionParams, extra?: Record<
   return s;
 }
 
+// The advisory-lock key shared between lib/buyerProspectCapture.ts and
+// app/api/buyer-applications/route.ts -- both must derive the identical string from the
+// identical (industrySlug, normalisedEmail) pair, or the two code paths won't actually serialise
+// against each other and the whole point of the lock is lost. hashtextextended() (called by
+// whoever uses this key) is Postgres's own hash, not reproduced here -- this function only
+// builds the string that gets hashed, so there's exactly one place that composition can drift.
+export function advisoryLockKey(industrySlug: string, normalisedEmail: string): string {
+  return `buyer_prospect:${industrySlug}:${normalisedEmail}`;
+}
+
 // Best-effort channel/source label from UTM + fbclid + referrer. Never presented as more precise
 // than it is -- see migration comments for the same caveat applied to the database columns.
 export function deriveSource(params: { utmSource?: string; fbclid?: string; referrer?: string }): string {

@@ -11,12 +11,18 @@ report, not something a migration should do on his behalf. This migration now on
 and the new `buyer_prospect_touches` table — nothing existing is changed, merged, or deleted.
 
 **There is currently no database-level uniqueness constraint** enforcing "one active prospect per
-email+industry". That rule is enforced in application code instead (`lib/buyerProspectCapture.ts`,
-via an explicit row lock), which has one accepted, documented limitation: two genuinely concurrent
-*first* submissions for the same brand-new email+industry could both succeed, since there's
-nothing to lock before either row exists. This is a narrow race window, not a data-loss risk — at
-worst it recreates the exact "a duplicate might already exist" situation this migration was
-written to avoid making worse, and it gets closed once the unique index below is added.
+email+industry". That rule is enforced in application code instead
+(`lib/buyerProspectCapture.ts`), via a `pg_advisory_xact_lock` keyed on `(industrySlug,
+normalisedEmail)` taken before the row-lock lookup — not the row lock alone, which can't protect
+a row that doesn't exist yet. This was a real gap: two genuinely concurrent *first* submissions for
+the same brand-new email+industry produced two rows before the advisory lock existed (confirmed
+directly, not assumed), and produce exactly one afterwards (see
+`lib/buyerProspectAttribution.integration.test.ts`, "two truly concurrent FIRST submissions").
+The same lock is taken in `app/api/buyer-applications/route.ts` before its own prospect match, so
+an application being submitted and a last-second repeat touch for the same person can't race
+each other either. The partial unique index below remains worth adding once production duplicates
+are reviewed, but as defence-in-depth, not as the fix for this specific race — the advisory lock
+is believed sufficient on its own.
 
 ## Before adding a uniqueness constraint
 

@@ -4,6 +4,7 @@ import { randomUUID } from 'crypto';
 import { attemptSend } from '../../../lib/email';
 import { adminNewApplicationEmail, applicationReceivedEmail } from '../../../lib/emailTemplates';
 import { BUYER_REPLACEMENT_POLICY_CONFIG, isConfiguredIndustrySlug } from '../../../lib/industries';
+import { advisoryLockKey } from '../../../lib/attribution';
 
 const INDUSTRY_LABELS: Record<string, string> = {
   spray_foam_removal: 'Spray Foam Removal',
@@ -245,6 +246,12 @@ export async function POST(req: NextRequest) {
     // 'Fabien@x.com' and 'fabien@x.com ' must be treated as the same person for matching, even
     // though the stored contact_email values themselves are never rewritten.
     const normalisedApplicantEmail = body.contact_email.trim().toLowerCase();
+
+    // Same advisory lock, same key derivation, as lib/buyerProspectCapture.ts -- so an
+    // application being submitted for this person and a last-second repeat touch (website or
+    // Meta) for the same email+industry can't race each other into inconsistent state. Must be
+    // acquired before the FOR UPDATE lookups below, not after.
+    await client.query('SELECT pg_advisory_xact_lock(hashtextextended($1, 0))', [advisoryLockKey(industrySlug, normalisedApplicantEmail)]);
 
     if (body.prospect_reference) {
       const byRef = await client.query(

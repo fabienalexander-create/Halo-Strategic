@@ -230,6 +230,56 @@ describe.skipIf(!adminUrl)('buyer prospect attribution (website + Meta Instant F
     expect(noMatch).toHaveLength(0);
   });
 
+  it('two truly concurrent FIRST submissions for the same brand-new email+industry produce exactly one prospect', async () => {
+    // This is the exact race Fabien flagged: a row lock alone can't protect a row that doesn't
+    // exist yet. Confirmed empirically before the advisory lock existed -- this scenario produced
+    // TWO rows. The pg_advisory_xact_lock in captureBuyerProspectTouch (keyed on industrySlug +
+    // normalised email) serialises the two calls below instead: whichever transaction loses the
+    // race for the lock blocks until the winner commits, then sees the winner's row via its own
+    // FOR UPDATE lookup and updates it rather than inserting a second one.
+    const email = `concurrent-${Date.now()}@example.test`;
+    const [a, b] = await Promise.all([
+      captureBuyerProspectTouch(db, {
+        channel: 'website', industryId, industrySlug: 'solar_battery',
+        companyName: 'Concurrent Co', contactName: 'A', contactEmail: email, telephone: '07700900010',
+        consentContact: true, utmSource: 'google',
+      }),
+      captureBuyerProspectTouch(db, {
+        channel: 'meta_instant_form', industryId, industrySlug: 'solar_battery',
+        companyName: 'Concurrent Co', contactName: 'B', contactEmail: email, telephone: '07700900010',
+        consentContact: true, metaLeadId: 'lead_concurrent_1',
+      }),
+    ]);
+
+    expect(a.prospectId).toBe(b.prospectId);
+    const rows = await db.sql`SELECT id FROM buyer_prospects WHERE lower(trim(contact_email)) = ${email}`;
+    expect(rows).toHaveLength(1);
+    const touches = await db.sql`SELECT channel FROM buyer_prospect_touches WHERE prospect_id = ${rows[0].id}`;
+    expect(touches).toHaveLength(2); // one first-touch insert, one repeat-touch update -- never two inserts
+  });
+
+  it('two concurrent retries of the SAME meta_lead_id produce exactly one touch, not an error', async () => {
+    const metaLeadId = `lead_retry_concurrent_${Date.now()}`;
+    const email = `retry-concurrent-${Date.now()}@example.test`;
+    const [a, b] = await Promise.all([
+      captureBuyerProspectTouch(db, {
+        channel: 'meta_instant_form', industryId, industrySlug: 'solar_battery',
+        companyName: 'Retry Race Co', contactName: 'Retry Race', contactEmail: email, telephone: '07700900011',
+        consentContact: true, metaLeadId,
+      }),
+      captureBuyerProspectTouch(db, {
+        channel: 'meta_instant_form', industryId, industrySlug: 'solar_battery',
+        companyName: 'Retry Race Co', contactName: 'Retry Race', contactEmail: email, telephone: '07700900011',
+        consentContact: true, metaLeadId,
+      }),
+    ]);
+
+    expect(a.prospectId).toBe(b.prospectId);
+    expect([a.isDuplicateMetaLead, b.isDuplicateMetaLead].filter(Boolean)).toHaveLength(1); // exactly one saw the duplicate
+    const touches = await db.sql`SELECT id FROM buyer_prospect_touches WHERE meta_lead_id = ${metaLeadId}`;
+    expect(touches).toHaveLength(1);
+  });
+
   it('a prospect_reference hint with a mismatched email is never trusted', async () => {
     const real = await captureBuyerProspectTouch(db, {
       channel: 'website', industryId, industrySlug: 'solar_battery',

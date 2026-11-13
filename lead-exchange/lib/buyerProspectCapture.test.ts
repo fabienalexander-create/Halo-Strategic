@@ -23,6 +23,9 @@ function fakeDb(options: { existingMetaLeadProspectId?: number } = {}) {
       if (text.includes('BEGIN') || text.includes('COMMIT') || text.includes('ROLLBACK')) {
         return { rows: [] };
       }
+      if (text.includes('pg_advisory_xact_lock')) {
+        return { rows: [] };
+      }
       if (text.includes('SELECT id, prospect_reference FROM buyer_prospects')) {
         const [normalisedEmail, industryId] = values as [string, number];
         const existing = Object.values(prospects).find(
@@ -125,6 +128,20 @@ describe('captureBuyerProspectTouch', () => {
 
     expect(second.prospectId).toBe(first.prospectId);
     expect(Object.keys(prospects)).toHaveLength(1);
+  });
+
+  it('acquires the advisory lock, keyed on industry+email, before looking up an existing prospect', async () => {
+    const { db, client } = fakeDb();
+    await captureBuyerProspectTouch(db, { ...base, industrySlug: 'solar_battery', contactEmail: 'Jo@Acme.test' });
+
+    const calls = client.query.mock.calls.map((c) => c[0] as string);
+    const lockIndex = calls.findIndex((c) => c.includes('pg_advisory_xact_lock'));
+    const lookupIndex = calls.findIndex((c) => c.includes('SELECT id, prospect_reference FROM buyer_prospects'));
+    expect(lockIndex).toBeGreaterThanOrEqual(0);
+    expect(lockIndex).toBeLessThan(lookupIndex);
+
+    const lockCall = client.query.mock.calls[lockIndex];
+    expect(lockCall[1]).toEqual(['buyer_prospect:solar_battery:jo@acme.test']);
   });
 
   it('a meta_lead_id already recorded is a true no-op -- no new prospect, no new touch', async () => {

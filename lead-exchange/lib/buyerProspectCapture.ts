@@ -1,4 +1,4 @@
-import { deriveSource } from './attribution';
+import { advisoryLockKey, deriveSource } from './attribution';
 import { generateUnsubscribeToken } from './buyerProspectEmail';
 
 export type CaptureChannel = 'website' | 'meta_instant_form';
@@ -77,15 +77,14 @@ function normaliseEmail(email: string): string {
  *   (company/contact/phone) from the original submission are never overwritten by a repeat
  *   touch, however sloppy. Not found -> a new prospect is created, which becomes both its own
  *   first-touch and last-touch.
- * - KNOWN LIMITATION, accepted deliberately rather than silently: there is currently no database
- *   constraint enforcing "one active prospect per email+industry" (see
- *   docs/BUYER_PROSPECT_ATTRIBUTION_ROLLBACK.md for why that's being held back until a read-only
- *   duplicate report against real production data has been reviewed). Two truly concurrent first
- *   submissions for the same brand-new email+industry could each find no existing row and both
- *   insert -- there is nothing yet to lock before either row exists. This is a real, if narrow,
- *   race window; closing it is exactly what adding the partial unique index (a later, separate
- *   migration) will do, after which this function's SELECT-then-branch logic should be replaced
- *   with the atomic INSERT ... ON CONFLICT upsert this previously used.
+ * - There is still no database-level uniqueness constraint enforcing "one active prospect per
+ *   email+industry" (see docs/BUYER_PROSPECT_ATTRIBUTION_ROLLBACK.md for why that's being held
+ *   back until a read-only duplicate report against real production data has been reviewed).
+ *   What closes the concurrency race in the meantime is the advisory lock taken below -- verified
+ *   to actually matter: two truly concurrent first submissions for the same brand-new
+ *   email+industry produced two rows before this lock existed (see the integration test), and
+ *   produce one afterwards. The lock is believed sufficient on its own; the partial unique index,
+ *   once added, is additional defence-in-depth rather than a second fix for the same gap.
  * - Every call that isn't a deduped Meta retry writes exactly one row to buyer_prospect_touches,
  *   first or repeat, so the full per-touch history (and every Meta lead_id ever received) is
  *   always recoverable regardless of what the summary row currently shows. This insert, the
@@ -120,6 +119,19 @@ export async function captureBuyerProspectTouch(
 
     const source = deriveSource({ utmSource: p.utmSource ?? undefined, fbclid: p.fbclid ?? undefined, referrer: p.referrer ?? undefined });
     const normalisedEmail = normaliseEmail(p.contactEmail);
+
+    // Closes the race a row lock alone can't: two truly concurrent FIRST submissions for the
+    // same brand-new email+industry would both find no existing row to lock, and both insert --
+    // confirmed empirically before this fix existed. A transaction-scoped Postgres advisory lock,
+    // keyed on a hash of (industrySlug, normalisedEmail), serialises the whole
+    // lookup-then-insert-or-update sequence below: the second transaction blocks here until the
+    // first commits or rolls back, then sees its row via the FOR UPDATE lookup instead of racing
+    // past it. Auto-released at transaction end either way (the `_xact_` variant), so there is no
+    // separate unlock step and no risk of a leaked lock surviving past this function. The same
+    // lock key is also taken in app/api/buyer-applications/route.ts before its own prospect
+    // match, so an application being submitted and a last-second repeat touch for the same person
+    // can't race each other either.
+    await client.query('SELECT pg_advisory_xact_lock(hashtextextended($1, 0))', [advisoryLockKey(p.industrySlug, normalisedEmail)]);
 
     const existingActive = await client.query(
       `SELECT id, prospect_reference FROM buyer_prospects
@@ -229,8 +241,41 @@ export async function captureBuyerProspectTouch(
     return { prospectId, prospectReference, isNewProspect, isDuplicateMetaLead: false };
   } catch (err) {
     await client.query('ROLLBACK');
+    // Belt-and-braces: the advisory lock above is keyed on (industrySlug, email), which already
+    // serialises two retries of the same real Meta lead_id in virtually every case (the same
+    // lead_id can't meaningfully carry two different email addresses). This catch is the backstop
+    // for the case it doesn't -- a malformed or unexpected Make payload, or a lead_id reused
+    // across a different email by a bug upstream -- so a genuine race on
+    // uq_buyer_prospect_touches_meta_lead_id is reported back as the correct "already recorded"
+    // duplicate response, never a bare 500.
+    if (isUniqueViolation(err, 'uq_buyer_prospect_touches_meta_lead_id') && p.metaLeadId) {
+      const retry = await db.pool.connect();
+      try {
+        const existing = await retry.query(
+          `SELECT t.prospect_id, bp.prospect_reference FROM buyer_prospect_touches t
+           JOIN buyer_prospects bp ON bp.id = t.prospect_id
+           WHERE t.meta_lead_id = $1`,
+          [p.metaLeadId]
+        );
+        if (existing.rows.length > 0) {
+          return {
+            prospectId: existing.rows[0].prospect_id as number,
+            prospectReference: existing.rows[0].prospect_reference as string,
+            isNewProspect: false,
+            isDuplicateMetaLead: true,
+          };
+        }
+      } finally {
+        retry.release();
+      }
+    }
     throw err;
   } finally {
     client.release();
   }
+}
+
+function isUniqueViolation(err: unknown, constraintName: string): boolean {
+  const e = err as { code?: string; constraint?: string } | null;
+  return !!e && e.code === '23505' && e.constraint === constraintName;
 }
