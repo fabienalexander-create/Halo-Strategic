@@ -4,6 +4,7 @@ import { randomUUID } from 'crypto';
 import { attemptSend } from '../../../lib/email';
 import { adminNewApplicationEmail, applicationReceivedEmail } from '../../../lib/emailTemplates';
 import { BUYER_REPLACEMENT_POLICY_CONFIG, isConfiguredIndustrySlug } from '../../../lib/industries';
+import { advisoryLockKey } from '../../../lib/attribution';
 
 const INDUSTRY_LABELS: Record<string, string> = {
   spray_foam_removal: 'Spray Foam Removal',
@@ -74,6 +75,15 @@ interface BuyerApplicationPayload {
   agreed_pii_handling: boolean;
   agreed_account_notifications: boolean;
   marketing_consent?: boolean;
+
+  // Attribution -- this application's own "last touch" (whatever was on the apply page's URL at
+  // submission time), plus an optional hint pointing back at an earlier buyer_prospects
+  // registration. The hint is never trusted on its own -- see linkToProspect below.
+  prospect_reference?: string;
+  utm_source?: string;
+  utm_medium?: string;
+  utm_campaign?: string;
+  fbclid?: string;
 }
 
 const REQUIRED_FIELDS: (keyof BuyerApplicationPayload)[] = [
@@ -209,6 +219,70 @@ export async function POST(req: NextRequest) {
   try {
     await client.query('BEGIN');
 
+    // Link this application back to an earlier buyer_prospects registration, if one exists --
+    // deterministic, never forgeable into claiming someone else's identity or bypassing review:
+    //
+    // 1. If a prospect_reference hint is present (carried through the nurture email link), it's
+    //    only trusted once corroborated against the SAME contact_email already on that prospect
+    //    row. A reference for someone else's record with a different email is simply ignored, not
+    //    treated as a match -- prospect_reference is a display id (sequential, not a secret), so
+    //    it must never be trusted on its own to attach to a record.
+    // 2. Otherwise, fall back to the most recent ACTIVE (unconverted) prospect for this exact
+    //    contact_email + industry -- the same join the original buyer_prospects migration
+    //    described but which nothing had ever implemented.
+    // 3. Row-locked (FOR UPDATE) for the rest of this transaction, so two applications racing to
+    //    claim the same prospect can't both succeed.
+    //
+    // Either way, this ONLY ever populates attribution columns and converted_buyer_id/
+    // converted_at below -- never application_status, internal_suitability_score, or anything
+    // that affects review/approval.
+    interface MatchedProspect {
+      id: number; utm_source: string | null; utm_medium: string | null; utm_campaign: string | null;
+      fbclid: string | null; capture_channel: string;
+    }
+    let matchedProspect: MatchedProspect | null = null;
+
+    // Normalised the same way lib/buyerProspectCapture.ts normalises for its own dedup lookup --
+    // 'Fabien@x.com' and 'fabien@x.com ' must be treated as the same person for matching, even
+    // though the stored contact_email values themselves are never rewritten.
+    const normalisedApplicantEmail = body.contact_email.trim().toLowerCase();
+
+    // Same advisory lock, same key derivation, as lib/buyerProspectCapture.ts -- so an
+    // application being submitted for this person and a last-second repeat touch (website or
+    // Meta) for the same email+industry can't race each other into inconsistent state. Must be
+    // acquired before the FOR UPDATE lookups below, not after.
+    await client.query('SELECT pg_advisory_xact_lock(hashtextextended($1, 0))', [advisoryLockKey(industrySlug, normalisedApplicantEmail)]);
+
+    if (body.prospect_reference) {
+      const byRef = await client.query(
+        `SELECT id, contact_email, utm_source, utm_medium, utm_campaign, fbclid, capture_channel
+         FROM buyer_prospects WHERE prospect_reference = $1 AND converted_buyer_id IS NULL FOR UPDATE`,
+        [body.prospect_reference]
+      );
+      if (byRef.rows.length > 0 && (byRef.rows[0].contact_email as string).trim().toLowerCase() === normalisedApplicantEmail) {
+        matchedProspect = byRef.rows[0] as unknown as MatchedProspect;
+      }
+    }
+    if (!matchedProspect) {
+      const byEmail = await client.query(
+        `SELECT id, utm_source, utm_medium, utm_campaign, fbclid, capture_channel
+         FROM buyer_prospects
+         WHERE lower(trim(contact_email)) = $1 AND industry_id = (SELECT id FROM industries WHERE slug = $2) AND converted_buyer_id IS NULL
+         ORDER BY created_at DESC LIMIT 1 FOR UPDATE`,
+        [normalisedApplicantEmail, industrySlug]
+      );
+      if (byEmail.rows.length > 0) {
+        matchedProspect = byEmail.rows[0] as unknown as MatchedProspect;
+      }
+    }
+
+    // First-touch: copied from the matched prospect if one exists; otherwise this application IS
+    // the first (and only, so far) touch, so it becomes its own first-touch record. Last-touch is
+    // always this application's own submission -- applying is, by definition, the most recent touch.
+    const firstTouch = matchedProspect
+      ? { source: matchedProspect.utm_source, medium: matchedProspect.utm_medium, campaign: matchedProspect.utm_campaign, fbclid: matchedProspect.fbclid, channel: matchedProspect.capture_channel }
+      : { source: body.utm_source ?? null, medium: body.utm_medium ?? null, campaign: body.utm_campaign ?? null, fbclid: body.fbclid ?? null, channel: 'website' };
+
     const insertResult = await client.query(
       `INSERT INTO buyers (
         company_name, website, contact_name, contact_email, telephone,
@@ -228,7 +302,9 @@ export async function POST(req: NextRequest) {
         acknowledged_replacement_policy_at, acknowledged_replacement_policy_version,
         confirmed_payment_before_release_understanding, agreed_pii_handling,
         agreed_account_notifications, marketing_consent,
-        application_status, application_reference, internal_suitability_score, internal_suitability_notes
+        application_status, application_reference, internal_suitability_score, internal_suitability_notes,
+        first_touch_utm_source, first_touch_utm_medium, first_touch_utm_campaign, first_touch_fbclid, first_touch_channel,
+        last_touch_utm_source, last_touch_utm_medium, last_touch_utm_campaign, last_touch_fbclid
       ) VALUES (
         $1,$2,$3,$4,$5,$6,$7,$8,
         (SELECT id FROM industries WHERE slug = $9),
@@ -237,7 +313,9 @@ export async function POST(req: NextRequest) {
         $26,$27,$28,$29,$30,$31,$32,$33,$34,
         $35,$36,$37,$38,$39,$40,$41,$42,
         $43,$44,$45,$46,$47,$48,$49,$50,$51,
-        $52, 'PENDING_REVIEW', $53, $54, $55
+        $52, 'PENDING_REVIEW', $53, $54, $55,
+        $56, $57, $58, $59, $60,
+        $61, $62, $63, $64
       )
       RETURNING id`,
       [
@@ -267,6 +345,8 @@ export async function POST(req: NextRequest) {
         `PENDING-${randomUUID()}`,
         score,
         notes.join(' '),
+        firstTouch.source, firstTouch.medium, firstTouch.campaign, firstTouch.fbclid, firstTouch.channel,
+        body.utm_source ?? null, body.utm_medium ?? null, body.utm_campaign ?? null, body.fbclid ?? null,
       ]
     );
 
@@ -274,6 +354,18 @@ export async function POST(req: NextRequest) {
     const applicationReference = `HLX-BYR-${String(buyerId).padStart(6, '0')}`;
 
     await client.query(`UPDATE buyers SET application_reference = $1 WHERE id = $2`, [applicationReference, buyerId]);
+
+    if (matchedProspect) {
+      await client.query(
+        `UPDATE buyer_prospects SET converted_buyer_id = $1, converted_at = now() WHERE id = $2`,
+        [buyerId, matchedProspect.id]
+      );
+      await client.query(
+        `INSERT INTO audit_log (actor, action, entity_type, entity_id, new_state)
+         VALUES ($1, 'BUYER_PROSPECT_CONVERTED', 'buyer_prospect', $2, $3)`,
+        [applicationReference, matchedProspect.id, JSON.stringify({ converted_buyer_id: buyerId })]
+      );
+    }
 
     await client.query(
       `INSERT INTO buyer_notification_preferences (buyer_id) VALUES ($1)`,
