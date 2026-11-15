@@ -93,6 +93,13 @@ export interface AttemptSendResult {
  * behind this check: even if this check were skipped by a bug, the database itself refuses to let
  * the row reach SENT. Marketing-only unsubscribe is deliberately NOT a suppression reason here --
  * opting out of ongoing marketing must never stop the bounded introductory sequence.
+ *
+ * PAUSED is suppressed on the same footing as UNSUBSCRIBED/bounced/complained -- a prospect whose
+ * consent provenance is under review (e.g. HLX-PROSPECT-000003, registered via an automation that
+ * fabricated consent_contact rather than capturing real evidence) must never receive an automated
+ * email just because a send happens to be retried later. Both this check and the database trigger
+ * were updated together specifically because a prior version left PAUSED unenforced at either
+ * layer -- a label with no teeth. See lib/buyerProspectEmail.test.ts for the regression coverage.
  */
 export async function attemptSendProspectEmail(
   db: SqlDb,
@@ -118,15 +125,18 @@ export async function attemptSendProspectEmail(
 
   if (
     row.prospect_nurture_status === 'UNSUBSCRIBED' ||
+    row.prospect_nurture_status === 'PAUSED' ||
     row.prospect_email_bounced_at !== null ||
     row.prospect_email_complained_at !== null
   ) {
     const reason =
       row.prospect_nurture_status === 'UNSUBSCRIBED'
         ? 'prospect unsubscribed from the introductory sequence'
-        : row.prospect_email_bounced_at !== null
-          ? 'recipient previously bounced'
-          : 'recipient previously complained';
+        : row.prospect_nurture_status === 'PAUSED'
+          ? 'prospect is paused (e.g. consent provenance under review) -- no automated contact until unpaused'
+          : row.prospect_email_bounced_at !== null
+            ? 'recipient previously bounced'
+            : 'recipient previously complained';
     console.error(`Prospect nurture email suppressed (${reason}): step ${row.nurture_step} for prospect ${row.prospect_id} (outbox #${id})`);
     await markOutcome(db, id, { status: 'SUPPRESSED', errorMessage: reason });
     return { sent: false, skipped: true, error: reason };
