@@ -31,6 +31,11 @@ export default function AdminHomePage() {
             Prospect Nurture Emails
           </Link>
         </p>
+        <p style={{ marginTop: 12 }}>
+          <Link href="/admin/prospect-pipeline" className="btn btn-bronze">
+            Buyer Acquisition Pipeline
+          </Link>
+        </p>
         <div className="disclaimer-box" style={{ marginTop: 20 }}>
           Priority 2 (application review) is working. Lead management, buyer commercial profiles
           beyond the review queue, and inventory controls (Priorities 3&ndash;5) are not built yet.
