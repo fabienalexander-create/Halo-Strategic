@@ -23,9 +23,10 @@ const REQUIRED_FIELDS: (keyof Body)[] = ['industry_slug', 'homeowner_name', 'pos
 // since by definition the admin has already checked it before typing it in (Fabien's own step
 // 2, "Halo verifies the lead", happens before this call, not inside it).
 //
-// meta_lead_id and source are kept in qualification_answers (existing flexible JSONB column)
-// rather than a new migration -- deliberately additive-free, since nothing else about this lead's
-// shape needs to change. Documented here so a future reader knows where to look.
+// meta_lead_id is also kept in qualification_answers for convenience alongside source, but the
+// real column (added for the automatic Meta ingestion endpoint, app/api/integrations/
+// meta-homeowner-leads) is what actually enforces uniqueness -- so pasting the same Meta lead in
+// here twice by hand is refused the same way a retried webhook delivery is.
 export async function POST(req: NextRequest) {
   const auth = await requireAdmin(req);
   if ('response' in auth) return auth.response;
@@ -66,11 +67,11 @@ export async function POST(req: NextRequest) {
     const inserted = await db.sql`
       INSERT INTO leads (
         industry_id, service_requirement, homeowner_name, homeowner_contact, property_type,
-        postcode, qualification_answers, source, status
+        postcode, qualification_answers, source, meta_lead_id, status
       ) VALUES (
         ${industryId}, ${body.service_requirement ?? null}, ${body.homeowner_name},
         ${homeownerContact}::jsonb, ${body.property_type ?? null}, ${body.postcode},
-        ${qualificationAnswers}::jsonb, ${body.source ?? null}, 'QUALIFIED'
+        ${qualificationAnswers}::jsonb, ${body.source ?? null}, ${body.meta_lead_id ?? null}, 'QUALIFIED'
       )
       RETURNING id
     `;
@@ -86,6 +87,10 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ lead_id: leadId, reference: `HLX-LEAD-${String(leadId).padStart(6, '0')}`, status: 'QUALIFIED' }, { status: 201 });
   } catch (err) {
+    const message = err instanceof Error ? err.message : String(err);
+    if (message.includes('uq_leads_meta_lead_id')) {
+      return NextResponse.json({ error: 'A lead with this Meta lead ID already exists.' }, { status: 409 });
+    }
     console.error('Manual lead entry failed', err);
     return NextResponse.json({ error: 'Failed to create lead.' }, { status: 500 });
   }
