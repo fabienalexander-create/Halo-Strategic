@@ -253,6 +253,41 @@ describe('buyer prospect nurture outbox', () => {
       expect(rows[0].status).toBe('SUPPRESSED');
     });
 
+    it('refuses to send to a PAUSED prospect', async () => {
+      const { attemptSendProspectEmail } = await import('./buyerProspectEmail');
+      const { db, rows } = fakeProspectEmailDb(
+        [{ id: 1, prospect_id: 1, nurture_step: 1, recipient: 'buyer@example.com', status: 'FAILED', provider_message_id: null, error_message: 'RESEND_API_KEY is not configured', attempt_count: 1 }],
+        [{ id: 1, nurture_status: 'PAUSED', email_bounced_at: null, email_complained_at: null }]
+      );
+
+      const result = await attemptSendProspectEmail(db, 1, content);
+
+      expect(result.sent).toBe(false);
+      expect(result.skipped).toBe(true);
+      expect(sendMock).not.toHaveBeenCalled();
+      expect(rows[0].status).toBe('SUPPRESSED');
+    });
+
+    it("Stuart's exact scenario: a FAILED send against a prospect quarantined (PAUSED) after the fact must not succeed once retried", async () => {
+      // Reproduces HLX-PROSPECT-000003: the welcome email originally failed because
+      // RESEND_API_KEY was unset (status FAILED). The prospect was then quarantined
+      // (nurture_status set to PAUSED) because consent was never genuinely verified. If
+      // RESEND_API_KEY were later configured and something retried this exact outbox row, the
+      // retry must still be blocked -- not sent, and not left looking like nothing happened.
+      sendMock.mockResolvedValue({ data: { id: 'msg_should_never_be_used' }, error: null });
+      const { attemptSendProspectEmail } = await import('./buyerProspectEmail');
+      const { db, rows } = fakeProspectEmailDb(
+        [{ id: 3, prospect_id: 3, nurture_step: 1, recipient: 'sg@l2mc.co.uk', status: 'FAILED', provider_message_id: null, error_message: 'RESEND_API_KEY is not configured', attempt_count: 1 }],
+        [{ id: 3, nurture_status: 'PAUSED', email_bounced_at: null, email_complained_at: null }]
+      );
+
+      const result = await attemptSendProspectEmail(db, 3, content);
+
+      expect(sendMock).not.toHaveBeenCalled();
+      expect(result).toEqual({ sent: false, skipped: true, error: expect.stringContaining('paused') });
+      expect(rows[0].status).toBe('SUPPRESSED');
+    });
+
     it('a marketing-only unsubscribe does NOT suppress the introductory sequence', async () => {
       sendMock.mockResolvedValue({ data: { id: 'msg_1' }, error: null });
       const { attemptSendProspectEmail } = await import('./buyerProspectEmail');
