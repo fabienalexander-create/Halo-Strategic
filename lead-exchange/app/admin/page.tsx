@@ -36,9 +36,26 @@ export default function AdminHomePage() {
             Buyer Acquisition Pipeline
           </Link>
         </p>
+        <p style={{ marginTop: 12 }}>
+          <Link href="/admin/leads" className="btn btn-bronze">
+            Leads
+          </Link>
+        </p>
+        <p style={{ marginTop: 12 }}>
+          <Link href="/admin/payments" className="btn btn-bronze">
+            Payments
+          </Link>
+        </p>
+        <p style={{ marginTop: 12 }}>
+          <Link href="/admin/buyers/new" className="btn btn-bronze">
+            Add Buyer Directly
+          </Link>
+        </p>
         <div className="disclaimer-box" style={{ marginTop: 20 }}>
-          Priority 2 (application review) is working. Lead management, buyer commercial profiles
-          beyond the review queue, and inventory controls (Priorities 3&ndash;5) are not built yet.
+          Priority 2 (application review) is working. Lead entry, allocation and payment
+          verification are now manual-admin workflows (Leads/Payments pages) built on top of the
+          existing pay-to-unlock schema. Inventory controls and automatic Meta ingestion for
+          homeowner leads are not built yet.
         </div>
         <AdminLogoutButton />
       </div>
