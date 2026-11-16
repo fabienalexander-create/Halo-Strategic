@@ -138,6 +138,7 @@ export function leadOfferEmail(params: {
   price: number | null; // null when packageCovered
   packageCovered: boolean;
   paymentReference: string | null; // quote this when paying; null when packageCovered
+  paymentLink?: string | null; // a unique pay-this-lead link, when one exists; falls back to bank transfer + reference
 }): EmailContent {
   const reference = escapeHtml(params.leadReference);
   const industry = escapeHtml(params.industryLabel);
@@ -147,11 +148,19 @@ export function leadOfferEmail(params: {
 
   const paymentText = params.packageCovered
     ? `This lead is covered by your package -- no payment is needed. We'll confirm once it's released.`
-    : `Price: ${params.currency} ${params.price?.toFixed(2)}
+    : params.paymentLink
+      ? `Price: ${params.currency} ${params.price?.toFixed(2)}
+To release the homeowner's contact details, pay using this link: ${params.paymentLink}
+We'll confirm by email once your payment is verified.`
+      : `Price: ${params.currency} ${params.price?.toFixed(2)}
 To release the homeowner's contact details, pay by bank transfer and quote reference ${params.paymentReference} so we can match your payment. We'll confirm by email once it's verified.`;
   const paymentHtml = params.packageCovered
     ? `<p>This lead is covered by your package — no payment is needed. We'll confirm once it's released.</p>`
-    : `<p>Price: ${escapeHtml(params.currency)} ${escapeHtml(params.price?.toFixed(2) ?? '')}<br>
+    : params.paymentLink
+      ? `<p>Price: ${escapeHtml(params.currency)} ${escapeHtml(params.price?.toFixed(2) ?? '')}<br>
+To release the homeowner's contact details, pay using this link: <a href="${escapeHtml(params.paymentLink)}">${escapeHtml(params.paymentLink)}</a><br>
+We'll confirm by email once your payment is verified.</p>`
+      : `<p>Price: ${escapeHtml(params.currency)} ${escapeHtml(params.price?.toFixed(2) ?? '')}<br>
 To release the homeowner's contact details, pay by bank transfer and quote reference <strong>${escapeHtml(params.paymentReference ?? '')}</strong> so we can match your payment. We'll confirm by email once it's verified.</p>`;
 
   return {

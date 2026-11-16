@@ -2,6 +2,39 @@ import { getDatabase } from '@netlify/database';
 import { NextRequest, NextResponse } from 'next/server';
 import { requireAdmin } from '../../../../lib/requireAdmin';
 
+// Lists buyers, newest first, optionally filtered by status -- used by the leads admin page's
+// "allocate to" dropdown (?status=ACTIVE) and by a general buyers overview.
+export async function GET(req: NextRequest) {
+  const auth = await requireAdmin(req);
+  if ('response' in auth) return auth.response;
+
+  const statusFilter = req.nextUrl.searchParams.get('status');
+
+  try {
+    const db = getDatabase();
+    const rows = statusFilter
+      ? await db.sql`
+          SELECT b.id, b.company_name, b.contact_name, b.contact_email, b.application_status,
+                 b.application_reference, b.agreed_price_per_lead, b.exclusivity_arrangement,
+                 i.slug AS industry_slug, i.name AS industry_name
+          FROM buyers b JOIN industries i ON i.id = b.industry_id
+          WHERE b.application_status = ${statusFilter}
+          ORDER BY b.created_at DESC LIMIT 200
+        `
+      : await db.sql`
+          SELECT b.id, b.company_name, b.contact_name, b.contact_email, b.application_status,
+                 b.application_reference, b.agreed_price_per_lead, b.exclusivity_arrangement,
+                 i.slug AS industry_slug, i.name AS industry_name
+          FROM buyers b JOIN industries i ON i.id = b.industry_id
+          ORDER BY b.created_at DESC LIMIT 200
+        `;
+    return NextResponse.json({ buyers: rows });
+  } catch (err) {
+    console.error('Listing buyers failed', err);
+    return NextResponse.json({ error: 'Failed to list buyers.' }, { status: 500 });
+  }
+}
+
 /**
  * Admin-only buyer record deletion, by application_reference. This is deliberately minimal --
  * not the real application-review queue (Priority 2, not built yet) -- it exists to clean up

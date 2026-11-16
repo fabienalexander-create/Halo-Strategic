@@ -14,6 +14,7 @@ interface Body {
   buyer_id?: number;
   homeowner_confirmation_id?: number;
   package_id?: number;
+  payment_link?: string;
 }
 
 // Offers a lead to a buyer -- the first and only place a lead_allocations row is ever created.
@@ -158,8 +159,8 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
     let paymentReference: string | null = null;
     if (!packageCovered) {
       const paymentInserted = await db.sql`
-        INSERT INTO payments (lead_allocation_id, expected_amount, status)
-        VALUES (${allocationId}, ${agreedPrice}, 'PENDING')
+        INSERT INTO payments (lead_allocation_id, expected_amount, status, payment_link)
+        VALUES (${allocationId}, ${agreedPrice}, 'PENDING', ${body.payment_link ?? null})
         RETURNING id
       `;
       const paymentId = paymentInserted[0].id;
@@ -180,7 +181,7 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
       ...leadOfferEmail({
         leadReference, industryLabel, postcode: lead.postcode, propertyType: lead.property_type,
         serviceRequirement: lead.service_requirement, currency: 'GBP', price: agreedPrice,
-        packageCovered, paymentReference,
+        packageCovered, paymentReference, paymentLink: body.payment_link ?? null,
       }),
     });
     if (adminEmails) {
