@@ -15,6 +15,7 @@ interface Body {
   homeowner_confirmation_id?: number;
   package_id?: number;
   payment_link?: string;
+  allocation_type?: 'EXCLUSIVE_WINDOW' | 'SHARED';
 }
 
 // Offers a lead to a buyer -- the first and only place a lead_allocations row is ever created.
@@ -29,7 +30,15 @@ interface Body {
 // A homeowner confirmation (recorded separately via /api/admin/homeowner-confirmations) is always
 // required -- this route checks it belongs to the same lead and buyer and isn't withdrawn itself,
 // as a clearer error than the database trigger's own exception, which still applies as the final
-// backstop.
+// backstop. It is buyer-specific: selling the same lead to two buyers means recording two separate
+// confirmations, one naming each business -- never inferred from the other.
+//
+// allocation_type defaults to EXCLUSIVE_WINDOW (one buyer, same as always). SHARED is a deliberate
+// decision (Fabien, 2026-11-17: "this will be a regular thing") to sell one lead to more than one
+// buyer at once -- an EXCLUSIVE_WINDOW request is refused the moment any live allocation already
+// exists (you cannot claim exclusivity over a lead someone else already has), but a SHARED request
+// is allowed regardless, and the database's own unique index (uq_lead_allocations_live_per_lead,
+// scoped to allocation_type = 'EXCLUSIVE_WINDOW') is the final backstop behind this check.
 export async function POST(req: NextRequest, { params }: { params: { id: string } }) {
   const auth = await requireAdmin(req);
   if ('response' in auth) return auth.response;
@@ -51,6 +60,10 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
   if (!body.homeowner_confirmation_id) {
     return NextResponse.json({ error: 'homeowner_confirmation_id is required.' }, { status: 400 });
   }
+  const allocationType = body.allocation_type ?? 'EXCLUSIVE_WINDOW';
+  if (allocationType !== 'EXCLUSIVE_WINDOW' && allocationType !== 'SHARED') {
+    return NextResponse.json({ error: "allocation_type must be 'EXCLUSIVE_WINDOW' or 'SHARED'." }, { status: 400 });
+  }
 
   try {
     const db = getDatabase();
@@ -70,10 +83,13 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
     };
 
     const liveAllocations = await db.sql`
-      SELECT id FROM lead_allocations WHERE lead_id = ${leadId} AND status IN ('OFFERED', 'ACCEPTED', 'PURCHASED')
+      SELECT id, buyer_id FROM lead_allocations WHERE lead_id = ${leadId} AND status IN ('OFFERED', 'ACCEPTED', 'PURCHASED')
     `;
-    if (liveAllocations.length > 0) {
-      return NextResponse.json({ error: 'This lead already has a live allocation.' }, { status: 409 });
+    if (allocationType === 'EXCLUSIVE_WINDOW' && liveAllocations.length > 0) {
+      return NextResponse.json({ error: 'This lead already has a live allocation -- cannot claim it exclusively.' }, { status: 409 });
+    }
+    if (liveAllocations.some((a) => (a as { buyer_id: number }).buyer_id === body.buyer_id)) {
+      return NextResponse.json({ error: 'This buyer already has a live allocation for this lead.' }, { status: 409 });
     }
 
     const buyers = await db.sql`
@@ -130,12 +146,13 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
       agreedPrice = buyer.agreed_price_per_lead;
     }
 
+    const allocationSequence = allocationType === 'EXCLUSIVE_WINDOW' ? 1 : null;
     const inserted = await db.sql`
       INSERT INTO lead_allocations (
         lead_id, buyer_id, allocation_type, allocation_sequence, status,
         notified_at, decided_at, agreed_price, package_id, homeowner_confirmation_id
       ) VALUES (
-        ${leadId}, ${body.buyer_id}, 'EXCLUSIVE_WINDOW', 1, 'PURCHASED',
+        ${leadId}, ${body.buyer_id}, ${allocationType}, ${allocationSequence}, 'PURCHASED',
         now(), now(), ${agreedPrice}, ${body.package_id ?? null}, ${body.homeowner_confirmation_id}
       )
       RETURNING id
@@ -148,7 +165,10 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
       INSERT INTO audit_log (actor, action, entity_type, entity_id, new_state)
       VALUES (
         ${auth.session.email}, 'LEAD_ALLOCATED', 'lead_allocation', ${allocationId},
-        ${JSON.stringify({ lead_id: leadId, buyer_id: body.buyer_id, agreed_price: agreedPrice, package_id: body.package_id ?? null })}
+        ${JSON.stringify({
+          lead_id: leadId, buyer_id: body.buyer_id, agreed_price: agreedPrice, package_id: body.package_id ?? null,
+          allocation_type: allocationType, other_live_buyer_ids: liveAllocations.map((a) => (a as { buyer_id: number }).buyer_id),
+        })}
       )
     `;
 

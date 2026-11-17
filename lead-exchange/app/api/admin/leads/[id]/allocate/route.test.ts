@@ -80,3 +80,77 @@ describe('POST /api/admin/leads/[id]/allocate -- payment link passthrough', () =
     expect(offerCall?.[1].text).toContain('bank transfer');
   });
 });
+
+describe('POST /api/admin/leads/[id]/allocate -- shared vs exclusive allocation', () => {
+  beforeEach(() => {
+    requireAdminMock.mockReset();
+    sqlMock.mockReset();
+    sendLeadDeliveryEmailMock.mockReset();
+    requireAdminMock.mockResolvedValue({ session: { adminId: 1, email: 'admin@halostrategic.com', role: 'owner' } });
+    sendLeadDeliveryEmailMock.mockResolvedValue({ sent: true, skipped: false, blocked: false });
+  });
+
+  it('rejects an unrecognised allocation_type before touching the database', async () => {
+    const { POST } = await import('./route');
+
+    const res = await POST(req({ buyer_id: 99, homeowner_confirmation_id: 5, allocation_type: 'NOT_A_REAL_TYPE' }), { params: { id: '55' } });
+
+    expect(res.status).toBe(400);
+    expect(sqlMock).not.toHaveBeenCalled();
+  });
+
+  it('rejects an EXCLUSIVE_WINDOW request when the lead already has any live allocation (e.g. to James)', async () => {
+    sqlMock
+      .mockResolvedValueOnce([LEAD_ROW]) // lead lookup
+      .mockResolvedValueOnce([{ id: 1, buyer_id: 42 }]); // James's existing live allocation
+    const { POST } = await import('./route');
+
+    const res = await POST(req({ buyer_id: 99, homeowner_confirmation_id: 5 }), { params: { id: '55' } }); // default EXCLUSIVE_WINDOW
+    const data = await res.json();
+
+    expect(res.status).toBe(409);
+    expect(data.error).toMatch(/exclusively/);
+  });
+
+  it('allows a SHARED allocation to a second buyer even though the lead already has a live (exclusive) allocation to another buyer', async () => {
+    sqlMock
+      .mockResolvedValueOnce([LEAD_ROW])
+      .mockResolvedValueOnce([{ id: 1, buyer_id: 42 }]) // James's existing EXCLUSIVE_WINDOW allocation
+      .mockResolvedValueOnce([BUYER_ROW]) // Russell
+      .mockResolvedValueOnce([CONFIRMATION_ROW])
+      .mockResolvedValueOnce([{ id: 124 }]) // allocation insert (Russell, SHARED)
+      .mockResolvedValueOnce([]) // leads status update
+      .mockResolvedValueOnce([]) // audit_log
+      .mockResolvedValueOnce([{ id: 78 }]) // payments insert
+      .mockResolvedValueOnce([]) // payments reference update
+      .mockResolvedValueOnce([{ email: 'admin@halostrategic.com' }]);
+    const { POST } = await import('./route');
+
+    const res = await POST(req({ buyer_id: 99, homeowner_confirmation_id: 5, allocation_type: 'SHARED' }), { params: { id: '55' } });
+    const data = await res.json();
+
+    expect(res.status).toBe(200);
+    expect(data.allocation_id).toBe(124);
+
+    const insertCall = sqlMock.mock.calls.find((c) => JSON.stringify(c).includes('INSERT INTO lead_allocations'));
+    expect(JSON.stringify(insertCall)).toContain('SHARED');
+    // allocation_sequence is null for SHARED, not 1
+    expect(JSON.stringify(insertCall)).not.toMatch(/"SHARED".*,1,/);
+
+    const auditCall = sqlMock.mock.calls.find((c) => JSON.stringify(c).includes("'LEAD_ALLOCATED'"));
+    expect(JSON.stringify(auditCall)).toContain('42'); // records James's buyer_id as an "other live buyer" for traceability
+  });
+
+  it('rejects allocating the same buyer twice for the same lead, even as SHARED', async () => {
+    sqlMock
+      .mockResolvedValueOnce([LEAD_ROW])
+      .mockResolvedValueOnce([{ id: 1, buyer_id: 99 }]); // buyer 99 already has a live allocation
+    const { POST } = await import('./route');
+
+    const res = await POST(req({ buyer_id: 99, homeowner_confirmation_id: 5, allocation_type: 'SHARED' }), { params: { id: '55' } });
+    const data = await res.json();
+
+    expect(res.status).toBe(409);
+    expect(data.error).toMatch(/already has a live allocation/);
+  });
+});

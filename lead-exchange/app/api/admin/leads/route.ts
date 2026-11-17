@@ -113,8 +113,9 @@ export async function GET(req: NextRequest) {
       ? await db.sql`
           SELECT l.id, l.status, l.homeowner_name, l.property_type, l.postcode, l.service_requirement,
                  l.source, l.qualification_answers, l.created_at, i.slug AS industry_slug, i.name AS industry_name,
-                 (SELECT a.id FROM lead_allocations a WHERE a.lead_id = l.id AND a.status IN ('OFFERED','ACCEPTED','PURCHASED') LIMIT 1) AS live_allocation_id,
-                 (SELECT b.company_name FROM lead_allocations a JOIN buyers b ON b.id = a.buyer_id WHERE a.lead_id = l.id AND a.status IN ('OFFERED','ACCEPTED','PURCHASED') LIMIT 1) AS allocated_buyer
+                 (SELECT json_agg(json_build_object('buyer_id', a.buyer_id, 'company_name', b.company_name, 'allocation_type', a.allocation_type) ORDER BY a.id)
+                  FROM lead_allocations a JOIN buyers b ON b.id = a.buyer_id
+                  WHERE a.lead_id = l.id AND a.status IN ('OFFERED','ACCEPTED','PURCHASED')) AS live_allocations
           FROM leads l JOIN industries i ON i.id = l.industry_id
           WHERE l.status = ${statusFilter}
           ORDER BY l.created_at DESC LIMIT 200
@@ -122,8 +123,9 @@ export async function GET(req: NextRequest) {
       : await db.sql`
           SELECT l.id, l.status, l.homeowner_name, l.property_type, l.postcode, l.service_requirement,
                  l.source, l.qualification_answers, l.created_at, i.slug AS industry_slug, i.name AS industry_name,
-                 (SELECT a.id FROM lead_allocations a WHERE a.lead_id = l.id AND a.status IN ('OFFERED','ACCEPTED','PURCHASED') LIMIT 1) AS live_allocation_id,
-                 (SELECT b.company_name FROM lead_allocations a JOIN buyers b ON b.id = a.buyer_id WHERE a.lead_id = l.id AND a.status IN ('OFFERED','ACCEPTED','PURCHASED') LIMIT 1) AS allocated_buyer
+                 (SELECT json_agg(json_build_object('buyer_id', a.buyer_id, 'company_name', b.company_name, 'allocation_type', a.allocation_type) ORDER BY a.id)
+                  FROM lead_allocations a JOIN buyers b ON b.id = a.buyer_id
+                  WHERE a.lead_id = l.id AND a.status IN ('OFFERED','ACCEPTED','PURCHASED')) AS live_allocations
           FROM leads l JOIN industries i ON i.id = l.industry_id
           ORDER BY l.created_at DESC LIMIT 200
         `;

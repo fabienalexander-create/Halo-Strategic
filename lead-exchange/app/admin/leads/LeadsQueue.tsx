@@ -21,8 +21,7 @@ interface LeadRow {
   created_at: string;
   industry_slug: string;
   industry_name: string;
-  live_allocation_id: number | null;
-  allocated_buyer: string | null;
+  live_allocations: { buyer_id: number; company_name: string; allocation_type: string }[] | null;
 }
 
 interface BuyerOption {
@@ -181,6 +180,7 @@ function LeadRowItem({
 
   const [allocBuyerId, setAllocBuyerId] = useState('');
   const [paymentLink, setPaymentLink] = useState('');
+  const [allocationType, setAllocationType] = useState<'EXCLUSIVE_WINDOW' | 'SHARED'>('EXCLUSIVE_WINDOW');
 
   async function recordConfirmation(e: React.FormEvent) {
     e.preventDefault();
@@ -216,7 +216,7 @@ function LeadRowItem({
         method: 'POST', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           buyer_id: Number(allocBuyerId), homeowner_confirmation_id: lastConfirmationId,
-          payment_link: paymentLink || undefined,
+          payment_link: paymentLink || undefined, allocation_type: allocationType,
         }),
       });
       const data = await res.json();
@@ -243,13 +243,17 @@ function LeadRowItem({
         </td>
         <td style={{ padding: '10px 8px' }}>{lead.industry_name}</td>
         <td style={{ padding: '10px 8px', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.78rem' }}>{lead.status}</td>
-        <td style={{ padding: '10px 8px' }}>{lead.allocated_buyer ?? '—'}</td>
         <td style={{ padding: '10px 8px' }}>
-          {!lead.live_allocation_id && (
-            <button className="btn btn-bronze" onClick={onToggle} style={{ fontSize: '0.82rem', padding: '6px 12px' }}>
-              {expanded ? 'Close' : 'Allocate'}
-            </button>
-          )}
+          {!lead.live_allocations || lead.live_allocations.length === 0 ? '—' : lead.live_allocations.map((a) => (
+            <div key={a.buyer_id}>
+              {a.company_name} <span style={{ color: 'var(--slate)', fontSize: '0.78rem' }}>({a.allocation_type === 'SHARED' ? 'shared' : 'exclusive'})</span>
+            </div>
+          ))}
+        </td>
+        <td style={{ padding: '10px 8px' }}>
+          <button className="btn btn-bronze" onClick={onToggle} style={{ fontSize: '0.82rem', padding: '6px 12px' }}>
+            {expanded ? 'Close' : 'Allocate'}
+          </button>
         </td>
       </tr>
       {expanded && (
@@ -290,12 +294,26 @@ function LeadRowItem({
             </form>
 
             <h4 style={{ fontSize: '0.95rem', marginBottom: 8 }}>Step 2 &mdash; Allocate and send redacted preview</h4>
+            {lead.live_allocations && lead.live_allocations.length > 0 && (
+              <div className="disclaimer-box" style={{ marginBottom: 12 }}>
+                Already allocated to: {lead.live_allocations.map((a) => a.company_name).join(', ')}.
+                Allocating to another buyer now must be deliberate &mdash; set type to Shared below.
+                This homeowner will be contacted by more than one business.
+              </div>
+            )}
             <form onSubmit={allocate}>
               <div className="form-row">
                 <label>Buyer</label>
                 <select value={allocBuyerId} onChange={(e) => setAllocBuyerId(e.target.value)} required>
                   <option value="">Select buyer</option>
                   {buyers.map((b) => <option key={b.id} value={b.id}>{b.company_name} (£{b.agreed_price_per_lead ?? '?'}/lead)</option>)}
+                </select>
+              </div>
+              <div className="form-row">
+                <label>Allocation type</label>
+                <select value={allocationType} onChange={(e) => setAllocationType(e.target.value as typeof allocationType)}>
+                  <option value="EXCLUSIVE_WINDOW">Exclusive &mdash; one buyer only</option>
+                  <option value="SHARED">Shared &mdash; sold to more than one buyer at once</option>
                 </select>
               </div>
               <div className="form-row">
