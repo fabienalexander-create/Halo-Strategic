@@ -297,7 +297,7 @@ export async function POST(req: NextRequest) {
       {
         reference: leadReference,
         message:
-          "Thanks — we've received your enquiry. If your details are shared with a suitable business, we'll let you know.",
+          "Thanks — we've received your enquiry. If your details are shared with one or more suitable businesses, we'll let you know.",
       },
       { status: 201 }
     );

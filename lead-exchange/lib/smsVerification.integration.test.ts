@@ -94,8 +94,8 @@ describe.skipIf(!adminUrl)('sms verification (real Postgres)', () => {
     process.env.SMS_VERIFICATION_ENABLED = 'true';
     expect(await queueVerification(db, { leadId: lead, mobile: newPhone(), noticeVersion: '2026-11-06-v0.1' })).toEqual({ queued: false, reason: 'NOTICE_NOT_SHOWN' });
     expect((await holder.db.query(`SELECT count(*)::int n FROM lead_phone_verifications WHERE lead_id=$1`, [lead])).rows[0].n).toBe(0);
-    // The shipped default covers only the solar notice version.
-    expect([...SMS_NOTICE_VERSIONS]).toEqual(['2026-11-13-v0.2', CV]);
+    // The shipped default covers only the solar notice versions.
+    expect([...SMS_NOTICE_VERSIONS]).toEqual(['2026-11-13-v0.2', '2026-11-18-v0.3', CV]);
     covered.delete(CV);
     expect(await queueVerification(db, { leadId: lead, mobile: newPhone(), noticeVersion: CV })).toEqual({ queued: false, reason: 'NOTICE_NOT_SHOWN' });
   });

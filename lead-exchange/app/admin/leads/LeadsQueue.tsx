@@ -21,8 +21,7 @@ interface LeadRow {
   created_at: string;
   industry_slug: string;
   industry_name: string;
-  live_allocation_id: number | null;
-  allocated_buyer: string | null;
+  live_allocations: { buyer_id: number; company_name: string; allocation_type: string }[] | null;
 }
 
 interface BuyerOption {
@@ -30,6 +29,15 @@ interface BuyerOption {
   company_name: string;
   application_status: string;
   agreed_price_per_lead: number | null;
+  industry_slug?: string;
+  exclusivity_arrangement?: 'exclusive' | 'shared' | null;
+}
+
+interface EligibleBuyer {
+  id: number;
+  company_name: string;
+  agreed_price_per_lead: number | null;
+  exclusivity_arrangement: 'exclusive' | 'shared' | null;
 }
 
 export default function LeadsQueue() {
@@ -181,6 +189,37 @@ function LeadRowItem({
 
   const [allocBuyerId, setAllocBuyerId] = useState('');
   const [paymentLink, setPaymentLink] = useState('');
+  const [allocationType, setAllocationType] = useState<'EXCLUSIVE_WINDOW' | 'SHARED'>('SHARED');
+  const [allocationTypeTouched, setAllocationTypeTouched] = useState(false);
+  const [eligibleBuyers, setEligibleBuyers] = useState<EligibleBuyer[] | null>(null);
+  const [showAllBuyers, setShowAllBuyers] = useState(false);
+
+  // Only buyers in the lead's own industry, ever -- the admin dropdowns used to list every
+  // ACTIVE buyer regardless of industry, which meant nothing stopped a roofing lead being offered
+  // to a solar installer.
+  const industryBuyers = buyers.filter((b) => b.industry_slug === lead.industry_slug);
+
+  useEffect(() => {
+    if (!expanded) return;
+    fetch(apiPath(`/api/admin/leads/${lead.id}/eligible-buyers`))
+      .then(async (r) => { if (!r.ok) throw new Error((await r.json()).error ?? 'Failed to load eligible buyers.'); return r.json(); })
+      .then((data) => setEligibleBuyers(data.buyers))
+      .catch(() => setEligibleBuyers([]));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [expanded, lead.id]);
+
+  const allocOptions: { id: number; company_name: string; agreed_price_per_lead: number | null }[] =
+    showAllBuyers || eligibleBuyers === null || eligibleBuyers.length === 0 ? industryBuyers : eligibleBuyers;
+
+  function onAllocBuyerChange(id: string) {
+    setAllocBuyerId(id);
+    if (allocationTypeTouched) return;
+    // Follow the selected buyer's own contracted arrangement, same as the route's own default --
+    // the admin can still override below, but shouldn't have to pick a type from nothing.
+    const buyer = industryBuyers.find((b) => String(b.id) === id) ?? eligibleBuyers?.find((b) => String(b.id) === id);
+    if (buyer?.exclusivity_arrangement === 'exclusive') setAllocationType('EXCLUSIVE_WINDOW');
+    else setAllocationType('SHARED');
+  }
 
   async function recordConfirmation(e: React.FormEvent) {
     e.preventDefault();
@@ -216,7 +255,7 @@ function LeadRowItem({
         method: 'POST', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           buyer_id: Number(allocBuyerId), homeowner_confirmation_id: lastConfirmationId,
-          payment_link: paymentLink || undefined,
+          payment_link: paymentLink || undefined, allocation_type: allocationType,
         }),
       });
       const data = await res.json();
@@ -243,13 +282,17 @@ function LeadRowItem({
         </td>
         <td style={{ padding: '10px 8px' }}>{lead.industry_name}</td>
         <td style={{ padding: '10px 8px', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.78rem' }}>{lead.status}</td>
-        <td style={{ padding: '10px 8px' }}>{lead.allocated_buyer ?? '—'}</td>
         <td style={{ padding: '10px 8px' }}>
-          {!lead.live_allocation_id && (
-            <button className="btn btn-bronze" onClick={onToggle} style={{ fontSize: '0.82rem', padding: '6px 12px' }}>
-              {expanded ? 'Close' : 'Allocate'}
-            </button>
-          )}
+          {!lead.live_allocations || lead.live_allocations.length === 0 ? '—' : lead.live_allocations.map((a) => (
+            <div key={a.buyer_id}>
+              {a.company_name} <span style={{ color: 'var(--slate)', fontSize: '0.78rem' }}>({a.allocation_type === 'SHARED' ? 'shared' : 'exclusive'})</span>
+            </div>
+          ))}
+        </td>
+        <td style={{ padding: '10px 8px' }}>
+          <button className="btn btn-bronze" onClick={onToggle} style={{ fontSize: '0.82rem', padding: '6px 12px' }}>
+            {expanded ? 'Close' : 'Allocate'}
+          </button>
         </td>
       </tr>
       {expanded && (
@@ -261,7 +304,10 @@ function LeadRowItem({
               Step 1 &mdash; Record homeowner confirmation {lastConfirmationId && <span style={{ color: '#2f4a33' }}>(recorded, confirmation #{lastConfirmationId})</span>}
             </h4>
             <p className="form-note">
-              Mandatory before any offer. This must be a lead-specific, named-business confirmation
+              Mandatory before any offer, and needed separately for each business this lead is
+              shared with &mdash; recording a YES for one buyer is never evidence of consent to
+              share with another. This must be a lead-specific, named-business confirmation,
+              covering that this enquiry may be passed to more than one business if that applies
               &mdash; not inferred from the enquiry form's general consent checkbox.
             </p>
             <form onSubmit={recordConfirmation} style={{ marginBottom: 20 }}>
@@ -269,7 +315,7 @@ function LeadRowItem({
                 <label>Buyer being named to the homeowner</label>
                 <select value={confirmBuyerId} onChange={(e) => setConfirmBuyerId(e.target.value)} required>
                   <option value="">Select buyer</option>
-                  {buyers.map((b) => <option key={b.id} value={b.id}>{b.company_name}</option>)}
+                  {industryBuyers.map((b) => <option key={b.id} value={b.id}>{b.company_name}</option>)}
                 </select>
               </div>
               <div className="form-row">
@@ -290,13 +336,40 @@ function LeadRowItem({
             </form>
 
             <h4 style={{ fontSize: '0.95rem', marginBottom: 8 }}>Step 2 &mdash; Allocate and send redacted preview</h4>
+            <p className="form-note">
+              Multi-buyer distribution is the normal model now, not an exception &mdash; a lead can
+              go to more than one matched buyer. The buyer list below is narrowed to those matched
+              by coverage and remaining weekly capacity; it is a suggestion, not a hard limit.
+            </p>
+            {lead.live_allocations && lead.live_allocations.length > 0 && (
+              <div className="disclaimer-box" style={{ marginBottom: 12 }}>
+                Already receiving this lead: {lead.live_allocations.map((a) => a.company_name).join(', ')}.
+                A new homeowner confirmation naming the next business is still required above before
+                allocating to them too.
+              </div>
+            )}
             <form onSubmit={allocate}>
               <div className="form-row">
                 <label>Buyer</label>
-                <select value={allocBuyerId} onChange={(e) => setAllocBuyerId(e.target.value)} required>
+                <select value={allocBuyerId} onChange={(e) => onAllocBuyerChange(e.target.value)} required>
                   <option value="">Select buyer</option>
-                  {buyers.map((b) => <option key={b.id} value={b.id}>{b.company_name} (£{b.agreed_price_per_lead ?? '?'}/lead)</option>)}
+                  {allocOptions.map((b) => <option key={b.id} value={b.id}>{b.company_name} (£{b.agreed_price_per_lead ?? '?'}/lead)</option>)}
                 </select>
+              </div>
+              <label style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: '0.82rem', color: 'var(--slate)', marginBottom: 12 }}>
+                <input type="checkbox" checked={showAllBuyers} onChange={(e) => setShowAllBuyers(e.target.checked)} style={{ width: 'auto' }} />
+                Not seeing who you expected? Show all ACTIVE buyers in this industry, matched or not.
+              </label>
+              <div className="form-row">
+                <label>Allocation type</label>
+                <select value={allocationType} onChange={(e) => { setAllocationTypeTouched(true); setAllocationType(e.target.value as typeof allocationType); }}>
+                  <option value="SHARED">Shared &mdash; sold to more than one buyer at once (default)</option>
+                  <option value="EXCLUSIVE_WINDOW">Exclusive &mdash; one buyer only</option>
+                </select>
+                <p className="form-note" style={{ marginTop: 4 }}>
+                  Follows the selected buyer's own agreed arrangement automatically; only override this
+                  if you're deliberately going against what's on file for them.
+                </p>
               </div>
               <div className="form-row">
                 <label>Unique payment link for this lead</label>

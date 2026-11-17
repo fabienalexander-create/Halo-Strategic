@@ -44,9 +44,10 @@ export default function RequestQuotePage() {
           <p>
             We check what you&rsquo;ve told us against the criteria we&rsquo;ve agreed with approved Solar
             &amp; Battery installers &mdash; things like your postcode, property type, and what you&rsquo;re
-            interested in. We only pass your details to an installer if you&rsquo;ve specifically agreed to
-            that, and only once we judge your enquiry a genuine fit for a business covering your area. If
-            there isn&rsquo;t a suitable match, your details aren&rsquo;t shared with anyone.
+            interested in. We only pass your details to an installer (or more than one, if that applies) if
+            you&rsquo;ve specifically agreed to that, and only once we judge your enquiry a genuine fit for a
+            business covering your area. If there isn&rsquo;t a suitable match, your details aren&rsquo;t
+            shared with anyone.
           </p>
         </div>
       </section>
@@ -57,7 +58,8 @@ export default function RequestQuotePage() {
           <h2 style={{ fontSize: '1.5rem', marginBottom: 16 }}>Separate, specific consent &mdash; not bundled together.</h2>
           <p>
             Below, you choose separately whether we can contact you, whether we can share your details with
-            an installer, and whether you&rsquo;ve read our privacy policy &mdash; these are three distinct
+            an installer (or more than one, if that applies), and whether you&rsquo;ve read our privacy
+            policy &mdash; these are three distinct
             choices, not one tick-box covering everything. Marketing emails are optional and off by default.
             See our full{' '}
             <Link href="/privacy-policy" style={{ color: 'var(--bronze)' }}>
