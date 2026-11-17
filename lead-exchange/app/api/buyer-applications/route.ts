@@ -5,6 +5,7 @@ import { attemptSend } from '../../../lib/email';
 import { adminNewApplicationEmail, applicationReceivedEmail } from '../../../lib/emailTemplates';
 import { BUYER_REPLACEMENT_POLICY_CONFIG, isConfiguredIndustrySlug } from '../../../lib/industries';
 import { advisoryLockKey } from '../../../lib/attribution';
+import { autoAuthoriseContactFromApplication } from '../../../lib/buyerProspectAutoAuthorise';
 
 const INDUSTRY_LABELS: Record<string, string> = {
   spray_foam_removal: 'Spray Foam Removal',
@@ -238,7 +239,7 @@ export async function POST(req: NextRequest) {
     // that affects review/approval.
     interface MatchedProspect {
       id: number; utm_source: string | null; utm_medium: string | null; utm_campaign: string | null;
-      fbclid: string | null; capture_channel: string;
+      fbclid: string | null; capture_channel: string; sales_stage: string; personal_contact_authorised_at: string | null;
     }
     let matchedProspect: MatchedProspect | null = null;
 
@@ -255,7 +256,7 @@ export async function POST(req: NextRequest) {
 
     if (body.prospect_reference) {
       const byRef = await client.query(
-        `SELECT id, contact_email, utm_source, utm_medium, utm_campaign, fbclid, capture_channel
+        `SELECT id, contact_email, utm_source, utm_medium, utm_campaign, fbclid, capture_channel, sales_stage, personal_contact_authorised_at
          FROM buyer_prospects WHERE prospect_reference = $1 AND converted_buyer_id IS NULL FOR UPDATE`,
         [body.prospect_reference]
       );
@@ -265,7 +266,7 @@ export async function POST(req: NextRequest) {
     }
     if (!matchedProspect) {
       const byEmail = await client.query(
-        `SELECT id, utm_source, utm_medium, utm_campaign, fbclid, capture_channel
+        `SELECT id, utm_source, utm_medium, utm_campaign, fbclid, capture_channel, sales_stage, personal_contact_authorised_at
          FROM buyer_prospects
          WHERE lower(trim(contact_email)) = $1 AND industry_id = (SELECT id FROM industries WHERE slug = $2) AND converted_buyer_id IS NULL
          ORDER BY created_at DESC LIMIT 1 FOR UPDATE`,
@@ -365,6 +366,17 @@ export async function POST(req: NextRequest) {
          VALUES ($1, 'BUYER_PROSPECT_CONVERTED', 'buyer_prospect', $2, $3)`,
         [applicationReference, matchedProspect.id, JSON.stringify({ converted_buyer_id: buyerId })]
       );
+
+      // Submitting this application is itself the consent to contact this prospect -- a step
+      // before they sign up (become-a-buyer apply, not activation), which already requires
+      // agreeing to receive account/lead notifications. Only acts if the prospect is still at NEW
+      // with no authorisation already recorded; never overwrites or advances past that.
+      await autoAuthoriseContactFromApplication(client, {
+        prospectId: matchedProspect.id,
+        currentSalesStage: matchedProspect.sales_stage,
+        personalContactAuthorisedAt: matchedProspect.personal_contact_authorised_at,
+        applicationReference,
+      });
     }
 
     await client.query(
