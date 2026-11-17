@@ -33,12 +33,18 @@ interface Body {
 // backstop. It is buyer-specific: selling the same lead to two buyers means recording two separate
 // confirmations, one naming each business -- never inferred from the other.
 //
-// allocation_type defaults to EXCLUSIVE_WINDOW (one buyer, same as always). SHARED is a deliberate
-// decision (Fabien, 2026-11-17: "this will be a regular thing") to sell one lead to more than one
-// buyer at once -- an EXCLUSIVE_WINDOW request is refused the moment any live allocation already
-// exists (you cannot claim exclusivity over a lead someone else already has), but a SHARED request
-// is allowed regardless, and the database's own unique index (uq_lead_allocations_live_per_lead,
-// scoped to allocation_type = 'EXCLUSIVE_WINDOW') is the final backstop behind this check.
+// Multi-buyer distribution is the default commercial model (Fabien, 2026-11-18: "exclusivity is
+// being removed as the default... each homeowner lead may be allocated to multiple suppliers"),
+// not a one-off admin override. allocation_type is therefore not a platform-wide default: it
+// follows what was actually agreed with the buyer (buyers.exclusivity_arrangement, required
+// before a buyer can go ACTIVE) when the admin doesn't pass one explicitly, and an explicit
+// request that contradicts that buyer's own contract is refused outright, here and in the
+// database trigger (lead_allocations_guard, netlify/database/migrations/
+// 20261118100000_multi_buyer_distribution_model.sql). An EXCLUSIVE_WINDOW request is refused the
+// moment any live allocation already exists for the lead (you cannot claim exclusivity over a
+// lead someone else already has); a SHARED request is allowed regardless, and the database's own
+// unique index (uq_lead_allocations_live_per_lead, scoped to allocation_type = 'EXCLUSIVE_WINDOW')
+// is the final backstop behind this check.
 export async function POST(req: NextRequest, { params }: { params: { id: string } }) {
   const auth = await requireAdmin(req);
   if ('response' in auth) return auth.response;
@@ -60,8 +66,7 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
   if (!body.homeowner_confirmation_id) {
     return NextResponse.json({ error: 'homeowner_confirmation_id is required.' }, { status: 400 });
   }
-  const allocationType = body.allocation_type ?? 'EXCLUSIVE_WINDOW';
-  if (allocationType !== 'EXCLUSIVE_WINDOW' && allocationType !== 'SHARED') {
+  if (body.allocation_type !== undefined && body.allocation_type !== 'EXCLUSIVE_WINDOW' && body.allocation_type !== 'SHARED') {
     return NextResponse.json({ error: "allocation_type must be 'EXCLUSIVE_WINDOW' or 'SHARED'." }, { status: 400 });
   }
 
@@ -85,15 +90,12 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
     const liveAllocations = await db.sql`
       SELECT id, buyer_id FROM lead_allocations WHERE lead_id = ${leadId} AND status IN ('OFFERED', 'ACCEPTED', 'PURCHASED')
     `;
-    if (allocationType === 'EXCLUSIVE_WINDOW' && liveAllocations.length > 0) {
-      return NextResponse.json({ error: 'This lead already has a live allocation -- cannot claim it exclusively.' }, { status: 409 });
-    }
     if (liveAllocations.some((a) => (a as { buyer_id: number }).buyer_id === body.buyer_id)) {
       return NextResponse.json({ error: 'This buyer already has a live allocation for this lead.' }, { status: 409 });
     }
 
     const buyers = await db.sql`
-      SELECT id, industry_id, application_status, company_name, contact_email, agreed_price_per_lead
+      SELECT id, industry_id, application_status, company_name, contact_email, agreed_price_per_lead, exclusivity_arrangement
       FROM buyers WHERE id = ${body.buyer_id}
     `;
     if (buyers.length === 0) {
@@ -101,13 +103,30 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
     }
     const buyer = buyers[0] as {
       id: number; industry_id: number; application_status: string; company_name: string;
-      contact_email: string; agreed_price_per_lead: number | null;
+      contact_email: string; agreed_price_per_lead: number | null; exclusivity_arrangement: 'exclusive' | 'shared' | null;
     };
     if (buyer.application_status !== 'ACTIVE') {
       return NextResponse.json({ error: `Buyer is not ACTIVE (currently ${buyer.application_status}).` }, { status: 409 });
     }
     if (buyer.industry_id !== lead.industry_id) {
       return NextResponse.json({ error: 'This buyer and lead are in different industries.' }, { status: 400 });
+    }
+
+    // Default to what was actually agreed with this buyer (buyers.exclusivity_arrangement, set
+    // before the buyer could go ACTIVE) rather than to a platform-wide default -- multi-buyer
+    // sharing is the normal model now, not a one-off admin override, so there is no single
+    // sensible default that ignores the buyer's own contract. A buyer with no arrangement
+    // recorded yet defaults to SHARED, the new baseline. An admin can still request a specific
+    // type explicitly, but not one that contradicts the buyer's recorded contract.
+    const allocationType = body.allocation_type ?? (buyer.exclusivity_arrangement === 'exclusive' ? 'EXCLUSIVE_WINDOW' : 'SHARED');
+    if (buyer.exclusivity_arrangement === 'shared' && allocationType === 'EXCLUSIVE_WINDOW') {
+      return NextResponse.json({ error: 'This buyer is contracted for shared leads only; cannot allocate EXCLUSIVE_WINDOW.' }, { status: 409 });
+    }
+    if (buyer.exclusivity_arrangement === 'exclusive' && allocationType === 'SHARED') {
+      return NextResponse.json({ error: 'This buyer is contracted for exclusive leads only; cannot allocate SHARED.' }, { status: 409 });
+    }
+    if (allocationType === 'EXCLUSIVE_WINDOW' && liveAllocations.length > 0) {
+      return NextResponse.json({ error: 'This lead already has a live allocation -- cannot claim it exclusively.' }, { status: 409 });
     }
 
     const confirmations = await db.sql`

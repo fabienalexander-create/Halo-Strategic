@@ -21,7 +21,13 @@ export function sqlFromClient(client: { query: (text: string, values: unknown[])
 // in lib/industries.ts). Only leads captured under one of these can ever be queued. Spray foam,
 // roofing and earlier solar leads are never texted. Even then nothing is sent unless
 // SMS_VERIFICATION_ENABLED=true, which stays unset until Fabien activates it.
-export const SMS_NOTICE_VERSIONS: ReadonlySet<string> = new Set<string>(['2026-11-13-v0.2']);
+//
+// '2026-11-18-v0.3' is solar_battery's current consentVersion (lib/industries.ts), updated
+// 2026-11-18 to disclose multi-buyer distribution -- kept in step with that value, additively, so
+// a new solar lead keeps getting the SMS verification notice it always did. The superseded
+// '2026-11-13-v0.2' stays listed rather than being removed: no lead is ever created with it again
+// after the bump, so it does nothing going forward, but removing it would misrepresent history.
+export const SMS_NOTICE_VERSIONS: ReadonlySet<string> = new Set<string>(['2026-11-13-v0.2', '2026-11-18-v0.3']);
 
 export const VERIFICATION_EXPIRY_HOURS = 48;
 export const PER_NUMBER_CAP_24H = 2;

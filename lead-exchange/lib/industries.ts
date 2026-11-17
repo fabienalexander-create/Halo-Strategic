@@ -45,24 +45,33 @@ export const SMS_VERIFICATION_NOTICE = {
   ],
 } as const;
 
+// Multi-buyer distribution is the default commercial model as of 2026-11-18 -- a homeowner's
+// enquiry may now be passed to more than one business, not just one. The previous wording below
+// ("a suitable business", "one as a genuine fit") read as singular and no longer matches what
+// actually happens, so every industry's consent wording is updated to disclose that explicitly,
+// with a new consentVersion recorded against it (existing enquiries keep whatever consent_version
+// they were actually given -- see homeowner_confirmations below for how distribution to a second
+// business is gated regardless of this form-level wording). lib/smsVerification.ts's
+// SMS_NOTICE_VERSIONS must be kept in step with solar_battery's consentVersion -- it reuses this
+// same version string as the "was the phone-verification notice shown" gate.
 export const HOMEOWNER_CONSENT_CONFIG: Record<IndustrySlug, HomeownerConsentConfig> = {
   spray_foam_removal: {
-    consentVersion: '2026-11-04-v0.1',
+    consentVersion: '2026-11-18-v0.2',
     source: 'spray_foam_removal_homeowner_form',
-    shareBuyerLabel: "I'm happy for my details to be shared with a suitable spray foam removal business, so they can contact me about this enquiry, if Halo Strategic identifies one as a genuine fit.",
-    namedRecipientOrCategory: 'An approved Spray Foam Removal buyer (installer) in the Halo Lead Exchange, only if judged a genuine fit',
+    shareBuyerLabel: "I'm happy for my details to be shared with one or more suitable spray foam removal businesses, so they can contact me about this enquiry, if Halo Strategic identifies them as a genuine fit.",
+    namedRecipientOrCategory: 'One or more approved Spray Foam Removal buyers (installers) in the Halo Lead Exchange, only those judged a genuine fit',
   },
   solar_battery: {
-    consentVersion: '2026-11-13-v0.2',
+    consentVersion: '2026-11-18-v0.3',
     source: 'solar_battery_homeowner_form',
-    shareBuyerLabel: "I'm happy for my details to be shared with a suitable Solar & Battery installer, so they can contact me about this enquiry, if Halo Strategic identifies one as a genuine fit.",
-    namedRecipientOrCategory: 'An approved Solar & Battery installer in the Halo Lead Exchange, only if judged a genuine fit',
+    shareBuyerLabel: "I'm happy for my details to be shared with one or more suitable Solar & Battery installers, so they can contact me about this enquiry, if Halo Strategic identifies them as a genuine fit.",
+    namedRecipientOrCategory: 'One or more approved Solar & Battery installers in the Halo Lead Exchange, only those judged a genuine fit',
   },
   roofing: {
-    consentVersion: '2026-11-07-v0.1',
+    consentVersion: '2026-11-18-v0.2',
     source: 'roofing_homeowner_form',
-    shareBuyerLabel: "I'm happy for my details to be shared with a suitable roofing contractor, so they can contact me about this enquiry, if Halo Strategic identifies one as a genuine fit.",
-    namedRecipientOrCategory: 'An approved Roofing buyer (contractor) in the Halo Lead Exchange, only if judged a genuine fit',
+    shareBuyerLabel: "I'm happy for my details to be shared with one or more suitable roofing contractors, so they can contact me about this enquiry, if Halo Strategic identifies them as a genuine fit.",
+    namedRecipientOrCategory: 'One or more approved Roofing buyers (contractors) in the Halo Lead Exchange, only those judged a genuine fit',
   },
 };
 

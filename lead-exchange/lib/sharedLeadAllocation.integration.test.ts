@@ -13,6 +13,10 @@ const isLocal = !!adminUrl && ['localhost', '127.0.0.1', '::1'].includes(new URL
 const require = createRequire(import.meta.url);
 const dir = join(__dirname, '..', 'netlify', 'database', 'migrations');
 const SHARED_ALLOCATION_MIGRATION = '20261117100000_shared_lead_allocation.sql';
+// Applied right after it, in order, in the same deferred step below -- 20261118 is a further
+// CREATE OR REPLACE of the same trigger function and must land on top of 20261117's body, not
+// run out of order relative to it.
+const MULTI_BUYER_MODEL_MIGRATION = '20261118100000_multi_buyer_distribution_model.sql';
 
 describe.skipIf(!adminUrl)('shared lead allocation', () => {
   const dbName = `lx_test_${Date.now()}_shared`;
@@ -34,7 +38,7 @@ describe.skipIf(!adminUrl)('shared lead allocation', () => {
     await db.connect();
 
     for (const f of readdirSync(dir).filter((n) => n.endsWith('.sql')).sort()) {
-      if (f === SHARED_ALLOCATION_MIGRATION) continue;
+      if (f === SHARED_ALLOCATION_MIGRATION || f === MULTI_BUYER_MODEL_MIGRATION) continue;
       await db.query(readFileSync(join(dir, f), 'utf8'));
     }
 
@@ -58,8 +62,11 @@ describe.skipIf(!adminUrl)('shared lead allocation', () => {
 
     // Pre-existing behaviour, from before this migration: two EXCLUSIVE_WINDOW allocations for the
     // same lead must already be impossible without the new migration -- establishes the baseline
-    // this migration must not weaken.
+    // this migration must not weaken. James and Russell here have no exclusivity_arrangement
+    // recorded (NULL), so 20261118's buyer-arrangement check is a no-op for every test below --
+    // that rule gets its own dedicated fixtures in buyerExclusivityArrangement.integration.test.ts.
     await db.query(readFileSync(join(dir, SHARED_ALLOCATION_MIGRATION), 'utf8'));
+    await db.query(readFileSync(join(dir, MULTI_BUYER_MODEL_MIGRATION), 'utf8'));
   });
 
   afterAll(async () => {

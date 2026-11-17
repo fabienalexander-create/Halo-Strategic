@@ -394,7 +394,7 @@ export default function SprayFoamCalculator() {
       <h3 style={{ fontSize: '1.05rem', marginBottom: 8 }}>Get your estimate</h3>
       <p className="form-note" style={{ textAlign: 'left', marginBottom: 16 }}>
         Add your details below and we&rsquo;ll show you your initial assessment straight away. Only
-        with your consent below will we pass your enquiry to a vetted removal specialist.
+        with your consent below will we pass your enquiry to one or more vetted removal specialists.
       </p>
 
       <TextField label="First name" name="first_name" required value={str('first_name')} onChange={(v) => set('first_name', v)} />
