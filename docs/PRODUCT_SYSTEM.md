@@ -41,6 +41,8 @@ A client can enter at any stage if they arrive with an existing diagnosis, but t
 
 **Amendment (2026-10-12):** added the Commercial Clarity Session, a new $199 entry point between the Health Check and the Diagnostic, per Fabien's explicit instruction. This is a new product decision, not a revisit of the Diagnostic ($995) or Audit ($7,500+) figures, which remain exactly as held above. Rationale: give qualified prospects a lower-risk, lower-commitment way to experience Halo's diagnostic approach before committing to the full Diagnostic, and learn which narrower problems buyers will pay to have solved. Explicitly not a discounted Diagnostic — narrower scope (one defined problem, not the full commercial journey), shorter session (45-60 min vs. 90 min), and does not carry the Halo Clarity Guarantee, which remains specific to the Diagnostic.
 
+**Amendment (2026-10-13):** made the Clarity Session the site's primary promoted CTA — homepage hero, the sitewide nav button, and the homepage's embedded contact form now lead with it, with the Diagnostic signposted as a secondary option everywhere (per Fabien's explicit instruction, following the Diagnostic ad campaign's 0% CTR at cold traffic). Explicitly not a judgment that the $995 price is the problem, and not an abandonment of the Diagnostic — a change in how people enter the funnel, not in the offer ladder itself. The Diagnostic's own page and the Audit's own page keep their existing on-page CTAs unchanged, since a visitor already reading about either shouldn't be redirected to a cheaper offer. Decision pending real data: click-through, bookings, paid conversion, and progression from Clarity Session into the Diagnostic.
+
 ### Commercial Health Check
 - **Definition:** a free, 10-minute self-assessment determining whether a full Commercial Diagnostic is appropriate.
 - **Entry criteria:** none. Open access.
@@ -59,8 +61,8 @@ A client can enter at any stage if they arrive with an existing diagnosis, but t
 - **Upgrade path:** Commercial Diagnostic, if the session surfaces a broader problem than one session can responsibly cover.
 
 ### Commercial Diagnostic
-- **Definition:** Halo's flagship entry product. A structured 90-minute session identifying the client's primary commercial constraint. No promise to fix anything, the promise is clarity.
-- **Entry criteria:** none beyond booking (or arriving via the Health Check).
+- **Definition:** Halo's deeper core engagement (amended 2026-10-13: the Clarity Session, not the Diagnostic, is now the site's primary promoted entry point — see its own section above; the Diagnostic's own scope, price, guarantee and terms are unchanged by this). A structured 90-minute session identifying the client's primary commercial constraint. No promise to fix anything, the promise is clarity.
+- **Entry criteria:** none beyond booking (or arriving via the Health Check or the Clarity Session).
 - **Deliverables:** identification of the primary commercial constraint; a written Executive Summary; prioritised next steps; a recommendation on whether further work is even needed.
 - **Outcomes:** the client leaves with materially more clarity about what's holding the business back and what should happen next (this is the basis for the Halo Clarity Guarantee, see `GUARANTEE.md`).
 - **Pricing:** $995 (unchanged, held deliberately, see Status above).
