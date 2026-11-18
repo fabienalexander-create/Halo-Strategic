@@ -124,7 +124,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Missing required mapped field(s).', missing_fields: ['consent_contact'] }, { status: 400 });
   }
   if (body.mapped.consent_contact !== true) {
-    return NextResponse.json({ error: 'Consent to be contacted and introduced to a suitable specialist is required.' }, { status: 400 });
+    return NextResponse.json({ error: 'Consent to be contacted and introduced to one or more suitable specialists is required.' }, { status: 400 });
   }
   if (!isConfiguredIndustrySlug(body.mapped.industry_slug)) {
     return NextResponse.json({ error: 'Unknown or unsupported industry.' }, { status: 400 });
