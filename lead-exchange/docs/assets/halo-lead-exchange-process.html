@@ -1,0 +1,305 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Halo Lead Exchange — Process</title>
+<style>
+  @page { size: A4; margin: 0; }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    color: #1b2340;
+    background: #ffffff;
+    width: 210mm;
+    height: 297mm;
+  }
+  .header {
+    background: #0f1b3d;
+    color: #fff;
+    padding: 34px 40px 30px;
+    position: relative;
+  }
+  .eyebrow {
+    font-size: 11px;
+    letter-spacing: 2px;
+    font-weight: 700;
+    color: #5ecfd6;
+    margin-bottom: 10px;
+  }
+  .title {
+    font-size: 27px;
+    font-weight: 800;
+    line-height: 1.25;
+    margin: 0 0 10px;
+    max-width: 78%;
+  }
+  .subtitle {
+    font-size: 13.5px;
+    color: #c3cad9;
+    max-width: 78%;
+    line-height: 1.5;
+    margin: 0;
+  }
+  .tag {
+    position: absolute;
+    top: 34px;
+    right: 40px;
+    background: #16233f;
+    border: 1px solid #2e3c5c;
+    color: #9fb2cf;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    padding: 7px 12px;
+    border-radius: 999px;
+  }
+  .body { padding: 26px 40px 0; }
+  .steps {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+    margin-bottom: 22px;
+  }
+  .step {
+    border: 1px solid #e3e7f0;
+    border-radius: 10px;
+    padding: 16px 14px 14px;
+    position: relative;
+    background: #fafbfd;
+  }
+  .step .bar {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 5px;
+    border-radius: 10px 10px 0 0;
+  }
+  .step:nth-child(1) .bar, .step:nth-child(3) .bar { background: #2f5bf0; }
+  .step:nth-child(2) .bar, .step:nth-child(4) .bar { background: #22b8c4; }
+  .step-num {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    background: #e9edfb;
+    color: #2f5bf0;
+    font-size: 11px;
+    font-weight: 800;
+    margin-top: 8px;
+    margin-bottom: 8px;
+  }
+  .step-title {
+    font-size: 11.5px;
+    font-weight: 800;
+    letter-spacing: 0.4px;
+    margin-bottom: 6px;
+  }
+  .step-body {
+    font-size: 10.5px;
+    line-height: 1.45;
+    color: #3b4260;
+    margin-bottom: 8px;
+    min-height: 58px;
+  }
+  .step-foot {
+    font-size: 9px;
+    line-height: 1.4;
+    color: #767d99;
+    border-top: 1px solid #ebeef5;
+    padding-top: 7px;
+  }
+  .arrow {
+    display: none;
+  }
+  .two-col {
+    display: grid;
+    grid-template-columns: 1.15fr 1fr;
+    gap: 14px;
+    margin-bottom: 20px;
+  }
+  .panel {
+    border-radius: 10px;
+    padding: 18px 18px 16px;
+  }
+  .panel.dark {
+    background: #0f1b3d;
+    color: #fff;
+  }
+  .panel.light {
+    border: 1px solid #e3e7f0;
+    background: #fafbfd;
+  }
+  .panel-title {
+    font-size: 13px;
+    font-weight: 800;
+    margin-bottom: 12px;
+  }
+  .panel.dark .panel-title { color: #fff; }
+  .safeguard {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 11px;
+  }
+  .dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: #5ecfd6;
+    margin-top: 5px;
+    flex: none;
+  }
+  .safeguard-text b { display: block; font-size: 11.5px; margin-bottom: 2px; }
+  .safeguard-text span { font-size: 10px; color: #b6c0d8; line-height: 1.4; }
+  .receive-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 4px;
+  }
+  .receive-label { font-size: 10px; color: #767d99; font-weight: 700; letter-spacing: 0.3px; }
+  .receive-value { font-size: 12.5px; font-weight: 700; margin-bottom: 14px; }
+  .receive-value.before { color: #3b4260; }
+  .receive-value.after { color: #0f9b64; }
+  .why {
+    margin-bottom: 18px;
+  }
+  .why-title {
+    font-size: 13px;
+    font-weight: 800;
+    margin-bottom: 10px;
+  }
+  .why-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 9px 16px;
+  }
+  .why-item {
+    display: flex;
+    gap: 8px;
+    font-size: 10.5px;
+    line-height: 1.4;
+    color: #3b4260;
+  }
+  .check {
+    flex: none;
+    width: 15px; height: 15px;
+    border-radius: 50%;
+    background: #e3f7ee;
+    color: #0f9b64;
+    font-size: 9px;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 1px;
+  }
+  .footer {
+    border-top: 1px solid #e3e7f0;
+    padding: 14px 40px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    position: absolute;
+    bottom: 0;
+    left: 0; right: 0;
+  }
+  .footer-brand { font-size: 11px; font-weight: 800; color: #1b2340; }
+  .footer-sub { font-size: 9px; color: #8b92ab; margin-top: 2px; }
+  .footer-right { font-size: 9px; color: #8b92ab; text-align: right; line-height: 1.5; }
+  .footer-right a { color: #2f5bf0; text-decoration: none; }
+  .page { position: relative; height: 297mm; }
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="header">
+    <div class="tag">SOLAR &nbsp;•&nbsp; SPRAY FOAM &nbsp;•&nbsp; ROOFING</div>
+    <div class="eyebrow">HALO &nbsp;/&nbsp; LEAD EXCHANGE</div>
+    <div class="title">From homeowner enquiry to a lead<br/>you can trust</div>
+    <p class="subtitle">How we turn genuine homeowner interest into a qualified, consented enquiry for your business — and why you only ever pay for what's been verified.</p>
+  </div>
+
+  <div class="body">
+    <div class="steps">
+      <div class="step">
+        <div class="bar"></div>
+        <div class="step-num">01</div>
+        <div class="step-title">ENQUIRY</div>
+        <div class="step-body">A homeowner responds to an advert or submits an enquiry through a website form — this is genuine, self-reported demand, not a cold list.</div>
+        <div class="step-foot">Homeowner details and the original enquiry are captured at source.</div>
+      </div>
+      <div class="step">
+        <div class="bar"></div>
+        <div class="step-num">02</div>
+        <div class="step-title">QUALIFICATION</div>
+        <div class="step-body">We check the information given and follow up for any missing detail — property type, timeframe, and what the homeowner actually needs.</div>
+        <div class="step-foot">Consent and eligibility are confirmed before a lead can progress any further.</div>
+      </div>
+      <div class="step">
+        <div class="bar"></div>
+        <div class="step-num">03</div>
+        <div class="step-title">INSTALLER MATCH</div>
+        <div class="step-body">The lead is matched against service type and postcode coverage, so it only ever reaches businesses genuinely able to take it on.</div>
+        <div class="step-foot">Only relevant, eligible buyers are considered — never a blanket broadcast.</div>
+      </div>
+      <div class="step">
+        <div class="bar"></div>
+        <div class="step-num">04</div>
+        <div class="step-title">PAYMENT &amp; RELEASE</div>
+        <div class="step-body">You review a redacted summary first, and pay only once you're satisfied it meets the criteria agreed between us.</div>
+        <div class="step-foot">Full contact details are released only after payment is verified.</div>
+      </div>
+    </div>
+
+    <div class="two-col">
+      <div class="panel dark">
+        <div class="panel-title">The safeguards built into every lead</div>
+        <div class="safeguard">
+          <div class="dot"></div>
+          <div class="safeguard-text"><b>Consent first</b><span>A lead is only ever shared in line with the homeowner's recorded permission — never assumed, never implied.</span></div>
+        </div>
+        <div class="safeguard">
+          <div class="dot"></div>
+          <div class="safeguard-text"><b>Relevant matching</b><span>Your declared service area and capacity determine what you're shown — you won't see enquiries outside your patch.</span></div>
+        </div>
+        <div class="safeguard">
+          <div class="dot"></div>
+          <div class="safeguard-text"><b>Payment before release</b><span>Full homeowner contact details are withheld until your payment has actually cleared — not just submitted.</span></div>
+        </div>
+      </div>
+      <div class="panel light">
+        <div class="panel-title">What you see, and when</div>
+        <div class="receive-row"></div>
+        <div class="receive-label">BEFORE PAYMENT</div>
+        <div class="receive-value before">A redacted lead summary</div>
+        <div class="receive-label">AFTER PAYMENT IS VERIFIED</div>
+        <div class="receive-value after">Full homeowner contact details</div>
+        <div class="receive-label" style="margin-top:4px;">IF A LEAD DOESN'T MEET CRITERIA</div>
+        <div class="receive-value before" style="color:#b03a2e;">Agreed replacement terms apply</div>
+      </div>
+    </div>
+
+    <div class="why">
+      <div class="why-title">Why this matters for your business</div>
+      <div class="why-grid">
+        <div class="why-item"><div class="check">✓</div>No spend on homeowners who haven't actually consented to being contacted about this.</div>
+        <div class="why-item"><div class="check">✓</div>Qualification criteria and your coverage area are agreed with you upfront, not decided for you.</div>
+        <div class="why-item"><div class="check">✓</div>You only commit to payment once you've seen enough to judge the lead for yourself.</div>
+        <div class="why-item"><div class="check">✓</div>A lead that doesn't meet what we agreed is handled under the terms we've set together — not a one-sided risk.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <div>
+      <div class="footer-brand">HALO LEAD EXCHANGE</div>
+      <div class="footer-sub">A clearer route from homeowner interest to installer opportunity</div>
+    </div>
+    <div class="footer-right">
+      Illustrative workflow — qualification and commercial terms are agreed individually with each buyer.<br/>
+      <a href="https://halostrategic.com/">halostrategic.com</a>
+    </div>
+  </div>
+</div>
+</body>
+</html>

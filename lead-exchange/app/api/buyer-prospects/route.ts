@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { isConfiguredIndustrySlug } from '../../../lib/industries';
 import { sendProspectNurtureEmail } from '../../../lib/buyerProspectEmail';
 import { prospectWelcomeEmail } from '../../../lib/emailTemplates';
+import { HALO_LEAD_EXCHANGE_PROCESS_PDF_BASE64, HALO_LEAD_EXCHANGE_PROCESS_PDF_FILENAME } from '../../../lib/assets/haloLeadExchangeProcessPdf';
 import { verifyTurnstileToken } from '../../../lib/turnstile';
 import { buildAttributionQuery } from '../../../lib/attribution';
 import { captureBuyerProspectTouch } from '../../../lib/buyerProspectCapture';
@@ -140,6 +141,7 @@ export async function POST(req: NextRequest) {
         nurtureStep: 1,
         to: body.contact_email,
         ...prospectWelcomeEmail({ contactName: body.contact_name, applyUrl, unsubscribeUrl }),
+        attachments: [{ filename: HALO_LEAD_EXCHANGE_PROCESS_PDF_FILENAME, contentBase64: HALO_LEAD_EXCHANGE_PROCESS_PDF_BASE64 }],
       });
       await db.sql`UPDATE buyer_prospects SET nurture_step = 1, last_nurture_sent_at = now() WHERE id = ${prospectId}`;
     }
