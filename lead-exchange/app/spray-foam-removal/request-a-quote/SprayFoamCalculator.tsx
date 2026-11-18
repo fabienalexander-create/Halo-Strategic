@@ -327,7 +327,7 @@ export default function SprayFoamCalculator() {
     e.preventDefault();
     setError(null);
 
-    const required = ['first_name', 'last_name', 'email', 'mobile', 'postcode', 'ownership_status', 'property_type'];
+    const required = ['full_name', 'email', 'mobile', 'postcode', 'ownership_status', 'property_type'];
     for (const f of required) {
       if (!str(f)) {
         setError('Please fill in all required fields before submitting.');
@@ -338,6 +338,16 @@ export default function SprayFoamCalculator() {
       setError('Please confirm all three required consents before submitting.');
       return;
     }
+
+    // The API still takes first_name/last_name separately, both required (shared by roofing and
+    // solar-battery, which still split the name into two fields) -- split on the first space
+    // here rather than changing that shared contract just for this one form's single "Full name"
+    // field. A single-word name (no space) has nothing to split, so it's used for both rather
+    // than leaving last_name empty and failing the server's required-field check.
+    const fullName = str('full_name').trim();
+    const firstSpace = fullName.indexOf(' ');
+    const firstName = firstSpace === -1 ? fullName : fullName.slice(0, firstSpace);
+    const lastName = firstSpace === -1 ? fullName : fullName.slice(firstSpace + 1).trim();
 
     // Computed here (not stored via set() first) so the POST body reflects it immediately --
     // set() only takes effect on the next render, and there is no next render before this fetch.
@@ -354,6 +364,8 @@ export default function SprayFoamCalculator() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           ...a,
+          first_name: firstName,
+          last_name: lastName,
           industry_slug: 'spray_foam_removal',
           bot_field: botField,
           calculator_in_area: inArea,
@@ -397,17 +409,9 @@ export default function SprayFoamCalculator() {
         with your consent below will we pass your enquiry to one or more vetted removal specialists.
       </p>
 
-      <TextField label="First name" name="first_name" required value={str('first_name')} onChange={(v) => set('first_name', v)} />
-      <TextField label="Last name" name="last_name" required value={str('last_name')} onChange={(v) => set('last_name', v)} />
+      <TextField label="Full name" name="full_name" required value={str('full_name')} onChange={(v) => set('full_name', v)} />
       <TextField label="Email" name="email" type="email" required value={str('email')} onChange={(v) => set('email', v)} />
       <TextField label="Mobile number" name="mobile" type="tel" required value={str('mobile')} onChange={(v) => set('mobile', v)} />
-      <SelectField
-        label="Preferred contact method"
-        name="preferred_contact_method"
-        options={['Phone', 'Email', 'Text message']}
-        value={str('preferred_contact_method')}
-        onChange={(v) => set('preferred_contact_method', v)}
-      />
       <SelectField
         label="Property ownership status"
         name="ownership_status"
