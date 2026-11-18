@@ -5,6 +5,7 @@ import { HOMEOWNER_CONSENT_CONFIG, isConfiguredIndustrySlug } from '../../../../
 import { buyerCoversPostcode } from '../../../../lib/buyerMatching';
 import { attemptSync, buildLeadRowValues } from '../../../../lib/sheetsSync';
 import { buildFollowUpUrl, generateFollowUpToken } from '../../../../lib/metaFollowUpToken';
+import { normalizeOwnershipAnswer, type OwnershipStatus } from '../../../../lib/ownershipAnswer';
 
 const INDUSTRY_LABELS: Record<string, string> = {
   spray_foam_removal: 'Spray Foam Removal',
@@ -68,8 +69,20 @@ interface MetaHomeownerLeadPayload {
     service_requirement?: string;
     // Deliberately a real tri-state question, not a plain truthy/falsy field: `false` ("I rent
     // this property") is a meaningful, valid answer that must never be treated the same as
-    // "not answered" -- see the explicit typeof check below, not the generic missing-field loop.
+    // "not answered". Kept for backward compatibility with any sender that already resolves
+    // this to a clean boolean itself; when present (and actually a boolean) it is used as-is and
+    // ownership_answer below is ignored. See normalizeOwnershipAnswer and the comment above
+    // REQUIRED_MAPPED_STRING_FIELDS for the current, preferred path.
     owns_property?: boolean;
+    // Raw ownership answer, used only when owns_property above isn't already a clean boolean.
+    // Meta's Instant Form answer for a checkbox-style question arrives as an array (e.g.
+    // ["yes"] or ["no"]), not a plain string -- accepted here in either shape so Make only has
+    // to extract this field, not interpret it. Fabien, 2026-11-18 (owns_property Make-formula
+    // audit): the nested if/get/get/map/boolean-comparison formula this replaced was too fragile
+    // to enter reliably in Make's editor; extraction stays in Make, interpretation moves here,
+    // where it's unit-testable. See normalizeOwnershipAnswer (lib/ownershipAnswer.ts) for exactly what counts as
+    // an affirmative answer.
+    ownership_answer?: string | string[] | null;
     // Spray Foam Removal qualification fields (Fabien's audit, 2026-11-18) -- stored in
     // qualification_answers, same JSONB column the website form already uses for its own
     // industry-specific questions. No migration: that column already takes arbitrary answers.
@@ -93,9 +106,12 @@ interface MetaHomeownerLeadPayload {
 }
 
 // String-valued required fields, checked with a plain falsy test (fine here: none of these are
-// ever meaningfully `false` or `0`). owns_property is a boolean and is checked separately below,
-// since `!false` would wrongly treat a valid "no" answer as missing. Exactly the four answers the
-// live five-question Instant Form can actually supply -- never relaxed further than this.
+// ever meaningfully `false` or `0`). Exactly the four answers the live five-question Instant Form
+// can actually supply -- never relaxed further than this. owns_property/ownership_answer is
+// deliberately NOT in this list (see lib/ownershipAnswer.ts, Fabien's 2026-11-18
+// decision): an ownership answer that's missing or unrecognized must still let an otherwise
+// valid lead through, just flagged ownership_unconfirmed rather than silently treated as either
+// a confirmed owner or a confirmed renter.
 const REQUIRED_MAPPED_STRING_FIELDS: (keyof MetaHomeownerLeadPayload['mapped'])[] = [
   'industry_slug', 'homeowner_name', 'postcode', 'mobile',
 ];
@@ -142,9 +158,15 @@ export async function POST(req: NextRequest) {
   if (missing.length > 0) {
     return NextResponse.json({ error: 'Missing required mapped field(s).', missing_fields: missing }, { status: 400 });
   }
-  if (typeof body.mapped.owns_property !== 'boolean') {
-    return NextResponse.json({ error: 'Missing required mapped field(s).', missing_fields: ['owns_property'] }, { status: 400 });
-  }
+  // Ownership is no longer hard-required (Fabien, 2026-11-18): a clean boolean owns_property is
+  // used as-is for backward compatibility; otherwise ownership_answer is normalized into one of
+  // three states. A missing or unrecognized answer never 400s and never becomes `confirmed` --
+  // see lib/ownershipAnswer.ts and the reviewReasons/qualificationAnswers use below.
+  const ownershipStatus: OwnershipStatus =
+    typeof body.mapped.owns_property === 'boolean'
+      ? (body.mapped.owns_property ? 'confirmed' : 'denied')
+      : normalizeOwnershipAnswer(body.mapped.ownership_answer);
+  const ownsProperty = ownershipStatus === 'confirmed';
   // consent_contact is deliberately NOT validated or rejected here -- the live form doesn't ask
   // it. Anything other than the literal boolean `true` (missing, false, or malformed) is treated
   // uniformly as "not given yet" by consentContactGiven below, never as a reason to 400.
@@ -175,7 +197,14 @@ export async function POST(req: NextRequest) {
     // qualification answers.
     const reviewReasons: string[] = [];
     if (awaitingQualification) reviewReasons.push('awaiting_qualification');
-    if (body.mapped.owns_property === false) reviewReasons.push('renter');
+    // 'renter' only for an explicit denial, 'ownership_unconfirmed' only for a missing or
+    // unrecognized answer -- deliberately never both, and never neither when ownsProperty is
+    // false, so a reviewer can always tell "they told us no" apart from "we don't know yet"
+    // (Fabien, 2026-11-18). Surfaced automatically wherever review_reasons already is -- the
+    // admin leads queue (app/admin/leads/LeadsQueue.tsx) joins and displays this array as soon
+    // as needs_manual_review is true, with no further change needed there.
+    if (ownershipStatus === 'denied') reviewReasons.push('renter');
+    if (ownershipStatus === 'unconfirmed') reviewReasons.push('ownership_unconfirmed');
 
     const activeBuyers = await db.sql`
       SELECT coverage_type, counties_covered, postcodes_covered
@@ -193,7 +222,13 @@ export async function POST(req: NextRequest) {
 
     const homeownerContact = JSON.stringify({ mobile: body.mapped.mobile ?? null, email: body.mapped.email ?? null });
     const qualificationAnswers = JSON.stringify({
-      owns_property: body.mapped.owns_property,
+      owns_property: ownsProperty,
+      // The tri-state behind owns_property above, kept explicit (not just collapsed into the
+      // boolean) so "denied" and "unconfirmed" stay distinguishable in the stored record itself,
+      // not only in review_reasons -- a second, independent place a reviewer or a future query
+      // can see it (Fabien, 2026-11-18: "make sure the ownership-unconfirmed state is actually
+      // visible to whoever reviews leads").
+      ownership_status: ownershipStatus,
       foam_location: body.mapped.foam_location ?? null,
       foam_type: body.mapped.foam_type ?? null,
       reason_for_enquiry: body.mapped.reason_for_enquiry,

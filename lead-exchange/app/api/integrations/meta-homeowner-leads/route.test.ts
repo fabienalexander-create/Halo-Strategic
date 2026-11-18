@@ -195,14 +195,19 @@ describe('POST /api/integrations/meta-homeowner-leads', () => {
       expect(sqlMock).not.toHaveBeenCalled();
     });
 
-    it('rejects when owns_property is not a boolean (missing or wrong type)', async () => {
+    // Superseded by Fabien's 2026-11-18 decision: a missing or unrecognized ownership answer
+    // must no longer reject an otherwise valid lead -- see 'ownership normalization' below for
+    // the behavior this replaced it with (accept, flag ownership_unconfirmed, never 400).
+    it('accepts a missing owns_property/ownership_answer rather than rejecting -- flagged unconfirmed, never a 400', async () => {
+      mockPreTransactionSql();
+      mockHappyPathClientQueries();
       const { POST } = await import('./route');
 
       const res = await POST(req({ ...VALID_BODY, mapped: { ...VALID_MAPPED, owns_property: undefined } }, 'test-secret'));
       const data = await res.json();
 
-      expect(res.status).toBe(400);
-      expect(data.missing_fields).toEqual(['owns_property']);
+      expect(res.status).toBe(201);
+      expect(data.duplicate).toBe(false);
     });
 
     it('does NOT treat owns_property: false (a renter) as a missing field', async () => {
@@ -355,6 +360,175 @@ describe('POST /api/integrations/meta-homeowner-leads', () => {
       const leadInsertCall = clientQueryMock.mock.calls[2];
       const qualificationAnswers = JSON.parse(leadInsertCall[1][6] as string);
       expect(qualificationAnswers.lead_intent).toBe('researching');
+    });
+  });
+
+  // Unit tests for normalizeOwnershipAnswer itself now live in lib/ownershipAnswer.test.ts,
+  // alongside the function (it moved out of this route module -- Next.js route files may only
+  // export the HTTP-method handlers, nothing else, enforced by the generated route types).
+  describe('ownership normalization (end-to-end)', () => {
+    it('ownership_answer "yes" confirms ownership -- no renter or ownership_unconfirmed flag', async () => {
+      mockPreTransactionSql();
+      mockHappyPathClientQueries();
+      const { POST } = await import('./route');
+
+      const res = await POST(req(
+        { ...VALID_BODY, mapped: { ...VALID_MAPPED, owns_property: undefined, ownership_answer: 'yes' } },
+        'test-secret'
+      ));
+
+      expect(res.status).toBe(201);
+      const qualificationAnswers = JSON.parse(clientQueryMock.mock.calls[2][1][6] as string);
+      expect(qualificationAnswers.owns_property).toBe(true);
+      expect(qualificationAnswers.ownership_status).toBe('confirmed');
+      expect(qualificationAnswers.needs_manual_review).toBe(false);
+      expect(qualificationAnswers.review_reasons).not.toContain('renter');
+      expect(qualificationAnswers.review_reasons).not.toContain('ownership_unconfirmed');
+    });
+
+    it("ownership_answer [\"yes\"] (Meta's raw array shape) confirms ownership", async () => {
+      mockPreTransactionSql();
+      mockHappyPathClientQueries();
+      const { POST } = await import('./route');
+
+      const res = await POST(req(
+        { ...VALID_BODY, mapped: { ...VALID_MAPPED, owns_property: undefined, ownership_answer: ['yes'] } },
+        'test-secret'
+      ));
+
+      expect(res.status).toBe(201);
+      const qualificationAnswers = JSON.parse(clientQueryMock.mock.calls[2][1][6] as string);
+      expect(qualificationAnswers.owns_property).toBe(true);
+      expect(qualificationAnswers.ownership_status).toBe('confirmed');
+    });
+
+    it('ownership_answer "no" denies ownership -- same renter/manual-review path as the boolean form', async () => {
+      mockPreTransactionSql();
+      mockHappyPathClientQueries();
+      const { POST } = await import('./route');
+
+      const res = await POST(req(
+        { ...VALID_BODY, mapped: { ...VALID_MAPPED, owns_property: undefined, ownership_answer: ['no'] } },
+        'test-secret'
+      ));
+
+      expect(res.status).toBe(201);
+      const qualificationAnswers = JSON.parse(clientQueryMock.mock.calls[2][1][6] as string);
+      expect(qualificationAnswers.owns_property).toBe(false);
+      expect(qualificationAnswers.ownership_status).toBe('denied');
+      expect(qualificationAnswers.needs_manual_review).toBe(true);
+      expect(qualificationAnswers.review_reasons).toContain('renter');
+      expect(qualificationAnswers.review_reasons).not.toContain('ownership_unconfirmed');
+    });
+
+    it('a completely missing ownership answer is accepted, flagged ownership_unconfirmed, and is NEVER classified as a confirmed renter', async () => {
+      mockPreTransactionSql();
+      mockHappyPathClientQueries();
+      const { POST } = await import('./route');
+
+      const res = await POST(req(
+        { ...VALID_BODY, mapped: { ...VALID_MAPPED, owns_property: undefined, ownership_answer: undefined } },
+        'test-secret'
+      ));
+      const data = await res.json();
+
+      expect(res.status).toBe(201);
+      expect(data.duplicate).toBe(false);
+      const qualificationAnswers = JSON.parse(clientQueryMock.mock.calls[2][1][6] as string);
+      // The core safety property Fabien asked for: unconfirmed is never promoted to true, and is
+      // distinguishable from an explicit "no" -- it must show up as ownership_unconfirmed, not
+      // renter, even though owns_property itself is false in both cases.
+      expect(qualificationAnswers.owns_property).toBe(false);
+      expect(qualificationAnswers.ownership_status).toBe('unconfirmed');
+      expect(qualificationAnswers.needs_manual_review).toBe(true);
+      expect(qualificationAnswers.review_reasons).toContain('ownership_unconfirmed');
+      expect(qualificationAnswers.review_reasons).not.toContain('renter');
+    });
+
+    it('an unrecognized ownership_answer is treated the same as missing -- unconfirmed, not denied, not confirmed', async () => {
+      mockPreTransactionSql();
+      mockHappyPathClientQueries();
+      const { POST } = await import('./route');
+
+      const res = await POST(req(
+        { ...VALID_BODY, mapped: { ...VALID_MAPPED, owns_property: undefined, ownership_answer: 'maybe' } },
+        'test-secret'
+      ));
+
+      expect(res.status).toBe(201);
+      const qualificationAnswers = JSON.parse(clientQueryMock.mock.calls[2][1][6] as string);
+      expect(qualificationAnswers.owns_property).toBe(false);
+      expect(qualificationAnswers.ownership_status).toBe('unconfirmed');
+      expect(qualificationAnswers.review_reasons).toContain('ownership_unconfirmed');
+      expect(qualificationAnswers.review_reasons).not.toContain('renter');
+    });
+
+    it("Meta's own empty-array shape for an unanswered question is unconfirmed, not denied", async () => {
+      mockPreTransactionSql();
+      mockHappyPathClientQueries();
+      const { POST } = await import('./route');
+
+      const res = await POST(req(
+        { ...VALID_BODY, mapped: { ...VALID_MAPPED, owns_property: undefined, ownership_answer: [] } },
+        'test-secret'
+      ));
+
+      expect(res.status).toBe(201);
+      const qualificationAnswers = JSON.parse(clientQueryMock.mock.calls[2][1][6] as string);
+      expect(qualificationAnswers.ownership_status).toBe('unconfirmed');
+      expect(qualificationAnswers.review_reasons).not.toContain('renter');
+    });
+
+    it('a clean boolean owns_property still wins over ownership_answer -- backward compatibility, no ambiguity to resolve', async () => {
+      mockPreTransactionSql();
+      mockHappyPathClientQueries();
+      const { POST } = await import('./route');
+
+      // Deliberately contradictory: if ownership_answer were consulted here this would flip the
+      // result. It must not be -- a sender that already resolves its own boolean is trusted as-is.
+      const res = await POST(req(
+        { ...VALID_BODY, mapped: { ...VALID_MAPPED, owns_property: true, ownership_answer: 'no' } },
+        'test-secret'
+      ));
+
+      expect(res.status).toBe(201);
+      const qualificationAnswers = JSON.parse(clientQueryMock.mock.calls[2][1][6] as string);
+      expect(qualificationAnswers.owns_property).toBe(true);
+      expect(qualificationAnswers.ownership_status).toBe('confirmed');
+    });
+
+    it('unconfirmed ownership never bypasses the existing qualification/consent pipeline -- still awaiting_qualification when those answers are also missing', async () => {
+      mockPreTransactionSql();
+      mockIncompletePathClientQueries();
+      const { POST } = await import('./route');
+
+      // Missing both the qualification fields/consent (as the live five-question form sends)
+      // AND the ownership answer -- the two must be tracked independently, neither masking or
+      // short-circuiting the other.
+      const res = await POST(req(
+        {
+          ...VALID_BODY,
+          mapped: {
+            ...VALID_MAPPED, owns_property: undefined, ownership_answer: undefined,
+            reason_for_enquiry: undefined, timeframe: undefined, preferred_contact_method: undefined,
+            consent_contact: undefined,
+          },
+        },
+        'test-secret'
+      ));
+      const data = await res.json();
+
+      expect(res.status).toBe(201);
+      expect(data.awaiting_qualification).toBe(true);
+      const qualificationAnswers = JSON.parse(clientQueryMock.mock.calls[1][1][6] as string);
+      expect(qualificationAnswers.owns_property).toBe(false);
+      expect(qualificationAnswers.ownership_status).toBe('unconfirmed');
+      expect(qualificationAnswers.review_reasons).toEqual(
+        expect.arrayContaining(['awaiting_qualification', 'ownership_unconfirmed'])
+      );
+      expect(qualificationAnswers.review_reasons).not.toContain('renter');
+      // Consent is still never recorded as given, same as before this change.
+      expect(clientQueryMock.mock.calls.some((c) => typeof c[0] === 'string' && c[0].includes('INSERT INTO consent_records'))).toBe(false);
     });
   });
 
