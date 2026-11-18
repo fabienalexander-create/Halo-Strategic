@@ -31,6 +31,36 @@ describe('buyerCoversPostcode', () => {
   it('excludes when coverage is recorded but the lead has no postcode', () => {
     expect(buyerCoversPostcode(candidate({ postcodes_covered: ['OX19'] }), null)).toBe(false);
   });
+
+  // A UK postcode area with more than 9 districts has districts like "PE1" and "PE19" that
+  // share a leading digit but are unrelated places (Peterborough vs St Neots). A naive
+  // string-prefix comparison ("PE19".startsWith("PE1")) would wrongly treat a buyer scoped to
+  // "PE1" as covering "PE19" too -- and, worse, a buyer scoped to "PE3" (Peterborough) as
+  // covering "PE30"-"PE38" (King's Lynn, 60+ miles away in a different county). These guard
+  // against that regressing.
+  it('does not let a single-digit district match an unrelated double-digit district in the same area', () => {
+    expect(buyerCoversPostcode(candidate({ postcodes_covered: ['PE1'] }), 'PE19 1AB')).toBe(false);
+    expect(buyerCoversPostcode(candidate({ postcodes_covered: ['PE1'] }), 'PE10 1AB')).toBe(false);
+    expect(buyerCoversPostcode(candidate({ postcodes_covered: ['PE3'] }), 'PE30 1AB')).toBe(false);
+    expect(buyerCoversPostcode(candidate({ postcodes_covered: ['HP1'] }), 'HP19 1AB')).toBe(false);
+  });
+
+  it('still matches the exact district it was scoped to', () => {
+    expect(buyerCoversPostcode(candidate({ postcodes_covered: ['PE1'] }), 'PE1 1AB')).toBe(true);
+    expect(buyerCoversPostcode(candidate({ postcodes_covered: ['PE19'] }), 'PE19 1AB')).toBe(true);
+    expect(buyerCoversPostcode(candidate({ postcodes_covered: ['PE19'] }), 'PE1 1AB')).toBe(false);
+  });
+
+  it('a bare area code still covers every district in that area, single- or double-digit', () => {
+    expect(buyerCoversPostcode(candidate({ postcodes_covered: ['PE'] }), 'PE1 1AB')).toBe(true);
+    expect(buyerCoversPostcode(candidate({ postcodes_covered: ['PE'] }), 'PE19 1AB')).toBe(true);
+    expect(buyerCoversPostcode(candidate({ postcodes_covered: ['PE'] }), 'PE38 1AB')).toBe(true);
+  });
+
+  it('does not match a different area that merely shares a letter prefix', () => {
+    expect(buyerCoversPostcode(candidate({ postcodes_covered: ['E'] }), 'EN1 1AB')).toBe(false);
+    expect(buyerCoversPostcode(candidate({ postcodes_covered: ['N'] }), 'NN1 1AB')).toBe(false);
+  });
 });
 
 describe('buyerHasCapacity', () => {

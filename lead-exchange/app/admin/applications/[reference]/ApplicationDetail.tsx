@@ -128,6 +128,10 @@ export default function ApplicationDetail({ reference }: { reference: string }) 
   const [fixPanelOpen, setFixPanelOpen] = useState(false);
   const [fixReason, setFixReason] = useState('');
   const [fixConfirmed, setFixConfirmed] = useState(false);
+  const [coveragePanelOpen, setCoveragePanelOpen] = useState(false);
+  const [coveragePostcodes, setCoveragePostcodes] = useState('');
+  const [coverageReason, setCoverageReason] = useState('');
+  const [coverageConfirmed, setCoverageConfirmed] = useState(false);
   const [commercials, setCommercials] = useState({
     agreed_price_per_lead: '', agreed_currency: 'GBP', exclusivity_arrangement: '',
     agreed_weekly_capacity: '', payment_arrangement_notes: '', agreed_pricing_notes: '',
@@ -219,6 +223,19 @@ export default function ApplicationDetail({ reference }: { reference: string }) 
     const data = await res.json();
     setActionMessage(res.ok ? 'Onboarding call record cleared and the correction logged. Record the call again when ready.' : `Error: ${data.error}`);
     if (res.ok) { setFixPanelOpen(false); setFixConfirmed(false); setFixReason(''); load(); }
+  }
+
+  async function correctCoverage() {
+    setActionMessage(null);
+    const postcodes_covered = coveragePostcodes.split(',').map((s) => s.trim()).filter(Boolean);
+    const res = await fetch(apiPath(`/api/admin/buyers/${reference}/coverage`), {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ postcodes_covered, reason: coverageReason, confirm: coverageConfirmed }),
+    });
+    const data = await res.json();
+    setActionMessage(res.ok ? `Postcode coverage updated: ${data.postcodes_covered.join(', ')}.` : `Error: ${data.error}`);
+    if (res.ok) { setCoveragePanelOpen(false); setCoverageConfirmed(false); setCoverageReason(''); setCoveragePostcodes(''); load(); }
   }
 
   async function activate() {
@@ -365,6 +382,55 @@ export default function ApplicationDetail({ reference }: { reference: string }) 
           </button>
         </div>
       )}
+
+      <div className="form-card" style={{ marginBottom: 24 }}>
+        <h3 style={{ fontSize: '1rem', marginBottom: 12 }}>Correct postcode coverage</h3>
+        <p className="form-note" style={{ textAlign: 'left', marginBottom: 12 }}>
+          Current postcodes_covered: {Array.isArray(buyer.postcodes_covered) && buyer.postcodes_covered.length > 0
+            ? buyer.postcodes_covered.join(', ')
+            : '(none recorded)'}
+        </p>
+        {!coveragePanelOpen && (
+          <button className="btn" style={{ border: '1px solid var(--border)' }} onClick={() => setCoveragePanelOpen(true)}>
+            Edit Postcode Coverage
+          </button>
+        )}
+        {coveragePanelOpen && (
+          <div>
+            <div className="form-row">
+              <label>Postcodes covered (comma-separated outward codes, e.g. CM, CO, PE19, HP1)</label>
+              <input type="text" value={coveragePostcodes} onChange={(e) => setCoveragePostcodes(e.target.value)} />
+              <p className="form-note" style={{ textAlign: 'left', marginTop: 4 }}>
+                Use actual outward postcode codes, not county names. A bare area code (e.g. &quot;CM&quot;) covers every
+                district in that area; a full district (e.g. &quot;PE19&quot;) covers only that exact district, so a buyer
+                scoped to part of a postcode area does not accidentally pick up the rest of it.
+              </p>
+            </div>
+            <div className="form-row">
+              <label>Reason for this change (required, 10 to 500 characters)</label>
+              <textarea value={coverageReason} maxLength={500} onChange={(e) => setCoverageReason(e.target.value)} />
+            </div>
+            <label style={{ display: 'block', margin: '8px 0 12px' }}>
+              <input type="checkbox" checked={coverageConfirmed} onChange={(e) => setCoverageConfirmed(e.target.checked)} />{' '}
+              I confirm this replaces {String(buyer.company_name)}&apos;s postcode coverage.
+            </label>
+            <button
+              className="btn btn-bronze"
+              disabled={!coverageConfirmed || coverageReason.trim().length < 10 || coveragePostcodes.trim() === ''}
+              onClick={correctCoverage}
+            >
+              Save Coverage
+            </button>{' '}
+            <button
+              className="btn"
+              style={{ border: '1px solid var(--border)' }}
+              onClick={() => { setCoveragePanelOpen(false); setCoverageConfirmed(false); }}
+            >
+              Cancel
+            </button>
+          </div>
+        )}
+      </div>
 
       {FIELD_GROUPS.map((group) => (
         <div key={group.title} style={{ marginBottom: 24 }}>

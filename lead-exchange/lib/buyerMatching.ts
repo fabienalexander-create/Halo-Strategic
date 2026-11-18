@@ -44,6 +44,37 @@ function outwardCode(postcode: string): string {
   return postcode.trim().toUpperCase().split(/\s+/)[0] ?? '';
 }
 
+// Splits an outward code (or a stored coverage entry) into its postcode AREA (the letters, e.g.
+// "PE", "CM") and its DISTRICT suffix (the digits plus an optional trailing letter, e.g. "19",
+// "1A"). A string with no digits at all -- a bare area code like "CM", or legacy junk data like
+// "Essex" -- falls back to treating the whole cleaned string as the area with no district, which
+// is exactly the right shape for a bare area code, and leaves junk data matching nothing (same as
+// before this function existed).
+function splitOutward(code: string): { area: string; district: string } {
+  const cleaned = code.trim().toUpperCase();
+  const match = cleaned.match(/^([A-Z]{1,2})(\d{1,2}[A-Z]?)$/);
+  if (!match) return { area: cleaned, district: '' };
+  return { area: match[1], district: match[2] };
+}
+
+// True if a buyer's stored coverage entry covers a lead's outward code. A bare postcode AREA
+// (letters only, e.g. "CM", "PE") covers every district in that area. A full district (area +
+// digits, e.g. "PE19", "CM1") covers ONLY that exact district.
+//
+// This is deliberately NOT a string-prefix check (`outward.startsWith(p)`) -- that looks
+// appealing but is wrong for any UK postcode area with more than 9 districts, which is most of
+// them: a buyer scoped to "PE1" (Peterborough) would also match "PE19" (St Neots) and "PE10"
+// through "PE18" (Spalding, Wisbech, March...) purely because "PE19".startsWith("PE1") is true.
+// Worse, "PE3" (Peterborough) would also match "PE30"-"PE38" (King's Lynn, west Norfolk) the
+// same way. Comparing the area and the FULL district suffix as discrete values, rather than one
+// as a string prefix of the other, is what avoids that collision.
+function outwardCoveredBy(outward: string, storedEntry: string): boolean {
+  const lead = splitOutward(outward);
+  const stored = splitOutward(storedEntry);
+  if (lead.area !== stored.area) return false;
+  return stored.district === '' || stored.district === lead.district;
+}
+
 // True if the buyer's declared coverage includes this postcode. A buyer with no coverage
 // recorded at all (coverage_type unset and both lists empty) is treated as covering everywhere --
 // most buyer records in this early-stage marketplace don't have detailed coverage filled in yet,
@@ -60,7 +91,7 @@ export function buyerCoversPostcode(buyer: Pick<BuyerCandidate, 'coverage_type' 
   if (!hasCoverageRecorded) return true;
   if (!postcode) return false;
   const outward = outwardCode(postcode);
-  return buyer.postcodes_covered.some((p) => outward.startsWith(p.trim().toUpperCase()) || p.trim().toUpperCase().startsWith(outward));
+  return buyer.postcodes_covered.some((p) => outwardCoveredBy(outward, p));
 }
 
 // True if taking this lead would not put the buyer over their own declared weekly capacity. A
