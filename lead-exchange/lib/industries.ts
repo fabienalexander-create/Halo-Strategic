@@ -95,3 +95,13 @@ export const BUYER_REPLACEMENT_POLICY_CONFIG: Record<IndustrySlug, BuyerReplacem
 export function isConfiguredIndustrySlug(slug: unknown): slug is IndustrySlug {
   return slug === 'spray_foam_removal' || slug === 'solar_battery' || slug === 'roofing';
 }
+
+// Canonical display labels, matching the industries.name values seeded in the database (and the
+// hardcoded options in app/admin/buyers/new/NewBuyerForm.tsx). Used anywhere that needs to list
+// every configured industry up front -- e.g. an admin filter dropdown -- rather than only the
+// industries that happen to already have rows in some other table.
+export const INDUSTRY_LABELS: Record<IndustrySlug, string> = {
+  spray_foam_removal: 'Spray Foam Removal',
+  solar_battery: 'Solar & Battery',
+  roofing: 'Roofing',
+};

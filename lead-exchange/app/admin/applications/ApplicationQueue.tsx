@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { apiPath } from '../../../lib/basePath';
+import { INDUSTRY_LABELS } from '../../../lib/industries';
 
 interface AppRow {
   application_reference: string;
@@ -44,7 +45,14 @@ export default function ApplicationQueue() {
   if (!rows) return <p>Loading&hellip;</p>;
   if (rows.length === 0) return <p>No applications yet.</p>;
 
-  const industries = ['All industries', ...Array.from(new Set(rows.map((r) => r.industry_name)))];
+  // Always offer every configured industry, not just the ones with an application so far --
+  // otherwise Roofing/Solar & Battery silently disappear from the filter until their first
+  // application lands. Union with the actual row values too, defensively, in case a row's
+  // industry isn't (yet) in INDUSTRY_LABELS.
+  const industries = [
+    'All industries',
+    ...Array.from(new Set([...Object.values(INDUSTRY_LABELS), ...rows.map((r) => r.industry_name)])),
+  ];
   const visibleRows = industryFilter === 'All industries' ? rows : rows.filter((r) => r.industry_name === industryFilter);
 
   return (
