@@ -139,12 +139,19 @@ export function leadOfferEmail(params: {
   packageCovered: boolean;
   paymentReference: string | null; // quote this when paying; null when packageCovered
   paymentLink?: string | null; // a unique pay-this-lead link, when one exists; falls back to bank transfer + reference
+  // Qualification detail beyond postcode/property type/service -- e.g. foam location, timeframe,
+  // preferred contact method (see lib/leadQualificationSummary.ts). Never homeowner contact
+  // detail: that stays behind the payment/release gate in leadUnlockedEmail, unaffected by this.
+  qualificationHighlights?: { label: string; value: string }[];
 }): EmailContent {
   const reference = escapeHtml(params.leadReference);
   const industry = escapeHtml(params.industryLabel);
   const area = escapeHtml(outwardPostcode(params.postcode));
   const propertyType = escapeHtml(params.propertyType);
   const serviceRequirement = escapeHtml(params.serviceRequirement);
+  const highlights = params.qualificationHighlights ?? [];
+  const highlightsText = highlights.length > 0 ? `\n${highlights.map((h) => `${h.label}: ${h.value}`).join('\n')}` : '';
+  const highlightsHtml = highlights.length > 0 ? `<br>${highlights.map((h) => `${escapeHtml(h.label)}: ${escapeHtml(h.value)}`).join('<br>')}` : '';
 
   const paymentText = params.packageCovered
     ? `This lead is covered by your package -- no payment is needed. We'll confirm once it's released.`
@@ -173,7 +180,7 @@ Reference: ${params.leadReference}
 Industry: ${params.industryLabel}
 Area: ${outwardPostcode(params.postcode)}
 Property type: ${params.propertyType}
-Service required: ${params.serviceRequirement}
+Service required: ${params.serviceRequirement}${highlightsText}
 
 ${paymentText}
 
@@ -186,7 +193,7 @@ Reference: ${reference}<br>
 Industry: ${industry}<br>
 Area: ${area}<br>
 Property type: ${propertyType}<br>
-Service required: ${serviceRequirement}
+Service required: ${serviceRequirement}${highlightsHtml}
 </p>
 ${paymentHtml}
 <p>Kind regards,<br>Halo Strategic</p>`,

@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { requireAdmin } from '../../../../../../lib/requireAdmin';
 import { sendLeadDeliveryEmail } from '../../../../../../lib/leadDeliveryEmail';
 import { leadOfferEmail, internalOfferCopyEmail, leadUnlockedEmail, internalReleaseCopyEmail } from '../../../../../../lib/emailTemplates';
+import { buildQualificationSummary } from '../../../../../../lib/leadQualificationSummary';
 
 const INDUSTRY_LABELS: Record<string, string> = {
   spray_foam_removal: 'Spray Foam Removal',
@@ -16,6 +17,13 @@ interface Body {
   package_id?: number;
   payment_link?: string;
   allocation_type?: 'EXCLUSIVE_WINDOW' | 'SHARED';
+  // Required, and only meaningful, when the lead carries qualification_answers.needs_manual_review
+  // -- Fabien, 2026-11-18: "manual review shouldn't mean permanently blocking a lead. It means the
+  // admin sees why it's flagged, checks the circumstances and explicitly acknowledges the decision
+  // before proceeding." Never inferred from the request simply being made; see the explicit check
+  // below, which refuses the allocation outright without it.
+  manual_review_acknowledged?: boolean;
+  manual_review_acknowledgement_note?: string;
 }
 
 // Offers a lead to a buyer -- the first and only place a lead_allocations row is ever created.
@@ -75,7 +83,7 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
 
     const leads = await db.sql`
       SELECT l.id, l.status, l.homeowner_name, l.homeowner_contact, l.property_type, l.postcode,
-             l.service_requirement, i.slug AS industry_slug, i.id AS industry_id
+             l.service_requirement, l.qualification_answers, i.slug AS industry_slug, i.id AS industry_id
       FROM leads l JOIN industries i ON i.id = l.industry_id
       WHERE l.id = ${leadId}
     `;
@@ -84,8 +92,22 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
     }
     const lead = leads[0] as {
       id: number; status: string; homeowner_name: string; homeowner_contact: { email?: string; mobile?: string };
-      property_type: string; postcode: string; service_requirement: string; industry_slug: string; industry_id: number;
+      property_type: string; postcode: string; service_requirement: string;
+      qualification_answers: Record<string, unknown> | null; industry_slug: string; industry_id: number;
     };
+
+    // The manual-review flag (set at ingestion -- renter, outside service area, researching-only)
+    // is never silently bypassed: an allocation is refused outright until an admin has explicitly
+    // acknowledged it, here, not just seen a warning in the UI. Preserved for every future
+    // allocation attempt on this lead, not just the first -- the flag never clears itself.
+    const needsManualReview = lead.qualification_answers?.needs_manual_review === true;
+    const reviewReasons = (lead.qualification_answers?.review_reasons as string[] | undefined) ?? [];
+    if (needsManualReview && body.manual_review_acknowledged !== true) {
+      return NextResponse.json(
+        { error: 'This lead is flagged for manual review and cannot be allocated without an explicit acknowledgement.', review_reasons: reviewReasons },
+        { status: 409 }
+      );
+    }
 
     const liveAllocations = await db.sql`
       SELECT id, buyer_id FROM lead_allocations WHERE lead_id = ${leadId} AND status IN ('OFFERED', 'ACCEPTED', 'PURCHASED')
@@ -187,6 +209,9 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
         ${JSON.stringify({
           lead_id: leadId, buyer_id: body.buyer_id, agreed_price: agreedPrice, package_id: body.package_id ?? null,
           allocation_type: allocationType, other_live_buyer_ids: liveAllocations.map((a) => (a as { buyer_id: number }).buyer_id),
+          manual_review: needsManualReview
+            ? { reasons: reviewReasons, acknowledged: true, acknowledgement_note: body.manual_review_acknowledgement_note ?? null }
+            : null,
         })}
       )
     `;
@@ -221,6 +246,7 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
         leadReference, industryLabel, postcode: lead.postcode, propertyType: lead.property_type,
         serviceRequirement: lead.service_requirement, currency: 'GBP', price: agreedPrice,
         packageCovered, paymentReference, paymentLink: body.payment_link ?? null,
+        qualificationHighlights: buildQualificationSummary(lead.qualification_answers),
       }),
     });
     if (adminEmails) {

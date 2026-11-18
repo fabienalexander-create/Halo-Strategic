@@ -225,3 +225,79 @@ describe('POST /api/admin/leads/[id]/allocate -- shared vs exclusive allocation'
     expect(data.error).toMatch(/already has a live allocation/);
   });
 });
+
+describe('POST /api/admin/leads/[id]/allocate -- manual-review safeguard', () => {
+  beforeEach(() => {
+    requireAdminMock.mockReset();
+    sqlMock.mockReset();
+    sendLeadDeliveryEmailMock.mockReset();
+    requireAdminMock.mockResolvedValue({ session: { adminId: 1, email: 'admin@halostrategic.com', role: 'owner' } });
+    sendLeadDeliveryEmailMock.mockResolvedValue({ sent: true, skipped: false, blocked: false });
+  });
+
+  const FLAGGED_LEAD_ROW = {
+    ...LEAD_ROW,
+    qualification_answers: { needs_manual_review: true, review_reasons: ['renter', 'outside_service_area'] },
+  };
+
+  it('refuses to allocate a flagged lead without an explicit acknowledgement', async () => {
+    sqlMock.mockResolvedValueOnce([FLAGGED_LEAD_ROW]);
+    const { POST } = await import('./route');
+
+    const res = await POST(req({ buyer_id: 99, homeowner_confirmation_id: 5 }), { params: { id: '55' } });
+    const data = await res.json();
+
+    expect(res.status).toBe(409);
+    expect(data.error).toMatch(/manual review/);
+    expect(data.review_reasons).toEqual(['renter', 'outside_service_area']);
+    // Never silently bypassed -- nothing past the lead lookup is even attempted.
+    expect(sqlMock).toHaveBeenCalledTimes(1);
+  });
+
+  it('refuses an acknowledgement of false the same as no acknowledgement at all', async () => {
+    sqlMock.mockResolvedValueOnce([FLAGGED_LEAD_ROW]);
+    const { POST } = await import('./route');
+
+    const res = await POST(req({ buyer_id: 99, homeowner_confirmation_id: 5, manual_review_acknowledged: false }), { params: { id: '55' } });
+
+    expect(res.status).toBe(409);
+  });
+
+  it('allows allocation to proceed once explicitly acknowledged, and records the acknowledgement in the audit log', async () => {
+    sqlMock
+      .mockResolvedValueOnce([FLAGGED_LEAD_ROW])
+      .mockResolvedValueOnce([]) // live allocations
+      .mockResolvedValueOnce([BUYER_ROW])
+      .mockResolvedValueOnce([CONFIRMATION_ROW])
+      .mockResolvedValueOnce([{ id: 123 }]) // allocation insert
+      .mockResolvedValueOnce([]) // leads status update
+      .mockResolvedValueOnce([]) // audit_log
+      .mockResolvedValueOnce([{ id: 77 }]) // payments insert
+      .mockResolvedValueOnce([]) // payments reference update
+      .mockResolvedValueOnce([{ email: 'admin@halostrategic.com' }]);
+    const { POST } = await import('./route');
+
+    const res = await POST(
+      req({ buyer_id: 99, homeowner_confirmation_id: 5, manual_review_acknowledged: true, manual_review_acknowledgement_note: 'Called the homeowner back, confirmed she owns the property.' }),
+      { params: { id: '55' } }
+    );
+
+    expect(res.status).toBe(200);
+
+    const auditCall = sqlMock.mock.calls.find((c) => JSON.stringify(c).includes("'LEAD_ALLOCATED'"));
+    expect(JSON.stringify(auditCall)).toContain('Called the homeowner back');
+    expect(JSON.stringify(auditCall)).toContain('renter');
+  });
+
+  it('does not stop at the manual-review check for a lead that was never flagged', async () => {
+    sqlMock.mockResolvedValueOnce([LEAD_ROW]).mockResolvedValueOnce([{ id: 1, buyer_id: 42 }]);
+    const { POST } = await import('./route');
+
+    await POST(req({ buyer_id: 99, homeowner_confirmation_id: 5, allocation_type: 'SHARED' }), { params: { id: '55' } });
+
+    // LEAD_ROW carries no qualification_answers at all -- proceeding past the lead lookup and
+    // live-allocations check all the way to the (unmocked, deliberately) buyer lookup proves the
+    // manual-review gate was never triggered for it.
+    expect(sqlMock).toHaveBeenCalledTimes(3);
+  });
+});

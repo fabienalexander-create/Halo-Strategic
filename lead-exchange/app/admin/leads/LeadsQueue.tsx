@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { apiPath } from '../../../lib/basePath';
+import { buildQualificationSummary } from '../../../lib/leadQualificationSummary';
 
 const INDUSTRIES = [
   { slug: 'spray_foam_removal', label: 'Spray Foam Removal' },
@@ -17,10 +18,10 @@ interface LeadRow {
   postcode: string;
   service_requirement: string | null;
   source: string | null;
-  qualification_answers: {
+  qualification_answers: ({
     meta_lead_id?: string | null; source?: string | null;
     needs_manual_review?: boolean; review_reasons?: string[]; lead_intent?: string;
-  } | null;
+  } & Record<string, unknown>) | null;
   created_at: string;
   industry_slug: string;
   industry_name: string;
@@ -196,6 +197,8 @@ function LeadRowItem({
   const [allocationTypeTouched, setAllocationTypeTouched] = useState(false);
   const [eligibleBuyers, setEligibleBuyers] = useState<EligibleBuyer[] | null>(null);
   const [showAllBuyers, setShowAllBuyers] = useState(false);
+  const [manualReviewAcknowledged, setManualReviewAcknowledged] = useState(false);
+  const [manualReviewNote, setManualReviewNote] = useState('');
 
   // Only buyers in the lead's own industry, ever -- the admin dropdowns used to list every
   // ACTIVE buyer regardless of industry, which meant nothing stopped a roofing lead being offered
@@ -259,6 +262,8 @@ function LeadRowItem({
         body: JSON.stringify({
           buyer_id: Number(allocBuyerId), homeowner_confirmation_id: lastConfirmationId,
           payment_link: paymentLink || undefined, allocation_type: allocationType,
+          manual_review_acknowledged: needsManualReview ? manualReviewAcknowledged : undefined,
+          manual_review_acknowledgement_note: needsManualReview ? manualReviewNote || undefined : undefined,
         }),
       });
       const data = await res.json();
@@ -275,6 +280,7 @@ function LeadRowItem({
   const needsManualReview = lead.qualification_answers?.needs_manual_review === true;
   const reviewReasons = lead.qualification_answers?.review_reasons ?? [];
   const leadIntent = lead.qualification_answers?.lead_intent;
+  const qualificationSummary = buildQualificationSummary(lead.qualification_answers);
 
   return (
     <>
@@ -311,6 +317,17 @@ function LeadRowItem({
         <tr>
           <td colSpan={5} style={{ padding: '14px 8px', background: 'var(--off-white, #faf9f7)' }}>
             {error && <div className="disclaimer-box" style={{ marginBottom: 12 }}>{error}</div>}
+
+            {qualificationSummary.length > 0 && (
+              <div style={{ marginBottom: 16, fontSize: '0.88rem' }}>
+                <strong style={{ display: 'block', marginBottom: 4 }}>Qualification answers</strong>
+                <ul className="dont-list" style={{ margin: 0 }}>
+                  {qualificationSummary.map((line) => (
+                    <li key={line.label}>{line.label}: {line.value}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
 
             <h4 style={{ fontSize: '0.95rem', marginBottom: 8 }}>
               Step 1 &mdash; Record homeowner confirmation {lastConfirmationId && <span style={{ color: '#2f4a33' }}>(recorded, confirmation #{lastConfirmationId})</span>}
@@ -360,6 +377,27 @@ function LeadRowItem({
                 allocating to them too.
               </div>
             )}
+            {needsManualReview && (
+              <div className="disclaimer-box" style={{ marginBottom: 12 }}>
+                <strong>⚠ Flagged for manual review: {reviewReasons.join(', ')}.</strong>
+                <p style={{ margin: '6px 0 10px' }}>
+                  Check the circumstances before allocating this lead -- this is not a permanent
+                  block, but it cannot be bypassed silently.
+                </p>
+                <label style={{ display: 'flex', alignItems: 'flex-start', gap: 8, marginBottom: 8 }}>
+                  <input
+                    type="checkbox" checked={manualReviewAcknowledged}
+                    onChange={(e) => setManualReviewAcknowledged(e.target.checked)}
+                    style={{ width: 'auto', marginTop: 3 }}
+                  />
+                  <span>I've reviewed the flagged issue(s) above and confirm it's safe to allocate this lead.</span>
+                </label>
+                <div className="form-row">
+                  <label>Note (optional, but recommended -- e.g. what you checked or who you called)</label>
+                  <textarea value={manualReviewNote} onChange={(e) => setManualReviewNote(e.target.value)} />
+                </div>
+              </div>
+            )}
             <form onSubmit={allocate}>
               <div className="form-row">
                 <label>Buyer</label>
@@ -387,10 +425,14 @@ function LeadRowItem({
                 <label>Unique payment link for this lead</label>
                 <input value={paymentLink} onChange={(e) => setPaymentLink(e.target.value)} placeholder="https://pay.tide.co/products/..." />
               </div>
-              <button className="btn btn-bronze" type="submit" disabled={submitting || !allocBuyerId || !lastConfirmationId}>
+              <button
+                className="btn btn-bronze" type="submit"
+                disabled={submitting || !allocBuyerId || !lastConfirmationId || (needsManualReview && !manualReviewAcknowledged)}
+              >
                 Allocate &amp; send preview
               </button>
               {!lastConfirmationId && <p className="form-note">Record the homeowner confirmation above first.</p>}
+              {needsManualReview && !manualReviewAcknowledged && <p className="form-note">Tick the acknowledgement above first.</p>}
             </form>
           </td>
         </tr>

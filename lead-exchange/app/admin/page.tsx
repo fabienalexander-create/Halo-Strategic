@@ -51,6 +51,11 @@ export default function AdminHomePage() {
             Add Buyer Directly
           </Link>
         </p>
+        <p style={{ marginTop: 12 }}>
+          <Link href="/admin/lead-sheet-syncs" className="btn btn-bronze">
+            Google Sheet Sync
+          </Link>
+        </p>
         <div className="disclaimer-box" style={{ marginTop: 20 }}>
           Priority 2 (application review) is working. Lead entry, allocation and payment
           verification are now manual-admin workflows (Leads/Payments pages) built on top of the

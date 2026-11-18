@@ -38,4 +38,22 @@ describe('leadOfferEmail', () => {
     expect(content.text).toContain('covered by your package');
     expect(content.text).not.toContain('should-be-ignored');
   });
+
+  it('includes qualification highlights when given, never homeowner contact detail', () => {
+    const content = leadOfferEmail({
+      ...BASE_PARAMS, paymentLink: null,
+      qualificationHighlights: [{ label: 'Timeframe', value: 'Within 3 months' }, { label: 'Preferred contact method', value: 'Phone' }],
+    });
+
+    expect(content.text).toContain('Timeframe: Within 3 months');
+    expect(content.text).toContain('Preferred contact method: Phone');
+    expect(content.html).toContain('Timeframe: Within 3 months');
+  });
+
+  it('omits the highlights block entirely when none are given', () => {
+    const content = leadOfferEmail({ ...BASE_PARAMS, paymentLink: null });
+
+    expect(content.text).not.toContain('Timeframe');
+    expect(content.html).not.toMatch(/<br>\s*<\/p>/);
+  });
 });
