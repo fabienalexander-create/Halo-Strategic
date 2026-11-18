@@ -212,6 +212,37 @@ describe('POST /api/admin/leads/[id]/allocate -- shared vs exclusive allocation'
     expect(JSON.stringify(auditCall)).toContain('42'); // records James's buyer_id as an "other live buyer" for traceability
   });
 
+  it('rejects allocating a lead that is still QUALIFICATION_PENDING (incomplete Meta intake)', async () => {
+    sqlMock.mockResolvedValueOnce([{ ...LEAD_ROW, status: 'QUALIFICATION_PENDING' }]); // lead lookup only -- nothing after it should run
+    const { POST } = await import('./route');
+
+    const res = await POST(req({ buyer_id: 99, homeowner_confirmation_id: 5 }), { params: { id: '55' } });
+    const data = await res.json();
+
+    expect(res.status).toBe(409);
+    expect(data.error).toMatch(/awaiting qualification/);
+    expect(sqlMock).toHaveBeenCalledTimes(1); // stops immediately after the lead lookup
+  });
+
+  it('still allows allocating a NEW-status lead (e.g. a Meta lead that completed the website follow-up)', async () => {
+    sqlMock
+      .mockResolvedValueOnce([{ ...LEAD_ROW, status: 'NEW' }])
+      .mockResolvedValueOnce([])
+      .mockResolvedValueOnce([BUYER_ROW])
+      .mockResolvedValueOnce([CONFIRMATION_ROW])
+      .mockResolvedValueOnce([{ id: 130 }])
+      .mockResolvedValueOnce([])
+      .mockResolvedValueOnce([])
+      .mockResolvedValueOnce([{ id: 81 }])
+      .mockResolvedValueOnce([])
+      .mockResolvedValueOnce([{ email: 'admin@halostrategic.com' }]);
+    const { POST } = await import('./route');
+
+    const res = await POST(req({ buyer_id: 99, homeowner_confirmation_id: 5 }), { params: { id: '55' } });
+
+    expect(res.status).toBe(200);
+  });
+
   it('rejects allocating the same buyer twice for the same lead, even as SHARED', async () => {
     sqlMock
       .mockResolvedValueOnce([LEAD_ROW])

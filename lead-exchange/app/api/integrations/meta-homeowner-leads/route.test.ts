@@ -66,14 +66,26 @@ function mockPreTransactionSql(buyers: Record<string, unknown>[] = [{ coverage_t
   sqlMock.mockResolvedValueOnce([{ id: 9, is_enabled: true }]).mockResolvedValueOnce(buyers);
 }
 
-// client.query call sequence for a successful new-lead happy path: BEGIN, consent insert, lead
-// insert, consent update, audit_log insert, sheet-sync insert, COMMIT.
+// client.query call sequence for a successful new-lead happy path WITH consent given: BEGIN,
+// consent insert, lead insert, consent update, audit_log insert, sheet-sync insert, COMMIT.
 function mockHappyPathClientQueries(leadId = 55, consentId = 3, syncId = 7) {
   clientQueryMock
     .mockResolvedValueOnce({ rows: [] }) // BEGIN
     .mockResolvedValueOnce({ rows: [{ id: consentId }] }) // consent_records insert
     .mockResolvedValueOnce({ rows: [{ id: leadId }] }) // leads insert
     .mockResolvedValueOnce({ rows: [] }) // consent_records update
+    .mockResolvedValueOnce({ rows: [] }) // audit_log insert
+    .mockResolvedValueOnce({ rows: [{ id: syncId }] }) // lead_sheet_syncs insert
+    .mockResolvedValueOnce({ rows: [] }); // COMMIT
+}
+
+// client.query call sequence for a lead created WITHOUT consent (consent_contact not true): BEGIN,
+// lead insert (no consent_records insert at all, no consent_records update either), audit_log
+// insert, sheet-sync insert, COMMIT -- two fewer calls than the happy path above.
+function mockIncompletePathClientQueries(leadId = 56, syncId = 8) {
+  clientQueryMock
+    .mockResolvedValueOnce({ rows: [] }) // BEGIN
+    .mockResolvedValueOnce({ rows: [{ id: leadId }] }) // leads insert
     .mockResolvedValueOnce({ rows: [] }) // audit_log insert
     .mockResolvedValueOnce({ rows: [{ id: syncId }] }) // lead_sheet_syncs insert
     .mockResolvedValueOnce({ rows: [] }); // COMMIT
@@ -166,14 +178,20 @@ describe('POST /api/integrations/meta-homeowner-leads', () => {
       expect(res.status).toBe(400);
     });
 
-    it('rejects missing required mapped string fields', async () => {
+    it('rejects missing required mapped string fields (name, postcode, mobile only -- the live form\'s own fields)', async () => {
       const { POST } = await import('./route');
 
       const res = await POST(req({ meta_lead_id: 'l:1', mapped: { industry_slug: 'spray_foam_removal' } }, 'test-secret'));
       const data = await res.json();
 
       expect(res.status).toBe(400);
-      expect(data.missing_fields).toEqual(expect.arrayContaining(['homeowner_name', 'postcode', 'mobile', 'reason_for_enquiry', 'timeframe', 'preferred_contact_method']));
+      expect(data.missing_fields).toEqual(expect.arrayContaining(['homeowner_name', 'postcode', 'mobile']));
+      // The qualification questions are deliberately NOT in this hard-required list any more --
+      // they're missing from the live five-question form, and now make the lead
+      // awaiting_qualification instead of rejecting it outright.
+      expect(data.missing_fields).not.toContain('reason_for_enquiry');
+      expect(data.missing_fields).not.toContain('timeframe');
+      expect(data.missing_fields).not.toContain('preferred_contact_method');
       expect(sqlMock).not.toHaveBeenCalled();
     });
 
@@ -197,25 +215,40 @@ describe('POST /api/integrations/meta-homeowner-leads', () => {
       expect(res.status).toBe(201);
     });
 
-    it('rejects when consent_contact is not a boolean', async () => {
+    it('accepts consent_contact not being a boolean -- treated as not given, not rejected', async () => {
+      mockPreTransactionSql();
+      mockIncompletePathClientQueries();
       const { POST } = await import('./route');
 
       const res = await POST(req({ ...VALID_BODY, mapped: { ...VALID_MAPPED, consent_contact: undefined } }, 'test-secret'));
       const data = await res.json();
 
-      expect(res.status).toBe(400);
-      expect(data.missing_fields).toEqual(['consent_contact']);
+      expect(res.status).toBe(201);
+      expect(data.awaiting_qualification).toBe(true);
+      expect(data.follow_up_url).toMatch(/^https:\/\/halostrategic\.com\/leads-exchange\/spray-foam-removal\/complete\?token=/);
+      // No consent_records row is ever created for this submission.
+      expect(clientQueryMock.mock.calls.some((c) => typeof c[0] === 'string' && c[0].includes('INSERT INTO consent_records'))).toBe(false);
     });
 
-    it('rejects an explicit consent_contact: false', async () => {
+    it('accepts an explicit consent_contact: false -- never rejected, never recorded as consent given', async () => {
+      mockPreTransactionSql();
+      mockIncompletePathClientQueries();
       const { POST } = await import('./route');
 
       const res = await POST(req({ ...VALID_BODY, mapped: { ...VALID_MAPPED, consent_contact: false } }, 'test-secret'));
       const data = await res.json();
 
-      expect(res.status).toBe(400);
-      expect(data.error).toMatch(/[Cc]onsent/);
-      expect(sqlMock).not.toHaveBeenCalled();
+      expect(res.status).toBe(201);
+      expect(data.awaiting_qualification).toBe(true);
+
+      const leadInsertCall = clientQueryMock.mock.calls[1];
+      expect(leadInsertCall[0]).toContain('INSERT INTO leads');
+      expect(leadInsertCall[1][7]).toBeNull(); // consent_record_id stays NULL
+      const qualificationAnswers = JSON.parse(leadInsertCall[1][6] as string);
+      expect(qualificationAnswers.consent_contact).toBe(false);
+      expect(qualificationAnswers.consent_share_buyer).toBe(false);
+      expect(qualificationAnswers.missing_qualification_fields).toContain('consent_contact');
+      expect(clientQueryMock.mock.calls.some((c) => typeof c[0] === 'string' && c[0].includes('INSERT INTO consent_records'))).toBe(false);
     });
 
     it('email is optional', async () => {
@@ -322,6 +355,89 @@ describe('POST /api/integrations/meta-homeowner-leads', () => {
       const leadInsertCall = clientQueryMock.mock.calls[2];
       const qualificationAnswers = JSON.parse(leadInsertCall[1][6] as string);
       expect(qualificationAnswers.lead_intent).toBe('researching');
+    });
+  });
+
+  describe('incomplete intake (awaiting qualification)', () => {
+    // Exactly what the live five-question Instant Form actually sends -- no qualification
+    // questions, no consent question at all.
+    const FIVE_QUESTION_MAPPED = {
+      industry_slug: 'spray_foam_removal',
+      homeowner_name: 'Nkechiyeuinm Onwuegbute',
+      mobile: '+447450949999',
+      postcode: 'N15 5DF',
+      email: 'n@example.com',
+      owns_property: true,
+    };
+
+    it('accepts a submission with only the live form\'s five fields, as an incomplete lead with a follow-up link', async () => {
+      mockPreTransactionSql();
+      mockIncompletePathClientQueries(56, 8);
+      const { POST } = await import('./route');
+
+      const res = await POST(req({ meta_lead_id: 'l:five-q', mapped: FIVE_QUESTION_MAPPED }, 'test-secret'));
+      const data = await res.json();
+
+      expect(res.status).toBe(201);
+      expect(data.status).toBe('QUALIFICATION_PENDING');
+      expect(data.awaiting_qualification).toBe(true);
+      expect(data.follow_up_url).toMatch(/^https:\/\/halostrategic\.com\/leads-exchange\/spray-foam-removal\/complete\?token=/);
+
+      const leadInsertCall = clientQueryMock.mock.calls[1];
+      const qualificationAnswers = JSON.parse(leadInsertCall[1][6] as string);
+      expect(qualificationAnswers.needs_manual_review).toBe(true);
+      expect(qualificationAnswers.review_reasons).toContain('awaiting_qualification');
+      expect(qualificationAnswers.missing_qualification_fields).toEqual(
+        expect.arrayContaining(['reason_for_enquiry', 'timeframe', 'preferred_contact_method', 'consent_contact'])
+      );
+      expect(leadInsertCall[1][7]).toBeNull(); // consent_record_id
+
+      // The stored hash is a 64-character hex SHA-256 digest -- never the raw token itself, and
+      // never equal to the token embedded in the response's own follow_up_url.
+      const tokenHash = leadInsertCall[1][10] as string;
+      const tokenExpiry = leadInsertCall[1][11] as Date;
+      expect(tokenHash).toMatch(/^[0-9a-f]{64}$/);
+      expect(tokenExpiry).toBeInstanceOf(Date);
+      const rawTokenInUrl = new URL(data.follow_up_url).searchParams.get('token');
+      expect(rawTokenInUrl).toBeTruthy();
+      expect(rawTokenInUrl).not.toBe(tokenHash);
+    });
+
+    it('can be awaiting_qualification while consent WAS given -- the two are independent', async () => {
+      mockPreTransactionSql();
+      mockHappyPathClientQueries(57, 4, 9); // consent IS created: this path still inserts one
+      const { POST } = await import('./route');
+
+      const res = await POST(
+        req({ ...VALID_BODY, mapped: { ...VALID_MAPPED, preferred_contact_method: undefined } }, 'test-secret')
+      );
+      const data = await res.json();
+
+      expect(res.status).toBe(201);
+      expect(data.awaiting_qualification).toBe(true);
+      expect(data.follow_up_url).not.toBeNull();
+
+      const consentInsertCall = clientQueryMock.mock.calls[1];
+      expect(consentInsertCall[0]).toContain('INSERT INTO consent_records');
+      const leadInsertCall = clientQueryMock.mock.calls[2];
+      const qualificationAnswers = JSON.parse(leadInsertCall[1][6] as string);
+      expect(qualificationAnswers.missing_qualification_fields).toEqual(['preferred_contact_method']);
+      expect(qualificationAnswers.consent_contact).toBe(true);
+    });
+
+    it('a fully complete submission is NOT awaiting_qualification and gets no follow-up token', async () => {
+      mockPreTransactionSql();
+      mockHappyPathClientQueries();
+      const { POST } = await import('./route');
+
+      const res = await POST(req(VALID_BODY, 'test-secret'));
+      const data = await res.json();
+
+      expect(data.awaiting_qualification).toBe(false);
+      expect(data.follow_up_url).toBeNull();
+      const leadInsertCall = clientQueryMock.mock.calls[2];
+      expect(leadInsertCall[1][10]).toBeNull();
+      expect(leadInsertCall[1][11]).toBeNull();
     });
   });
 
