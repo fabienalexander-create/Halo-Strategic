@@ -90,6 +90,30 @@ describe('POST /api/admin/buyers/create', () => {
     expect(calls).toContain('COMMIT');
   });
 
+  it('stores postcodes_covered for a regional buyer instead of defaulting to Nationwide', async () => {
+    const { POST } = await import('./route');
+
+    await POST(req({ ...VALID_BODY, coverage_type: 'regional', postcodes_covered: ['LE', 'NN', 'CV'] }));
+
+    const insertCall = queryMock.mock.calls.find((c) => (c[0] as string).startsWith('INSERT INTO buyers'));
+    expect(insertCall).toBeDefined();
+    const params = insertCall![1] as unknown[];
+    // coverage_type, counties_covered, postcodes_covered are params 6-8 (1-indexed in the SQL).
+    expect(params[5]).toBe('regional');
+    expect(params[7]).toBe(JSON.stringify(['LE', 'NN', 'CV']));
+  });
+
+  it('defaults counties_covered and postcodes_covered to empty arrays, never a fabricated Nationwide value', async () => {
+    const { POST } = await import('./route');
+
+    await POST(req(VALID_BODY));
+
+    const insertCall = queryMock.mock.calls.find((c) => (c[0] as string).startsWith('INSERT INTO buyers'));
+    const params = insertCall![1] as unknown[];
+    expect(params[6]).toBe(JSON.stringify([]));
+    expect(params[7]).toBe(JSON.stringify([]));
+  });
+
   it('rolls back and rethrows if the insert fails partway through', async () => {
     queryMock.mockImplementation(async (text: string) => {
       if (text.includes('BEGIN') || text.includes('ROLLBACK')) return { rows: [] };

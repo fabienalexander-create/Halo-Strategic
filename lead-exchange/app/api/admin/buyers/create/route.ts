@@ -12,6 +12,7 @@ interface Body {
   telephone?: string;
   coverage_type?: string;
   counties_covered?: string[];
+  postcodes_covered?: string[];
   notes?: string;
 }
 
@@ -61,20 +62,26 @@ export async function POST(req: NextRequest) {
       const inserted = await client.query(
         `INSERT INTO buyers (
           company_name, contact_name, contact_email, telephone, industry_id,
-          coverage_type, counties_covered, review_notes,
+          coverage_type, counties_covered, postcodes_covered, review_notes,
           confirmed_info_accurate, confirmed_can_deliver_services,
           confirmed_payment_before_release_understanding, agreed_pii_handling, agreed_account_notifications,
           application_status, application_reference
         ) VALUES (
           $1, $2, $3, $4, $5,
-          $6, $7, $8,
+          $6, $7, $8, $9,
           false, false,
           false, false, false,
-          'PENDING_REVIEW', $9
+          'PENDING_REVIEW', $10
         ) RETURNING id`,
         [
           body.company_name, body.contact_name, body.contact_email, body.telephone, industryId,
-          body.coverage_type ?? 'national', JSON.stringify(body.counties_covered ?? ['Nationwide']),
+          // 'national' coverage needs no list -- lib/buyerMatching.ts's buyerCoversPostcode
+          // short-circuits to "covers everywhere" on coverage_type === 'national' alone. For
+          // 'regional', postcodes_covered is the field that function actually matches a lead's
+          // postcode against; counties_covered is never read by that matching logic at all (it
+          // only counts towards "has any coverage recorded"), so it's kept for display/record
+          // purposes only -- never fabricated as ['Nationwide'] the way this used to work.
+          body.coverage_type ?? 'national', JSON.stringify(body.counties_covered ?? []), JSON.stringify(body.postcodes_covered ?? []),
           body.notes ?? 'Onboarded directly by admin (not via public application form).',
           `PENDING-${randomUUID()}`,
         ]
