@@ -101,10 +101,15 @@ export interface AttemptSendResult {
  * were updated together specifically because a prior version left PAUSED unenforced at either
  * layer -- a label with no teeth. See lib/buyerProspectEmail.test.ts for the regression coverage.
  */
+export interface EmailAttachment {
+  filename: string;
+  contentBase64: string;
+}
+
 export async function attemptSendProspectEmail(
   db: SqlDb,
   id: number,
-  content: { subject: string; html: string; text: string; headers?: Record<string, string> }
+  content: { subject: string; html: string; text: string; headers?: Record<string, string>; attachments?: EmailAttachment[] }
 ): Promise<AttemptSendResult> {
   const rows = await db.sql`
     SELECT e.id, e.prospect_id, e.nurture_step, e.recipient, e.status,
@@ -171,6 +176,9 @@ export async function attemptSendProspectEmail(
       html: content.html,
       text: content.text,
       ...(content.headers ? { headers: content.headers } : {}),
+      ...(content.attachments && content.attachments.length > 0
+        ? { attachments: content.attachments.map((a) => ({ filename: a.filename, content: a.contentBase64 })) }
+        : {}),
     });
     if (error) {
       const message = error.message ?? String(error);
@@ -321,8 +329,23 @@ export async function markProspectEmailComplained(db: SqlDb, providerMessageId: 
  */
 export async function sendProspectNurtureEmail(
   db: SqlDb,
-  params: { prospectId: number; nurtureStep: number; to: string; subject: string; html: string; text: string; headers?: Record<string, string> }
+  params: {
+    prospectId: number;
+    nurtureStep: number;
+    to: string;
+    subject: string;
+    html: string;
+    text: string;
+    headers?: Record<string, string>;
+    attachments?: EmailAttachment[];
+  }
 ): Promise<AttemptSendResult> {
   const outbox = await createProspectEmailEntry(db, { prospectId: params.prospectId, nurtureStep: params.nurtureStep, recipient: params.to });
-  return attemptSendProspectEmail(db, outbox.id, { subject: params.subject, html: params.html, text: params.text, headers: params.headers });
+  return attemptSendProspectEmail(db, outbox.id, {
+    subject: params.subject,
+    html: params.html,
+    text: params.text,
+    headers: params.headers,
+    attachments: params.attachments,
+  });
 }

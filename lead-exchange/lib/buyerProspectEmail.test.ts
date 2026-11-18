@@ -151,6 +151,30 @@ describe('buyer prospect nurture outbox', () => {
     expect(rows[0].status).toBe('SENT');
   });
 
+  it('passes attachments through to the provider, and omits the field entirely when none are given', async () => {
+    sendMock.mockResolvedValue({ data: { id: 'msg_1' }, error: null });
+    const { sendProspectNurtureEmail } = await import('./buyerProspectEmail');
+    const { db } = fakeProspectEmailDb();
+
+    await sendProspectNurtureEmail(db, {
+      prospectId: 1,
+      nurtureStep: 1,
+      to: 'buyer@example.com',
+      ...content,
+      attachments: [{ filename: 'Halo-Lead-Exchange-Process.pdf', contentBase64: 'JVBERi0xLjQ=' }],
+    });
+    expect(sendMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        attachments: [{ filename: 'Halo-Lead-Exchange-Process.pdf', content: 'JVBERi0xLjQ=' }],
+      })
+    );
+
+    sendMock.mockClear();
+    const { db: db2 } = fakeProspectEmailDb();
+    await sendProspectNurtureEmail(db2, { prospectId: 2, nurtureStep: 1, to: 'buyer2@example.com', ...content });
+    expect(sendMock).toHaveBeenCalledWith(expect.not.objectContaining({ attachments: expect.anything() }));
+  });
+
   it('records FAILED without contacting the provider when RESEND_API_KEY is missing', async () => {
     delete process.env.RESEND_API_KEY;
     const { sendProspectNurtureEmail } = await import('./buyerProspectEmail');
