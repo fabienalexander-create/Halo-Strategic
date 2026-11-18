@@ -17,7 +17,10 @@ interface LeadRow {
   postcode: string;
   service_requirement: string | null;
   source: string | null;
-  qualification_answers: { meta_lead_id?: string | null; source?: string | null } | null;
+  qualification_answers: {
+    meta_lead_id?: string | null; source?: string | null;
+    needs_manual_review?: boolean; review_reasons?: string[]; lead_intent?: string;
+  } | null;
   created_at: string;
   industry_slug: string;
   industry_name: string;
@@ -269,6 +272,9 @@ function LeadRowItem({
   }
 
   const metaLeadId = lead.qualification_answers?.meta_lead_id;
+  const needsManualReview = lead.qualification_answers?.needs_manual_review === true;
+  const reviewReasons = lead.qualification_answers?.review_reasons ?? [];
+  const leadIntent = lead.qualification_answers?.lead_intent;
 
   return (
     <>
@@ -278,7 +284,13 @@ function LeadRowItem({
           <div style={{ color: 'var(--slate)', fontSize: '0.8rem' }}>
             {lead.homeowner_name} &middot; {lead.postcode}
             {metaLeadId && <><br />Meta ID: {metaLeadId}</>}
+            {leadIntent === 'researching' && <><br /><span style={{ color: 'var(--slate)' }}>Researching only, not yet active</span></>}
           </div>
+          {needsManualReview && (
+            <div style={{ color: '#8C4438', fontSize: '0.78rem', fontWeight: 600, marginTop: 4 }}>
+              ⚠ Needs manual review: {reviewReasons.join(', ')}
+            </div>
+          )}
         </td>
         <td style={{ padding: '10px 8px' }}>{lead.industry_name}</td>
         <td style={{ padding: '10px 8px', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.78rem' }}>{lead.status}</td>

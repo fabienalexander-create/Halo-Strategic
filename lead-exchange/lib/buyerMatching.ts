@@ -50,7 +50,11 @@ function outwardCode(postcode: string): string {
 // and excluding them all by default would be a worse failure mode (a lead nobody is ever shown)
 // than including a buyer who turns out not to cover the area, which the admin can still see and
 // override.
-export function buyerCoversPostcode(buyer: BuyerCandidate, postcode: string | null): boolean {
+//
+// Takes only the three coverage fields, not a full BuyerCandidate, so callers that only have
+// those (e.g. the Meta ingestion endpoint's outside-service-area check) don't need to fabricate
+// the rest of the shape just to call this.
+export function buyerCoversPostcode(buyer: Pick<BuyerCandidate, 'coverage_type' | 'counties_covered' | 'postcodes_covered'>, postcode: string | null): boolean {
   if (buyer.coverage_type === 'national') return true;
   const hasCoverageRecorded = buyer.counties_covered.length > 0 || buyer.postcodes_covered.length > 0;
   if (!hasCoverageRecorded) return true;
