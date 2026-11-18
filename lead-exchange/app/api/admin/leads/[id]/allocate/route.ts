@@ -87,6 +87,22 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
       property_type: string; postcode: string; service_requirement: string; industry_slug: string; industry_id: number;
     };
 
+    // QUALIFICATION_PENDING is the status every Meta-sourced lead is created at -- including an
+    // incomplete one still missing its qualification answers and/or consent (Fabien, 2026-11-18:
+    // "an incomplete lead cannot be allocated"). Blocking on this specific status, rather than
+    // requiring status === 'QUALIFIED', is deliberate: NEW is the status every website-sourced
+    // lead already sits at today, with nothing in this codebase that ever promotes NEW to
+    // QUALIFIED, so a blanket QUALIFIED-only gate would also block every existing, already-live
+    // website lead from ever being allocated -- a real regression, not a safeguard. Once a
+    // Meta-sourced lead's qualification is completed (app/api/homeowner-enquiries/complete/
+    // route.ts), it moves to NEW, same as a website lead, and becomes allocatable the same way.
+    if (lead.status === 'QUALIFICATION_PENDING') {
+      return NextResponse.json(
+        { error: 'This lead is still awaiting qualification and consent; it cannot be allocated yet.' },
+        { status: 409 }
+      );
+    }
+
     const liveAllocations = await db.sql`
       SELECT id, buyer_id FROM lead_allocations WHERE lead_id = ${leadId} AND status IN ('OFFERED', 'ACCEPTED', 'PURCHASED')
     `;
