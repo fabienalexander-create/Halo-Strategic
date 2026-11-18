@@ -190,7 +190,7 @@ export async function POST(req: NextRequest) {
 
     const consentResult = await client.query(
       `INSERT INTO consent_records (wording_version, source, purpose, named_recipient_or_category)
-       VALUES ($1, $2, 'Contact about enquiry and share with one suitable buyer', $3)
+       VALUES ($1, $2, 'Contact about enquiry and share with one or more suitable buyers', $3)
        RETURNING id`,
       [consentConfig.consentVersion, consentConfig.source, consentConfig.namedRecipientOrCategory]
     );
