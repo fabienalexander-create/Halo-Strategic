@@ -12,9 +12,22 @@
 -- Same table on purpose, so a follow-up and a verification share one suppression list, one set of
 -- per-number and hourly caps, one sender, one delivery-receipt route and one audit trail.
 --
+-- follow_up_token_enc: the follow-up link token for one META_FOLLOW_UP text, encrypted at rest
+--   (AES-256-GCM, key SMS_LINK_ENCRYPTION_KEY, bound to this row's id; see lib/smsLinkCrypto.ts).
+--   Minted on the first send attempt and reused by every retry, so a text that reached the
+--   homeowner even though its confirmation timed out keeps a working link (Fabien, 2026-11-19:
+--   "one stable link per queued message, reused across all three delivery attempts"). Wiped as
+--   soon as the text no longer needs sending (sent, failed, expired, stopped or superseded). Only
+--   ever set on META_FOLLOW_UP rows. leads.follow_up_token_hash still holds only the hash.
+--
 -- Rollback (run only with approval, app rolled back first):
+--   ALTER TABLE lead_phone_verifications DROP COLUMN IF EXISTS follow_up_token_enc;
 --   ALTER TABLE lead_phone_verifications DROP COLUMN IF EXISTS purpose;
 
 ALTER TABLE lead_phone_verifications
   ADD COLUMN purpose TEXT NOT NULL DEFAULT 'PHONE_VERIFICATION'
   CHECK (purpose IN ('PHONE_VERIFICATION', 'META_FOLLOW_UP'));
+
+ALTER TABLE lead_phone_verifications
+  ADD COLUMN follow_up_token_enc TEXT
+  CHECK (follow_up_token_enc IS NULL OR purpose = 'META_FOLLOW_UP');

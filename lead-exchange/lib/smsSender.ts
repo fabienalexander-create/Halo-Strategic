@@ -2,7 +2,15 @@ import { createHmac } from 'crypto';
 import {
   MAX_SEND_ATTEMPTS, SqlDb, isWithinSendingHours, metaFollowUpSmsEnabled, metaFollowUpSmsText, verificationSmsText,
 } from './smsVerification';
-import { buildFollowUpUrl, generateFollowUpToken } from './metaFollowUpToken';
+import { FOLLOW_UP_TOKEN_TTL_DAYS, buildFollowUpUrl, generateFollowUpToken, hashFollowUpToken } from './metaFollowUpToken';
+import { decryptLinkToken, encryptLinkToken, linkEncryptionKey, linkTokenAad } from './smsLinkCrypto';
+
+// Reference only. Never a phone number, link or message text.
+function smsAudit(db: SqlDb, action: string, row: Record<string, unknown>) {
+  return db.sql`
+    INSERT INTO audit_log (actor, action, entity_type, entity_id, new_state)
+    VALUES ('system:sms', ${action}, 'lead_phone_verification', ${row.id}, ${JSON.stringify({ reference: row.verification_ref })}::jsonb)`;
+}
 
 export interface SendSummary {
   skipped?: 'NOT_CONFIGURED' | 'NOT_ENABLED';
@@ -39,12 +47,12 @@ export async function sendPendingVerifications(
   const leadFilter = opts.leadId ?? null;
 
   const expired = await db.sql`
-    UPDATE lead_phone_verifications SET status = 'EXPIRED', updated_at = now()
+    UPDATE lead_phone_verifications SET status = 'EXPIRED', follow_up_token_enc = NULL, updated_at = now()
     WHERE status IN ('PENDING_SEND','SENDING','SENT','DELIVERED') AND expires_at <= now() RETURNING id`;
   summary.expired = expired.length;
 
   const suppressed = await db.sql`
-    UPDATE lead_phone_verifications v SET status = 'SUPPRESSED', updated_at = now()
+    UPDATE lead_phone_verifications v SET status = 'SUPPRESSED', follow_up_token_enc = NULL, updated_at = now()
     WHERE v.status IN ('PENDING_SEND','SENDING')
       AND EXISTS (SELECT 1 FROM sms_suppressions s WHERE s.phone_e164 = v.phone_e164)
     RETURNING v.id`;
@@ -53,7 +61,9 @@ export async function sendPendingVerifications(
   // META_FOLLOW_UP rows are only claimed while their own switch is on (so turning it off stops
   // already-queued texts too) and inside quiet hours. PHONE_VERIFICATION rows are unaffected: a
   // Solar & Battery homeowner who has just submitted the website form is waiting for that text.
-  const followUpsSendable = metaFollowUpSmsEnabled() && isWithinSendingHours(opts.now ?? new Date());
+  // Also held (left queued, not failed) if SMS_LINK_ENCRYPTION_KEY is missing or invalid, since
+  // a follow-up can't be sent without a link that can be stored safely for its retries.
+  const followUpsSendable = metaFollowUpSmsEnabled() && isWithinSendingHours(opts.now ?? new Date()) && linkEncryptionKey() !== null;
 
   const claimed = await db.sql`
     UPDATE lead_phone_verifications SET status = 'SENDING', attempt_count = attempt_count + 1, updated_at = now()
@@ -68,33 +78,62 @@ export async function sendPendingVerifications(
       FOR UPDATE SKIP LOCKED
     )
     AND (status = 'PENDING_SEND' OR (status = 'SENDING' AND updated_at < now() - interval '10 minutes'))
-    RETURNING id, verification_ref, phone_e164, attempt_count, purpose, lead_id`;
+    RETURNING id, verification_ref, phone_e164, attempt_count, purpose, lead_id, follow_up_token_enc`;
   summary.claimed = claimed.length;
 
   for (const row of claimed) {
     let text: string;
     if (row.purpose === 'META_FOLLOW_UP') {
-      // Halo stores only a hash of the follow-up token, so a fresh token is minted now and its hash
-      // replaces the stored one. The link inside this text is then the only working copy anywhere;
-      // the link returned to Make at intake stops working. Only done while the lead still needs it:
-      // still awaiting qualification, a token outstanding, and that token not yet used.
-      const token = generateFollowUpToken();
-      const rotated = await db.sql`
-        UPDATE leads SET follow_up_token_hash = ${token.tokenHash}, follow_up_token_expires_at = ${token.expiresAt}
+      // ONE link per queued text, reused by every attempt (Fabien, 2026-11-19). If Make/TextMagic
+      // delivers a text but the confirmation times out, the retry must carry the same link, or the
+      // text the homeowner already has would point at a dead link.
+      //
+      // First attempt: mint a token and store it encrypted on this row BEFORE anything else, so any
+      // later attempt reuses it. Every attempt (first or retry) then points the lead at this token's
+      // hash, idempotently: the hash only changes the first time, and the link Make received at
+      // intake stops working then. The lead must still need the link (awaiting qualification, a
+      // token outstanding, not yet used), otherwise the text is closed unsent.
+      const key = linkEncryptionKey()!; // followUpsSendable guarantees a valid key
+      const aad = linkTokenAad(row.id as number);
+      let rawToken: string;
+      if (row.follow_up_token_enc) {
+        const decrypted = decryptLinkToken(row.follow_up_token_enc, key, aad);
+        if (!decrypted) {
+          // Fail closed: never send a link that can't be proven to be this text's own.
+          await db.sql`
+            UPDATE lead_phone_verifications SET status = 'FAILED', error_message = 'LINK_UNREADABLE', follow_up_token_enc = NULL, updated_at = now()
+            WHERE id = ${row.id} AND status = 'SENDING'`;
+          await smsAudit(db, 'SMS_META_FOLLOW_UP_LINK_UNREADABLE', row);
+          summary.failed++;
+          continue;
+        }
+        rawToken = decrypted;
+      } else {
+        rawToken = generateFollowUpToken().rawToken;
+        await db.sql`
+          UPDATE lead_phone_verifications SET follow_up_token_enc = ${encryptLinkToken(rawToken, key, aad)}, updated_at = now()
+          WHERE id = ${row.id} AND status = 'SENDING'`;
+      }
+
+      const tokenHash = hashFollowUpToken(rawToken);
+      const newExpiry = new Date(Date.now() + FOLLOW_UP_TOKEN_TTL_DAYS * 24 * 60 * 60 * 1000);
+      const linked = await db.sql`
+        UPDATE leads SET
+          follow_up_token_expires_at = CASE WHEN follow_up_token_hash = ${tokenHash} THEN follow_up_token_expires_at ELSE ${newExpiry} END,
+          follow_up_token_hash = ${tokenHash}
         WHERE id = ${row.lead_id} AND status = 'QUALIFICATION_PENDING'
           AND follow_up_token_hash IS NOT NULL AND follow_up_token_used_at IS NULL
         RETURNING id`;
-      if (rotated.length === 0) {
+      if (linked.length === 0) {
         await db.sql`
-          UPDATE lead_phone_verifications SET status = 'SUPERSEDED', error_message = 'LEAD_NO_LONGER_NEEDS_FOLLOW_UP', updated_at = now()
+          UPDATE lead_phone_verifications SET status = 'SUPERSEDED', error_message = 'LEAD_NO_LONGER_NEEDS_FOLLOW_UP',
+            follow_up_token_enc = NULL, updated_at = now()
           WHERE id = ${row.id} AND status = 'SENDING'`;
-        await db.sql`
-          INSERT INTO audit_log (actor, action, entity_type, entity_id, new_state)
-          VALUES ('system:sms', 'SMS_META_FOLLOW_UP_SUPERSEDED', 'lead_phone_verification', ${row.id}, ${JSON.stringify({ reference: row.verification_ref })}::jsonb)`;
+        await smsAudit(db, 'SMS_META_FOLLOW_UP_SUPERSEDED', row);
         summary.superseded++;
         continue;
       }
-      text = metaFollowUpSmsText(buildFollowUpUrl(token.rawToken));
+      text = metaFollowUpSmsText(buildFollowUpUrl(rawToken));
     } else {
       text = verificationSmsText(row.verification_ref as string);
     }
@@ -128,15 +167,19 @@ export async function sendPendingVerifications(
       error = err instanceof Error ? err.name : 'send failed';
     }
 
+    // The encrypted link is kept only while another attempt might still need it: wiped once sent
+    // or finally failed. A failed attempt that will be retried keeps it, so the retry sends the
+    // same link.
     if (!error) {
       await db.sql`
         UPDATE lead_phone_verifications SET status = 'SENT', sent_at = now(), provider_message_id = ${providerId},
-          error_message = NULL, updated_at = now() WHERE id = ${row.id} AND status = 'SENDING'`;
+          error_message = NULL, follow_up_token_enc = NULL, updated_at = now() WHERE id = ${row.id} AND status = 'SENDING'`;
       summary.sent++;
     } else {
       const final = (row.attempt_count as number) >= MAX_SEND_ATTEMPTS;
       await db.sql`
-        UPDATE lead_phone_verifications SET status = ${final ? 'FAILED' : 'PENDING_SEND'}, error_message = ${error}, updated_at = now()
+        UPDATE lead_phone_verifications SET status = ${final ? 'FAILED' : 'PENDING_SEND'}, error_message = ${error},
+          follow_up_token_enc = CASE WHEN ${final}::boolean THEN NULL ELSE follow_up_token_enc END, updated_at = now()
         WHERE id = ${row.id} AND status = 'SENDING'`;
       summary.failed++;
     }

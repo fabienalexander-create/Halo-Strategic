@@ -37,12 +37,13 @@ A one-way text to a spray foam Meta Instant Form homeowner, with their single-us
 
 Status: built and tested. Off until Fabien switches it on, with legal sign-off.
 
-**Gates (all must be true):** `SMS_VERIFICATION_ENABLED=true` AND `META_FOLLOW_UP_SMS_ENABLED=true`; industry in `META_FOLLOW_UP_INDUSTRIES` (spray foam only); the lead was saved awaiting qualification with a follow-up link; valid UK mobile; not on the STOP list; within the shared per-number and hourly caps. At send time the switch and quiet hours are checked again, and the lead must still be `QUALIFICATION_PENDING` with an unused link, otherwise the text is closed as `SUPERSEDED` unsent.
+**Gates (all must be true):** `SMS_VERIFICATION_ENABLED=true` AND `META_FOLLOW_UP_SMS_ENABLED=true` AND a valid `SMS_LINK_ENCRYPTION_KEY` (32 random bytes, base64: `openssl rand -base64 32`); industry in `META_FOLLOW_UP_INDUSTRIES` (spray foam only); the lead was saved awaiting qualification with a follow-up link; valid UK mobile; not on the STOP list; within the shared per-number and hourly caps. At send time the switch and quiet hours are checked again, and the lead must still be `QUALIFICATION_PENDING` with an unused link, otherwise the text is closed as `SUPERSEDED` unsent.
 
 **How it works:**
 - Migration `20261119100000_sms_purpose.sql` adds `lead_phone_verifications.purpose` (`PHONE_VERIFICATION` default, or `META_FOLLOW_UP`). Additive, rollback in the header.
 - The Meta intake route queues the text inside its transaction, in a savepoint, only when both switches are on, then makes one best-effort send after commit.
-- Halo stores only a hash of the follow-up token, so the sender mints a fresh token when it sends. The link in the text becomes the only working link; the one returned to Make at intake stops working.
+- **One stable link per text.** On the first send attempt the sender mints the link's token and stores it on that text's row, encrypted with AES-256-GCM (`SMS_LINK_ENCRYPTION_KEY`, bound to the row id; `lib/smsLinkCrypto.ts`). Every retry reuses that exact link, so a text that was delivered even though its confirmation timed out still works. The encrypted copy is wiped once the text is sent, fails for good, expires, is stopped or is superseded. `leads` keeps only the hash, as before. The link Make received at intake stops working on the first attempt.
+- A stored link that can't be decrypted (tampered, or copied from another row) fails closed: the text is marked `FAILED` (`LINK_UNREADABLE`) and nothing is sent. With the key missing or invalid, follow-ups simply stay queued.
 - Make receives `{verification_ref, to, text, purpose}`, signed exactly as before.
 - A YES reply never verifies a follow-up (only `PHONE_VERIFICATION` rows match). STOP closes texts of every purpose and suppresses the number.
 - Not sent within 24 hours (`META_FOLLOW_UP_SEND_WINDOW_HOURS`): expired, never sent late.

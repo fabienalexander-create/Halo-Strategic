@@ -30,6 +30,7 @@ const db: SqlDb = {
 const DAYTIME = new Date('2026-11-19T12:00:00Z'); // 12:00 GMT
 const NIGHT = new Date('2026-11-19T03:00:00Z'); // 03:00 GMT
 const SOLAR_CV = 'test-followup-solar-v1';
+const LINK_KEY = randomBytes(32).toString('base64');
 const covered = SMS_NOTICE_VERSIONS as Set<string>;
 
 describe.skipIf(!adminUrl)('Meta follow-up SMS (real Postgres)', () => {
@@ -57,6 +58,18 @@ describe.skipIf(!adminUrl)('Meta follow-up SMS (real Postgres)', () => {
   }
   const row = async (id: number) => (await q(`SELECT * FROM lead_phone_verifications WHERE id=$1`, [id]))[0];
   const okMake = () => vi.fn().mockImplementation(async () => new Response(JSON.stringify({ message_id: `tm-${randomBytes(4).toString('hex')}` }), { status: 200 }));
+  const TOKEN_RE = /https:\/\/halostrategic\.com\/leads-exchange\/spray-foam-removal\/complete\?token=([A-Za-z0-9_-]{43})/;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const sentToken = (call: any[]) => TOKEN_RE.exec(JSON.parse(call[1].body).text)![1];
+  // Exactly the condition app/api/homeowner-enquiries/complete/route.ts uses to accept a link.
+  const linkWorks = async (rawToken: string) => (await q(
+    `SELECT id FROM leads WHERE follow_up_token_hash = $1 AND follow_up_token_used_at IS NULL AND follow_up_token_expires_at > now()`,
+    [hashFollowUpToken(rawToken)]
+  )).length === 1;
+  // A hand-off that reaches TextMagic (the homeowner gets the text) but whose reply never comes back.
+  const deliveredThenTimedOut = () => vi.fn().mockImplementation(async () => {
+    throw Object.assign(new Error('The operation was aborted due to timeout'), { name: 'TimeoutError' });
+  });
 
   beforeAll(async () => {
     if (!isLocal) throw new Error('TEST_PG_ADMIN_URL must point at localhost. Refusing to run.');
@@ -90,6 +103,7 @@ describe.skipIf(!adminUrl)('Meta follow-up SMS (real Postgres)', () => {
     process.env.META_FOLLOW_UP_SMS_ENABLED = 'true';
     process.env.MAKE_SMS_OUT_WEBHOOK_URL = 'https://hook.invalid/sms-out';
     process.env.MAKE_SMS_OUT_SECRET = 'make-secret';
+    process.env.SMS_LINK_ENCRYPTION_KEY = LINK_KEY;
     delete process.env.SMS_HOURLY_LIMIT;
     covered.add(SOLAR_CV);
   });
@@ -221,6 +235,9 @@ describe.skipIf(!adminUrl)('Meta follow-up SMS (real Postgres)', () => {
     const newHash = (await q(`SELECT follow_up_token_hash h FROM leads WHERE id=$1`, [lead]))[0].h;
     expect(newHash).toBe(hashFollowUpToken(link![1]));
     expect(newHash).not.toBe(oldHash);
+    expect(await linkWorks(link![1])).toBe(true);
+    // Once sent, the encrypted copy is wiped: nothing readable or decryptable is left behind.
+    expect((await row(r.verificationId)).follow_up_token_enc).toBeNull();
     expect(JSON.stringify(await q(`SELECT * FROM lead_phone_verifications WHERE id=$1`, [r.verificationId]))).not.toContain(link![1]);
 
     const expected = createHmac('sha256', 'make-secret').update(`${init.headers['x-halo-timestamp']}.${init.body}`).digest('hex');
@@ -256,7 +273,7 @@ describe.skipIf(!adminUrl)('Meta follow-up SMS (real Postgres)', () => {
     expect(make).not.toHaveBeenCalled();
   });
 
-  it('retries a failed hand-off and marks it FAILED after three attempts', async () => {
+  it('retries a failed hand-off with the SAME link every time, and marks it FAILED after three attempts', async () => {
     const r = await queueFollowUp(newPhone());
     if (!r.queued) throw new Error('setup');
     const lead = (await row(r.verificationId)).lead_id;
@@ -265,9 +282,119 @@ describe.skipIf(!adminUrl)('Meta follow-up SMS (real Postgres)', () => {
     expect((await row(r.verificationId))).toMatchObject({ status: 'PENDING_SEND', attempt_count: 1 });
     await sendPendingVerifications(db, { leadId: lead, fetchImpl: failing, now: DAYTIME });
     await sendPendingVerifications(db, { leadId: lead, fetchImpl: failing, now: DAYTIME });
-    expect((await row(r.verificationId))).toMatchObject({ status: 'FAILED', attempt_count: 3 });
+    expect((await row(r.verificationId))).toMatchObject({ status: 'FAILED', attempt_count: 3, follow_up_token_enc: null });
     await sendPendingVerifications(db, { leadId: lead, fetchImpl: failing, now: DAYTIME });
     expect(failing).toHaveBeenCalledTimes(3);
+    const tokens = failing.mock.calls.map(sentToken);
+    expect(new Set(tokens).size).toBe(1);
+    expect(await linkWorks(tokens[0])).toBe(true);
+  });
+
+  it('a text delivered whose confirmation timed out keeps a working link: the retry resends the SAME link', async () => {
+    const r = await queueFollowUp(newPhone());
+    if (!r.queued) throw new Error('setup');
+    const lead = (await row(r.verificationId)).lead_id;
+
+    // Attempt 1: TextMagic delivers it, the homeowner has it, but HLX never hears back.
+    const timedOut = deliveredThenTimedOut();
+    await sendPendingVerifications(db, { leadId: lead, fetchImpl: timedOut, now: DAYTIME });
+    const tokenInHomeownersText = sentToken(timedOut.mock.calls[0]);
+    const pending = await row(r.verificationId);
+    expect(pending).toMatchObject({ status: 'PENDING_SEND', attempt_count: 1, error_message: 'TimeoutError' });
+    expect(await linkWorks(tokenInHomeownersText)).toBe(true);
+
+    // Held for the retry: encrypted, never the raw token or its hash.
+    expect(pending.follow_up_token_enc).toMatch(/^v1\./);
+    expect(pending.follow_up_token_enc).not.toContain(tokenInHomeownersText);
+    expect(pending.follow_up_token_enc).not.toContain(hashFollowUpToken(tokenInHomeownersText));
+
+    // Attempt 2 succeeds and carries the very same link.
+    const make = okMake();
+    await sendPendingVerifications(db, { leadId: lead, fetchImpl: make, now: DAYTIME });
+    expect(sentToken(make.mock.calls[0])).toBe(tokenInHomeownersText);
+    expect(JSON.parse(make.mock.calls[0][1].body).text).toBe(JSON.parse(timedOut.mock.calls[0][1].body).text);
+
+    // The link in the FIRST text still works, and the expiry was not pushed out by the retry.
+    expect(await linkWorks(tokenInHomeownersText)).toBe(true);
+    const after = await row(r.verificationId);
+    expect(after).toMatchObject({ status: 'SENT', attempt_count: 2, follow_up_token_enc: null });
+  });
+
+  it('a retry never pushes the link expiry out: it stays as set on the first attempt', async () => {
+    const r = await queueFollowUp(newPhone());
+    if (!r.queued) throw new Error('setup');
+    const lead = (await row(r.verificationId)).lead_id;
+    await sendPendingVerifications(db, { leadId: lead, fetchImpl: deliveredThenTimedOut(), now: DAYTIME });
+    const firstExpiry = (await q(`SELECT follow_up_token_expires_at e FROM leads WHERE id=$1`, [lead]))[0].e;
+    await new Promise((res) => setTimeout(res, 20));
+    await sendPendingVerifications(db, { leadId: lead, fetchImpl: okMake(), now: DAYTIME });
+    expect((await q(`SELECT follow_up_token_expires_at e FROM leads WHERE id=$1`, [lead]))[0].e).toEqual(firstExpiry);
+  });
+
+  it('does not resend once the homeowner has used the link between attempts', async () => {
+    const r = await queueFollowUp(newPhone());
+    if (!r.queued) throw new Error('setup');
+    const lead = (await row(r.verificationId)).lead_id;
+    const timedOut = deliveredThenTimedOut();
+    await sendPendingVerifications(db, { leadId: lead, fetchImpl: timedOut, now: DAYTIME });
+    // The homeowner taps the link from the text they did receive and completes the journey.
+    await q(`UPDATE leads SET follow_up_token_used_at = now() WHERE follow_up_token_hash = $1`, [hashFollowUpToken(sentToken(timedOut.mock.calls[0]))]);
+    const make = okMake();
+    const s = await sendPendingVerifications(db, { leadId: lead, fetchImpl: make, now: DAYTIME });
+    expect(s).toMatchObject({ superseded: 1, sent: 0 });
+    expect(make).not.toHaveBeenCalled();
+    expect(await row(r.verificationId)).toMatchObject({ status: 'SUPERSEDED', follow_up_token_enc: null });
+  });
+
+  it('fails closed on a stored link that cannot be decrypted: tampered, or copied from another text', async () => {
+    const make = okMake();
+    const holdForRetry = async () => {
+      const r = await queueFollowUp(newPhone());
+      if (!r.queued) throw new Error('setup');
+      const lead = (await row(r.verificationId)).lead_id;
+      await sendPendingVerifications(db, { leadId: lead, fetchImpl: deliveredThenTimedOut(), now: DAYTIME });
+      return { id: r.verificationId, lead, enc: (await row(r.verificationId)).follow_up_token_enc as string };
+    };
+    const a = await holdForRetry();
+    const b = await holdForRetry();
+
+    const parts = a.enc.split('.');
+    parts[3] = parts[3].slice(0, 5) + (parts[3][5] === 'A' ? 'B' : 'A') + parts[3].slice(6);
+    const tampered = parts.join('.');
+    expect(tampered).not.toBe(a.enc);
+    await q(`UPDATE lead_phone_verifications SET follow_up_token_enc = $1 WHERE id = $2`, [tampered, a.id]);
+    await q(`UPDATE lead_phone_verifications SET follow_up_token_enc = $1 WHERE id = $2`, [a.enc, b.id]); // a's value on b's row
+
+    for (const t of [a, b]) {
+      await sendPendingVerifications(db, { leadId: t.lead, fetchImpl: make, now: DAYTIME });
+      expect(await row(t.id)).toMatchObject({ status: 'FAILED', error_message: 'LINK_UNREADABLE', follow_up_token_enc: null });
+    }
+    expect(make).not.toHaveBeenCalled();
+  });
+
+  it('holds follow-ups (does not fail them) while the link encryption key is missing or invalid', async () => {
+    for (const bad of [undefined, 'too-short', Buffer.alloc(16).toString('base64')]) {
+      const r = await queueFollowUp(newPhone());
+      if (!r.queued) throw new Error('setup');
+      const lead = (await row(r.verificationId)).lead_id;
+      if (bad === undefined) delete process.env.SMS_LINK_ENCRYPTION_KEY; else process.env.SMS_LINK_ENCRYPTION_KEY = bad;
+      const make = okMake();
+      expect((await sendPendingVerifications(db, { leadId: lead, fetchImpl: make, now: DAYTIME })).claimed).toBe(0);
+      expect(make).not.toHaveBeenCalled();
+      expect((await row(r.verificationId)).status).toBe('PENDING_SEND');
+      process.env.SMS_LINK_ENCRYPTION_KEY = LINK_KEY;
+    }
+  });
+
+  it('STOP while a retry is pending closes the text and wipes the held link', async () => {
+    const phone = newPhone();
+    const r = await queueFollowUp(phone);
+    if (!r.queued) throw new Error('setup');
+    const lead = (await row(r.verificationId)).lead_id;
+    await sendPendingVerifications(db, { leadId: lead, fetchImpl: deliveredThenTimedOut(), now: DAYTIME });
+    expect((await row(r.verificationId)).follow_up_token_enc).not.toBeNull();
+    await handleInboundReply(db, { from: e164(phone), text: 'STOP', messageId: `stop-${r.reference}` });
+    expect(await row(r.verificationId)).toMatchObject({ status: 'SUPPRESSED', follow_up_token_enc: null });
   });
 
   it('expires a follow-up that was not sent within its window instead of sending it late', async () => {

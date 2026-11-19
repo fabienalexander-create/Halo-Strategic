@@ -194,9 +194,9 @@ export async function queueVerification(
  * business reasons, intended to run inside the intake transaction within a savepoint so it can
  * never break or lose the lead.
  *
- * The follow-up link itself is NOT stored here. Halo only keeps a hash of a follow-up token, so the
- * sender mints a fresh token at the moment of sending (lib/smsSender.ts), and the text it hands to
- * Make is the only place the working link ever exists.
+ * No link is created here. On the text's first send attempt the sender mints its token, stores it
+ * on this row encrypted (lib/smsLinkCrypto.ts) and reuses it for every retry, so the homeowner never
+ * holds a dead link because a confirmation timed out (lib/smsSender.ts).
  */
 export async function queueMetaFollowUp(
   db: SqlDb,
@@ -282,7 +282,7 @@ export async function handleInboundReply(
       ON CONFLICT (phone_e164) DO NOTHING
     `;
     const closed = await db.sql`
-      UPDATE lead_phone_verifications SET status = 'SUPPRESSED', updated_at = now()
+      UPDATE lead_phone_verifications SET status = 'SUPPRESSED', follow_up_token_enc = NULL, updated_at = now()
       WHERE phone_e164 = ${phone} AND status IN ('PENDING_SEND','SENDING','SENT','DELIVERED')
       RETURNING id, verification_ref
     `;

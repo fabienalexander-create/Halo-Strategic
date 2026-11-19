@@ -1,5 +1,6 @@
 import { afterEach, describe, expect, it } from 'vitest';
 import { buildFollowUpUrl, generateFollowUpToken } from './metaFollowUpToken';
+import { decryptLinkToken, encryptLinkToken, linkEncryptionKey, linkTokenAad } from './smsLinkCrypto';
 import {
   isWithinSendingHours, metaFollowUpSmsEnabled, metaFollowUpSmsText, smsSegmentInfo,
 } from './smsVerification';
@@ -95,6 +96,43 @@ describe('isWithinSendingHours (08:00-20:00 Europe/London)', () => {
 
   it('is never open in the middle of the night', () => {
     expect(isWithinSendingHours(new Date('2026-11-19T03:00:00Z'))).toBe(false);
+  });
+});
+
+describe('follow-up link encryption (AES-256-GCM)', () => {
+  const key = Buffer.alloc(32, 7);
+  const token = generateFollowUpToken().rawToken;
+
+  it('round-trips, with a fresh IV each time', () => {
+    const a = encryptLinkToken(token, key, linkTokenAad(1));
+    const b = encryptLinkToken(token, key, linkTokenAad(1));
+    expect(a).not.toBe(b);
+    expect(a).not.toContain(token);
+    expect(decryptLinkToken(a, key, linkTokenAad(1))).toBe(token);
+    expect(decryptLinkToken(b, key, linkTokenAad(1))).toBe(token);
+  });
+
+  it('refuses a value bound to a different row, a wrong key, a tampered value or junk', () => {
+    const enc = encryptLinkToken(token, key, linkTokenAad(1));
+    expect(decryptLinkToken(enc, key, linkTokenAad(2))).toBeNull();
+    expect(decryptLinkToken(enc, Buffer.alloc(32, 8), linkTokenAad(1))).toBeNull();
+    const parts = enc.split('.');
+    parts[2] = parts[2].slice(0, 3) + (parts[2][3] === 'A' ? 'B' : 'A') + parts[2].slice(4);
+    expect(decryptLinkToken(parts.join('.'), key, linkTokenAad(1))).toBeNull();
+    for (const junk of [null, 42, '', 'v1.x.y', 'v2.a.b.c', enc.replace('v1', 'v0')]) {
+      expect(decryptLinkToken(junk, key, linkTokenAad(1))).toBeNull();
+    }
+  });
+
+  it('only accepts a 32-byte base64 key from SMS_LINK_ENCRYPTION_KEY', () => {
+    const original = process.env.SMS_LINK_ENCRYPTION_KEY;
+    delete process.env.SMS_LINK_ENCRYPTION_KEY;
+    expect(linkEncryptionKey()).toBeNull();
+    process.env.SMS_LINK_ENCRYPTION_KEY = Buffer.alloc(16).toString('base64');
+    expect(linkEncryptionKey()).toBeNull();
+    process.env.SMS_LINK_ENCRYPTION_KEY = Buffer.alloc(32, 1).toString('base64');
+    expect(linkEncryptionKey()?.length).toBe(32);
+    if (original === undefined) delete process.env.SMS_LINK_ENCRYPTION_KEY; else process.env.SMS_LINK_ENCRYPTION_KEY = original;
   });
 });
 
