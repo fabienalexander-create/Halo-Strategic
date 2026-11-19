@@ -6,6 +6,8 @@ import { buyerCoversPostcode } from '../../../../lib/buyerMatching';
 import { attemptSync, buildLeadRowValues } from '../../../../lib/sheetsSync';
 import { buildFollowUpUrl, generateFollowUpToken } from '../../../../lib/metaFollowUpToken';
 import { normalizeOwnershipAnswer, type OwnershipStatus } from '../../../../lib/ownershipAnswer';
+import { metaFollowUpSmsEnabled, queueMetaFollowUp, sqlFromClient } from '../../../../lib/smsVerification';
+import { sendPendingVerifications } from '../../../../lib/smsSender';
 
 const INDUSTRY_LABELS: Record<string, string> = {
   spray_foam_removal: 'Spray Foam Removal',
@@ -266,6 +268,7 @@ export async function POST(req: NextRequest) {
     let leadId: number | null = null;
     let leadReference = '';
     let syncId: number | null = null;
+    let followUpSmsQueued = false;
     try {
       await client.query('BEGIN');
 
@@ -355,6 +358,25 @@ export async function POST(req: NextRequest) {
       );
       syncId = syncInsert.rows.length > 0 ? (syncInsert.rows[0].id as number) : null;
 
+      // Meta follow-up text (Fabien, 2026-11-19, stage 1 of the homeowner SMS work): queued in the
+      // SAME transaction so a queued text can never refer to a lead that wasn't saved, and inside a
+      // savepoint so nothing about texting can ever fail or lose the lead. Skipped entirely --
+      // not even a savepoint -- unless both SMS switches are on. HLX alone decides eligibility
+      // (industry, valid UK mobile, STOP list, caps); Make only ever delivers what HLX hands it.
+      if (followUp && metaFollowUpSmsEnabled()) {
+        await client.query('SAVEPOINT meta_follow_up_sms');
+        try {
+          const queued = await queueMetaFollowUp(sqlFromClient(client), {
+            leadId, mobile: body.mapped.mobile, industrySlug,
+          });
+          followUpSmsQueued = queued.queued;
+          await client.query('RELEASE SAVEPOINT meta_follow_up_sms');
+        } catch (smsErr) {
+          await client.query('ROLLBACK TO SAVEPOINT meta_follow_up_sms');
+          console.error('Meta follow-up SMS queue failed', smsErr instanceof Error ? smsErr.message : 'unknown');
+        }
+      }
+
       await client.query('COMMIT');
     } catch (err) {
       await client.query('ROLLBACK');
@@ -380,15 +402,26 @@ export async function POST(req: NextRequest) {
       await attemptSync(db, syncId, leadReference, rowValues);
     }
 
-    // follow_up_url carries the one and only copy of the raw token anywhere -- it is never
-    // written to the database (see above). This response is delivered to the Make scenario that
-    // called this endpoint; sending the link on to the homeowner is a deliberate separate,
-    // manual step for now (see the route-level comment above), not done by this endpoint.
+    // One best-effort send straight after commit, never allowed to throw. Quiet hours, the kill
+    // switches and the STOP list are all re-checked by the sender itself; anything not sent now
+    // stays queued for the scheduled retry (POST /api/sms/send-pending).
+    if (followUpSmsQueued && leadId !== null) {
+      try {
+        await sendPendingVerifications(db, { limit: 1, leadId });
+      } catch (sendErr) {
+        console.error('Meta follow-up SMS send failed', sendErr instanceof Error ? sendErr.message : 'unknown');
+      }
+    }
+
+    // follow_up_url carries a raw token that is never written to the database (see above). When a
+    // follow-up text is queued, the sender mints a fresh token for the text itself, which replaces
+    // this one: from then on the link in the homeowner's text is the only working link.
     return NextResponse.json(
       {
         lead_id: leadId, reference: leadReference, status: 'QUALIFICATION_PENDING', duplicate: false,
         awaiting_qualification: awaitingQualification,
         follow_up_url: followUp ? buildFollowUpUrl(followUp.rawToken) : null,
+        follow_up_sms_queued: followUpSmsQueued,
       },
       { status: 201 }
     );

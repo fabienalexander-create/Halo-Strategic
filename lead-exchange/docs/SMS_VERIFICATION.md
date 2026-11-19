@@ -28,5 +28,26 @@ Status: built and tested locally. Not deployed. Nothing is live: no Make scenari
 ## Not done (needs approval)
 Make scenarios, TextMagic callbacks and top-up, env vars, the consent wording change on the form and privacy policy, a scheduler for the retry route, production deploy, old key rotation.
 
+## Meta follow-up text (stage 1, added 2026-11-19)
+
+A one-way text to a spray foam Meta Instant Form homeowner, with their single-use link to finish the enquiry on the website. Approved by Fabien: wording Option C, sent from a reply-capable UK number, quiet hours 08:00-20:00 Europe/London, no first name, GSM-7 only, two segments maximum.
+
+> Halo Strategic: thanks for your spray foam removal enquiry. Please complete your details here: [link]
+> If an installer covers your area, they may contact you directly. Reply STOP to opt out.
+
+Status: built and tested. Off until Fabien switches it on, with legal sign-off.
+
+**Gates (all must be true):** `SMS_VERIFICATION_ENABLED=true` AND `META_FOLLOW_UP_SMS_ENABLED=true`; industry in `META_FOLLOW_UP_INDUSTRIES` (spray foam only); the lead was saved awaiting qualification with a follow-up link; valid UK mobile; not on the STOP list; within the shared per-number and hourly caps. At send time the switch and quiet hours are checked again, and the lead must still be `QUALIFICATION_PENDING` with an unused link, otherwise the text is closed as `SUPERSEDED` unsent.
+
+**How it works:**
+- Migration `20261119100000_sms_purpose.sql` adds `lead_phone_verifications.purpose` (`PHONE_VERIFICATION` default, or `META_FOLLOW_UP`). Additive, rollback in the header.
+- The Meta intake route queues the text inside its transaction, in a savepoint, only when both switches are on, then makes one best-effort send after commit.
+- Halo stores only a hash of the follow-up token, so the sender mints a fresh token when it sends. The link in the text becomes the only working link; the one returned to Make at intake stops working.
+- Make receives `{verification_ref, to, text, purpose}`, signed exactly as before.
+- A YES reply never verifies a follow-up (only `PHONE_VERIFICATION` rows match). STOP closes texts of every purpose and suppresses the number.
+- Not sent within 24 hours (`META_FOLLOW_UP_SEND_WINDOW_HOURS`): expired, never sent late.
+
+**Needs before activation:** the Make SMS-out scenario to TextMagic from the reply-capable number; TextMagic inbound and delivery webhooks to `/api/webhooks/sms/inbound` and `/delivery`; a scheduled call to `/api/sms/send-pending` (every 15 minutes) so texts held overnight go out at 08:00; the env vars above; legal sign-off on the wording and basis.
+
 ## Rollback
-Unset `SMS_VERIFICATION_ENABLED` (instant, nothing sends). Full rollback: app rolled back first, then the DROP statements in the migration header.
+Unset `SMS_VERIFICATION_ENABLED` (instant, nothing sends). To stop only Meta follow-ups, unset `META_FOLLOW_UP_SMS_ENABLED` (already-queued follow-ups stop too). Full rollback: app rolled back first, then the DROP statements in the migration headers.

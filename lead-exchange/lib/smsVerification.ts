@@ -50,6 +50,63 @@ export function verificationSmsText(ref: string): string {
   return `Halo Strategic: please confirm your solar enquiry. Reply YES ${ref} to confirm. Reply STOP to opt out.`;
 }
 
+// ---- Meta follow-up (one-way link text) -----------------------------------------------------
+//
+// A Meta Instant Form homeowner arrives without the qualification questions or consent the website
+// form asks for (see app/api/integrations/meta-homeowner-leads/route.ts). This text sends them
+// their single-use link to finish the enquiry on the website. It is not a verification: a YES reply
+// to it never verifies anything (handleInboundReply only matches PHONE_VERIFICATION rows), while
+// STOP still opts the number out of every Halo text.
+//
+// Fabien, 2026-11-19: approved wording Option C; reply-capable UK number (so STOP replies work);
+// quiet hours 08:00-20:00 Europe/London; no first name; plain GSM-7 characters only; max two SMS
+// segments with a real 118-character link (enforced by lib/smsMetaFollowUp.test.ts).
+
+export type SmsPurpose = 'PHONE_VERIFICATION' | 'META_FOLLOW_UP';
+
+// Industries whose Meta homeowner leads may be sent the follow-up text. The approved wording names
+// spray foam removal explicitly, so any other industry needs its own approved wording first.
+export const META_FOLLOW_UP_INDUSTRIES: ReadonlySet<string> = new Set<string>(['spray_foam_removal']);
+
+// A queued follow-up that hasn't gone out within this window is expired rather than sent late.
+// Long enough to span one night of quiet hours plus a few retries; short enough that a homeowner is
+// never texted days after their enquiry.
+export const META_FOLLOW_UP_SEND_WINDOW_HOURS = 24;
+
+export const SENDING_HOURS = { startHour: 8, endHour: 20, timeZone: 'Europe/London' } as const;
+
+// Both switches are required: the existing master switch (which also governs Solar & Battery
+// verification) and a follow-up specific one, so either kind can be turned on or off on its own.
+export function metaFollowUpSmsEnabled(): boolean {
+  return process.env.SMS_VERIFICATION_ENABLED === 'true' && process.env.META_FOLLOW_UP_SMS_ENABLED === 'true';
+}
+
+export function metaFollowUpSmsText(followUpUrl: string): string {
+  return `Halo Strategic: thanks for your spray foam removal enquiry. Please complete your details here: ${followUpUrl}\nIf an installer covers your area, they may contact you directly. Reply STOP to opt out.`;
+}
+
+// True between 08:00 (inclusive) and 20:00 (exclusive) UK local time, BST or GMT as applicable.
+export function isWithinSendingHours(now: Date = new Date()): boolean {
+  const hour = Number(new Intl.DateTimeFormat('en-GB', { timeZone: SENDING_HOURS.timeZone, hour: '2-digit', hourCycle: 'h23' }).format(now));
+  return hour >= SENDING_HOURS.startHour && hour < SENDING_HOURS.endHour;
+}
+
+// GSM 03.38 basic character set and its extension table (extension characters cost two units).
+// Anything outside both forces UCS-2 encoding, which cuts a segment from 153 to 67 characters --
+// a single curly apostrophe can more than double the cost of a message.
+const GSM7_BASIC = new Set(Array.from('@£$¥èéùìòÇ\nØø\rÅåΔ_ΦΓΛΩΠΨΣΘΞÆæßÉ !"#¤%&\'()*+,-./0123456789:;<=>?¡ABCDEFGHIJKLMNOPQRSTUVWXYZÄÖÑÜ§¿abcdefghijklmnopqrstuvwxyzäöñüà'));
+const GSM7_EXTENSION = new Set(Array.from('^{}\\[~]|€\f'));
+
+export function smsSegmentInfo(text: string): { encoding: 'GSM-7' | 'UCS-2'; units: number; segments: number } {
+  const chars = Array.from(text);
+  if (chars.every((c) => GSM7_BASIC.has(c) || GSM7_EXTENSION.has(c))) {
+    const units = chars.reduce((n, c) => n + (GSM7_EXTENSION.has(c) ? 2 : 1), 0);
+    return { encoding: 'GSM-7', units, segments: units <= 160 ? 1 : Math.ceil(units / 153) };
+  }
+  const units = text.length; // UTF-16 code units, which is what UCS-2 segments count
+  return { encoding: 'UCS-2', units, segments: units <= 70 ? 1 : Math.ceil(units / 67) };
+}
+
 function audit(db: SqlDb, action: string, verificationId: number, reference: string, extra: Record<string, unknown> = {}) {
   // Reference only. Never a phone number or message text.
   return db.sql`
@@ -60,7 +117,28 @@ function audit(db: SqlDb, action: string, verificationId: number, reference: str
 
 export type QueueResult =
   | { queued: true; verificationId: number; reference: string }
-  | { queued: false; reason: 'NOT_ENABLED' | 'NOTICE_NOT_SHOWN' | 'INVALID_NUMBER' | 'SUPPRESSED' | 'NUMBER_CAPPED' | 'CIRCUIT_BREAKER' | 'ALREADY_OPEN' };
+  | { queued: false; reason: 'NOT_ENABLED' | 'NOTICE_NOT_SHOWN' | 'INDUSTRY_NOT_ELIGIBLE' | 'INVALID_NUMBER' | 'SUPPRESSED' | 'NUMBER_CAPPED' | 'CIRCUIT_BREAKER' | 'ALREADY_OPEN' };
+
+// Suppression list, per-number cap and global hourly circuit breaker, in that order. Shared by
+// every kind of homeowner text: the caps count requests of all purposes together, so a homeowner
+// can never receive more than PER_NUMBER_CAP_24H Halo texts a day in total.
+async function capacityCheck(db: SqlDb, phone: string): Promise<'SUPPRESSED' | 'NUMBER_CAPPED' | 'CIRCUIT_BREAKER' | null> {
+  const suppressed = await db.sql`SELECT 1 FROM sms_suppressions WHERE phone_e164 = ${phone}`;
+  if (suppressed.length > 0) return 'SUPPRESSED';
+
+  const perNumber = await db.sql`
+    SELECT count(*)::int AS n FROM lead_phone_verifications
+    WHERE phone_e164 = ${phone} AND created_at > now() - interval '24 hours'
+  `;
+  if ((perNumber[0].n as number) >= PER_NUMBER_CAP_24H) return 'NUMBER_CAPPED';
+
+  const hourlyLimit = Number(process.env.SMS_HOURLY_LIMIT) > 0 ? Number(process.env.SMS_HOURLY_LIMIT) : DEFAULT_HOURLY_LIMIT;
+  const lastHour = await db.sql`
+    SELECT count(*)::int AS n FROM lead_phone_verifications WHERE created_at > now() - interval '1 hour'
+  `;
+  if ((lastHour[0].n as number) >= hourlyLimit) return 'CIRCUIT_BREAKER';
+  return null;
+}
 
 /**
  * Queues one verification request for a lead. Never throws for business reasons; returns why
@@ -86,20 +164,8 @@ export async function queueVerification(
     return { queued: false, reason: 'INVALID_NUMBER' };
   }
 
-  const suppressed = await db.sql`SELECT 1 FROM sms_suppressions WHERE phone_e164 = ${phone}`;
-  if (suppressed.length > 0) return { queued: false, reason: 'SUPPRESSED' };
-
-  const perNumber = await db.sql`
-    SELECT count(*)::int AS n FROM lead_phone_verifications
-    WHERE phone_e164 = ${phone} AND created_at > now() - interval '24 hours'
-  `;
-  if ((perNumber[0].n as number) >= PER_NUMBER_CAP_24H) return { queued: false, reason: 'NUMBER_CAPPED' };
-
-  const hourlyLimit = Number(process.env.SMS_HOURLY_LIMIT) > 0 ? Number(process.env.SMS_HOURLY_LIMIT) : DEFAULT_HOURLY_LIMIT;
-  const lastHour = await db.sql`
-    SELECT count(*)::int AS n FROM lead_phone_verifications WHERE created_at > now() - interval '1 hour'
-  `;
-  if ((lastHour[0].n as number) >= hourlyLimit) return { queued: false, reason: 'CIRCUIT_BREAKER' };
+  const blocked = await capacityCheck(db, phone);
+  if (blocked) return { queued: false, reason: blocked };
 
   // ON CONFLICT DO NOTHING covers both a reference collision (retry with a new ref) and the
   // one-open-request-per-lead index (checked afterwards), without raising inside a transaction.
@@ -112,6 +178,57 @@ export async function queueVerification(
     `;
     if (rows[0]) {
       await audit(db, 'SMS_VERIFICATION_QUEUED', rows[0].id as number, ref);
+      return { queued: true, verificationId: rows[0].id as number, reference: ref };
+    }
+    const open = await db.sql`
+      SELECT 1 FROM lead_phone_verifications
+      WHERE lead_id = ${params.leadId} AND status IN ('PENDING_SEND','SENDING','SENT','DELIVERED')
+    `;
+    if (open.length > 0) return { queued: false, reason: 'ALREADY_OPEN' };
+  }
+  throw new Error('Could not allocate a unique verification reference');
+}
+
+/**
+ * Queues one Meta follow-up text for a lead. Same contract as queueVerification: never throws for
+ * business reasons, intended to run inside the intake transaction within a savepoint so it can
+ * never break or lose the lead.
+ *
+ * The follow-up link itself is NOT stored here. Halo only keeps a hash of a follow-up token, so the
+ * sender mints a fresh token at the moment of sending (lib/smsSender.ts), and the text it hands to
+ * Make is the only place the working link ever exists.
+ */
+export async function queueMetaFollowUp(
+  db: SqlDb,
+  params: { leadId: number; mobile: unknown; industrySlug: string }
+): Promise<QueueResult> {
+  if (!metaFollowUpSmsEnabled()) return { queued: false, reason: 'NOT_ENABLED' };
+  if (!META_FOLLOW_UP_INDUSTRIES.has(params.industrySlug)) return { queued: false, reason: 'INDUSTRY_NOT_ELIGIBLE' };
+
+  const phone = normaliseUkMobile(params.mobile);
+  if (!phone) {
+    const ref = `X${generateVerificationRef()}`;
+    const rows = await db.sql`
+      INSERT INTO lead_phone_verifications (lead_id, verification_ref, phone_e164, status, expires_at, purpose)
+      VALUES (${params.leadId}, ${ref}, NULL, 'FAILED_INVALID_NUMBER', now(), 'META_FOLLOW_UP')
+      ON CONFLICT DO NOTHING RETURNING id
+    `;
+    if (rows[0]) await audit(db, 'SMS_META_FOLLOW_UP_INVALID_NUMBER', rows[0].id as number, ref);
+    return { queued: false, reason: 'INVALID_NUMBER' };
+  }
+
+  const blocked = await capacityCheck(db, phone);
+  if (blocked) return { queued: false, reason: blocked };
+
+  for (let attempt = 0; attempt < 5; attempt++) {
+    const ref = generateVerificationRef();
+    const rows = await db.sql`
+      INSERT INTO lead_phone_verifications (lead_id, verification_ref, phone_e164, status, expires_at, purpose)
+      VALUES (${params.leadId}, ${ref}, ${phone}, 'PENDING_SEND', now() + make_interval(hours => ${META_FOLLOW_UP_SEND_WINDOW_HOURS}), 'META_FOLLOW_UP')
+      ON CONFLICT DO NOTHING RETURNING id
+    `;
+    if (rows[0]) {
+      await audit(db, 'SMS_META_FOLLOW_UP_QUEUED', rows[0].id as number, ref);
       return { queued: true, verificationId: rows[0].id as number, reference: ref };
     }
     const open = await db.sql`
@@ -180,13 +297,16 @@ export async function handleInboundReply(
     if (seen.length > 0) return { outcome: 'DUPLICATE' };
   }
 
+  // Only PHONE_VERIFICATION requests can ever be verified. A homeowner replying "yes" to a Meta
+  // follow-up text must not be marked phone-verified (they were never asked to verify), and an open
+  // follow-up must not make a bare YES to a real verification look ambiguous.
   let rows: Array<Record<string, unknown>>;
   try {
     if (reply.ref) {
       rows = await db.sql`
         UPDATE lead_phone_verifications
         SET status = 'VERIFIED', verified_at = now(), inbound_message_id = ${messageId}, updated_at = now()
-        WHERE verification_ref = ${reply.ref} AND phone_e164 = ${phone}
+        WHERE verification_ref = ${reply.ref} AND phone_e164 = ${phone} AND purpose = 'PHONE_VERIFICATION'
           AND status IN ('SENDING','SENT','DELIVERED') AND expires_at > now()
         RETURNING id, verification_ref
       `;
@@ -194,10 +314,12 @@ export async function handleInboundReply(
       rows = await db.sql`
         UPDATE lead_phone_verifications v
         SET status = 'VERIFIED', verified_at = now(), inbound_message_id = ${messageId}, updated_at = now()
-        WHERE v.phone_e164 = ${phone} AND v.status IN ('SENDING','SENT','DELIVERED') AND v.expires_at > now()
+        WHERE v.phone_e164 = ${phone} AND v.purpose = 'PHONE_VERIFICATION'
+          AND v.status IN ('SENDING','SENT','DELIVERED') AND v.expires_at > now()
           AND (
             SELECT count(*) FROM lead_phone_verifications o
-            WHERE o.phone_e164 = ${phone} AND o.status IN ('SENDING','SENT','DELIVERED') AND o.expires_at > now()
+            WHERE o.phone_e164 = ${phone} AND o.purpose = 'PHONE_VERIFICATION'
+              AND o.status IN ('SENDING','SENT','DELIVERED') AND o.expires_at > now()
           ) = 1
         RETURNING v.id, v.verification_ref
       `;
@@ -215,7 +337,8 @@ export async function handleInboundReply(
   if (!reply.ref) {
     const open = await db.sql`
       SELECT count(*)::int AS n FROM lead_phone_verifications
-      WHERE phone_e164 = ${phone} AND status IN ('SENDING','SENT','DELIVERED') AND expires_at > now()
+      WHERE phone_e164 = ${phone} AND purpose = 'PHONE_VERIFICATION'
+        AND status IN ('SENDING','SENT','DELIVERED') AND expires_at > now()
     `;
     if ((open[0].n as number) > 1) return { outcome: 'AMBIGUOUS' };
   }

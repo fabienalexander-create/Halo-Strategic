@@ -21,6 +21,9 @@ vi.mock('../../../../lib/sheetsSync', () => ({
   buildLeadRowValues: buildLeadRowValuesMock,
 }));
 
+const sendPendingMock = vi.fn();
+vi.mock('../../../../lib/smsSender', () => ({ sendPendingVerifications: sendPendingMock }));
+
 const sqlMock = vi.fn();
 const clientQueryMock = vi.fn();
 const releaseMock = vi.fn();
@@ -668,6 +671,156 @@ describe('POST /api/integrations/meta-homeowner-leads', () => {
       expect(allQueries).not.toContain('payments');
       expect(allQueries).not.toContain('lead_delivery_emails');
       expect(allQueries).not.toContain('homeowner_confirmations');
+    });
+  });
+
+  // Fabien, 2026-11-19, stage 1 of the homeowner SMS work: the follow-up text is queued inside the
+  // intake transaction, in a savepoint, only when both switches are on -- and nothing about texting
+  // can ever fail, block or lose the lead.
+  describe('Meta follow-up SMS', () => {
+    const FIVE_QUESTION = {
+      meta_lead_id: 'l:sms-1',
+      mapped: { industry_slug: 'spray_foam_removal', homeowner_name: 'A B', mobile: '07700 900123', postcode: 'N15 5DF', owns_property: true },
+    };
+    const queryTexts = () => clientQueryMock.mock.calls.map((c) => String(c[0]).replace(/\s+/g, ' ').trim());
+
+    // Incomplete path (BEGIN, lead insert, audit, sync insert) then the follow-up queue inside a
+    // savepoint: SAVEPOINT, STOP-list check, per-number count, hourly count, request insert, request
+    // audit, RELEASE, then COMMIT.
+    function mockIncompleteWithFollowUp(leadId = 56) {
+      clientQueryMock
+        .mockResolvedValueOnce({ rows: [] }) // BEGIN
+        .mockResolvedValueOnce({ rows: [{ id: leadId }] }) // leads insert
+        .mockResolvedValueOnce({ rows: [] }) // audit_log insert
+        .mockResolvedValueOnce({ rows: [{ id: 8 }] }) // lead_sheet_syncs insert
+        .mockResolvedValueOnce({ rows: [] }) // SAVEPOINT
+        .mockResolvedValueOnce({ rows: [] }) // sms_suppressions check
+        .mockResolvedValueOnce({ rows: [{ n: 0 }] }) // per-number count
+        .mockResolvedValueOnce({ rows: [{ n: 0 }] }) // hourly count
+        .mockResolvedValueOnce({ rows: [{ id: 901 }] }) // lead_phone_verifications insert
+        .mockResolvedValueOnce({ rows: [] }) // audit_log insert (reference only)
+        .mockResolvedValueOnce({ rows: [] }) // RELEASE SAVEPOINT
+        .mockResolvedValueOnce({ rows: [] }); // COMMIT
+    }
+
+    beforeEach(() => {
+      sendPendingMock.mockReset();
+      process.env.SMS_VERIFICATION_ENABLED = 'true';
+      process.env.META_FOLLOW_UP_SMS_ENABLED = 'true';
+    });
+
+    afterEach(() => {
+      delete process.env.SMS_VERIFICATION_ENABLED;
+      delete process.env.META_FOLLOW_UP_SMS_ENABLED;
+    });
+
+    it('queues a META_FOLLOW_UP text inside the transaction, then makes one best-effort send after commit', async () => {
+      mockPreTransactionSql();
+      mockIncompleteWithFollowUp(56);
+      sendPendingMock.mockResolvedValue({ sent: 1 });
+      const { POST } = await import('./route');
+
+      const res = await POST(req(FIVE_QUESTION, 'test-secret'));
+      const data = await res.json();
+
+      expect(res.status).toBe(201);
+      expect(data.follow_up_sms_queued).toBe(true);
+      const texts = queryTexts();
+      expect(texts[4]).toBe('SAVEPOINT meta_follow_up_sms');
+      expect(texts[8]).toContain("'META_FOLLOW_UP'");
+      expect(texts[10]).toBe('RELEASE SAVEPOINT meta_follow_up_sms');
+      expect(texts[11]).toBe('COMMIT');
+      expect(sendPendingMock).toHaveBeenCalledTimes(1);
+      expect(sendPendingMock.mock.calls[0][1]).toEqual({ limit: 1, leadId: 56 });
+      // The text itself and the phone number never appear in the audit entry.
+      expect(JSON.stringify(clientQueryMock.mock.calls[9][1])).not.toContain('7700900123');
+    });
+
+    it('a texting failure rolls back only the savepoint: the lead is still committed and saved', async () => {
+      mockPreTransactionSql();
+      clientQueryMock
+        .mockResolvedValueOnce({ rows: [] }) // BEGIN
+        .mockResolvedValueOnce({ rows: [{ id: 57 }] }) // leads insert
+        .mockResolvedValueOnce({ rows: [] }) // audit_log insert
+        .mockResolvedValueOnce({ rows: [{ id: 9 }] }) // lead_sheet_syncs insert
+        .mockResolvedValueOnce({ rows: [] }) // SAVEPOINT
+        .mockRejectedValueOnce(new Error('sms table unavailable')) // sms_suppressions check fails
+        .mockResolvedValueOnce({ rows: [] }) // ROLLBACK TO SAVEPOINT
+        .mockResolvedValueOnce({ rows: [] }); // COMMIT
+      const { POST } = await import('./route');
+
+      const res = await POST(req({ ...FIVE_QUESTION, meta_lead_id: 'l:sms-2' }, 'test-secret'));
+      const data = await res.json();
+
+      expect(res.status).toBe(201);
+      expect(data.lead_id).toBe(57);
+      expect(data.follow_up_sms_queued).toBe(false);
+      const texts = queryTexts();
+      expect(texts).toContain('ROLLBACK TO SAVEPOINT meta_follow_up_sms');
+      expect(texts[texts.length - 1]).toBe('COMMIT');
+      expect(texts).not.toContain('ROLLBACK');
+      expect(sendPendingMock).not.toHaveBeenCalled();
+    });
+
+    it('a failed send after commit never affects the response', async () => {
+      mockPreTransactionSql();
+      mockIncompleteWithFollowUp(58);
+      sendPendingMock.mockRejectedValue(new Error('Make unreachable'));
+      const { POST } = await import('./route');
+
+      const res = await POST(req({ ...FIVE_QUESTION, meta_lead_id: 'l:sms-3' }, 'test-secret'));
+
+      expect(res.status).toBe(201);
+      expect((await res.json()).follow_up_sms_queued).toBe(true);
+    });
+
+    it('does nothing at all (not even a savepoint) when either switch is off', async () => {
+      for (const off of ['SMS_VERIFICATION_ENABLED', 'META_FOLLOW_UP_SMS_ENABLED']) {
+        clientQueryMock.mockReset();
+        sqlMock.mockReset();
+        process.env.SMS_VERIFICATION_ENABLED = 'true';
+        process.env.META_FOLLOW_UP_SMS_ENABLED = 'true';
+        delete process.env[off];
+        mockPreTransactionSql();
+        mockIncompletePathClientQueries(59, 10);
+        const { POST } = await import('./route');
+
+        const res = await POST(req({ ...FIVE_QUESTION, meta_lead_id: `l:sms-off-${off}` }, 'test-secret'));
+
+        expect(res.status).toBe(201);
+        expect((await res.json()).follow_up_sms_queued).toBe(false);
+        expect(queryTexts().some((t) => t.includes('SAVEPOINT') || t.includes('lead_phone_verifications'))).toBe(false);
+      }
+      expect(sendPendingMock).not.toHaveBeenCalled();
+    });
+
+    it('does not queue a text for a complete submission, which has no follow-up link to send', async () => {
+      mockPreTransactionSql();
+      mockHappyPathClientQueries();
+      const { POST } = await import('./route');
+
+      const res = await POST(req(VALID_BODY, 'test-secret'));
+
+      expect(res.status).toBe(201);
+      expect((await res.json()).follow_up_sms_queued).toBe(false);
+      expect(queryTexts().some((t) => t.includes('SAVEPOINT'))).toBe(false);
+    });
+
+    it('never texts on a duplicate delivery of the same Meta lead', async () => {
+      mockPreTransactionSql();
+      clientQueryMock
+        .mockResolvedValueOnce({ rows: [] }) // BEGIN
+        .mockResolvedValueOnce({ rows: [] }) // leads insert hits ON CONFLICT DO NOTHING
+        .mockResolvedValueOnce({ rows: [] }); // ROLLBACK
+      sqlMock.mockResolvedValueOnce([{ id: 56, status: 'QUALIFICATION_PENDING' }]);
+      const { POST } = await import('./route');
+
+      const res = await POST(req(FIVE_QUESTION, 'test-secret'));
+
+      expect(res.status).toBe(200);
+      expect((await res.json()).duplicate).toBe(true);
+      expect(queryTexts().some((t) => t.includes('SAVEPOINT') || t.includes('lead_phone_verifications'))).toBe(false);
+      expect(sendPendingMock).not.toHaveBeenCalled();
     });
   });
 });
