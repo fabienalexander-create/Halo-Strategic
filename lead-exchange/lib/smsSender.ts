@@ -1,5 +1,5 @@
-import { createHmac } from 'crypto';
 import { MAX_SEND_ATTEMPTS, SqlDb, verificationSmsText } from './smsVerification';
+import { postSmsToMake } from './smsMakeOut';
 
 export interface SendSummary {
   skipped?: 'NOT_CONFIGURED' | 'NOT_ENABLED';
@@ -60,33 +60,11 @@ export async function sendPendingVerifications(
   summary.claimed = claimed.length;
 
   for (const row of claimed) {
-    const body = JSON.stringify({
+    const { providerId, error } = await postSmsToMake(url, secret, {
       verification_ref: row.verification_ref,
       to: row.phone_e164,
       text: verificationSmsText(row.verification_ref as string),
-    });
-    const timestamp = String(Math.floor(Date.now() / 1000));
-    const signature = createHmac('sha256', secret).update(`${timestamp}.${body}`).digest('hex');
-    let providerId: string | null = null;
-    let error: string | null = null;
-    try {
-      const res = await doFetch(url, {
-        method: 'POST',
-        headers: { 'content-type': 'application/json', 'x-halo-timestamp': timestamp, 'x-halo-signature': signature },
-        body,
-        signal: AbortSignal.timeout(10_000),
-      });
-      if (!res.ok) {
-        error = `Make returned ${res.status}`;
-      } else {
-        try {
-          const json = (await res.json()) as { message_id?: unknown };
-          if (typeof json.message_id === 'string' || typeof json.message_id === 'number') providerId = String(json.message_id).slice(0, 200);
-        } catch { /* a body without JSON is fine; the delivery route can still match by reference later */ }
-      }
-    } catch (err) {
-      error = err instanceof Error ? err.name : 'send failed';
-    }
+    }, doFetch);
 
     if (!error) {
       await db.sql`

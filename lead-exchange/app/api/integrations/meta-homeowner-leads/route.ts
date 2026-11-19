@@ -4,7 +4,9 @@ import { secretMatches } from '../../../../lib/smsWebhookAuth';
 import { HOMEOWNER_CONSENT_CONFIG, isConfiguredIndustrySlug } from '../../../../lib/industries';
 import { buyerCoversPostcode } from '../../../../lib/buyerMatching';
 import { attemptSync, buildLeadRowValues } from '../../../../lib/sheetsSync';
-import { buildFollowUpUrl, generateFollowUpToken } from '../../../../lib/metaFollowUpToken';
+import { buildFollowUpUrl } from '../../../../lib/metaFollowUpToken';
+import { getFollowUpSmsMode, issueFollowUpToken, queueFollowUpSms, sendPendingFollowUpSms } from '../../../../lib/metaFollowUpSms';
+import { sqlFromClient } from '../../../../lib/smsVerification';
 import { normalizeOwnershipAnswer, type OwnershipStatus } from '../../../../lib/ownershipAnswer';
 
 const INDUSTRY_LABELS: Record<string, string> = {
@@ -257,15 +259,17 @@ export async function POST(req: NextRequest) {
     });
     const source = 'meta_instant_form';
 
-    // A follow-up token is only generated when there's something to follow up on. Raw value
-    // never touches the database (see lib/metaFollowUpToken.ts) -- only its hash and expiry are
-    // stored, and only this one response ever carries the raw value/URL.
-    const followUp = awaitingQualification ? generateFollowUpToken() : null;
+    // A follow-up token is only generated when there's something to follow up on. The raw value
+    // never touches the database -- only its hash and expiry. When META_FOLLOW_UP_LINK_KEY is set
+    // the token is derived from a nonce so it can be re-derived later for the follow-up SMS (see
+    // lib/metaFollowUpSms.ts); otherwise it is plain random, exactly as before.
+    const followUp = awaitingQualification ? issueFollowUpToken() : null;
 
     const client = await db.pool.connect();
     let leadId: number | null = null;
     let leadReference = '';
     let syncId: number | null = null;
+    let followUpSmsQueued = false;
     try {
       await client.query('BEGIN');
 
@@ -355,6 +359,24 @@ export async function POST(req: NextRequest) {
       );
       syncId = syncInsert.rows.length > 0 ? (syncInsert.rows[0].id as number) : null;
 
+      // Follow-up SMS, queued in the same transaction as the lead so it can't be lost, and only
+      // when META_FOLLOW_UP_SMS_ENABLED is on. Savepoint: whatever happens here, the lead is saved.
+      // A retried Meta delivery never reaches this point (it rolls back above), so it can never
+      // queue a second text.
+      if (followUp?.linkNonce && industrySlug === 'spray_foam_removal' && getFollowUpSmsMode() !== 'off') {
+        await client.query('SAVEPOINT meta_follow_up_sms');
+        try {
+          const queued = await queueFollowUpSms(sqlFromClient(client), {
+            leadId, mobile: body.mapped.mobile, linkNonce: followUp.linkNonce, createdBy: 'system:meta_homeowner_leads_webhook',
+          });
+          followUpSmsQueued = queued.queued;
+          await client.query('RELEASE SAVEPOINT meta_follow_up_sms');
+        } catch (smsErr) {
+          await client.query('ROLLBACK TO SAVEPOINT meta_follow_up_sms');
+          console.error('Meta follow-up SMS queue failed', smsErr instanceof Error ? smsErr.message : 'unknown');
+        }
+      }
+
       await client.query('COMMIT');
     } catch (err) {
       await client.query('ROLLBACK');
@@ -380,10 +402,17 @@ export async function POST(req: NextRequest) {
       await attemptSync(db, syncId, leadReference, rowValues);
     }
 
-    // follow_up_url carries the one and only copy of the raw token anywhere -- it is never
-    // written to the database (see above). This response is delivered to the Make scenario that
-    // called this endpoint; sending the link on to the homeowner is a deliberate separate,
-    // manual step for now (see the route-level comment above), not done by this endpoint.
+    // Best-effort first send after commit; POST /api/sms/send-pending retries anything left.
+    if (followUpSmsQueued && leadId !== null) {
+      try {
+        await sendPendingFollowUpSms(db, { limit: 1, leadId });
+      } catch (sendErr) {
+        console.error('Meta follow-up SMS send failed', sendErr instanceof Error ? sendErr.message : 'unknown');
+      }
+    }
+
+    // follow_up_url is returned to the calling Make scenario exactly as before; the raw token is
+    // never written to the database. The homeowner text (when enabled) re-derives it instead.
     return NextResponse.json(
       {
         lead_id: leadId, reference: leadReference, status: 'QUALIFICATION_PENDING', duplicate: false,

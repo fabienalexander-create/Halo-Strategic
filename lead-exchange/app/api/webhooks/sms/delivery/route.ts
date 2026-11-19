@@ -1,6 +1,7 @@
 import { getDatabase } from '@netlify/database';
 import { NextRequest, NextResponse } from 'next/server';
 import { recordDelivery } from '../../../../../lib/smsVerification';
+import { recordFollowUpDelivery } from '../../../../../lib/metaFollowUpSms';
 import { secretMatches } from '../../../../../lib/smsWebhookAuth';
 
 // Delivery receipts relayed by Make. Records DELIVERED or FAILED only. Never VERIFIED.
@@ -22,7 +23,9 @@ export async function POST(req: NextRequest) {
   if (!delivered && !failed) return NextResponse.json({ updated: 0 }, { status: 200 });
 
   try {
-    const updated = await recordDelivery(getDatabase(), { providerMessageId: body.message_id, delivered, detail: body.detail ?? status });
+    const db = getDatabase();
+    const receipt = { providerMessageId: body.message_id, delivered, detail: body.detail ?? status };
+    const updated = (await recordDelivery(db, receipt)) + (await recordFollowUpDelivery(db, receipt));
     return NextResponse.json({ updated }, { status: 200 });
   } catch (err) {
     console.error('SMS delivery failed', err instanceof Error ? err.message : 'unknown');

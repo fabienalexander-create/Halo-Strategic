@@ -312,6 +312,10 @@ function LeadRowItem({
           <td colSpan={5} style={{ padding: '14px 8px', background: 'var(--off-white, #faf9f7)' }}>
             {error && <div className="disclaimer-box" style={{ marginBottom: 12 }}>{error}</div>}
 
+            {lead.status === 'QUALIFICATION_PENDING' && lead.industry_slug === 'spray_foam_removal' && (
+              <FollowUpLinkPanel leadId={lead.id} />
+            )}
+
             <h4 style={{ fontSize: '0.95rem', marginBottom: 8 }}>
               Step 1 &mdash; Record homeowner confirmation {lastConfirmationId && <span style={{ color: '#2f4a33' }}>(recorded, confirmation #{lastConfirmationId})</span>}
             </h4>
@@ -396,5 +400,67 @@ function LeadRowItem({
         </tr>
       )}
     </>
+  );
+}
+
+const SMS_REASON_LABELS: Record<string, string> = {
+  NOT_ENABLED: 'Automatic texts are switched off, so no text was sent. Send the link yourself.',
+  NO_LINK_NONCE: 'The link key is not configured, so no text can be sent. Send the link yourself.',
+  INVALID_NUMBER: 'The mobile number on this lead is not a valid UK mobile, so no text was sent.',
+  TEST_MODE_NUMBER_NOT_ALLOWED: 'Test mode is on and this is not the reserved test number, so no text was sent.',
+  SUPPRESSED: 'This number has opted out (STOP), so no text was sent.',
+  NUMBER_CAPPED: 'This number has already had the maximum texts in 24 hours, so no text was sent.',
+  CIRCUIT_BREAKER: 'The hourly text limit was reached, so no text was sent.',
+  ALREADY_OPEN: 'A text is already waiting to go out for this lead.',
+};
+
+function FollowUpLinkPanel({ leadId }: { leadId: number }) {
+  const [busy, setBusy] = useState(false);
+  const [result, setResult] = useState<{ url: string; expiresAt: string; smsQueued: boolean; smsReason: string | null } | null>(null);
+  const [panelError, setPanelError] = useState<string | null>(null);
+
+  async function reissue() {
+    if (!window.confirm('Issue a new follow-up link? The previous link for this homeowner will stop working.')) return;
+    setBusy(true);
+    setPanelError(null);
+    try {
+      const res = await fetch(apiPath(`/api/admin/leads/${leadId}/follow-up-link`), {
+        method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({}),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error ?? 'Failed to issue link.');
+      setResult({ url: data.follow_up_url, expiresAt: data.expires_at, smsQueued: data.sms_queued, smsReason: data.sms_reason });
+    } catch (e) {
+      setPanelError(e instanceof Error ? e.message : String(e));
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  return (
+    <div style={{ marginBottom: 20, paddingBottom: 16, borderBottom: '1px solid var(--border)' }}>
+      <h4 style={{ fontSize: '0.95rem', marginBottom: 8 }}>Follow-up link</h4>
+      <p className="form-note">
+        This homeowner still needs to answer the qualification questions. Issue a fresh link to
+        send them. It is shown once here and is not stored, so copy it before closing.
+      </p>
+      {panelError && <div className="disclaimer-box" style={{ marginBottom: 8 }}>{panelError}</div>}
+      {result ? (
+        <div>
+          <input readOnly value={result.url} onFocus={(e) => e.target.select()} style={{ width: '100%', fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.78rem' }} />
+          <div style={{ marginTop: 6, display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
+            <button type="button" className="btn btn-bronze" style={{ fontSize: '0.82rem', padding: '6px 12px' }} onClick={() => navigator.clipboard?.writeText(result.url)}>Copy link</button>
+            <span style={{ color: 'var(--slate)', fontSize: '0.8rem' }}>Expires {new Date(result.expiresAt).toLocaleDateString('en-GB')}</span>
+          </div>
+          <p className="form-note" style={{ marginTop: 6 }}>
+            {result.smsQueued ? 'A text with this link has been queued to the homeowner.' : (SMS_REASON_LABELS[result.smsReason ?? ''] ?? 'No text was sent.')}
+          </p>
+        </div>
+      ) : (
+        <button type="button" className="btn btn-bronze" disabled={busy} onClick={reissue} style={{ fontSize: '0.82rem', padding: '6px 12px' }}>
+          {busy ? 'Issuing…' : 'Issue new follow-up link'}
+        </button>
+      )}
+    </div>
   );
 }

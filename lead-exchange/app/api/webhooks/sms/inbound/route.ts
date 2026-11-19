@@ -1,6 +1,7 @@
 import { getDatabase } from '@netlify/database';
 import { NextRequest, NextResponse } from 'next/server';
 import { handleInboundReply } from '../../../../../lib/smsVerification';
+import { suppressOpenFollowUps } from '../../../../../lib/metaFollowUpSms';
 import { secretMatches } from '../../../../../lib/smsWebhookAuth';
 
 // Inbound homeowner SMS replies, relayed by the Make scenario "HLX SMS in".
@@ -19,7 +20,10 @@ export async function POST(req: NextRequest) {
   try { body = JSON.parse(raw); } catch { return NextResponse.json({ error: 'Invalid JSON.' }, { status: 400 }); }
 
   try {
-    const result = await handleInboundReply(getDatabase(), { from: body.from, text: body.text, messageId: body.message_id });
+    const db = getDatabase();
+    const result = await handleInboundReply(db, { from: body.from, text: body.text, messageId: body.message_id });
+    // STOP also closes any follow-up text still waiting to go out (the sender re-checks too).
+    if (result.outcome === 'STOPPED') await suppressOpenFollowUps(db, body.from);
     return NextResponse.json({ outcome: result.outcome }, { status: 200 });
   } catch (err) {
     console.error('SMS inbound failed', err instanceof Error ? err.message : 'unknown');
