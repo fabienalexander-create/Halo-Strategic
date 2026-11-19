@@ -1,2 +1,19 @@
 /site-motion.js
   Cache-Control: public, max-age=300, must-revalidate
+
+# Internal working files that are deployed alongside the site but are not public pages. Keep them
+# out of Google's index (and stop Google following template placeholder links like {{CANONICAL}},
+# which show up in Search Console as 404s). This hides them from search only; it does not stop
+# someone who has the URL from opening them.
+/docs/*
+  X-Robots-Tag: noindex, nofollow
+/content/*
+  X-Robots-Tag: noindex, nofollow
+/tools/*
+  X-Robots-Tag: noindex, nofollow
+/lead-exchange/*
+  X-Robots-Tag: noindex, nofollow
+/How_Halo_Thinks_v1.md
+  X-Robots-Tag: noindex, nofollow
+/404.html
+  X-Robots-Tag: noindex
