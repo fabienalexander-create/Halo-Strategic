@@ -147,7 +147,7 @@ export function leadOfferEmail(params: {
   price: number | string | null; // null when packageCovered
   packageCovered: boolean;
   paymentReference: string | null; // quote this when paying; null when packageCovered
-  paymentLink?: string | null; // a unique pay-this-lead link, when one exists; falls back to bank transfer + reference
+  paymentLink?: string | null; // a Tide payment link, possibly shared across a buyer's leads, so the reference is always shown with it (2026-11-19); falls back to bank transfer + reference
 }): EmailContent {
   const reference = escapeHtml(params.leadReference);
   const industry = escapeHtml(params.industryLabel);
@@ -156,18 +156,20 @@ export function leadOfferEmail(params: {
   const serviceRequirement = escapeHtml(params.serviceRequirement);
 
   const paymentText = params.packageCovered
-    ? `This lead is covered by your package -- no payment is needed. We'll confirm once it's released.`
+    ? `This lead is covered by your package, so no payment is needed. We'll confirm once it's released.`
     : params.paymentLink
       ? `Price: ${params.currency} ${formatPrice(params.price)}
 To release the homeowner's contact details, pay using this link: ${params.paymentLink}
+Please quote payment reference ${params.paymentReference} with your payment so we can match it to this lead.
 We'll confirm by email once your payment is verified.`
       : `Price: ${params.currency} ${formatPrice(params.price)}
 To release the homeowner's contact details, pay by bank transfer and quote reference ${params.paymentReference} so we can match your payment. We'll confirm by email once it's verified.`;
   const paymentHtml = params.packageCovered
-    ? `<p>This lead is covered by your package — no payment is needed. We'll confirm once it's released.</p>`
+    ? `<p>This lead is covered by your package, so no payment is needed. We'll confirm once it's released.</p>`
     : params.paymentLink
       ? `<p>Price: ${escapeHtml(params.currency)} ${escapeHtml(formatPrice(params.price))}<br>
 To release the homeowner's contact details, pay using this link: <a href="${escapeHtml(params.paymentLink)}">${escapeHtml(params.paymentLink)}</a><br>
+Please quote payment reference <strong>${escapeHtml(params.paymentReference ?? '')}</strong> with your payment so we can match it to this lead.<br>
 We'll confirm by email once your payment is verified.</p>`
       : `<p>Price: ${escapeHtml(params.currency)} ${escapeHtml(formatPrice(params.price))}<br>
 To release the homeowner's contact details, pay by bank transfer and quote reference <strong>${escapeHtml(params.paymentReference ?? '')}</strong> so we can match your payment. We'll confirm by email once it's verified.</p>`;

@@ -78,6 +78,9 @@ describe('POST /api/admin/leads/[id]/allocate -- payment link passthrough', () =
     const offerCall = sendLeadDeliveryEmailMock.mock.calls.find((c) => c[1].emailType === 'LEAD_OFFER');
     expect(offerCall?.[1].text).toContain('https://pay.tide.co/products/russell-lead-055');
     expect(offerCall?.[1].text).not.toContain('bank transfer');
+    // The link may be shared across a buyer's leads, so the unique reference always goes with it.
+    expect(offerCall?.[1].text).toContain('Please quote payment reference HLX-PAY-000077');
+    expect(offerCall?.[1].html).toContain('<strong>HLX-PAY-000077</strong>');
   });
 
   it('falls back to the bank-transfer instruction when no payment_link is given', async () => {

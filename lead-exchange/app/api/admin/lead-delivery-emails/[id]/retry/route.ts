@@ -39,7 +39,7 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
     SELECT e.id AS email_id, e.email_type, e.recipient, e.status AS email_status,
            a.id AS allocation_id, a.agreed_price, a.package_id,
            l.id AS lead_id, l.homeowner_name, l.homeowner_contact, l.postcode, l.property_type, l.service_requirement,
-           i.slug AS industry_slug, b.company_name, p.payment_reference
+           i.slug AS industry_slug, b.company_name, p.payment_reference, p.payment_link
     FROM lead_delivery_emails e
     JOIN lead_allocations a ON a.id = e.lead_allocation_id
     JOIN leads l ON l.id = a.lead_id
@@ -56,7 +56,7 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
     agreed_price: number | null; package_id: number | null; lead_id: number;
     homeowner_name: string; homeowner_contact: { email?: string; mobile?: string };
     postcode: string; property_type: string; service_requirement: string;
-    industry_slug: string; company_name: string; payment_reference: string | null;
+    industry_slug: string; company_name: string; payment_reference: string | null; payment_link: string | null;
   };
 
   if (row.email_status === 'SUPERSEDED') {
@@ -76,7 +76,7 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
       content = leadOfferEmail({
         leadReference, industryLabel, postcode: row.postcode, propertyType: row.property_type,
         serviceRequirement: row.service_requirement, currency: 'GBP', price: row.agreed_price,
-        packageCovered, paymentReference: row.payment_reference,
+        packageCovered, paymentReference: row.payment_reference, paymentLink: row.payment_link,
       });
       break;
     case 'INTERNAL_OFFER_COPY':
