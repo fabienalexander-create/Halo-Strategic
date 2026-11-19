@@ -48,7 +48,23 @@ Status: built and tested. Off until Fabien switches it on, with legal sign-off.
 - A YES reply never verifies a follow-up (only `PHONE_VERIFICATION` rows match). STOP closes texts of every purpose and suppresses the number.
 - Not sent within 24 hours (`META_FOLLOW_UP_SEND_WINDOW_HOURS`): expired, never sent late.
 
-**Needs before activation:** the Make SMS-out scenario to TextMagic from the reply-capable number; TextMagic inbound and delivery webhooks to `/api/webhooks/sms/inbound` and `/delivery`; a scheduled call to `/api/sms/send-pending` (every 15 minutes) so texts held overnight go out at 08:00; the env vars above; legal sign-off on the wording and basis.
+**Needs before activation:** the Make SMS-out scenario to TextMagic from the reply-capable number; TextMagic inbound and delivery webhooks to `/api/webhooks/sms/inbound` and `/delivery`; the env vars above; legal sign-off on the wording and basis. The scheduler is now built (stage 2, below).
+
+## Stage 2: scheduler and Make contract (added 2026-11-19)
+
+Status: built and tested. Off. No Make scenario created, no TextMagic change, no text sent.
+
+**Scheduler.** `netlify/functions/sms-send-pending.ts`, a Netlify scheduled function, every 15 minutes. It calls the same `sendPendingVerifications` the intake routes use, so texts held overnight go out from 08:00, failed hand-offs retry (max 3, same link), stale texts expire and STOP numbers are closed. It adds no rules of its own. With `SMS_VERIFICATION_ENABLED` unset it returns before touching the database. Logs counts only. Scheduled functions run on the published production deploy only. `POST /api/sms/send-pending` stays as a manual trigger.
+
+**What Make's SMS-out scenario must do** (to be built inactive, after approval):
+1. Custom webhook receives `{verification_ref, to, text, purpose}` with headers `x-halo-timestamp` (unix seconds) and `x-halo-signature`.
+2. Verify before anything else: `x-halo-signature` equals hex HMAC-SHA256 of `${x-halo-timestamp}.${raw body}` with key `MAKE_SMS_OUT_SECRET`, and the timestamp is within 5 minutes. Otherwise respond 401 and stop.
+3. TextMagic: send `text` unchanged to `to` from the reply-capable UK number. Never edit, shorten or add to the text.
+4. Respond 200 with `{"message_id": "<TextMagic message id>"}`. Any other response, or none within the timeout, is treated as not sent and retried by HLX with the same link.
+
+Make holds no logic: no quiet hours, caps, STOP list or retries there. All of that is in HLX.
+
+**Activation order (each step Fabien's, none done):** legal sign-off; build the Make scenario inactive and test it against a number Fabien owns with only `SMS_VERIFICATION_ENABLED` on; set `MAKE_SMS_OUT_WEBHOOK_URL`, `MAKE_SMS_OUT_SECRET`, `SMS_INBOUND_SECRET`, `SMS_SENDER_SECRET`; point TextMagic inbound and delivery webhooks at HLX; then `META_FOLLOW_UP_SMS_ENABLED` and `SMS_LINK_ENCRYPTION_KEY`.
 
 ## Rollback
-Unset `SMS_VERIFICATION_ENABLED` (instant, nothing sends). To stop only Meta follow-ups, unset `META_FOLLOW_UP_SMS_ENABLED` (already-queued follow-ups stop too). Full rollback: app rolled back first, then the DROP statements in the migration headers.
+Unset `SMS_VERIFICATION_ENABLED` (instant, nothing sends, and the scheduler stops touching the database). To stop only Meta follow-ups, unset `META_FOLLOW_UP_SMS_ENABLED` (already-queued follow-ups stop too). Full rollback: app rolled back first, then the DROP statements in the migration headers.
