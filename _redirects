@@ -80,3 +80,8 @@
 /docs/*      /404.html   404!
 /tools/*     /404.html   404!
 /content/*   /404.html   404!
+
+# lead-guides:start
+/lead-guides/index.html  /lead-guides/  301!
+/lead-guides/speed-to-lead-first-hour.html  /lead-guides/speed-to-lead-first-hour  301!
+# lead-guides:end
