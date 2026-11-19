@@ -8,7 +8,25 @@ const sendLeadDeliveryEmailMock = vi.fn();
 vi.mock('../../../../../../lib/leadDeliveryEmail', () => ({ sendLeadDeliveryEmail: sendLeadDeliveryEmailMock }));
 
 const sqlMock = vi.fn();
-vi.mock('@netlify/database', () => ({ getDatabase: vi.fn(() => ({ sql: sqlMock })) }));
+// Writes happen inside one transaction on a pooled client (2026-11-19). The client answers by
+// statement, not by call order, so each test only states what's different about its scenario.
+const clientQueryMock = vi.fn();
+const releaseMock = vi.fn();
+vi.mock('@netlify/database', () => ({
+  getDatabase: vi.fn(() => ({ sql: sqlMock, pool: { connect: vi.fn(async () => ({ query: clientQueryMock, release: releaseMock })) } })),
+}));
+
+function mockTx(opts: { lockStatus?: string; liveBuyerIds?: number[]; allocationId?: number; paymentId?: number } = {}) {
+  clientQueryMock.mockImplementation(async (text: string) => {
+    if (/FOR UPDATE/.test(text)) return { rows: [{ status: opts.lockStatus ?? 'QUALIFIED' }] };
+    if (/^SELECT buyer_id FROM lead_allocations/.test(text.trim())) return { rows: (opts.liveBuyerIds ?? []).map((b) => ({ buyer_id: b })) };
+    if (/INSERT INTO lead_allocations/.test(text)) return { rows: [{ id: opts.allocationId ?? 123 }] };
+    if (/INSERT INTO payments/.test(text)) return { rows: [{ id: opts.paymentId ?? 77 }] };
+    return { rows: [] };
+  });
+}
+const txCall = (pattern: string) => clientQueryMock.mock.calls.find((c) => String(c[0]).includes(pattern));
+const txTexts = () => clientQueryMock.mock.calls.map((c) => String(c[0]).trim().split(/\s+/).slice(0, 3).join(' '));
 
 function req(body: unknown): NextRequest {
   return new NextRequest('https://example.com/api/admin/leads/55/allocate', { method: 'POST', body: JSON.stringify(body) });
@@ -21,27 +39,24 @@ const LEAD_ROW = {
 const BUYER_ROW = { id: 99, industry_id: 3, application_status: 'ACTIVE', company_name: 'Russell Griffiths (business name pending)', contact_email: 'russellgriffiths@yahoo.com', agreed_price_per_lead: 65 };
 const CONFIRMATION_ROW = { id: 5, lead_id: 55, buyer_id: 99, withdrawn_at: null };
 
-// Mocks the full non-package sequence of db.sql calls the route makes in order: lead lookup,
-// live-allocation check, buyer lookup, confirmation lookup, allocation insert, leads status
-// update, audit_log insert, admin_users lookup, payments insert, payments reference update.
+// Reads before the transaction (lead, live allocations, buyer, confirmation), then the admin
+// lookup after commit. Every write goes through the transaction client (mockTx).
 function mockHappyPath() {
   sqlMock
     .mockResolvedValueOnce([LEAD_ROW])
     .mockResolvedValueOnce([])
     .mockResolvedValueOnce([BUYER_ROW])
     .mockResolvedValueOnce([CONFIRMATION_ROW])
-    .mockResolvedValueOnce([{ id: 123 }]) // allocation insert
-    .mockResolvedValueOnce([]) // leads status update
-    .mockResolvedValueOnce([]) // audit_log
-    .mockResolvedValueOnce([{ id: 77 }]) // payments insert
-    .mockResolvedValueOnce([]) // payments reference update
-    .mockResolvedValueOnce([{ email: 'admin@halostrategic.com' }]); // admin_users
+    .mockResolvedValueOnce([{ email: 'admin@halostrategic.com' }]); // admin_users, after commit
+  mockTx();
 }
 
 describe('POST /api/admin/leads/[id]/allocate -- payment link passthrough', () => {
   beforeEach(() => {
     requireAdminMock.mockReset();
     sqlMock.mockReset();
+    clientQueryMock.mockReset();
+    releaseMock.mockReset();
     sendLeadDeliveryEmailMock.mockReset();
     requireAdminMock.mockResolvedValue({ session: { adminId: 1, email: 'admin@halostrategic.com', role: 'owner' } });
     sendLeadDeliveryEmailMock.mockResolvedValue({ sent: true, skipped: false, blocked: false });
@@ -57,7 +72,7 @@ describe('POST /api/admin/leads/[id]/allocate -- payment link passthrough', () =
     expect(res.status).toBe(200);
     expect(data.payment_reference).toBe('HLX-PAY-000077');
 
-    const paymentsInsertCall = sqlMock.mock.calls.find((c) => JSON.stringify(c).includes('INSERT INTO payments'));
+    const paymentsInsertCall = txCall('INSERT INTO payments');
     expect(JSON.stringify(paymentsInsertCall)).toContain('https://pay.tide.co/products/russell-lead-055');
 
     const offerCall = sendLeadDeliveryEmailMock.mock.calls.find((c) => c[1].emailType === 'LEAD_OFFER');
@@ -72,7 +87,7 @@ describe('POST /api/admin/leads/[id]/allocate -- payment link passthrough', () =
     const res = await POST(req({ buyer_id: 99, homeowner_confirmation_id: 5 }), { params: { id: '55' } });
     expect(res.status).toBe(200);
 
-    const paymentsInsertCall = sqlMock.mock.calls.find((c) => JSON.stringify(c).includes('INSERT INTO payments'));
+    const paymentsInsertCall = txCall('INSERT INTO payments');
     // null, not a stray link, when none was given
     expect(JSON.stringify(paymentsInsertCall).includes('"https')).toBe(false);
 
@@ -85,6 +100,8 @@ describe('POST /api/admin/leads/[id]/allocate -- shared vs exclusive allocation'
   beforeEach(() => {
     requireAdminMock.mockReset();
     sqlMock.mockReset();
+    clientQueryMock.mockReset();
+    releaseMock.mockReset();
     sendLeadDeliveryEmailMock.mockReset();
     requireAdminMock.mockResolvedValue({ session: { adminId: 1, email: 'admin@halostrategic.com', role: 'owner' } });
     sendLeadDeliveryEmailMock.mockResolvedValue({ sent: true, skipped: false, blocked: false });
@@ -119,18 +136,14 @@ describe('POST /api/admin/leads/[id]/allocate -- shared vs exclusive allocation'
       .mockResolvedValueOnce([]) // no existing live allocations
       .mockResolvedValueOnce([{ ...BUYER_ROW, exclusivity_arrangement: null }])
       .mockResolvedValueOnce([CONFIRMATION_ROW])
-      .mockResolvedValueOnce([{ id: 125 }])
-      .mockResolvedValueOnce([])
-      .mockResolvedValueOnce([])
-      .mockResolvedValueOnce([{ id: 79 }])
-      .mockResolvedValueOnce([])
       .mockResolvedValueOnce([{ email: 'admin@halostrategic.com' }]);
+    mockTx({ allocationId: 125, paymentId: 79 });
     const { POST } = await import('./route');
 
     const res = await POST(req({ buyer_id: 99, homeowner_confirmation_id: 5 }), { params: { id: '55' } }); // no allocation_type given
     expect(res.status).toBe(200);
 
-    const insertCall = sqlMock.mock.calls.find((c) => JSON.stringify(c).includes('INSERT INTO lead_allocations'));
+    const insertCall = txCall('INSERT INTO lead_allocations');
     expect(JSON.stringify(insertCall)).toContain('SHARED');
   });
 
@@ -140,18 +153,14 @@ describe('POST /api/admin/leads/[id]/allocate -- shared vs exclusive allocation'
       .mockResolvedValueOnce([])
       .mockResolvedValueOnce([{ ...BUYER_ROW, exclusivity_arrangement: 'exclusive' }])
       .mockResolvedValueOnce([CONFIRMATION_ROW])
-      .mockResolvedValueOnce([{ id: 126 }])
-      .mockResolvedValueOnce([])
-      .mockResolvedValueOnce([])
-      .mockResolvedValueOnce([{ id: 80 }])
-      .mockResolvedValueOnce([])
       .mockResolvedValueOnce([{ email: 'admin@halostrategic.com' }]);
+    mockTx({ allocationId: 126, paymentId: 80 });
     const { POST } = await import('./route');
 
     const res = await POST(req({ buyer_id: 99, homeowner_confirmation_id: 5 }), { params: { id: '55' } }); // no allocation_type given
     expect(res.status).toBe(200);
 
-    const insertCall = sqlMock.mock.calls.find((c) => JSON.stringify(c).includes('INSERT INTO lead_allocations'));
+    const insertCall = txCall('INSERT INTO lead_allocations');
     expect(JSON.stringify(insertCall)).toContain('EXCLUSIVE_WINDOW');
   });
 
@@ -189,12 +198,8 @@ describe('POST /api/admin/leads/[id]/allocate -- shared vs exclusive allocation'
       .mockResolvedValueOnce([{ id: 1, buyer_id: 42 }]) // James's existing EXCLUSIVE_WINDOW allocation
       .mockResolvedValueOnce([BUYER_ROW]) // Russell
       .mockResolvedValueOnce([CONFIRMATION_ROW])
-      .mockResolvedValueOnce([{ id: 124 }]) // allocation insert (Russell, SHARED)
-      .mockResolvedValueOnce([]) // leads status update
-      .mockResolvedValueOnce([]) // audit_log
-      .mockResolvedValueOnce([{ id: 78 }]) // payments insert
-      .mockResolvedValueOnce([]) // payments reference update
       .mockResolvedValueOnce([{ email: 'admin@halostrategic.com' }]);
+    mockTx({ allocationId: 124, paymentId: 78, liveBuyerIds: [42] });
     const { POST } = await import('./route');
 
     const res = await POST(req({ buyer_id: 99, homeowner_confirmation_id: 5, allocation_type: 'SHARED' }), { params: { id: '55' } });
@@ -203,12 +208,12 @@ describe('POST /api/admin/leads/[id]/allocate -- shared vs exclusive allocation'
     expect(res.status).toBe(200);
     expect(data.allocation_id).toBe(124);
 
-    const insertCall = sqlMock.mock.calls.find((c) => JSON.stringify(c).includes('INSERT INTO lead_allocations'));
+    const insertCall = txCall('INSERT INTO lead_allocations');
     expect(JSON.stringify(insertCall)).toContain('SHARED');
     // allocation_sequence is null for SHARED, not 1
     expect(JSON.stringify(insertCall)).not.toMatch(/"SHARED".*,1,/);
 
-    const auditCall = sqlMock.mock.calls.find((c) => JSON.stringify(c).includes("'LEAD_ALLOCATED'"));
+    const auditCall = txCall("'LEAD_ALLOCATED'");
     expect(JSON.stringify(auditCall)).toContain('42'); // records James's buyer_id as an "other live buyer" for traceability
   });
 
@@ -230,12 +235,8 @@ describe('POST /api/admin/leads/[id]/allocate -- shared vs exclusive allocation'
       .mockResolvedValueOnce([])
       .mockResolvedValueOnce([BUYER_ROW])
       .mockResolvedValueOnce([CONFIRMATION_ROW])
-      .mockResolvedValueOnce([{ id: 130 }])
-      .mockResolvedValueOnce([])
-      .mockResolvedValueOnce([])
-      .mockResolvedValueOnce([{ id: 81 }])
-      .mockResolvedValueOnce([])
       .mockResolvedValueOnce([{ email: 'admin@halostrategic.com' }]);
+    mockTx({ allocationId: 130, paymentId: 81 });
     const { POST } = await import('./route');
 
     const res = await POST(req({ buyer_id: 99, homeowner_confirmation_id: 5 }), { params: { id: '55' } });
@@ -254,5 +255,130 @@ describe('POST /api/admin/leads/[id]/allocate -- shared vs exclusive allocation'
 
     expect(res.status).toBe(409);
     expect(data.error).toMatch(/already has a live allocation/);
+  });
+});
+
+// Fabien, 2026-11-19: one allocation is one business transaction.
+describe('POST /api/admin/leads/[id]/allocate -- all-or-nothing', () => {
+  const READS = () => sqlMock
+    .mockResolvedValueOnce([LEAD_ROW])
+    .mockResolvedValueOnce([])
+    .mockResolvedValueOnce([BUYER_ROW])
+    .mockResolvedValueOnce([CONFIRMATION_ROW])
+    .mockResolvedValueOnce([{ email: 'admin@halostrategic.com' }]);
+
+  beforeEach(() => {
+    requireAdminMock.mockReset();
+    sqlMock.mockReset();
+    clientQueryMock.mockReset();
+    releaseMock.mockReset();
+    sendLeadDeliveryEmailMock.mockReset();
+    requireAdminMock.mockResolvedValue({ session: { adminId: 1, email: 'admin@halostrategic.com', role: 'owner' } });
+    sendLeadDeliveryEmailMock.mockResolvedValue({ sent: true, skipped: false, blocked: false });
+  });
+
+  it('writes allocation, lead status, audit and payment inside one transaction, locking the lead first', async () => {
+    READS();
+    mockTx();
+    const { POST } = await import('./route');
+
+    const res = await POST(req({ buyer_id: 99, homeowner_confirmation_id: 5 }), { params: { id: '55' } });
+
+    expect(res.status).toBe(200);
+    expect(txTexts()).toEqual([
+      'BEGIN', 'SELECT status FROM', 'SELECT buyer_id FROM', 'INSERT INTO lead_allocations', "UPDATE leads SET",
+      'INSERT INTO audit_log', 'INSERT INTO payments', 'UPDATE payments SET', 'COMMIT',
+    ]);
+    expect(String(clientQueryMock.mock.calls[1][0])).toContain('FOR UPDATE');
+    // No write goes around the transaction.
+    expect(sqlMock.mock.calls.some((c) => /INSERT|UPDATE/.test(JSON.stringify(c[0])))).toBe(false);
+    expect(releaseMock).toHaveBeenCalledTimes(1);
+  });
+
+  it('rolls everything back if the payment insert fails: no half-recorded sale, no offer email', async () => {
+    READS();
+    clientQueryMock.mockImplementation(async (text: string) => {
+      if (/FOR UPDATE/.test(text)) return { rows: [{ status: 'QUALIFIED' }] };
+      if (/INSERT INTO lead_allocations/.test(text)) return { rows: [{ id: 200 }] };
+      if (/INSERT INTO payments/.test(text)) throw new Error('connection lost');
+      return { rows: [] };
+    });
+    const { POST } = await import('./route');
+
+    const res = await POST(req({ buyer_id: 99, homeowner_confirmation_id: 5 }), { params: { id: '55' } });
+
+    expect(res.status).toBe(500);
+    expect(txTexts()).toContain('ROLLBACK');
+    expect(txTexts()).not.toContain('COMMIT');
+    expect(sendLeadDeliveryEmailMock).not.toHaveBeenCalled();
+    expect(releaseMock).toHaveBeenCalledTimes(1);
+  });
+
+  it('refuses a duplicate that only appears under the lock (two admins at once)', async () => {
+    READS(); // the earlier read saw no live allocation...
+    mockTx({ liveBuyerIds: [99] }); // ...but by the time the lock is held, this buyer has one
+    const { POST } = await import('./route');
+
+    const res = await POST(req({ buyer_id: 99, homeowner_confirmation_id: 5 }), { params: { id: '55' } });
+
+    expect(res.status).toBe(409);
+    expect((await res.json()).error).toMatch(/already has a live allocation/);
+    expect(txCall('INSERT INTO lead_allocations')).toBeUndefined();
+    expect(txTexts()).toContain('ROLLBACK');
+    expect(sendLeadDeliveryEmailMock).not.toHaveBeenCalled();
+  });
+
+  it('refuses an exclusive claim when another buyer took the lead between the read and the lock', async () => {
+    sqlMock
+      .mockResolvedValueOnce([LEAD_ROW])
+      .mockResolvedValueOnce([])
+      .mockResolvedValueOnce([{ ...BUYER_ROW, exclusivity_arrangement: 'exclusive' }])
+      .mockResolvedValueOnce([CONFIRMATION_ROW]);
+    mockTx({ liveBuyerIds: [42] });
+    const { POST } = await import('./route');
+
+    const res = await POST(req({ buyer_id: 99, homeowner_confirmation_id: 5 }), { params: { id: '55' } });
+
+    expect(res.status).toBe(409);
+    expect(txCall('INSERT INTO lead_allocations')).toBeUndefined();
+  });
+
+  it('refuses if the lead went back to awaiting qualification before the lock', async () => {
+    READS();
+    mockTx({ lockStatus: 'QUALIFICATION_PENDING' });
+    const { POST } = await import('./route');
+
+    const res = await POST(req({ buyer_id: 99, homeowner_confirmation_id: 5 }), { params: { id: '55' } });
+
+    expect(res.status).toBe(409);
+    expect(txCall('INSERT INTO lead_allocations')).toBeUndefined();
+  });
+
+  it('turns a database guard refusal into a 409, with nothing recorded and no email sent', async () => {
+    READS();
+    clientQueryMock.mockImplementation(async (text: string) => {
+      if (/FOR UPDATE/.test(text)) return { rows: [{ status: 'QUALIFIED' }] };
+      if (/INSERT INTO lead_allocations/.test(text)) throw Object.assign(new Error('homeowner confirmation 5 has been withdrawn'), { code: 'P0001' });
+      return { rows: [] };
+    });
+    const { POST } = await import('./route');
+
+    const res = await POST(req({ buyer_id: 99, homeowner_confirmation_id: 5 }), { params: { id: '55' } });
+
+    expect(res.status).toBe(409);
+    expect(txTexts()).toContain('ROLLBACK');
+    expect(sendLeadDeliveryEmailMock).not.toHaveBeenCalled();
+  });
+
+  it('sends the offer email only after commit, never the unlock email before payment', async () => {
+    READS();
+    mockTx();
+    const { POST } = await import('./route');
+
+    await POST(req({ buyer_id: 99, homeowner_confirmation_id: 5 }), { params: { id: '55' } });
+
+    const types = sendLeadDeliveryEmailMock.mock.calls.map((c) => c[1].emailType);
+    expect(types).toEqual(['LEAD_OFFER', 'INTERNAL_OFFER_COPY']);
+    expect(types).not.toContain('LEAD_UNLOCKED');
   });
 });

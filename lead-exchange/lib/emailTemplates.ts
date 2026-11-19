@@ -128,6 +128,15 @@ function outwardPostcode(postcode: string): string {
 // detail -- only what the marketing pages already promise pre-payment (area, property type,
 // service requirement) -- same redaction boundary as leads.homeowner_contact's own "never exposed
 // pre-payment" comment in the schema.
+// Postgres NUMERIC columns (agreed_price, agreed_price_per_lead) arrive from the database driver
+// as strings, e.g. "65.00", not numbers. Found 2026-11-19 by the real-database allocation test:
+// calling .toFixed on that string threw, so every pay-per-lead offer email failed. Accept both.
+export function formatPrice(price: number | string | null | undefined): string {
+  if (price === null || price === undefined || price === '') return '';
+  const n = Number(price);
+  return Number.isFinite(n) ? n.toFixed(2) : '';
+}
+
 export function leadOfferEmail(params: {
   leadReference: string;
   industryLabel: string;
@@ -135,7 +144,7 @@ export function leadOfferEmail(params: {
   propertyType: string;
   serviceRequirement: string;
   currency: string;
-  price: number | null; // null when packageCovered
+  price: number | string | null; // null when packageCovered
   packageCovered: boolean;
   paymentReference: string | null; // quote this when paying; null when packageCovered
   paymentLink?: string | null; // a unique pay-this-lead link, when one exists; falls back to bank transfer + reference
@@ -149,18 +158,18 @@ export function leadOfferEmail(params: {
   const paymentText = params.packageCovered
     ? `This lead is covered by your package -- no payment is needed. We'll confirm once it's released.`
     : params.paymentLink
-      ? `Price: ${params.currency} ${params.price?.toFixed(2)}
+      ? `Price: ${params.currency} ${formatPrice(params.price)}
 To release the homeowner's contact details, pay using this link: ${params.paymentLink}
 We'll confirm by email once your payment is verified.`
-      : `Price: ${params.currency} ${params.price?.toFixed(2)}
+      : `Price: ${params.currency} ${formatPrice(params.price)}
 To release the homeowner's contact details, pay by bank transfer and quote reference ${params.paymentReference} so we can match your payment. We'll confirm by email once it's verified.`;
   const paymentHtml = params.packageCovered
     ? `<p>This lead is covered by your package — no payment is needed. We'll confirm once it's released.</p>`
     : params.paymentLink
-      ? `<p>Price: ${escapeHtml(params.currency)} ${escapeHtml(params.price?.toFixed(2) ?? '')}<br>
+      ? `<p>Price: ${escapeHtml(params.currency)} ${escapeHtml(formatPrice(params.price))}<br>
 To release the homeowner's contact details, pay using this link: <a href="${escapeHtml(params.paymentLink)}">${escapeHtml(params.paymentLink)}</a><br>
 We'll confirm by email once your payment is verified.</p>`
-      : `<p>Price: ${escapeHtml(params.currency)} ${escapeHtml(params.price?.toFixed(2) ?? '')}<br>
+      : `<p>Price: ${escapeHtml(params.currency)} ${escapeHtml(formatPrice(params.price))}<br>
 To release the homeowner's contact details, pay by bank transfer and quote reference <strong>${escapeHtml(params.paymentReference ?? '')}</strong> so we can match your payment. We'll confirm by email once it's verified.</p>`;
 
   return {
@@ -201,14 +210,14 @@ export function internalOfferCopyEmail(params: {
   companyName: string;
   industryLabel: string;
   postcode: string;
-  price: number | null;
+  price: number | string | null;
   packageCovered: boolean;
 }): EmailContent {
   const reference = escapeHtml(params.leadReference);
   const company = escapeHtml(params.companyName);
   const industry = escapeHtml(params.industryLabel);
   const area = escapeHtml(outwardPostcode(params.postcode));
-  const priceLine = params.packageCovered ? 'Package-covered (no payment due)' : `${params.price?.toFixed(2) ?? ''} (awaiting verified payment)`;
+  const priceLine = params.packageCovered ? 'Package-covered (no payment due)' : `${formatPrice(params.price)} (awaiting verified payment)`;
   return {
     subject: `[Internal] Lead ${params.leadReference} offered to ${params.companyName}`,
     text: `Lead ${params.leadReference} (${params.industryLabel}, ${outwardPostcode(params.postcode)}) was offered to ${params.companyName}.

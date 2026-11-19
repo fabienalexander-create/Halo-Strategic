@@ -119,7 +119,7 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
     }
     const buyer = buyers[0] as {
       id: number; industry_id: number; application_status: string; company_name: string;
-      contact_email: string; agreed_price_per_lead: number | null; exclusivity_arrangement: 'exclusive' | 'shared' | null;
+      contact_email: string; agreed_price_per_lead: number | string | null; exclusivity_arrangement: 'exclusive' | 'shared' | null;
     };
     if (buyer.application_status !== 'ACTIVE') {
       return NextResponse.json({ error: `Buyer is not ACTIVE (currently ${buyer.application_status}).` }, { status: 409 });
@@ -178,49 +178,94 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
       if (buyer.agreed_price_per_lead === null) {
         return NextResponse.json({ error: 'Buyer has no agreed_price_per_lead set; cannot snapshot a price without a package.' }, { status: 422 });
       }
-      agreedPrice = buyer.agreed_price_per_lead;
+      // NUMERIC arrives from the driver as a string ("65.00"); normalise once here.
+      agreedPrice = Number(buyer.agreed_price_per_lead);
     }
 
     const allocationSequence = allocationType === 'EXCLUSIVE_WINDOW' ? 1 : null;
-    const inserted = await db.sql`
-      INSERT INTO lead_allocations (
-        lead_id, buyer_id, allocation_type, allocation_sequence, status,
-        notified_at, decided_at, agreed_price, package_id, homeowner_confirmation_id
-      ) VALUES (
-        ${leadId}, ${body.buyer_id}, ${allocationType}, ${allocationSequence}, 'PURCHASED',
-        now(), now(), ${agreedPrice}, ${body.package_id ?? null}, ${body.homeowner_confirmation_id}
-      )
-      RETURNING id
-    `;
-    const allocationId = inserted[0].id;
-
-    await db.sql`UPDATE leads SET status = 'RESERVED' WHERE id = ${leadId}`;
-
-    await db.sql`
-      INSERT INTO audit_log (actor, action, entity_type, entity_id, new_state)
-      VALUES (
-        ${auth.session.email}, 'LEAD_ALLOCATED', 'lead_allocation', ${allocationId},
-        ${JSON.stringify({
-          lead_id: leadId, buyer_id: body.buyer_id, agreed_price: agreedPrice, package_id: body.package_id ?? null,
-          allocation_type: allocationType, other_live_buyer_ids: liveAllocations.map((a) => (a as { buyer_id: number }).buyer_id),
-        })}
-      )
-    `;
-
     const industryLabel = INDUSTRY_LABELS[lead.industry_slug] ?? lead.industry_slug;
     const leadReference = `HLX-LEAD-${String(leadId).padStart(6, '0')}`;
     const packageCovered = Boolean(body.package_id);
 
+    // One allocation is one business transaction (Fabien, 2026-11-19): the allocation row, the
+    // lead's status, its audit entry and its payment row are committed together or not at all, so
+    // a failure part-way can never leave a sale recorded without its payment (or a payment with no
+    // sale). The lead row is locked first, so two admins allocating the same lead at the same
+    // moment are serialised, and the duplicate/overlap checks above are re-run under that lock
+    // against what is actually committed -- the earlier reads only give fast, friendly errors.
+    // Buyer exclusivity rules are unchanged; the database triggers still enforce them as before.
+    const client = await db.pool.connect();
+    let allocationId: number;
     let paymentReference: string | null = null;
-    if (!packageCovered) {
-      const paymentInserted = await db.sql`
-        INSERT INTO payments (lead_allocation_id, expected_amount, status, payment_link)
-        VALUES (${allocationId}, ${agreedPrice}, 'PENDING', ${body.payment_link ?? null})
-        RETURNING id
-      `;
-      const paymentId = paymentInserted[0].id;
-      paymentReference = `HLX-PAY-${String(paymentId).padStart(6, '0')}`;
-      await db.sql`UPDATE payments SET payment_reference = ${paymentReference} WHERE id = ${paymentId}`;
+    let liveBuyerIdsAtCommit: number[] = [];
+    try {
+      await client.query('BEGIN');
+
+      const locked = await client.query(`SELECT status FROM leads WHERE id = $1 FOR UPDATE`, [leadId]);
+      if (locked.rows.length === 0 || locked.rows[0].status === 'QUALIFICATION_PENDING') {
+        await client.query('ROLLBACK');
+        return NextResponse.json({ error: 'This lead is no longer available to allocate.' }, { status: 409 });
+      }
+
+      const liveNow = await client.query(
+        `SELECT buyer_id FROM lead_allocations WHERE lead_id = $1 AND status IN ('OFFERED', 'ACCEPTED', 'PURCHASED')`,
+        [leadId]
+      );
+      liveBuyerIdsAtCommit = liveNow.rows.map((r: { buyer_id: number }) => r.buyer_id);
+      if (liveBuyerIdsAtCommit.includes(body.buyer_id)) {
+        await client.query('ROLLBACK');
+        return NextResponse.json({ error: 'This buyer already has a live allocation for this lead.' }, { status: 409 });
+      }
+      if (allocationType === 'EXCLUSIVE_WINDOW' && liveBuyerIdsAtCommit.length > 0) {
+        await client.query('ROLLBACK');
+        return NextResponse.json({ error: 'This lead already has a live allocation -- cannot claim it exclusively.' }, { status: 409 });
+      }
+
+      const inserted = await client.query(
+        `INSERT INTO lead_allocations (
+          lead_id, buyer_id, allocation_type, allocation_sequence, status,
+          notified_at, decided_at, agreed_price, package_id, homeowner_confirmation_id
+        ) VALUES ($1, $2, $3, $4, 'PURCHASED', now(), now(), $5, $6, $7)
+        RETURNING id`,
+        [leadId, body.buyer_id, allocationType, allocationSequence, agreedPrice, body.package_id ?? null, body.homeowner_confirmation_id]
+      );
+      allocationId = inserted.rows[0].id as number;
+
+      await client.query(`UPDATE leads SET status = 'RESERVED' WHERE id = $1`, [leadId]);
+
+      await client.query(
+        `INSERT INTO audit_log (actor, action, entity_type, entity_id, new_state)
+         VALUES ($1, 'LEAD_ALLOCATED', 'lead_allocation', $2, $3)`,
+        [auth.session.email, allocationId, JSON.stringify({
+          lead_id: leadId, buyer_id: body.buyer_id, agreed_price: agreedPrice, package_id: body.package_id ?? null,
+          allocation_type: allocationType, other_live_buyer_ids: liveBuyerIdsAtCommit,
+        })]
+      );
+
+      if (!packageCovered) {
+        const paymentInserted = await client.query(
+          `INSERT INTO payments (lead_allocation_id, expected_amount, status, payment_link)
+           VALUES ($1, $2, 'PENDING', $3) RETURNING id`,
+          [allocationId, agreedPrice, body.payment_link ?? null]
+        );
+        const paymentId = paymentInserted.rows[0].id as number;
+        paymentReference = `HLX-PAY-${String(paymentId).padStart(6, '0')}`;
+        await client.query(`UPDATE payments SET payment_reference = $1 WHERE id = $2`, [paymentReference, paymentId]);
+      }
+
+      await client.query('COMMIT');
+    } catch (err) {
+      await client.query('ROLLBACK').catch(() => undefined);
+      // The database's own allocation guard (lead_allocations_guard trigger, unique index) is the
+      // final backstop behind the checks above; its refusals are a business answer, not a crash.
+      const message = err instanceof Error ? err.message : '';
+      const code = (err as { code?: string }).code;
+      if (code === '23505' || /live allocation|exclusive|withdrawn|different lead or buyer|package/i.test(message)) {
+        return NextResponse.json({ error: 'This allocation conflicts with an existing one and was not recorded.' }, { status: 409 });
+      }
+      throw err;
+    } finally {
+      client.release();
     }
 
     // Offer emails are sent after the allocation (and, if applicable, the payment row) are
