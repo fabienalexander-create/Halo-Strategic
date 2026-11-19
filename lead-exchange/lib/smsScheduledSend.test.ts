@@ -1,11 +1,13 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
 
 const sendPendingMock = vi.hoisted(() => vi.fn());
 const getDatabaseMock = vi.hoisted(() => vi.fn(() => ({ sql: vi.fn() })));
-vi.mock('../../lib/smsSender', () => ({ sendPendingVerifications: sendPendingMock }));
+vi.mock('./smsSender', () => ({ sendPendingVerifications: sendPendingMock }));
 vi.mock('@netlify/database', () => ({ getDatabase: getDatabaseMock }));
 
-describe('sms-send-pending scheduled function', () => {
+describe('scheduled SMS send (netlify/functions/sms-send-pending.mts)', () => {
   beforeEach(() => {
     sendPendingMock.mockReset();
     getDatabaseMock.mockClear();
@@ -15,13 +17,14 @@ describe('sms-send-pending scheduled function', () => {
     delete process.env.SMS_VERIFICATION_ENABLED;
   });
 
-  it('runs every 15 minutes', async () => {
-    const { config } = await import('./sms-send-pending');
-    expect(config.schedule).toBe('*/15 * * * *');
+  it('the Netlify function runs every 15 minutes and only delegates here', () => {
+    const fn = readFileSync(join(__dirname, '..', 'netlify', 'functions', 'sms-send-pending.mts'), 'utf8');
+    expect(fn).toContain("export const config = { schedule: '*/15 * * * *' };");
+    expect(fn).toContain('export default async () => runScheduledSmsSend();');
   });
 
   it('does nothing at all, not even a database connection, while SMS is switched off', async () => {
-    const { default: handler } = await import('./sms-send-pending');
+    const { runScheduledSmsSend: handler } = await import('./smsScheduledSend');
     for (const value of [undefined, 'false', 'TRUE', '1']) {
       if (value === undefined) delete process.env.SMS_VERIFICATION_ENABLED;
       else process.env.SMS_VERIFICATION_ENABLED = value;
@@ -36,7 +39,7 @@ describe('sms-send-pending scheduled function', () => {
     process.env.SMS_VERIFICATION_ENABLED = 'true';
     sendPendingMock.mockResolvedValue({ expired: 0, suppressed: 0, claimed: 1, sent: 1, failed: 0, superseded: 0 });
     const log = vi.spyOn(console, 'log').mockImplementation(() => undefined);
-    const { default: handler } = await import('./sms-send-pending');
+    const { runScheduledSmsSend: handler } = await import('./smsScheduledSend');
 
     const res = await handler();
 
@@ -51,7 +54,7 @@ describe('sms-send-pending scheduled function', () => {
     process.env.SMS_VERIFICATION_ENABLED = 'true';
     sendPendingMock.mockRejectedValue(new Error('db down'));
     const err = vi.spyOn(console, 'error').mockImplementation(() => undefined);
-    const { default: handler } = await import('./sms-send-pending');
+    const { runScheduledSmsSend: handler } = await import('./smsScheduledSend');
 
     const res = await handler();
 

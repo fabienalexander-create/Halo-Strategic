@@ -1,7 +1,8 @@
 import { getDatabase } from '@netlify/database';
-import { sendPendingVerifications } from '../../lib/smsSender';
+import { sendPendingVerifications } from './smsSender';
 
-// Homeowner SMS stage 2 (Fabien, 2026-11-19): the scheduler the SMS engine was built to expect.
+// Homeowner SMS stage 2 (Fabien, 2026-11-19): the body of the scheduled function
+// netlify/functions/sms-send-pending.mts, kept here so it is type-checked and tested.
 // Every 15 minutes it runs the same sender the intake routes use, so that:
 //  - Meta follow-up texts held outside 08:00-20:00 Europe/London go out from 08:00;
 //  - a hand-off to Make that failed is retried (max 3 attempts, the SAME link every time);
@@ -13,7 +14,7 @@ import { sendPendingVerifications } from '../../lib/smsSender';
 // follow-ups additionally need META_FOLLOW_UP_SMS_ENABLED=true and SMS_LINK_ENCRYPTION_KEY, and
 // nothing is handed to Make without MAKE_SMS_OUT_WEBHOOK_URL and MAKE_SMS_OUT_SECRET. Logs counts
 // only: never a phone number, reference or message text.
-export default async function handler(): Promise<Response> {
+export async function runScheduledSmsSend(): Promise<Response> {
   if (process.env.SMS_VERIFICATION_ENABLED !== 'true') {
     return Response.json({ skipped: 'NOT_ENABLED' });
   }
@@ -27,4 +28,3 @@ export default async function handler(): Promise<Response> {
   }
 }
 
-export const config = { schedule: '*/15 * * * *' };

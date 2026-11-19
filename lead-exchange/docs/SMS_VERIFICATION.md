@@ -54,7 +54,7 @@ Status: built and tested. Off until Fabien switches it on, with legal sign-off.
 
 Status: built and tested. Off. No Make scenario created, no TextMagic change, no text sent.
 
-**Scheduler.** `netlify/functions/sms-send-pending.ts`, a Netlify scheduled function, every 15 minutes. It calls the same `sendPendingVerifications` the intake routes use, so texts held overnight go out from 08:00, failed hand-offs retry (max 3, same link), stale texts expire and STOP numbers are closed. It adds no rules of its own. With `SMS_VERIFICATION_ENABLED` unset it returns before touching the database. Logs counts only. Scheduled functions run on the published production deploy only. `POST /api/sms/send-pending` stays as a manual trigger.
+**Scheduler.** `netlify/functions/sms-send-pending.mts` (body in `lib/smsScheduledSend.ts`), a Netlify scheduled function, every 15 minutes. It calls the same `sendPendingVerifications` the intake routes use, so texts held overnight go out from 08:00, failed hand-offs retry (max 3, same link), stale texts expire and STOP numbers are closed. It adds no rules of its own. With `SMS_VERIFICATION_ENABLED` unset it returns before touching the database. Logs counts only. Scheduled functions run on the published production deploy only. `POST /api/sms/send-pending` stays as a manual trigger.
 
 **What Make's SMS-out scenario must do** (to be built inactive, after approval):
 1. Custom webhook receives `{verification_ref, to, text, purpose}` with headers `x-halo-timestamp` (unix seconds) and `x-halo-signature`.

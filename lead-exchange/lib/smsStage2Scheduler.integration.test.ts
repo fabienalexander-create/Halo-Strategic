@@ -7,7 +7,7 @@ import { handleInboundReply, queueMetaFollowUp, recordDelivery, type SqlDb } fro
 import { hashFollowUpToken } from './metaFollowUpToken';
 
 // Homeowner SMS stage 2 (Fabien, 2026-11-19), end to end through the real scheduled function
-// (netlify/functions/sms-send-pending.ts) on a real, fully migrated Postgres. One overnight Meta
+// (netlify/functions/sms-send-pending.mts, body in lib/smsScheduledSend.ts) on a real, fully migrated Postgres. One overnight Meta
 // lead: held at night, sent at 08:00, a hand-off that timed out retried with the SAME link,
 // delivered, then STOP. Switches are turned on inside this test process only. No real SMS: Make
 // is a stubbed fetch and the webhook URL is .invalid.
@@ -80,7 +80,7 @@ describe.skipIf(!adminUrl)('SMS stage 2: scheduled sender, end to end (real Post
 
   async function runSchedulerAt(iso: string) {
     vi.setSystemTime(LONDON(iso));
-    const { default: handler } = await import('../netlify/functions/sms-send-pending');
+    const { runScheduledSmsSend: handler } = await import('./smsScheduledSend');
     return (await handler()).json();
   }
   async function newMetaLead(mobile: string) {
@@ -171,7 +171,7 @@ describe.skipIf(!adminUrl)('SMS stage 2: scheduled sender, end to end (real Post
       return new Response(JSON.stringify({ message_id: `tm-${randomBytes(4).toString('hex')}` }), { status: 200 });
     });
     vi.setSystemTime(LONDON('2026-11-20T12:00:00Z'));
-    const { default: handler } = await import('../netlify/functions/sms-send-pending');
+    const { runScheduledSmsSend: handler } = await import('./smsScheduledSend');
 
     await Promise.all([handler(), handler(), handler()]);
 
