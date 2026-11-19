@@ -32,6 +32,11 @@ export default function AdminHomePage() {
           </Link>
         </p>
         <p style={{ marginTop: 12 }}>
+          <Link href="/admin/emails" className="btn btn-bronze">
+            Buyer Emails (delivery status)
+          </Link>
+        </p>
+        <p style={{ marginTop: 12 }}>
           <Link href="/admin/prospect-pipeline" className="btn btn-bronze">
             Buyer Acquisition Pipeline
           </Link>

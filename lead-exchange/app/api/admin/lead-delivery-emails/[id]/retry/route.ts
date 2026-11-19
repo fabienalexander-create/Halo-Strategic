@@ -10,7 +10,9 @@ const INDUSTRY_LABELS: Record<string, string> = {
   roofing: 'Roofing',
 };
 
-// Retries a FAILED (or still-PENDING) lead_delivery_emails row -- same idempotent shape as the
+// Retries a FAILED (or still-PENDING) lead_delivery_emails row. Never resends one that went out,
+// bounced or was superseded, and claims the row first so concurrent retries cannot duplicate a
+// buyer notification (2026-11-19). Same idempotent shape as the
 // lead-sheet-syncs and transactional-emails retry endpoints. Re-derives the email content from
 // the current state of the allocation/lead/buyer rather than storing rendered content, so a retry
 // days later still reflects reality (e.g. if a price were ever corrected -- though nothing in this
@@ -24,9 +26,17 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
     return NextResponse.json({ error: 'Invalid id.' }, { status: 400 });
   }
 
+  let body: { confirmed_not_received?: boolean } = {};
+  try {
+    const raw = await req.text();
+    if (raw) body = JSON.parse(raw);
+  } catch {
+    return NextResponse.json({ error: 'Invalid JSON body.' }, { status: 400 });
+  }
+
   const db = getDatabase();
   const rows = await db.sql`
-    SELECT e.id AS email_id, e.email_type, e.recipient,
+    SELECT e.id AS email_id, e.email_type, e.recipient, e.status AS email_status,
            a.id AS allocation_id, a.agreed_price, a.package_id,
            l.id AS lead_id, l.homeowner_name, l.homeowner_contact, l.postcode, l.property_type, l.service_requirement,
            i.slug AS industry_slug, b.company_name, p.payment_reference
@@ -42,12 +52,19 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
     return NextResponse.json({ error: 'No matching lead delivery email found.' }, { status: 404 });
   }
   const row = rows[0] as {
-    email_id: number; email_type: string; recipient: string; allocation_id: number;
+    email_id: number; email_type: string; recipient: string; email_status: string; allocation_id: number;
     agreed_price: number | null; package_id: number | null; lead_id: number;
     homeowner_name: string; homeowner_contact: { email?: string; mobile?: string };
     postcode: string; property_type: string; service_requirement: string;
     industry_slug: string; company_name: string; payment_reference: string | null;
   };
+
+  if (row.email_status === 'SUPERSEDED') {
+    return NextResponse.json({ error: 'This email was superseded and will not be sent.' }, { status: 409 });
+  }
+  if (row.email_status === 'BOUNCED' || row.email_status === 'COMPLAINED') {
+    return NextResponse.json({ error: `This email ${row.email_status === 'BOUNCED' ? 'bounced' : 'was marked as spam'}. Fix the address before sending anything else.` }, { status: 409 });
+  }
 
   const industryLabel = INDUSTRY_LABELS[row.industry_slug] ?? row.industry_slug;
   const leadReference = `HLX-LEAD-${String(row.lead_id).padStart(6, '0')}`;
@@ -83,9 +100,9 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
       });
       break;
     default:
-      return NextResponse.json({ error: `Unknown email_type: ${row.email_type}` }, { status: 500 });
+      return NextResponse.json({ error: `No template for email type ${row.email_type}; not sent.` }, { status: 422 });
   }
 
-  const result = await attemptSendLeadDeliveryEmail(db, row.email_id, content);
-  return NextResponse.json(result);
+  const result = await attemptSendLeadDeliveryEmail(db, row.email_id, content, { confirmedNotReceived: body.confirmed_not_received === true });
+  return NextResponse.json(result, { status: result.outcomeUnknown && !result.sent ? 409 : 200 });
 }

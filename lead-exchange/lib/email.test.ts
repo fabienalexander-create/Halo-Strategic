@@ -18,6 +18,8 @@ interface FakeRow {
   provider_message_id: string | null;
   error_message: string | null;
   attempt_count: number;
+  send_claimed_at?: number | null;
+  outcome_unknown?: boolean;
 }
 
 // A minimal in-memory stand-in for the transactional_emails outbox table, just realistic enough
@@ -58,7 +60,20 @@ function fakeOutboxDb(seed: FakeRow[] = []): { db: SqlDb; rows: FakeRow[] } {
       if (text.includes('SELECT') && text.includes('WHERE id')) {
         const [id] = values as [number];
         const row = rows.find((r) => r.id === id);
-        return row ? [{ id: row.id, buyer_id: row.buyer_id, email_type: row.email_type, recipient: row.recipient, status: row.status }] : [];
+        return row ? [{ id: row.id, buyer_id: row.buyer_id, email_type: row.email_type, recipient: row.recipient, status: row.status, outcome_unknown: row.outcome_unknown ?? false }] : [];
+      }
+
+      if (text.includes('SET send_claimed_at = now()')) {
+        // Mirrors the real claim: only PENDING/FAILED, not already claimed, and an unknown
+        // outcome only with confirmation.
+        const [id, confirmed] = values as [number, boolean];
+        const row = rows.find((r) => r.id === id);
+        if (!row || !['PENDING', 'FAILED'].includes(row.status)) return [];
+        const free = !row.send_claimed_at && !row.outcome_unknown;
+        if (!free && !confirmed) return [];
+        if (row.send_claimed_at && confirmed) return []; // still in flight in this fake
+        row.send_claimed_at = Date.now();
+        return [{ id }];
       }
 
       if (text.includes("SET status = 'SENT'")) {
@@ -69,17 +84,21 @@ function fakeOutboxDb(seed: FakeRow[] = []): { db: SqlDb; rows: FakeRow[] } {
           row.provider_message_id = providerMessageId;
           row.error_message = null;
           row.attempt_count += 1;
+          row.send_claimed_at = null;
+          row.outcome_unknown = false;
         }
         return [];
       }
 
       if (text.includes("SET status = 'FAILED'")) {
-        const [errorMessage, id] = values as [string | null, number];
+        const [errorMessage, outcomeUnknown, id] = values as [string | null, boolean, number];
         const row = rows.find((r) => r.id === id);
         if (row) {
           row.status = 'FAILED';
           row.error_message = errorMessage;
           row.attempt_count += 1;
+          row.send_claimed_at = null;
+          row.outcome_unknown = outcomeUnknown;
         }
         return [];
       }

@@ -8,7 +8,7 @@ export interface SqlDb {
 }
 
 export type LeadDeliveryEmailType = 'LEAD_OFFER' | 'LEAD_UNLOCKED' | 'INTERNAL_OFFER_COPY' | 'INTERNAL_RELEASE_COPY';
-export type LeadDeliveryEmailStatus = 'PENDING' | 'SENT' | 'FAILED' | 'DELIVERED';
+export type LeadDeliveryEmailStatus = 'PENDING' | 'SENT' | 'FAILED' | 'DELIVERED' | 'BOUNCED' | 'COMPLAINED' | 'SUPERSEDED';
 
 export interface LeadDeliveryEmailRow {
   id: number;
@@ -81,26 +81,65 @@ export interface AttemptSendResult {
   sent: boolean;
   skipped: boolean;
   error?: string;
+  // True when an earlier attempt may already have reached the recipient (see outcome_unknown).
+  outcomeUnknown?: boolean;
 }
 
+export interface AttemptSendOptions {
+  // An admin has checked and the recipient did not receive the earlier attempt. Only then is a
+  // row whose outcome is unknown sent again.
+  confirmedNotReceived?: boolean;
+}
+
+// Statuses that are final for sending purposes: the message went out, or it must never go.
+const NOT_SENDABLE = new Set(['SENT', 'DELIVERED', 'BOUNCED', 'COMPLAINED', 'SUPERSEDED']);
+
 /**
- * Attempts to send the email for an existing lead_delivery_emails row, identified by its id.
- * Idempotent: a row already SENT or DELIVERED is skipped without contacting the provider again,
- * so this is safe to call from the admin retry endpoint as many times as needed. Never throws --
- * same reason as lib/email.ts's attemptSend: a failed email must never undo an already-committed
- * payment verification or delivery record.
+ * Attempts to send the email for an existing outbox row. Safe to call any number of times, from
+ * any number of requests at once (Fabien, 2026-11-19: retries must never duplicate a buyer
+ * notification):
+ *  - a row that already went out, bounced, or was superseded is never sent again;
+ *  - the row is claimed atomically (send_claimed_at) before Resend is called, so only one request
+ *    can be sending it at a time;
+ *  - if Resend's answer is lost (network error), the row is marked outcome_unknown and is not
+ *    resent until an admin confirms the recipient did not get it.
+ * Never throws, so an email problem can never undo an already-committed business operation.
  */
 export async function attemptSendLeadDeliveryEmail(
   db: SqlDb,
   id: number,
-  content: { subject: string; html: string; text: string }
+  content: { subject: string; html: string; text: string },
+  options: AttemptSendOptions = {}
 ): Promise<AttemptSendResult> {
-  const rows = await db.sql`SELECT id, lead_allocation_id, email_type, recipient, status FROM lead_delivery_emails WHERE id = ${id}`;
+  const rows = await db.sql`SELECT id, lead_allocation_id, email_type, recipient, status, outcome_unknown FROM lead_delivery_emails WHERE id = ${id}`;
   if (rows.length === 0) {
     return { sent: false, skipped: false, error: 'Outbox entry not found' };
   }
-  const row = rows[0] as unknown as LeadDeliveryEmailRow;
-  if (row.status === 'SENT' || row.status === 'DELIVERED') {
+  const row = rows[0] as unknown as LeadDeliveryEmailRow & { outcome_unknown?: boolean };
+  if (NOT_SENDABLE.has(row.status)) {
+    return { sent: false, skipped: true };
+  }
+  if (row.outcome_unknown && !options.confirmedNotReceived) {
+    return {
+      sent: false, skipped: false, outcomeUnknown: true,
+      error: 'An earlier attempt may already have been delivered. Check with the recipient, then retry with confirmation.',
+    };
+  }
+
+  const confirmed = options.confirmedNotReceived === true;
+  const claimed = await db.sql`
+    UPDATE lead_delivery_emails
+    SET send_claimed_at = now(), updated_at = now()
+    WHERE id = ${id}
+      AND status IN ('PENDING', 'FAILED')
+      AND (
+        (send_claimed_at IS NULL AND outcome_unknown = false)
+        OR (${confirmed} AND (send_claimed_at IS NULL OR send_claimed_at < now() - interval '10 minutes'))
+      )
+    RETURNING id
+  `;
+  if (claimed.length === 0) {
+    // Another request holds the claim (sending right now), or the row changed underneath us.
     return { sent: false, skipped: true };
   }
 
@@ -113,6 +152,8 @@ export async function attemptSendLeadDeliveryEmail(
   }
 
   try {
+    // recipient is normally a single address; internal/admin copies may hold a comma-separated
+    // list, since Resend's `to` accepts an array.
     const to = row.recipient.includes(',')
       ? row.recipient.split(',').map((address) => address.trim())
       : row.recipient;
@@ -125,6 +166,7 @@ export async function attemptSendLeadDeliveryEmail(
       text: content.text,
     });
     if (error) {
+      // Resend answered and refused: definitely not sent, safe to retry.
       const message = error.message ?? String(error);
       console.error(`Lead delivery email send failed: ${row.email_type} for allocation ${row.lead_allocation_id} (outbox #${id})`, error);
       await markOutcome(db, id, { status: 'FAILED', errorMessage: message });
@@ -133,36 +175,42 @@ export async function attemptSendLeadDeliveryEmail(
     await markOutcome(db, id, { status: 'SENT', providerMessageId: data?.id });
     return { sent: true, skipped: false };
   } catch (err) {
+    // No answer from Resend: the message may or may not have gone out.
     const message = err instanceof Error ? err.message : String(err);
     console.error(`Lead delivery email send threw: ${row.email_type} for allocation ${row.lead_allocation_id} (outbox #${id})`, err);
-    await markOutcome(db, id, { status: 'FAILED', errorMessage: message });
-    return { sent: false, skipped: false, error: message };
+    await markOutcome(db, id, { status: 'FAILED', errorMessage: `Outcome unknown: ${message}`, outcomeUnknown: true });
+    return { sent: false, skipped: false, error: message, outcomeUnknown: true };
   }
 }
 
 async function markOutcome(
   db: SqlDb,
   id: number,
-  outcome: { status: 'SENT' | 'FAILED'; providerMessageId?: string; errorMessage?: string }
+  outcome: { status: 'SENT' | 'FAILED'; providerMessageId?: string; errorMessage?: string; outcomeUnknown?: boolean }
 ): Promise<void> {
   try {
     if (outcome.status === 'SENT') {
       await db.sql`
         UPDATE lead_delivery_emails
         SET status = 'SENT', provider_message_id = ${outcome.providerMessageId ?? null}, error_message = NULL,
-            attempt_count = attempt_count + 1, sent_at = now(), updated_at = now()
+            attempt_count = attempt_count + 1, sent_at = now(), updated_at = now(),
+            send_claimed_at = NULL, outcome_unknown = false
         WHERE id = ${id}
       `;
     } else {
       await db.sql`
         UPDATE lead_delivery_emails
         SET status = 'FAILED', error_message = ${outcome.errorMessage ?? null},
-            attempt_count = attempt_count + 1, updated_at = now()
+            attempt_count = attempt_count + 1, updated_at = now(),
+            send_claimed_at = NULL, outcome_unknown = ${outcome.outcomeUnknown === true}
         WHERE id = ${id}
       `;
     }
   } catch (err) {
-    console.error(`Failed to record outcome for lead delivery email outbox #${id}`, err);
+    // Recording the outcome is best-effort -- never let it surface as a send failure. If it
+    // fails, send_claimed_at stays set, so the row is treated as outcome unknown, never resent
+    // automatically.
+    console.error(`Failed to record outcome for lead_delivery_emails #${id}`, err);
   }
 }
 
