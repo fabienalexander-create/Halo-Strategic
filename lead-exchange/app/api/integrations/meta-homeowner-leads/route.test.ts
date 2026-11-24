@@ -4,6 +4,7 @@ import { NextRequest } from 'next/server';
 const isConfiguredIndustrySlugMock = vi.fn();
 vi.mock('../../../../lib/industries', () => ({
   isConfiguredIndustrySlug: isConfiguredIndustrySlugMock,
+  categoryLabel: (slug: string | null | undefined) => (slug === 'spray_foam_removal' ? 'Spray Foam Removal' : slug ?? ''),
   HOMEOWNER_CONSENT_CONFIG: {
     spray_foam_removal: {
       consentVersion: '2026-11-18-v0.2',

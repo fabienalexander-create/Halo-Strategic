@@ -1,19 +1,13 @@
 import { getDatabase } from '@netlify/database';
 import { NextRequest, NextResponse } from 'next/server';
 import { secretMatches } from '../../../../lib/smsWebhookAuth';
-import { HOMEOWNER_CONSENT_CONFIG, isConfiguredIndustrySlug } from '../../../../lib/industries';
+import { HOMEOWNER_CONSENT_CONFIG, categoryLabel, isConfiguredIndustrySlug } from '../../../../lib/industries';
 import { buyerCoversPostcode } from '../../../../lib/buyerMatching';
 import { attemptSync, buildLeadRowValues } from '../../../../lib/sheetsSync';
 import { buildFollowUpUrl, generateFollowUpToken } from '../../../../lib/metaFollowUpToken';
 import { normalizeOwnershipAnswer, type OwnershipStatus } from '../../../../lib/ownershipAnswer';
 import { metaFollowUpSmsEnabled, queueMetaFollowUp, sqlFromClient } from '../../../../lib/smsVerification';
 import { sendPendingVerifications } from '../../../../lib/smsSender';
-
-const INDUSTRY_LABELS: Record<string, string> = {
-  spray_foam_removal: 'Spray Foam Removal',
-  solar_battery: 'Solar & Battery',
-  roofing: 'Roofing',
-};
 
 // Server-to-server ingestion for homeowner enquiries (e.g. the Spray Foam Roof Help Meta Instant
 // Form), bridged via a Make scenario, NOT called directly by Meta or by any browser. Same
@@ -390,7 +384,7 @@ export async function POST(req: NextRequest) {
     if (syncId !== null) {
       const rowValues = buildLeadRowValues({
         leadReference,
-        industryLabel: INDUSTRY_LABELS[industrySlug] ?? industrySlug,
+        industryLabel: categoryLabel(industrySlug),
         campaignOrSource: body.campaign_name ?? body.campaign_id ?? 'Meta Instant Form',
         receivedAt: body.created_time ?? new Date().toISOString(),
         fullName: body.mapped.homeowner_name ?? '',

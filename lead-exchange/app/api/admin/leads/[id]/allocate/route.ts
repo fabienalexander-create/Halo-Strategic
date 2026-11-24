@@ -3,12 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { requireAdmin } from '../../../../../../lib/requireAdmin';
 import { sendLeadDeliveryEmail } from '../../../../../../lib/leadDeliveryEmail';
 import { leadOfferEmail, internalOfferCopyEmail, leadUnlockedEmail, internalReleaseCopyEmail } from '../../../../../../lib/emailTemplates';
-
-const INDUSTRY_LABELS: Record<string, string> = {
-  spray_foam_removal: 'Spray Foam Removal',
-  solar_battery: 'Solar & Battery',
-  roofing: 'Roofing',
-};
+import { categoryLabel, isConfiguredIndustrySlug } from '../../../../../../lib/industries';
 
 interface Body {
   buyer_id?: number;
@@ -86,6 +81,15 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
       id: number; status: string; homeowner_name: string; homeowner_contact: { email?: string; mobile?: string };
       property_type: string; postcode: string; service_requirement: string; industry_slug: string; industry_id: number;
     };
+
+    // Allocation only ever happens in a live category (lib/industries.ts CATEGORIES). Prepared and
+    // future categories cannot take enquiries anyway; this is the backstop at the point of sale.
+    if (!isConfiguredIndustrySlug(lead.industry_slug)) {
+      return NextResponse.json(
+        { error: `${categoryLabel(lead.industry_slug)} is not a live category yet; its leads cannot be allocated.` },
+        { status: 409 }
+      );
+    }
 
     // QUALIFICATION_PENDING is the status every Meta-sourced lead is created at -- including an
     // incomplete one still missing its qualification answers and/or consent (Fabien, 2026-11-18:
@@ -183,7 +187,7 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
     }
 
     const allocationSequence = allocationType === 'EXCLUSIVE_WINDOW' ? 1 : null;
-    const industryLabel = INDUSTRY_LABELS[lead.industry_slug] ?? lead.industry_slug;
+    const industryLabel = categoryLabel(lead.industry_slug);
     const leadReference = `HLX-LEAD-${String(leadId).padStart(6, '0')}`;
     const packageCovered = Boolean(body.package_id);
 

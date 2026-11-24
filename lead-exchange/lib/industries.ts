@@ -10,7 +10,76 @@
 // the second, independent gate: an industry must be BOTH enabled in the database AND configured
 // here before either route will accept a submission for it.
 
+// ---- Central category registry --------------------------------------------------------------
+// The single list of service categories, used across intake, buyer forms, admin and emails. A
+// category's `status` decides what it may do:
+//   live      -- accepts homeowner enquiries and buyers (still also needs industries.is_enabled)
+//   prepared  -- defined and seeded in the database, but no public form, no enquiries, no buyers,
+//                no allocation. Becomes live only after Fabien approves its consent wording and
+//                there is a buyer for it (see docs/CATEGORY_CONSENT_DRAFTS.md).
+//   future    -- placeholder for planning; disabled everywhere.
+// Every slug here must exist in the `industries` table and vice versa; lib/categoryConsistency.ts
+// checks that (tests, and GET /api/admin/categories against the live database).
+
 export type IndustrySlug = 'spray_foam_removal' | 'solar_battery' | 'roofing';
+export type CategorySlug = IndustrySlug | 'windows_doors' | 'insulation' | 'heat_pumps' | 'kitchens' | 'bathrooms';
+export type CategoryStatus = 'live' | 'prepared' | 'future';
+
+export interface CategoryDefinition {
+  slug: CategorySlug;
+  label: string;
+  // Stored on leads.service_requirement for website enquiries.
+  serviceRequirementLabel: string;
+  status: CategoryStatus;
+  // What the category covers, where the boundary with another category matters.
+  scope?: string;
+  // Keys of the homeowner enquiry payload that belong to this category's qualification answers.
+  // For prepared categories these are proposed only and are not used until the category is live.
+  qualificationFields: readonly string[];
+}
+
+export const CATEGORIES: readonly CategoryDefinition[] = [
+  {
+    slug: 'spray_foam_removal', label: 'Spray Foam Removal', serviceRequirementLabel: 'Spray Foam Removal', status: 'live',
+    scope: 'Removal of existing spray foam insulation. New insulation installation is the separate Insulation category.',
+    qualificationFields: [
+      'foam_location', 'foam_type', 'reason_for_removal', 'timeframe', 'roof_access', 'previous_quotes',
+      'bedrooms', 'foam_extent', 'loft_size_estimate', 'house_number_or_name',
+      'calculator_in_area', 'calculator_estimate_available', 'calculator_estimate_shown',
+    ],
+  },
+  {
+    slug: 'solar_battery', label: 'Solar & Battery', serviceRequirementLabel: 'Solar & Battery Installation', status: 'live',
+    qualificationFields: ['interest_type', 'roof_type', 'existing_solar', 'timeframe'],
+  },
+  {
+    slug: 'roofing', label: 'Roofing', serviceRequirementLabel: 'Roofing', status: 'live',
+    qualificationFields: ['work_type', 'roof_type', 'urgency', 'issue_description', 'timeframe'],
+  },
+  {
+    slug: 'windows_doors', label: 'Windows & Doors', serviceRequirementLabel: 'Windows & Doors', status: 'prepared',
+    qualificationFields: ['work_type', 'number_of_units', 'frame_material', 'timeframe'],
+  },
+  {
+    slug: 'insulation', label: 'Insulation', serviceRequirementLabel: 'Insulation Installation', status: 'prepared',
+    scope: 'New insulation installation only: loft, cavity wall and external wall. Spray foam removal is a separate category.',
+    qualificationFields: ['insulation_type', 'property_age', 'existing_insulation', 'timeframe'],
+  },
+  { slug: 'heat_pumps', label: 'Heat Pumps', serviceRequirementLabel: 'Heat Pump Installation', status: 'future', qualificationFields: [] },
+  { slug: 'kitchens', label: 'Kitchens', serviceRequirementLabel: 'Kitchen Installation', status: 'future', qualificationFields: [] },
+  { slug: 'bathrooms', label: 'Bathrooms', serviceRequirementLabel: 'Bathroom Installation', status: 'future', qualificationFields: [] },
+];
+
+export const LIVE_CATEGORIES: readonly CategoryDefinition[] = CATEGORIES.filter((c) => c.status === 'live');
+
+export function getCategory(slug: unknown): CategoryDefinition | undefined {
+  return CATEGORIES.find((c) => c.slug === slug);
+}
+
+// Display label for any stored slug; falls back to the slug itself for anything unknown.
+export function categoryLabel(slug: string | null | undefined): string {
+  return getCategory(slug)?.label ?? slug ?? '';
+}
 
 export interface HomeownerConsentConfig {
   consentVersion: string;
@@ -92,16 +161,12 @@ export const BUYER_REPLACEMENT_POLICY_CONFIG: Record<IndustrySlug, BuyerReplacem
   roofing: { version: '2027-01-01-v1.0', hasPublishedPolicy: true, policyUrl: '/lead-replacement-policy' },
 };
 
+// True only for LIVE categories. Every intake and creation path (homeowner forms, Meta intake,
+// buyer applications and prospects, admin lead and buyer creation) checks this, so a prepared or
+// future category can never take an enquiry or a buyer, whatever the database flag says.
 export function isConfiguredIndustrySlug(slug: unknown): slug is IndustrySlug {
-  return slug === 'spray_foam_removal' || slug === 'solar_battery' || slug === 'roofing';
+  return getCategory(slug)?.status === 'live';
 }
 
-// Canonical display labels, matching the industries.name values seeded in the database (and the
-// hardcoded options in app/admin/buyers/new/NewBuyerForm.tsx). Used anywhere that needs to list
-// every configured industry up front -- e.g. an admin filter dropdown -- rather than only the
-// industries that happen to already have rows in some other table.
-export const INDUSTRY_LABELS: Record<IndustrySlug, string> = {
-  spray_foam_removal: 'Spray Foam Removal',
-  solar_battery: 'Solar & Battery',
-  roofing: 'Roofing',
-};
+// Display labels for the live categories, matching industries.name in the database.
+export const INDUSTRY_LABELS = Object.fromEntries(LIVE_CATEGORIES.map((c) => [c.slug, c.label])) as Record<IndustrySlug, string>;

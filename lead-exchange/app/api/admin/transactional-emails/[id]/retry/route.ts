@@ -7,12 +7,7 @@ import {
   applicationApprovedForCommercialReviewEmail,
   adminNewApplicationEmail,
 } from '../../../../../../lib/emailTemplates';
-
-const INDUSTRY_LABELS: Record<string, string> = {
-  spray_foam_removal: 'Spray Foam Removal',
-  solar_battery: 'Solar & Battery',
-  roofing: 'Roofing',
-};
+import { categoryLabel } from '../../../../../../lib/industries';
 
 // Retries a FAILED (or still-PENDING) outbox entry WITHOUT repeating the original application or
 // approval action. Safe to call repeatedly or concurrently: attemptSend claims the row first and
@@ -75,7 +70,7 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
       content = adminNewApplicationEmail({
         companyName: row.company_name,
         contactName: row.contact_name,
-        industryLabel: (row.industry_slug && INDUSTRY_LABELS[row.industry_slug]) ?? row.industry_slug ?? '',
+        industryLabel: categoryLabel(row.industry_slug),
         applicationReference: row.application_reference,
       });
       break;

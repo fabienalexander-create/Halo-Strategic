@@ -3,15 +3,9 @@ import { NextRequest, NextResponse } from 'next/server';
 import { randomUUID } from 'crypto';
 import { attemptSend } from '../../../lib/email';
 import { adminNewApplicationEmail, applicationReceivedEmail } from '../../../lib/emailTemplates';
-import { BUYER_REPLACEMENT_POLICY_CONFIG, isConfiguredIndustrySlug } from '../../../lib/industries';
+import { BUYER_REPLACEMENT_POLICY_CONFIG, isConfiguredIndustrySlug, categoryLabel } from '../../../lib/industries';
 import { advisoryLockKey } from '../../../lib/attribution';
 import { autoAuthoriseContactFromApplication } from '../../../lib/buyerProspectAutoAuthorise';
-
-const INDUSTRY_LABELS: Record<string, string> = {
-  spray_foam_removal: 'Spray Foam Removal',
-  solar_battery: 'Solar & Battery',
-  roofing: 'Roofing',
-};
 
 // Current version of the Buyer Terms every applicant agrees to, regardless of industry -- it
 // describes Halo's admin-mediated process generally (applications, payment-before-release, data
@@ -433,7 +427,7 @@ export async function POST(req: NextRequest) {
         adminNewApplicationEmail({
           companyName: body.company_name,
           contactName: body.contact_name,
-          industryLabel: INDUSTRY_LABELS[industrySlug] ?? industrySlug,
+          industryLabel: categoryLabel(industrySlug),
           applicationReference,
         })
       );

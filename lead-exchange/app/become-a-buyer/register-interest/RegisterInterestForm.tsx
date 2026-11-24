@@ -4,6 +4,7 @@ import { useRef, useState } from 'react';
 import Link from 'next/link';
 import Script from 'next/script';
 import { apiPath } from '../../../lib/basePath';
+import { LIVE_CATEGORIES } from '../../../lib/industries';
 
 // Exposed to the browser only when Fabien has actually configured a site key (Next.js inlines
 // NEXT_PUBLIC_ vars at build time) -- the widget simply doesn't render without one, so the form
@@ -22,12 +23,8 @@ declare global {
 
 type Answers = Record<string, string | boolean | undefined>;
 
-const INDUSTRY_OPTIONS = ['Spray Foam Removal', 'Solar & Battery', 'Roofing'];
-const INDUSTRY_SLUGS: Record<string, string> = {
-  'Spray Foam Removal': 'spray_foam_removal',
-  'Solar & Battery': 'solar_battery',
-  Roofing: 'roofing',
-};
+const INDUSTRY_OPTIONS = LIVE_CATEGORIES.map((c) => c.label);
+const INDUSTRY_SLUGS: Record<string, string> = Object.fromEntries(LIVE_CATEGORIES.map((c) => [c.label, c.slug]));
 
 function TextField({
   label, name, type = 'text', required, value, onChange,
