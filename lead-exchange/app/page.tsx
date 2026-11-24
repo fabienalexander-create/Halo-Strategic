@@ -157,6 +157,113 @@ export default function HomePage() {
 
       <section>
         <div className="container" data-reveal>
+          <div className="eyebrow">UK and USA</div>
+          <h2 style={{ fontSize: '1.5rem', marginBottom: 12 }}>
+            Built for home-improvement businesses on both sides of the Atlantic.
+          </h2>
+          <p style={{ marginBottom: 0 }}>
+            Lead Exchange started in the UK. We&rsquo;re applying the same structured approach, market by
+            market, as we open the platform to US buyers, not promising national coverage before it
+            exists.
+          </p>
+          <div className="market-grid">
+            <div className="industry-card">
+              <span className="industry-card-badge">Live today</span>
+              <h3>United Kingdom</h3>
+              <p>
+                Our acquisition, qualification and buyer-approval systems are live and running across our
+                current UK markets: Spray Foam Removal, with Solar &amp; Battery and Roofing opening to
+                new buyers as we establish coverage.
+              </p>
+            </div>
+            <div className="industry-card">
+              <span className="industry-card-badge industry-card-badge--soon">Opening to buyers</span>
+              <h3>United States</h3>
+              <p>
+                We&rsquo;re building the same acquisition and qualification approach for US
+                home-improvement businesses. Buyer coverage is being established market by market, not
+                offered everywhere at once.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="band">
+        <div className="container" data-reveal>
+          <div className="eyebrow">For Contractors</div>
+          <h2 style={{ fontSize: '1.5rem', marginBottom: 16 }}>
+            Already know your market? Apply to become a buyer.
+          </h2>
+          <p>
+            Every application is reviewed individually, with a short onboarding call to confirm fit
+            before your account goes live. Pricing, coverage area and exclusivity are agreed directly
+            with you, not fixed in advance or the same for every buyer.
+          </p>
+          <Link href="/become-a-buyer" className="btn btn-bronze" style={{ marginTop: 8 }}>
+            Explore Becoming a Buyer
+          </Link>
+        </div>
+      </section>
+
+      <section id="faq" className="tight" style={{ background: 'var(--surface)', borderTop: '1px solid var(--border)', borderBottom: '1px solid var(--border)' }}>
+        <div className="container" style={{ maxWidth: 800 }} data-reveal>
+          <div className="eyebrow">FAQ</div>
+          <h2 className="section-title" style={{ fontSize: '1.7rem' }}>What people ask first.</h2>
+          <div className="faq">
+            <details>
+              <summary>How does Lead Exchange work?</summary>
+              <p>
+                We develop acquisition campaigns, generate homeowner enquiries, check them against
+                criteria agreed with approved buyers, and offer suitable enquiries to the matching buyer.
+              </p>
+            </details>
+            <details>
+              <summary>Which markets do you operate in today?</summary>
+              <p>
+                The UK is live today, with Spray Foam Removal open to new buyers and Solar &amp; Battery
+                and Roofing opening as we establish coverage. We&rsquo;re building the same approach for
+                US buyers, market by market.
+              </p>
+            </details>
+            <details>
+              <summary>Is exclusivity available?</summary>
+              <p>
+                Not claimed as standard. Whether a lead is sold to one buyer only or shared is set out in
+                your individual buyer agreement, not assumed as a platform-wide default.
+              </p>
+            </details>
+            <details>
+              <summary>What happens if a lead turns out to be invalid?</summary>
+              <p>
+                We don&rsquo;t operate a cash refund model. Where a lead meets the agreed criteria for
+                being invalid, we provide an equivalent{' '}
+                <Link href="/lead-replacement-policy" style={{ color: 'var(--bronze)' }}>
+                  replacement lead
+                </Link>
+                , not an automatic refund.
+              </p>
+            </details>
+            <details>
+              <summary>How does pricing work?</summary>
+              <p>Agreed individually during onboarding, based on your industry, coverage area and arrangement.</p>
+            </details>
+            <details>
+              <summary>How do I get started?</summary>
+              <p>
+                <Link href="/become-a-buyer" style={{ color: 'var(--bronze)' }}>
+                  Apply to become a buyer
+                </Link>
+                . Every application is reviewed individually, with a short onboarding call before your
+                account goes live.
+              </p>
+            </details>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <div className="container" data-reveal>
           <div className="eyebrow">More From Halo Strategic</div>
           <h2 style={{ fontSize: '1.5rem', marginBottom: 16 }}>Behind the Lead Exchange.</h2>
           <div className="site-links">
