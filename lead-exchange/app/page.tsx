@@ -74,10 +74,10 @@ export default function HomePage() {
             </div>
             <div className="mini-card">
               <div className="k">SPEND CONTROL</div>
-              <h3>Pay per lead, nothing locked in</h3>
+              <h3>You choose what you buy</h3>
               <p>
-                Buy the enquiries you want as they come up, with transparent per-lead pricing and no
-                minimum commitment.
+                See a redacted preview of each enquiry and decide lead by lead. Pricing is agreed with you
+                during onboarding and set out in your buyer agreement.
               </p>
             </div>
             <div className="mini-card">
