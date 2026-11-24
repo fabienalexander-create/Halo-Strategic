@@ -3,16 +3,10 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { apiPath } from '../../lib/basePath';
-import { BUYER_REPLACEMENT_POLICY_CONFIG, isConfiguredIndustrySlug } from '../../lib/industries';
+import { BUYER_REPLACEMENT_POLICY_CONFIG, INDUSTRY_LABELS, isConfiguredIndustrySlug } from '../../lib/industries';
 import { pickAttributionParams } from '../../lib/attribution';
 
 type Answers = Record<string, string | boolean | number | string[] | undefined>;
-
-const INDUSTRY_LABELS: Record<string, string> = {
-  spray_foam_removal: 'Spray Foam Removal',
-  solar_battery: 'Solar & Battery',
-  roofing: 'Roofing',
-};
 
 function TextField({
   label, name, type = 'text', required, hint, value, onChange,
@@ -242,8 +236,8 @@ export default function BuyerApplicationForm() {
         name="industry_slug"
         required
         options={Object.values(INDUSTRY_LABELS)}
-        value={INDUSTRY_LABELS[str('industry_slug')] ?? ''}
-        onChange={(v) => set('industry_slug', Object.keys(INDUSTRY_LABELS).find((slug) => INDUSTRY_LABELS[slug] === v) ?? '')}
+        value={INDUSTRY_LABELS[str('industry_slug') as keyof typeof INDUSTRY_LABELS] ?? ''}
+        onChange={(v) => set('industry_slug', Object.keys(INDUSTRY_LABELS).find((slug) => INDUSTRY_LABELS[slug as keyof typeof INDUSTRY_LABELS] === v) ?? '')}
       />
       <TextField label="Company name" name="company_name" required value={str('company_name')} onChange={(v) => set('company_name', v)} />
       <TextField label="Contact name" name="contact_name" required value={str('contact_name')} onChange={(v) => set('contact_name', v)} />

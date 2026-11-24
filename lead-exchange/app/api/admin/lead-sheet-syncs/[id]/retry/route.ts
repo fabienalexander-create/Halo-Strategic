@@ -2,12 +2,7 @@ import { getDatabase } from '@netlify/database';
 import { NextRequest, NextResponse } from 'next/server';
 import { requireAdmin } from '../../../../../../lib/requireAdmin';
 import { attemptSync, buildLeadRowValues } from '../../../../../../lib/sheetsSync';
-
-const INDUSTRY_LABELS: Record<string, string> = {
-  spray_foam_removal: 'Spray Foam Removal',
-  solar_battery: 'Solar & Battery',
-  roofing: 'Roofing',
-};
+import { categoryLabel } from '../../../../../../lib/industries';
 
 // Retries a FAILED (or still-PENDING) sync entry WITHOUT repeating the original enquiry --
 // idempotent in the same way the transactional-email retry is: attemptSync skips an entry already
@@ -48,7 +43,7 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
   const leadReference = `HLX-LEAD-${String(row.lead_id).padStart(6, '0')}`;
   const rowValues = buildLeadRowValues({
     leadReference,
-    industryLabel: INDUSTRY_LABELS[row.industry_slug] ?? row.industry_slug,
+    industryLabel: categoryLabel(row.industry_slug),
     campaignOrSource: row.acquisition_campaign ?? 'Website form',
     receivedAt: new Date(row.created_at).toISOString(),
     fullName: row.homeowner_name,

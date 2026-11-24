@@ -232,6 +232,19 @@ describe('POST /api/admin/leads/[id]/allocate -- shared vs exclusive allocation'
     expect(sqlMock).toHaveBeenCalledTimes(1); // stops immediately after the lead lookup
   });
 
+  it('refuses to allocate a lead in a category that is not live (prepared or future)', async () => {
+    for (const slug of ['windows_doors', 'insulation', 'heat_pumps']) {
+      sqlMock.mockReset();
+      sqlMock.mockResolvedValueOnce([{ ...LEAD_ROW, industry_slug: slug }]);
+      const { POST } = await import('./route');
+      const res = await POST(req({ buyer_id: 99, homeowner_confirmation_id: 5 }), { params: { id: '55' } });
+      expect(res.status).toBe(409);
+      expect((await res.json()).error).toMatch(/not a live category/);
+      expect(sqlMock).toHaveBeenCalledTimes(1);
+      expect(clientQueryMock).not.toHaveBeenCalled();
+    }
+  });
+
   it('still allows allocating a NEW-status lead (e.g. a Meta lead that completed the website follow-up)', async () => {
     sqlMock
       .mockResolvedValueOnce([{ ...LEAD_ROW, status: 'NEW' }])

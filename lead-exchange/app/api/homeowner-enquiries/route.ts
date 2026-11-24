@@ -1,18 +1,9 @@
 import { getDatabase } from '@netlify/database';
 import { NextRequest, NextResponse } from 'next/server';
-import { HOMEOWNER_CONSENT_CONFIG, isConfiguredIndustrySlug } from '../../../lib/industries';
+import { HOMEOWNER_CONSENT_CONFIG, categoryLabel, getCategory, isConfiguredIndustrySlug } from '../../../lib/industries';
 import { attemptSync, buildLeadRowValues } from '../../../lib/sheetsSync';
 import { queueVerification, sqlFromClient } from '../../../lib/smsVerification';
 import { sendPendingVerifications } from '../../../lib/smsSender';
-
-// Matches the "Industry" wording already used elsewhere (become-a-buyer's selector, the homepage
-// cards) and in the operational sheet's own existing rows -- not SERVICE_REQUIREMENT_LABEL below,
-// which is wording for the lead's own service_requirement field, not a column of industry names.
-const INDUSTRY_LABELS: Record<string, string> = {
-  spray_foam_removal: 'Spray Foam Removal',
-  solar_battery: 'Solar & Battery',
-  roofing: 'Roofing',
-};
 
 // Minimal in-memory rate limiting per Netlify Function instance — same floor as /api/contact
 // and /api/admin/login, not a replacement for a real rate-limiter.
@@ -93,21 +84,6 @@ const REQUIRED_FIELDS: (keyof HomeownerEnquiryPayload)[] = [
 // above (which get their own dedicated columns/handling). Keeping this list explicit, rather than
 // spreading the whole body into qualification_answers, means a field submitted for the wrong
 // industry is simply dropped, not silently stored against the wrong vertical's lead.
-const QUALIFICATION_FIELDS: Record<string, (keyof HomeownerEnquiryPayload)[]> = {
-  spray_foam_removal: [
-    'foam_location', 'foam_type', 'reason_for_removal', 'timeframe', 'roof_access', 'previous_quotes',
-    'bedrooms', 'foam_extent', 'loft_size_estimate', 'house_number_or_name',
-    'calculator_in_area', 'calculator_estimate_available', 'calculator_estimate_shown',
-  ],
-  solar_battery: ['interest_type', 'roof_type', 'existing_solar', 'timeframe'],
-  roofing: ['work_type', 'roof_type', 'urgency', 'issue_description', 'timeframe'],
-};
-
-const SERVICE_REQUIREMENT_LABEL: Record<string, string> = {
-  spray_foam_removal: 'Spray Foam Removal',
-  solar_battery: 'Solar & Battery Installation',
-  roofing: 'Roofing',
-};
 
 export async function POST(req: NextRequest) {
   const ip = req.headers.get('x-nf-client-connection-ip') ?? req.headers.get('x-forwarded-for') ?? 'unknown';
@@ -170,7 +146,9 @@ export async function POST(req: NextRequest) {
   const industryId = industryRows[0].id as number;
 
   const consentConfig = HOMEOWNER_CONSENT_CONFIG[industrySlug];
-  const qualificationFields = QUALIFICATION_FIELDS[industrySlug];
+  // Category-specific questions come from the central registry (lib/industries.ts CATEGORIES).
+  const category = getCategory(industrySlug)!;
+  const qualificationFields = category.qualificationFields as readonly (keyof HomeownerEnquiryPayload)[];
   const qualificationAnswers: Record<string, unknown> = { ownership_status: body.ownership_status };
   for (const field of qualificationFields) {
     qualificationAnswers[field] = body[field] ?? null;
@@ -209,7 +187,7 @@ export async function POST(req: NextRequest) {
       RETURNING id`,
       [
         industryId,
-        SERVICE_REQUIREMENT_LABEL[industrySlug],
+        category.serviceRequirementLabel,
         `${body.first_name} ${body.last_name}`,
         JSON.stringify({ email: body.email, mobile: body.mobile, preferred_contact_method: body.preferred_contact_method ?? null }),
         body.property_type,
@@ -281,7 +259,7 @@ export async function POST(req: NextRequest) {
     if (syncInsert.rows.length > 0) {
       const rowValues = buildLeadRowValues({
         leadReference,
-        industryLabel: INDUSTRY_LABELS[industrySlug] ?? industrySlug,
+        industryLabel: categoryLabel(industrySlug),
         campaignOrSource: body.utm_campaign ?? 'Website form',
         receivedAt: new Date().toISOString(),
         fullName: `${body.first_name} ${body.last_name}`,

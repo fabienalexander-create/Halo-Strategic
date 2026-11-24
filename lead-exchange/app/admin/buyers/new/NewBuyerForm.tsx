@@ -2,12 +2,9 @@
 
 import { useState } from 'react';
 import { apiPath } from '../../../../lib/basePath';
+import { LIVE_CATEGORIES } from '../../../../lib/industries';
 
-const INDUSTRIES = [
-  { slug: 'spray_foam_removal', label: 'Spray Foam Removal' },
-  { slug: 'solar_battery', label: 'Solar & Battery' },
-  { slug: 'roofing', label: 'Roofing' },
-];
+const INDUSTRIES = LIVE_CATEGORIES.map((c) => ({ slug: c.slug, label: c.label }));
 
 export default function NewBuyerForm() {
   const [form, setForm] = useState({

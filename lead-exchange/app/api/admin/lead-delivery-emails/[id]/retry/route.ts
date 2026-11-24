@@ -3,12 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { requireAdmin } from '../../../../../../lib/requireAdmin';
 import { attemptSendLeadDeliveryEmail } from '../../../../../../lib/leadDeliveryEmail';
 import { leadOfferEmail, internalOfferCopyEmail, leadUnlockedEmail, internalReleaseCopyEmail } from '../../../../../../lib/emailTemplates';
-
-const INDUSTRY_LABELS: Record<string, string> = {
-  spray_foam_removal: 'Spray Foam Removal',
-  solar_battery: 'Solar & Battery',
-  roofing: 'Roofing',
-};
+import { categoryLabel } from '../../../../../../lib/industries';
 
 // Retries a FAILED (or still-PENDING) lead_delivery_emails row. Never resends one that went out,
 // bounced or was superseded, and claims the row first so concurrent retries cannot duplicate a
@@ -66,7 +61,7 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
     return NextResponse.json({ error: `This email ${row.email_status === 'BOUNCED' ? 'bounced' : 'was marked as spam'}. Fix the address before sending anything else.` }, { status: 409 });
   }
 
-  const industryLabel = INDUSTRY_LABELS[row.industry_slug] ?? row.industry_slug;
+  const industryLabel = categoryLabel(row.industry_slug);
   const leadReference = `HLX-LEAD-${String(row.lead_id).padStart(6, '0')}`;
   const packageCovered = row.package_id !== null;
 

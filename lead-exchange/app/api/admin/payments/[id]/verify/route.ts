@@ -3,12 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { requireAdmin } from '../../../../../../lib/requireAdmin';
 import { sendLeadDeliveryEmail } from '../../../../../../lib/leadDeliveryEmail';
 import { leadUnlockedEmail, internalReleaseCopyEmail } from '../../../../../../lib/emailTemplates';
-
-const INDUSTRY_LABELS: Record<string, string> = {
-  spray_foam_removal: 'Spray Foam Removal',
-  solar_battery: 'Solar & Battery',
-  roofing: 'Roofing',
-};
+import { categoryLabel } from '../../../../../../lib/industries';
 
 interface Body {
   transaction_reference?: string;
@@ -140,7 +135,7 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
     }
 
     if (released) {
-      const industryLabel = INDUSTRY_LABELS[row.industry_slug] ?? row.industry_slug;
+      const industryLabel = categoryLabel(row.industry_slug);
       const leadReference = `HLX-LEAD-${String(row.lead_id).padStart(6, '0')}`;
 
       await sendLeadDeliveryEmail(db, {
