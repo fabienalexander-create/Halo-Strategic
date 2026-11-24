@@ -1,6 +1,13 @@
 import Link from 'next/link';
 import LoftCrossSection from '../components/LoftCrossSection';
 import Reveal from '../components/Reveal';
+import { indexablePage } from '../../lib/seo';
+
+export const metadata = indexablePage({
+  path: '/spray-foam-removal',
+  title: 'Spray Foam Removal Leads | Halo Lead Exchange',
+  description: 'Qualified spray foam removal enquiries for UK removal specialists, checked against agreed criteria before any enquiry reaches a buyer.',
+});
 
 export default function SprayFoamRemovalPage() {
   return (

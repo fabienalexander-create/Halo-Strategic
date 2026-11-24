@@ -4,6 +4,13 @@ import SolarBatteryIllustration from './components/SolarBatteryIllustration';
 import RoofingIllustration from './components/RoofingIllustration';
 import ProcessSteps from './components/ProcessSteps';
 import Reveal from './components/Reveal';
+import { indexablePage } from '../lib/seo';
+
+export const metadata = indexablePage({
+  path: '/',
+  title: 'Halo Lead Exchange | Homeowner Enquiries for Installers',
+  description: 'Lead Exchange connects UK home-improvement businesses with homeowners looking for their services. Every enquiry is checked, with a preview before you buy.',
+});
 
 export default function HomePage() {
   return (
