@@ -13,11 +13,11 @@ export default function HomePage() {
         <div className="container hero-grid">
           <div className="hero-copy">
           <div className="eyebrow">Halo Lead Exchange</div>
-          <h1>Qualified home improvement enquiries. Delivered to the right businesses.</h1>
+          <h1>Better homeowner enquiries. More opportunities for your business.</h1>
           <p className="lead">
-            Halo Strategic connects UK service providers with homeowners actively exploring relevant
-            home-improvement services. We focus on qualification, transparent lead information, and a
-            controlled purchasing and delivery process.
+            Lead Exchange connects home-improvement businesses with homeowners actively looking for
+            services. We focus on qualification, transparent lead information, and giving you control
+            over how you buy.
           </p>
           <div className="hero-actions">
             <Link href="/become-a-buyer" className="btn btn-bronze">
@@ -36,7 +36,7 @@ export default function HomePage() {
 
       <section className="band">
         <div className="container" data-reveal>
-          <div className="eyebrow">What We Do</div>
+          <div className="eyebrow">Why Businesses Use Lead Exchange</div>
           <h2 style={{ fontSize: '1.5rem', marginBottom: 16 }}>
             We don&rsquo;t simply pass contact lists to businesses.
           </h2>
@@ -45,6 +45,48 @@ export default function HomePage() {
             commercially useful opportunities — for one specialist market at a time, built properly
             rather than launched everywhere at once.
           </p>
+          <div className="card-grid">
+            <div className="mini-card">
+              <div className="k">LOCAL OPPORTUNITIES</div>
+              <h3>Matched to where you work</h3>
+              <p>
+                Enquiries are only offered to buyers whose approved territory covers them, so you see
+                opportunities in the areas you actually serve.
+              </p>
+            </div>
+            <div className="mini-card">
+              <div className="k">RELEVANT ENQUIRIES</div>
+              <h3>Project detail, not just a contact</h3>
+              <p>
+                Each enquiry carries the qualification and project information gathered before it&rsquo;s
+                offered, not a bare name and number.
+              </p>
+            </div>
+            <div className="mini-card">
+              <div className="k">SPEND CONTROL</div>
+              <h3>Pay per lead, nothing locked in</h3>
+              <p>
+                Buy the enquiries you want as they come up, with transparent per-lead pricing and no
+                minimum commitment.
+              </p>
+            </div>
+            <div className="mini-card">
+              <div className="k">LESS COMPETITION</div>
+              <h3>Exclusive, where that&rsquo;s agreed</h3>
+              <p>
+                Some leads are sold to one buyer only. Whether a given lead is exclusive or shared is
+                set out in your buyer agreement, never assumed.
+              </p>
+            </div>
+            <div className="mini-card">
+              <div className="k">ROOM TO GROW</div>
+              <h3>Scale with your own capacity</h3>
+              <p>
+                Take on more, or less, as your business has room for it &mdash; access is matched to the
+                services and volume you can actually handle.
+              </p>
+            </div>
+          </div>
         </div>
       </section>
 

@@ -130,6 +130,14 @@
   .stat .l{ font-size:0.8rem; color:var(--slate); }
   .evidence-more{ margin-top:8px; }
 
+  /* LEAD EXCHANGE PROMO */
+  .lx-promo{ background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-lg); padding:48px; display:grid; grid-template-columns:1.3fr 1fr; gap:48px; align-items:center; }
+  .lx-promo-copy p{ margin:0 0 18px; }
+  .lx-promo-copy p:last-of-type{ margin-bottom:28px; }
+  .lx-diagram{ display:flex; align-items:center; justify-content:center; }
+  .lx-diagram svg{ width:100%; height:auto; max-width:260px; }
+  .lx-diagram .lx-node-label{ font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:0.02em; fill:var(--slate); }
+
   /* WHO THIS IS FOR */
   .who-grid{ list-style:none; margin:28px 0 0; padding:0; display:grid; gap:12px; }
   .who-grid li{ background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-md); padding:16px 20px; font-family:'Fraunces',serif; font-style:italic; font-size:1.05rem; color:var(--navy-deep); }
@@ -271,6 +279,9 @@
     .about-intro h1{ font-size:2rem; }
     .step-row{ flex-direction:column; }
     .evidence-grid, .stat-grid{ grid-template-columns:1fr 1fr; }
+    .lx-promo{ grid-template-columns:1fr; padding:32px 24px; gap:28px; }
+    .lx-diagram{ order:-1; }
+    .lx-diagram svg{ max-width:200px; }
   }
   @media (prefers-reduced-motion: reduce){
     *{ transition:none !important; scroll-behavior:auto !important; }
@@ -705,13 +716,30 @@ if (window.__haloShowBanner) {
     </div>
   </section>
 
-  <!-- LEAD EXCHANGE (subordinate pathway, upgraded from the old /lead-generation paragraph) -->
+  <!-- LEAD EXCHANGE PROMO (upgraded from the old subordinate-pathway paragraph) -->
   <section class="tight" style="border-top:1px solid var(--border); border-bottom:1px solid var(--border);">
     <div class="container">
-      <div class="eyebrow">Halo Lead Exchange</div>
-      <h2 class="section-title" style="font-size:1.7rem;">A smarter way to access new customer opportunities.</h2>
-      <p>Through the Halo Lead Exchange, we develop targeted consumer acquisition campaigns and connect relevant enquiries with businesses operating in selected markets. A lead is an input into a commercial system, not the outcome &mdash; that's the same diagnosis-first thinking behind every Halo engagement, applied here too.</p>
-      <p>Halo Strategic is first and foremost a commercial growth consultancy. The Lead Exchange is one additional commercial pathway within that business. <a href="/leads-exchange/become-a-buyer" style="color:var(--bronze); font-weight:600; text-decoration:underline;">Explore the Lead Exchange &rarr;</a></p>
+      <div class="lx-promo">
+        <div class="lx-promo-copy">
+          <div class="eyebrow">Halo Lead Exchange</div>
+          <h2 class="section-title" style="font-size:1.7rem; max-width:none;">More opportunities. Better connections.</h2>
+          <p class="lead" style="font-size:1.05rem;">Lead Exchange connects home-improvement businesses with homeowners actively looking for their services.</p>
+          <p>Access relevant local opportunities, understand the projects behind each enquiry, and grow your business with greater control over how you buy leads.</p>
+          <a href="/leads-exchange" class="btn btn-bronze">Explore Lead Exchange &rarr;</a>
+        </div>
+        <div class="lx-diagram" aria-hidden="true">
+          <svg viewBox="0 0 260 150" xmlns="http://www.w3.org/2000/svg">
+            <line x1="46" y1="54" x2="208" y2="104" stroke="var(--border)" stroke-width="1.5" stroke-dasharray="3 5"/>
+            <circle cx="46" cy="54" r="8" fill="none" stroke="var(--bronze)" stroke-width="2"/>
+            <circle cx="46" cy="54" r="3" fill="var(--bronze)"/>
+            <text x="46" y="84" text-anchor="middle" class="lx-node-label">HOMEOWNER</text>
+            <text x="46" y="98" text-anchor="middle" class="lx-node-label">ENQUIRY</text>
+            <circle cx="208" cy="104" r="8" fill="var(--navy)"/>
+            <text x="208" y="36" text-anchor="middle" class="lx-node-label">YOUR</text>
+            <text x="208" y="50" text-anchor="middle" class="lx-node-label">BUSINESS</text>
+          </svg>
+        </div>
+      </div>
     </div>
   </section>
 
