@@ -621,6 +621,14 @@ nav.main-nav a:hover {
   color: var(--slate);
 }
 
+/* UK/USA market cards — same badge+heading+body shape as industry cards, two up instead of three */
+.market-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+  margin-top: 24px;
+}
+
 .site-link-body {
   display: block;
   font-size: 0.95rem;
@@ -632,6 +640,9 @@ nav.main-nav a:hover {
     grid-template-columns: 1fr;
   }
   .industry-cards {
+    grid-template-columns: 1fr;
+  }
+  .market-grid {
     grid-template-columns: 1fr;
   }
   .hero-grid {

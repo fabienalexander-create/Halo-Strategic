@@ -13,11 +13,14 @@ export default function HomePage() {
         <div className="container hero-grid">
           <div className="hero-copy">
           <div className="eyebrow">Halo Lead Exchange</div>
-          <h1>Qualified home improvement enquiries. Delivered to the right businesses.</h1>
+          <h1>Better homeowner enquiries. More opportunities for your business.</h1>
           <p className="lead">
-            Halo Strategic connects UK service providers with homeowners actively exploring relevant
-            home-improvement services. We focus on qualification, transparent lead information, and a
-            controlled purchasing and delivery process.
+            Lead Exchange connects home-improvement businesses with homeowners actively looking for
+            services. We focus on qualification, transparent lead information, and giving you control
+            over how you buy.
+          </p>
+          <p className="form-note" style={{ margin: '4px 0 0' }}>
+            Built for home-improvement businesses across the UK and USA.
           </p>
           <div className="hero-actions">
             <Link href="/become-a-buyer" className="btn btn-bronze">
@@ -36,7 +39,7 @@ export default function HomePage() {
 
       <section className="band">
         <div className="container" data-reveal>
-          <div className="eyebrow">What We Do</div>
+          <div className="eyebrow">Why Businesses Use Lead Exchange</div>
           <h2 style={{ fontSize: '1.5rem', marginBottom: 16 }}>
             We don&rsquo;t simply pass contact lists to businesses.
           </h2>
@@ -45,6 +48,48 @@ export default function HomePage() {
             commercially useful opportunities — for one specialist market at a time, built properly
             rather than launched everywhere at once.
           </p>
+          <div className="card-grid">
+            <div className="mini-card">
+              <div className="k">LOCAL OPPORTUNITIES</div>
+              <h3>Matched to where you work</h3>
+              <p>
+                Enquiries are only offered to buyers whose approved territory covers them, so you see
+                opportunities in the areas you actually serve.
+              </p>
+            </div>
+            <div className="mini-card">
+              <div className="k">RELEVANT ENQUIRIES</div>
+              <h3>Project detail, not just a contact</h3>
+              <p>
+                Each enquiry carries the qualification and project information gathered before it&rsquo;s
+                offered, not a bare name and number.
+              </p>
+            </div>
+            <div className="mini-card">
+              <div className="k">SPEND CONTROL</div>
+              <h3>Pay per lead, nothing locked in</h3>
+              <p>
+                Buy the enquiries you want as they come up, with transparent per-lead pricing and no
+                minimum commitment.
+              </p>
+            </div>
+            <div className="mini-card">
+              <div className="k">LESS COMPETITION</div>
+              <h3>Exclusive, where that&rsquo;s agreed</h3>
+              <p>
+                Some leads are sold to one buyer only. Whether a given lead is exclusive or shared is
+                set out in your buyer agreement, never assumed.
+              </p>
+            </div>
+            <div className="mini-card">
+              <div className="k">ROOM TO GROW</div>
+              <h3>Scale with your own capacity</h3>
+              <p>
+                Take on more, or less, as your business has room for it &mdash; access is matched to the
+                services and volume you can actually handle.
+              </p>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -73,7 +118,7 @@ export default function HomePage() {
             </div>
             <div className="industry-card">
               <SolarBatteryIllustration />
-              <span className="industry-card-badge">New market</span>
+              <span className="industry-card-badge industry-card-badge--soon">New market &mdash; opening to buyers</span>
               <h3>Solar &amp; Battery</h3>
               <p>
                 Homeowners exploring solar panels, battery storage, or both, qualified before any
@@ -85,7 +130,7 @@ export default function HomePage() {
             </div>
             <div className="industry-card">
               <RoofingIllustration />
-              <span className="industry-card-badge">New market</span>
+              <span className="industry-card-badge industry-card-badge--soon">New market &mdash; opening to buyers</span>
               <h3>Roofing</h3>
               <p>
                 Homeowners needing a roof repair or replacement, qualified before any enquiry reaches a
@@ -107,6 +152,113 @@ export default function HomePage() {
           <Link href="/how-it-works" className="btn btn-bronze" style={{ marginTop: 24 }}>
             Read the Full Process
           </Link>
+        </div>
+      </section>
+
+      <section>
+        <div className="container" data-reveal>
+          <div className="eyebrow">UK and USA</div>
+          <h2 style={{ fontSize: '1.5rem', marginBottom: 12 }}>
+            Built for home-improvement businesses on both sides of the Atlantic.
+          </h2>
+          <p style={{ marginBottom: 0 }}>
+            Lead Exchange started in the UK. We&rsquo;re applying the same structured approach, market by
+            market, as we open the platform to US buyers, not promising national coverage before it
+            exists.
+          </p>
+          <div className="market-grid">
+            <div className="industry-card">
+              <span className="industry-card-badge">Live today</span>
+              <h3>United Kingdom</h3>
+              <p>
+                Our acquisition, qualification and buyer-approval systems are live and running across our
+                current UK markets: Spray Foam Removal, with Solar &amp; Battery and Roofing opening to
+                new buyers as we establish coverage.
+              </p>
+            </div>
+            <div className="industry-card">
+              <span className="industry-card-badge industry-card-badge--soon">Opening to buyers</span>
+              <h3>United States</h3>
+              <p>
+                We&rsquo;re building the same acquisition and qualification approach for US
+                home-improvement businesses. Buyer coverage is being established market by market, not
+                offered everywhere at once.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="band">
+        <div className="container" data-reveal>
+          <div className="eyebrow">For Contractors</div>
+          <h2 style={{ fontSize: '1.5rem', marginBottom: 16 }}>
+            Already know your market? Apply to become a buyer.
+          </h2>
+          <p>
+            Every application is reviewed individually, with a short onboarding call to confirm fit
+            before your account goes live. Pricing, coverage area and exclusivity are agreed directly
+            with you, not fixed in advance or the same for every buyer.
+          </p>
+          <Link href="/become-a-buyer" className="btn btn-bronze" style={{ marginTop: 8 }}>
+            Explore Becoming a Buyer
+          </Link>
+        </div>
+      </section>
+
+      <section id="faq" className="tight" style={{ background: 'var(--surface)', borderTop: '1px solid var(--border)', borderBottom: '1px solid var(--border)' }}>
+        <div className="container" style={{ maxWidth: 800 }} data-reveal>
+          <div className="eyebrow">FAQ</div>
+          <h2 className="section-title" style={{ fontSize: '1.7rem' }}>What people ask first.</h2>
+          <div className="faq">
+            <details>
+              <summary>How does Lead Exchange work?</summary>
+              <p>
+                We develop acquisition campaigns, generate homeowner enquiries, check them against
+                criteria agreed with approved buyers, and offer suitable enquiries to the matching buyer.
+              </p>
+            </details>
+            <details>
+              <summary>Which markets do you operate in today?</summary>
+              <p>
+                The UK is live today, with Spray Foam Removal open to new buyers and Solar &amp; Battery
+                and Roofing opening as we establish coverage. We&rsquo;re building the same approach for
+                US buyers, market by market.
+              </p>
+            </details>
+            <details>
+              <summary>Is exclusivity available?</summary>
+              <p>
+                Not claimed as standard. Whether a lead is sold to one buyer only or shared is set out in
+                your individual buyer agreement, not assumed as a platform-wide default.
+              </p>
+            </details>
+            <details>
+              <summary>What happens if a lead turns out to be invalid?</summary>
+              <p>
+                We don&rsquo;t operate a cash refund model. Where a lead meets the agreed criteria for
+                being invalid, we provide an equivalent{' '}
+                <Link href="/lead-replacement-policy" style={{ color: 'var(--bronze)' }}>
+                  replacement lead
+                </Link>
+                , not an automatic refund.
+              </p>
+            </details>
+            <details>
+              <summary>How does pricing work?</summary>
+              <p>Agreed individually during onboarding, based on your industry, coverage area and arrangement.</p>
+            </details>
+            <details>
+              <summary>How do I get started?</summary>
+              <p>
+                <Link href="/become-a-buyer" style={{ color: 'var(--bronze)' }}>
+                  Apply to become a buyer
+                </Link>
+                . Every application is reviewed individually, with a short onboarding call before your
+                account goes live.
+              </p>
+            </details>
+          </div>
         </div>
       </section>
 
