@@ -1,3 +1,11 @@
+import { indexablePage } from '../../lib/seo';
+
+export const metadata = indexablePage({
+  path: '/how-it-works',
+  title: 'How Halo Lead Exchange Works | Enquiry to Delivery',
+  description: 'Six stages from homeowner enquiry to delivered lead: qualification, a redacted preview, buyer acceptance, verified payment, then full contact details.',
+});
+
 const stages = [
   { n: '01', title: 'Lead generation', body: 'Halo generates or acquires a homeowner enquiry.' },
   { n: '02', title: 'Qualification', body: 'The enquiry is checked against agreed criteria before it enters inventory.' },

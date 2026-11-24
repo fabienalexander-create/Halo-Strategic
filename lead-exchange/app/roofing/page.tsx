@@ -1,6 +1,13 @@
 import Link from 'next/link';
 import RoofingIllustration from '../components/RoofingIllustration';
 import Reveal from '../components/Reveal';
+import { indexablePage } from '../../lib/seo';
+
+export const metadata = indexablePage({
+  path: '/roofing',
+  title: 'Roofing Leads for UK Roofers | Halo Lead Exchange',
+  description: 'Qualified roofing enquiries for UK roofing contractors: homeowners needing a repair or replacement, checked against agreed criteria before they reach you.',
+});
 
 export default function RoofingPage() {
   return (

@@ -1,6 +1,13 @@
 import Link from 'next/link';
 import SolarBatteryIllustration from '../components/SolarBatteryIllustration';
 import Reveal from '../components/Reveal';
+import { indexablePage } from '../../lib/seo';
+
+export const metadata = indexablePage({
+  path: '/solar-battery',
+  title: 'Solar & Battery Leads for UK Installers | Halo Lead Exchange',
+  description: 'Qualified solar panel and battery storage enquiries for UK installers, checked against agreed criteria before any enquiry reaches a buyer.',
+});
 
 export default function SolarBatteryPage() {
   return (
