@@ -13,11 +13,11 @@ export default function HomePage() {
         <div className="container hero-grid">
           <div className="hero-copy">
           <div className="eyebrow">Halo Lead Exchange</div>
-          <h1>Qualified home improvement enquiries. Delivered to the right businesses.</h1>
+          <h1>Better homeowner enquiries. More opportunities for your business.</h1>
           <p className="lead">
-            Halo Strategic connects UK service providers with homeowners actively exploring relevant
-            home-improvement services. We focus on qualification, transparent lead information, and a
-            controlled purchasing and delivery process.
+            Lead Exchange connects home-improvement businesses with homeowners actively looking for
+            their services. Every enquiry is checked before it is offered, you see the project on a
+            redacted preview first, and you decide lead by lead.
           </p>
           <div className="hero-actions">
             <Link href="/become-a-buyer" className="btn btn-bronze">
@@ -31,6 +31,43 @@ export default function HomePage() {
           <div className="hero-art" data-reveal>
             <LoftCrossSection />
           </div>
+        </div>
+      </section>
+
+      <section className="band">
+        <div className="container" data-reveal>
+          <div className="eyebrow">For Home-Improvement Businesses</div>
+          <h2 style={{ fontSize: '1.5rem', marginBottom: 16 }}>
+            Why businesses buy through Lead Exchange.
+          </h2>
+          <ul className="buyer-benefits">
+            <li>
+              <span className="buyer-benefit-k">Local opportunities</span>
+              <span>Enquiries are matched to the areas you tell us you cover.</span>
+            </li>
+            <li>
+              <span className="buyer-benefit-k">Relevant enquiries</span>
+              <span>Each enquiry is checked against agreed criteria, and the preview shows the project details and qualification answers before you buy.</span>
+            </li>
+            <li>
+              <span className="buyer-benefit-k">Control over spend</span>
+              <span>Pay per lead, on terms agreed with you during onboarding. You only buy the enquiries you choose.</span>
+            </li>
+            <li>
+              <span className="buyer-benefit-k">Less competition</span>
+              <span>Whether a lead is exclusive to you or shared is set out in your buyer agreement, never left to guesswork.</span>
+            </li>
+            <li>
+              <span className="buyer-benefit-k">Room to grow</span>
+              <span>Tell us your services and capacity, and we offer enquiries that fit them.</span>
+            </li>
+          </ul>
+          <p className="buyer-markets">
+            Live in the UK today for spray foam removal, solar &amp; battery and roofing. Businesses in
+            other trades, and in the US, can{' '}
+            <Link href="/become-a-buyer/register-interest">register interest</Link> as we open new
+            markets.
+          </p>
         </div>
       </section>
 

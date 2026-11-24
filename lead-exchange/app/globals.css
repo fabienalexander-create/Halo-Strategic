@@ -714,3 +714,41 @@ nav.main-nav a:hover {
     transform: none;
   }
 }
+
+/* Homepage: buyer benefits */
+.buyer-benefits {
+  list-style: none;
+  margin: 24px 0 0;
+  padding: 0;
+  border-top: 1px solid var(--border);
+}
+.buyer-benefits li {
+  display: grid;
+  grid-template-columns: 12rem 1fr;
+  gap: 16px;
+  padding: 16px 0;
+  border-bottom: 1px solid var(--border);
+}
+.buyer-benefit-k {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.74rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--bronze);
+  padding-top: 3px;
+}
+.buyer-markets {
+  margin: 24px 0 0;
+  font-size: 0.92rem;
+  color: var(--slate);
+}
+.buyer-markets a {
+  color: var(--bronze);
+  text-decoration: underline;
+}
+@media (max-width: 640px) {
+  .buyer-benefits li {
+    grid-template-columns: 1fr;
+    gap: 4px;
+  }
+}

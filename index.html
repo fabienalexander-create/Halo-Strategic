@@ -275,6 +275,29 @@
   @media (prefers-reduced-motion: reduce){
     *{ transition:none !important; scroll-behavior:auto !important; }
   }
+
+  /* LEAD EXCHANGE FEATURE */
+  .lx-feature{ background:var(--navy-deep); color:#EDEEF0; }
+  .lx-grid{ display:grid; grid-template-columns:minmax(0,1.15fr) minmax(0,0.85fr); gap:64px; align-items:center; }
+  .lx-feature .eyebrow{ color:var(--bronze-light); }
+  .lx-feature h2.section-title{ color:#fff; font-size:2.3rem; max-width:13em; }
+  .lx-feature p{ color:#C7CBD4; max-width:34em; }
+  .lx-benefits{ list-style:none; margin:32px 0 36px; padding:0; border-top:1px solid rgba(216,190,143,0.22); }
+  .lx-benefits li{ display:grid; grid-template-columns:7.5rem 1fr; gap:16px; padding:14px 0; border-bottom:1px solid rgba(216,190,143,0.22); font-size:0.95rem; color:#DDE0E5; }
+  .lx-benefits .k{ font-family:'IBM Plex Mono',monospace; font-size:0.72rem; text-transform:uppercase; letter-spacing:0.1em; color:var(--bronze-light); padding-top:3px; }
+  .lx-actions{ display:flex; flex-wrap:wrap; align-items:center; gap:24px; }
+  .lx-actions .lx-secondary{ color:#C7CBD4; font-size:0.92rem; text-decoration:underline; text-underline-offset:3px; }
+  .lx-actions .lx-secondary:hover{ color:#fff; }
+  .lx-note{ font-family:'IBM Plex Mono',monospace; font-size:0.74rem; letter-spacing:0.04em; color:#9AA1AE; margin:28px 0 0; }
+  .lx-art{ width:100%; height:auto; display:block; }
+  @media (max-width:900px){
+    .lx-grid{ grid-template-columns:1fr; gap:40px; }
+    .lx-art-wrap{ order:-1; max-width:420px; }
+    .lx-feature h2.section-title{ font-size:1.9rem; }
+  }
+  @media (max-width:520px){
+    .lx-benefits li{ grid-template-columns:1fr; gap:4px; }
+  }
 </style>
 <!-- Cookie consent (gates Google Tag Manager until accepted) -->
 <script>
@@ -628,6 +651,60 @@ if (window.__haloShowBanner) {
     </div>
   </section>
 
+  <!-- LEAD EXCHANGE FEATURE: a separate marketplace run by Halo Strategic, kept distinct from the consultancy -->
+  <section class="lx-feature" id="lead-exchange" aria-labelledby="lx-heading">
+    <div class="container lx-grid">
+      <div>
+        <div class="eyebrow">Halo Lead Exchange</div>
+        <h2 class="section-title" id="lx-heading">More opportunities.<br> Better connections.</h2>
+        <p>Lead Exchange connects home-improvement businesses with homeowners actively looking for their services.</p>
+        <p>Access relevant local opportunities, understand the project behind each enquiry, and grow your business with greater control over how you buy leads.</p>
+        <ul class="lx-benefits">
+          <li><span class="k">Local</span><span>Enquiries matched to the areas you actually cover.</span></li>
+          <li><span class="k">Relevant</span><span>Every enquiry is checked against agreed criteria before it is offered to you.</span></li>
+          <li><span class="k">In control</span><span>See a redacted preview of the project first, then decide lead by lead.</span></li>
+          <li><span class="k">Clear terms</span><span>Exclusivity and pricing are agreed in your buyer agreement, never left vague.</span></li>
+        </ul>
+        <div class="lx-actions">
+          <a href="/leads-exchange" class="btn btn-bronze">Explore Lead Exchange &rarr;</a>
+          <a href="/leads-exchange/how-it-works" class="lx-secondary">How it works</a>
+        </div>
+        <p class="lx-note">Live in the UK for solar &amp; battery, roofing and spray foam removal. US businesses can register interest.</p>
+      </div>
+      <div class="lx-art-wrap">
+        <svg class="lx-art" viewBox="0 0 420 340" role="img" aria-labelledby="lx-art-title">
+          <title id="lx-art-title">A homeowner enquiry is checked by Halo, previewed, then connected to a matched local business.</title>
+          <g fill="none" stroke="#D8BE8F" stroke-opacity="0.35" stroke-width="1.5">
+            <path d="M92 110 C 160 110, 160 170, 210 170"/>
+            <path d="M210 170 C 260 170, 260 110, 328 110"/>
+            <path d="M210 170 C 260 170, 260 230, 328 230" stroke-dasharray="4 6"/>
+          </g>
+          <g font-family="IBM Plex Mono, monospace" font-size="10" letter-spacing="1.2" fill="#9AA1AE">
+            <text x="56" y="64" text-anchor="middle">HOMEOWNER</text>
+            <text x="210" y="124" text-anchor="middle">CHECKED</text>
+            <text x="364" y="64" text-anchor="middle">YOUR AREA</text>
+            <text x="364" y="290" text-anchor="middle">NOT MATCHED</text>
+          </g>
+          <!-- homeowner: house outline -->
+          <g stroke="#F6F6F3" stroke-width="1.5" fill="none" stroke-linejoin="round">
+            <path d="M34 112 L56 92 L78 112 V132 H34 Z"/>
+            <path d="M50 132 V120 H62 V132"/>
+          </g>
+          <!-- Halo check: arcs + bronze triangle, echoing the mark -->
+          <circle cx="210" cy="170" r="30" fill="#1B2A4A" stroke="#B08D57" stroke-width="1.5"/>
+          <path d="M197 174 L207 183 L224 160" fill="none" stroke="#B08D57" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <!-- matched business -->
+          <rect x="336" y="88" width="56" height="44" rx="6" fill="none" stroke="#F6F6F3" stroke-width="1.5"/>
+          <path d="M348 104 H380 M348 116 H370" stroke="#F6F6F3" stroke-width="1.5" stroke-linecap="round"/>
+          <circle cx="392" cy="88" r="7" fill="#B08D57"/>
+          <!-- unmatched business -->
+          <rect x="336" y="208" width="56" height="44" rx="6" fill="none" stroke="#44546A" stroke-width="1.5"/>
+          <path d="M348 224 H380 M348 236 H370" stroke="#44546A" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+      </div>
+    </div>
+  </section>
+
   <!-- CASE STUDIES -->
   <section style="background:var(--surface); border-top:1px solid var(--border); border-bottom:1px solid var(--border);" id="case-studies">
     <div class="container">
@@ -702,16 +779,6 @@ if (window.__haloShowBanner) {
         </div>
         <p style="margin-bottom:0;" class="evidence-more">The ideas behind Halo's approach exist because they solved the same commercial problem more than once, not because they looked good in a slide deck. Every number above, and the diagnosis behind it, is written up in full on <a href="/selected-engagements" style="color:var(--bronze); text-decoration:underline;">Selected Engagements</a>.</p>
       </div>
-    </div>
-  </section>
-
-  <!-- LEAD EXCHANGE (subordinate pathway, upgraded from the old /lead-generation paragraph) -->
-  <section class="tight" style="border-top:1px solid var(--border); border-bottom:1px solid var(--border);">
-    <div class="container">
-      <div class="eyebrow">Halo Lead Exchange</div>
-      <h2 class="section-title" style="font-size:1.7rem;">A smarter way to access new customer opportunities.</h2>
-      <p>Through the Halo Lead Exchange, we develop targeted consumer acquisition campaigns and connect relevant enquiries with businesses operating in selected markets. A lead is an input into a commercial system, not the outcome &mdash; that's the same diagnosis-first thinking behind every Halo engagement, applied here too.</p>
-      <p>Halo Strategic is first and foremost a commercial growth consultancy. The Lead Exchange is one additional commercial pathway within that business. <a href="/leads-exchange/become-a-buyer" style="color:var(--bronze); font-weight:600; text-decoration:underline;">Explore the Lead Exchange &rarr;</a></p>
     </div>
   </section>
 
