@@ -1,6 +1,19 @@
 # Halo Strategic — Evergreen SEO Content Engine
 
-Status: Living document, governs the Insights pipeline going forward. Owner: Claude Code. Written 2026-07-31/08-04 from a brief Fabien provided, adjusted in one material way before approval (cadence) — see ADR-021 for the full reasoning.
+Status: Living document, governs the Insights pipeline going forward. Owner: Claude Code. Written 2026-07-31/08-04 from a brief Fabien provided, adjusted in one material way before approval (cadence) — see ADR-021 for the full reasoning. **Superseded in part on 2026-11-24** — see "Cadence update, 2026-11-24" below: a single daily engine now covers both businesses and publishes everything to Insights; Lead Guides (docs/LEAD_GUIDES_CONTENT_ENGINE.md) is closed to new content.
+
+## Cadence update, 2026-11-24
+
+As of 2026-11-24, a single scheduled task ("Halo Strategic – Daily SEO & Editorial Engine") fires twice a day and covers both businesses:
+
+- **Morning run:** one Halo Strategic article (the audience, pillars and evidence rules below).
+- **Afternoon run:** one Lead Exchange article (UK installers and lead buyers; category "Lead Exchange"), also published here in Insights rather than under `/leads-exchange`.
+
+Both runs publish to `/insights/<slug>` and both are gated the same way: draft the article, build it, open a pull request into `main`. **Approval is merging the pull request** — nothing goes live without that. This replaces the Google Drive draft-review step described under "Workflow" below.
+
+The evidence discipline is unchanged in substance: never invent statistics, clients, case studies, quotes or prices; outside figures only from real, named, verified sources; worked numbers labelled illustrative. What has changed is the volume ceiling — daily cadence for both businesses means most articles will now draw on outside research and general commercial reasoning rather than Halo's own six case studies, since the case-study base cannot support two articles a day. The "2–3/week, evidence-gated" reasoning directly below this note explains why that ceiling existed in the first place; it's kept for the record, but the ceiling itself no longer applies.
+
+Lead Guides (`/lead-guides/`) stopped receiving new guides on 2026-11-24. Its existing approved backlog finishes publishing via its own daily task, then that task is disabled. See docs/LEAD_GUIDES_CONTENT_ENGINE.md.
 
 ## Objective
 
@@ -53,7 +66,16 @@ Before drafting the next article, check the current category distribution and fa
 
 Every article: unique title, meta description, H1, H2 structure, internal links (Commercial Diagnostic, Commercial Audit, About, Contact, plus 2–5 related Insights articles), a soft CTA (never a hard sell — the existing pattern already in every published article, e.g. "If that gap sounds familiar, a Commercial Diagnostic is a free, 45-minute way to find out where it actually sits in your business," is the template to keep reusing). FAQ sections are a new addition this document introduces — use the existing `.faq details/summary` CSS pattern already built into `tools/insights-article-template.html` (shared with Commercial Audit's FAQ) rather than inventing new markup. Article/FAQPage JSON-LD schema per Insights article remains an open, not-yet-decided item (see Pending Decisions in docs/ARCHITECTURAL_DECISIONS.md) — do not add schema markup speculatively without a separate decision to do so.
 
-## Workflow
+## Workflow (current, as of 2026-11-24)
+
+1. A single scheduled task ("Halo Strategic – Daily SEO & Editorial Engine") fires twice a day. Before 12:00 Asia/Ho_Chi_Minh it writes the Halo Strategic (morning) article; after, the Lead Exchange (afternoon) article. Each run reads this document, `tools/insights-articles.json`, `tools/lead-guides.json` and two recent Insights pages for context and category balance.
+2. In the same run, the task adds the entry to `tools/insights-articles.json`, runs `node tools/build-insights.js`, confirms the only changed paths are `tools/insights-articles.json`, `insights/index.html` and the new article page (anything else changing means stop and report drift, not push), updates `sitemap.xml` and `_redirects`, commits to a new branch, pushes, and opens a pull request into `main`.
+3. Fabien reviews the pull request and merges it. **Merging is the approval** — it is also what puts the article live via Netlify's auto-deploy from `main`.
+4. If the task cannot push or open a PR in a given run, it saves a Google Doc draft plus the JSON entry to the Drive folder instead and reports that plainly, rather than silently failing.
+
+### Workflow (superseded, kept for reference)
+
+The process below ran from 2026-07-31 until 2026-11-24 and is no longer in use:
 
 1. A scheduled task (`halo-seo-article-writer`, see ADR-021) drafts one article at a time, 3x/week, following this document and reading `tools/insights-articles.json` for current category balance. Draft-only — it does not touch the live repo, run the generator, or publish anything.
 2. Drafts save to `C:\Users\user\Documents\Halo Strategic\09 Editorial & Content Engine\Insights Drafts\`, one file per article, formatted so Fabien can review in 10–15 minutes: title, H1, meta description, category, teaser, FAQ, full body, and a note on which internal links and evidence sources it used.
