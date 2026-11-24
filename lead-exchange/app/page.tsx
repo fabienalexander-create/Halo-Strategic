@@ -19,6 +19,9 @@ export default function HomePage() {
             services. We focus on qualification, transparent lead information, and giving you control
             over how you buy.
           </p>
+          <p className="form-note" style={{ margin: '4px 0 0' }}>
+            Built for home-improvement businesses across the UK and USA.
+          </p>
           <div className="hero-actions">
             <Link href="/become-a-buyer" className="btn btn-bronze">
               Apply to Become a Buyer
@@ -115,7 +118,7 @@ export default function HomePage() {
             </div>
             <div className="industry-card">
               <SolarBatteryIllustration />
-              <span className="industry-card-badge">New market</span>
+              <span className="industry-card-badge industry-card-badge--soon">New market &mdash; opening to buyers</span>
               <h3>Solar &amp; Battery</h3>
               <p>
                 Homeowners exploring solar panels, battery storage, or both, qualified before any
@@ -127,7 +130,7 @@ export default function HomePage() {
             </div>
             <div className="industry-card">
               <RoofingIllustration />
-              <span className="industry-card-badge">New market</span>
+              <span className="industry-card-badge industry-card-badge--soon">New market &mdash; opening to buyers</span>
               <h3>Roofing</h3>
               <p>
                 Homeowners needing a roof repair or replacement, qualified before any enquiry reaches a
