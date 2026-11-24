@@ -23,6 +23,12 @@
 /cookie-policy.html          /cookie-policy                301!
 /terms-and-conditions.html   /terms-and-conditions         301!
 /thank-you.html              /thank-you                    301!
+
+# Retired page (pre-Lead Exchange "Halo Lead Generation" positioning). Its job is now done by
+# the Lead Exchange, so send it there rather than leave an orphaned page competing with it.
+/lead-generation             /leads-exchange               301!
+/lead-generation.html        /leads-exchange               301!
+
 /insights/index.html         /insights/                    301!
 /insights/every-department-can-be-doing-its-job-well.html  /insights/every-department-can-be-doing-its-job-well  301!
 /insights/marketing-problem-or-commercial-problem.html  /insights/marketing-problem-or-commercial-problem  301!
