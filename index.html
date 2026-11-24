@@ -134,6 +134,13 @@
   .lx-promo{ background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-lg); padding:48px; display:grid; grid-template-columns:1.3fr 1fr; gap:48px; align-items:center; }
   .lx-promo-copy p{ margin:0 0 18px; }
   .lx-promo-copy p:last-of-type{ margin-bottom:28px; }
+  .lx-benefits{ list-style:none; margin:4px 0 28px; padding:0; border-top:1px solid var(--border); }
+  .lx-benefits li{ display:grid; grid-template-columns:7rem 1fr; gap:14px; padding:12px 0; border-bottom:1px solid var(--border); font-size:0.95rem; color:var(--ink); }
+  .lx-benefits .k{ font-family:'IBM Plex Mono',monospace; font-size:0.72rem; text-transform:uppercase; letter-spacing:0.1em; color:var(--bronze); padding-top:3px; }
+  .lx-actions{ display:flex; flex-wrap:wrap; align-items:center; gap:22px; }
+  .lx-actions .lx-secondary{ color:var(--slate); font-size:0.92rem; text-decoration:underline; text-underline-offset:3px; }
+  .lx-actions .lx-secondary:hover{ color:var(--navy-deep); }
+  .lx-promo-copy p.lx-note{ font-family:'IBM Plex Mono',monospace; font-size:0.74rem; letter-spacing:0.03em; color:var(--slate); margin:22px 0 0; }
   .lx-diagram{ display:flex; align-items:center; justify-content:center; }
   .lx-diagram svg{ width:100%; height:auto; max-width:290px; }
   .lx-diagram .lx-node-label{ font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:0.02em; fill:var(--slate); }
@@ -281,6 +288,7 @@
     .step-row{ flex-direction:column; }
     .evidence-grid, .stat-grid{ grid-template-columns:1fr 1fr; }
     .lx-promo{ grid-template-columns:1fr; padding:32px 24px; gap:28px; }
+    .lx-benefits li{ grid-template-columns:1fr; gap:4px; }
     .lx-diagram{ order:-1; }
     .lx-diagram svg{ max-width:240px; }
   }
@@ -726,7 +734,17 @@ if (window.__haloShowBanner) {
           <h2 class="section-title" style="font-size:1.7rem; max-width:none;">More opportunities. Better connections.</h2>
           <p class="lead" style="font-size:1.05rem;">Lead Exchange connects home-improvement businesses with homeowners actively looking for their services.</p>
           <p>Access relevant local opportunities, understand the projects behind each enquiry, and grow your business with greater control over how you buy leads.</p>
-          <a href="/leads-exchange" class="btn btn-bronze">Explore Lead Exchange &rarr;</a>
+          <ul class="lx-benefits">
+            <li><span class="k">Local</span><span>Enquiries matched to the areas you actually cover.</span></li>
+            <li><span class="k">Relevant</span><span>Every enquiry is checked against agreed criteria before it is offered to you.</span></li>
+            <li><span class="k">In control</span><span>See a redacted preview of the project first, then decide lead by lead.</span></li>
+            <li><span class="k">Clear terms</span><span>Exclusivity and pricing are agreed in your buyer agreement, never left vague.</span></li>
+          </ul>
+          <div class="lx-actions">
+            <a href="/leads-exchange" class="btn btn-bronze">Explore Lead Exchange &rarr;</a>
+            <a href="/leads-exchange/how-it-works" class="lx-secondary">How it works</a>
+          </div>
+          <p class="lx-note">Live in the UK for spray foam removal, solar &amp; battery and roofing. US businesses can register interest.</p>
         </div>
         <div class="lx-diagram" aria-hidden="true">
           <svg viewBox="0 0 280 248" xmlns="http://www.w3.org/2000/svg">
