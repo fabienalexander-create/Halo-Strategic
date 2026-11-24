@@ -9,7 +9,7 @@ import { indexablePage } from '../lib/seo';
 export const metadata = indexablePage({
   path: '/',
   title: 'Halo Lead Exchange | Homeowner Enquiries for Installers',
-  description: 'Lead Exchange connects UK home-improvement businesses with homeowners looking for their services. Every enquiry is checked, previewed, then bought lead by lead.',
+  description: 'Lead Exchange connects UK home-improvement businesses with homeowners looking for their services. Every enquiry is checked, with a preview before you buy.',
 });
 
 export default function HomePage() {
