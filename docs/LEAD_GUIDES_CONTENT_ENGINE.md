@@ -1,19 +1,21 @@
-# Lead Guides: daily SEO content for Halo Lead Exchange
+# Lead Guides: SEO content for Halo Lead Exchange
 
-Status: live from 2026-11-19. Owner: Claude Code, approved by Fabien ("full approval on how it runs and sits").
+Status: live from 2026-11-19. **Closed to new content from 2026-11-24.** Owner: Claude Code, approved by Fabien ("full approval on how it runs and sits").
 
 ## What it is
 
-A section of the main site at `halostrategic.com/lead-guides/`: one practical guide a day for installers who buy homeowner leads (spray foam removal, solar and battery, roofing). Every guide links into Halo Lead Exchange (`/leads-exchange/...`) through its body, a standard call-out box and the footer. The goal is search visibility for lead-buying questions and trust before an installer applies.
+A section of the main site at `halostrategic.com/lead-guides/`: practical guides for installers who buy homeowner leads (spray foam removal, solar and battery, roofing). Every guide links into Halo Lead Exchange (`/leads-exchange/...`) through its body, a standard call-out box and the footer. The goal is search visibility for lead-buying questions and trust before an installer applies.
 
-Kept separate from `/insights/` on purpose: Insights is consultancy thinking for founders, governed by the case-study evidence rule and a 2-3/week ceiling (docs/SEO_CONTENT_ENGINE.md). Lead Guides can run daily because its subject is Lead Exchange's own process, which is first-hand fact, not client evidence.
+Kept separate from `/insights/` on purpose: Insights is consultancy thinking for founders, originally governed by a 2-3/week ceiling (docs/SEO_CONTENT_ENGINE.md), now a daily engine covering both businesses (see that doc's "Cadence update, 2026-11-24"). Lead Guides ran daily because its subject is Lead Exchange's own process, first-hand fact rather than client evidence.
+
+**As of 2026-11-24, Lead Guides takes no new content.** All new SEO content for both Halo Strategic and Lead Exchange is now written through the single daily engine described in docs/SEO_CONTENT_ENGINE.md and published to `/insights`, approved the same way for both businesses: a pull request, merged by Fabien. The weekly writer task that used to add new Lead Guides has been removed. The daily publisher below keeps running only to clear the backlog that was already approved in `tools/lead-guides.json`; once the last currently-queued guide (dated 2026-11-25) is live, that task is disabled and this section stops changing.
 
 ## How it runs
 
-1. `tools/lead-guides.json` holds every guide: copy, `publishDate`, `status` (`approved` or `draft`), optional `faq`.
+1. `tools/lead-guides.json` holds every guide: copy, `publishDate`, `status` (`approved` or `draft`), optional `faq`. No new entries are being added to this file (see above); the existing approved entries are simply publishing out on their scheduled dates.
 2. `node tools/build-lead-guides.js` publishes guides that are `approved` and dated today or earlier (UK date). It removes any page that is not, rebuilds `/lead-guides/index.html`, adds related-guide links, and rewrites the marked Lead Guides blocks in `sitemap.xml` and `_redirects`. `--check` validates only; `--date=YYYY-MM-DD` previews a day.
-3. **Daily publisher** (scheduled task, every morning UK time): runs the build on `main` and commits and pushes only if something changed. If a run is missed, the next one catches up.
-4. **Weekly writer** (scheduled task, Saturdays): writes the next 7 guides (one per day, continuing from the last scheduled date), validates them, and opens a pull request. **Merging the PR is the approval.** Unmerged guides never publish; if the queue runs dry the section simply pauses, it never publishes unreviewed copy.
+3. **Daily publisher** (scheduled task, every morning UK time): runs the build on `main` and commits and pushes only if something changed. If a run is missed, the next one catches up. This is the only moving part left in this pipeline: once the backlog (last date 2026-11-25) is exhausted, this task is disabled and nothing further publishes here.
+4. **Weekly writer** — removed 2026-11-24. It used to write the next 7 guides a week on a branch, approved by merging its pull request. That process no longer runs; the topic backlog below is kept for reference only and is not being worked through.
 
 ## Voice and evidence rules (non-negotiable)
 
