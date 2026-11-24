@@ -33,6 +33,12 @@ const articles = [
     excerpt:
       'Six years of running paid-social campaigns across home-improvement trades taught one lesson that shapes how we qualify solar and battery enquiries today.',
   },
+  {
+    slug: 'how-much-do-roofing-leads-cost-in-the-uk',
+    title: 'How Much Do Roofing Leads Really Cost in the UK?',
+    excerpt:
+      'The price per lead is the easiest number to advertise and the least useful one to buy on. Here is what actually decides the cost per job.',
+  },
 ];
 
 export default function InsightsIndexPage() {
