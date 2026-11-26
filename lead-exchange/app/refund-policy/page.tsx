@@ -5,7 +5,7 @@ export default function RefundPolicyPage() {
         <div className="eyebrow">Spray Foam Removal &mdash; Pilot Policy</div>
         <h1 style={{ fontSize: '1.8rem', marginBottom: 20 }}>Refund &amp; Replacement Policy</h1>
 
-        <p className="form-note" style={{ marginBottom: 24 }}>Version 2026-11-04-v0.1. Last updated 4 November 2026.</p>
+        <p className="form-note" style={{ marginBottom: 24 }}>DRAFT amendment (booked appointments), proposed 26 November 2026. Not yet approved. Replaces version 2026-11-04-v0.1 once approved.</p>
 
         <h2 style={{ fontSize: '1.2rem', margin: '24px 0 10px' }}>1. Replacement, not automatic refund</h2>
         <p>
@@ -53,6 +53,16 @@ export default function RefundPolicyPage() {
           Disputed cases are reviewed by a Halo Strategic administrator, with the outcome recorded against
           the lead&rsquo;s record. Replacement eligibility in a contested case is not decided by an
           automated rule alone.
+        </p>
+
+        <h2 style={{ fontSize: '1.2rem', margin: '24px 0 10px' }}>7. Booked appointments</h2>
+        <p>
+          A booked appointment means a date and time has been arranged with the homeowner. It is not a guarantee
+          that the homeowner will attend. Where a Spray Foam Removal booked appointment is cancelled by the
+          homeowner or the homeowner does not attend, section 7 of the{' '}
+          <a href="/leads-exchange/lead-replacement-policy" style={{ color: 'var(--bronze)' }}>Lead Replacement Policy</a>{' '}
+          applies, including the 48-hour reporting requirement. The three-day contact window in section 2 applies
+          to verified enquiries.
         </p>
       </div>
     </section>

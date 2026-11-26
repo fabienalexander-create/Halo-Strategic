@@ -7,7 +7,7 @@ export default function LeadReplacementPolicyPage() {
         <div className="eyebrow">Solar &amp; Battery and Roofing &mdash; Standard Policy</div>
         <h1 style={{ fontSize: '1.8rem', marginBottom: 20 }}>Lead Replacement Policy</h1>
 
-        <p className="form-note" style={{ marginBottom: 24 }}>Version 2027-01-01-v1.0. Effective 1 January 2027.</p>
+        <p className="form-note" style={{ marginBottom: 24 }}>DRAFT amendment (booked appointments), proposed 26 November 2026. Not yet approved. Replaces version 2027-01-01-v1.0 once approved.</p>
 
         <h2 style={{ fontSize: '1.2rem', margin: '24px 0 10px' }}>1. Our commitment</h2>
         <p>
@@ -47,8 +47,10 @@ export default function LeadReplacementPolicyPage() {
           <li>The contractor considers the opportunity commercially unattractive despite it meeting the agreed qualification criteria.</li>
         </ul>
         <p>
-          Halo Lead Exchange supplies homeowner opportunities, not guaranteed appointments, quotations or
-          installations.
+          Halo Lead Exchange supplies homeowner opportunities. Where we supply a booked appointment, a date and
+          time has been arranged with the homeowner, but we do not guarantee that the homeowner will attend, or
+          that any quotation, installation or sale will follow. Section 7 sets out what happens when a booked
+          appointment falls through.
         </p>
 
         <h2 style={{ fontSize: '1.2rem', margin: '24px 0 10px' }}>4. How to request a replacement</h2>
@@ -85,15 +87,53 @@ export default function LeadReplacementPolicyPage() {
           <li>This policy does not override any mandatory legal rights or separately agreed contractual provisions.</li>
         </ul>
 
-        <h2 style={{ fontSize: '1.2rem', margin: '24px 0 10px' }}>7. Scope</h2>
+        <h2 style={{ fontSize: '1.2rem', margin: '24px 0 10px' }}>7. Booked appointments</h2>
+        <p>
+          7.1 A booked appointment is an enquiry where Halo Lead Exchange has arranged a specific date and time
+          for the homeowner to meet or speak with the buyer.
+        </p>
+        <p>
+          7.2 The booked appointment price covers arranging and confirming the appointment. It does not guarantee
+          that the homeowner will attend, proceed with the work or buy a service.
+        </p>
+        <p>
+          7.3 If a homeowner cancels or does not attend, the buyer should first allow a reasonable opportunity
+          for the appointment to be rearranged.
+        </p>
+        <p>7.4 Where the appointment cannot be rearranged, the buyer may request a replacement appointment, provided that:</p>
+        <ul style={{ color: 'var(--slate)', paddingLeft: 20 }}>
+          <li>the buyer was available, and attended at the agreed time where an in-person appointment was arranged;</li>
+          <li>the buyer did not cause the cancellation or failure to attend;</li>
+          <li>the buyer made reasonable attempts to contact the homeowner;</li>
+          <li>the issue is reported to Halo Lead Exchange within 48 hours of the scheduled appointment; and</li>
+          <li>the buyer provides enough information for us to verify what happened.</li>
+        </ul>
+        <p>
+          7.5 If the request is approved, Halo Lead Exchange will arrange a replacement appointment without an
+          additional lead charge. <strong>[TO CONFIRM: whether a replacement is offered for every genuine homeowner cancellation or no-show that cannot be rearranged (recommended), or only some]</strong>
+        </p>
+        <p>
+          7.6 A replacement is not automatically available where the buyer cancels, does not attend, changes the
+          appointment without agreement or otherwise causes the appointment to be missed.
+        </p>
+        <p>
+          7.7 The replacement protections in sections 1 to 6 continue to apply to booked appointments where the
+          underlying enquiry is invalid. They are unchanged for verified enquiries.
+        </p>
+        <p>
+          7.8 This policy does not guarantee a sale, conversion, completed installation or homeowner purchase.
+        </p>
+
+        <h2 style={{ fontSize: '1.2rem', margin: '24px 0 10px' }}>8. Scope</h2>
         <p>
           This policy applies to the Solar &amp; Battery and Roofing verticals. Spray Foam Removal is
           covered by its own, separately approved{' '}
           <Link href="/refund-policy" style={{ color: 'var(--bronze)' }}>Refund &amp; Replacement Policy</Link>,
-          which remains unchanged and in force.
+          which remains in force. Section 7 (booked appointments) also applies to Spray Foam Removal booked
+          appointments, as stated in that policy.
         </p>
 
-        <h2 style={{ fontSize: '1.2rem', margin: '24px 0 10px' }}>8. Contact</h2>
+        <h2 style={{ fontSize: '1.2rem', margin: '24px 0 10px' }}>9. Contact</h2>
         <p>
           For replacement requests, buyers should contact Halo Lead Exchange and include their buyer
           reference and lead reference.
