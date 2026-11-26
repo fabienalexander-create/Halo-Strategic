@@ -3,7 +3,8 @@ import Link from 'next/link';
 import { buildAttributionQuery, pickAttributionParams } from '../../lib/attribution';
 import { BASE_PATH } from '../../lib/basePath';
 
-// Paid-traffic landing page (video funnel), built to be A/B tested against /become-a-buyer.
+// Paid-traffic landing page (video funnel) at /leads-exchange/vsl: linked from the Meta Instant
+// Form's completion screen and A/B tested against /become-a-buyer.
 // Deliberately NOT indexable: the root layout's noindex default applies, and robots is set here
 // explicitly too, so it never competes with the five organic landing pages.
 //
@@ -34,7 +35,7 @@ const trades = [
   { href: '/spray-foam-removal', name: 'Spray foam removal', body: 'Foam type, location, reason for removal and access.' },
 ];
 
-export default function GetStartedPage({
+export default function VslPage({
   searchParams,
 }: {
   searchParams: { [key: string]: string | string[] | undefined };
