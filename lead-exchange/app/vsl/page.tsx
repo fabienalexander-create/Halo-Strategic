@@ -15,16 +15,16 @@ import { BASE_PATH } from '../../lib/basePath';
 export const metadata: Metadata = {
   title: 'Get Started with Halo Lead Exchange',
   description:
-    'Checked homeowner enquiries and booked appointments for UK solar & battery, roofing and spray foam removal installers. Start with 5 leads, then pay per lead.',
+    'Checked homeowner enquiries for UK solar & battery, roofing and spray foam removal installers. Start with 5 leads for £425, then £85 per lead.',
   robots: 'noindex, nofollow',
 };
 
-// Pricing agreed 2026-11-12 (confirmed by Fabien 2026-11-26). Two lead types; a starter pack is
-// 5 leads of one type paid up front, then pay per lead at the same per-lead price. The same for all
+// Pricing agreed 2026-11-12 (confirmed by Fabien 2026-11-26). Launched 2026-11-26 with verified
+// enquiries only: booked appointments (£125, starter pack £625) follow once the application supports
+// them as a lead type (Technical PR B), and are not offered here until then. The same price for all
 // three live trades: a solar-specific price was discussed but never finalised, so it is not shown.
 const PRICING = [
-  { key: 'enquiry', name: 'Verified enquiry', perLead: '£85', starter: '£425', note: 'A checked homeowner enquiry with full contact details once released.' },
-  { key: 'appointment', name: 'Booked appointment', perLead: '£125', starter: '£625', note: 'A checked enquiry with a time and date arranged with the homeowner for you.' },
+  { key: 'enquiry', name: 'Verified enquiry', perLead: '£85', starter: '£425', note: 'A checked homeowner enquiry, with full contact details released once it is yours.' },
 ];
 
 const promises = [
@@ -52,8 +52,8 @@ export default function VslPage({
   const steps = [
     { n: '01', h: 'Apply', p: 'A short application: your business, your trade and the areas you cover. Every application is reviewed by a person.' },
     { n: '02', h: 'Onboarding call', p: 'We confirm your territory and how many jobs you can take on, and set out your terms in a buyer agreement.' },
-    { n: '03', h: 'Your first 5 leads', p: 'Choose a starter pack of 5 verified enquiries (£425) or 5 booked appointments (£625), paid up front. Each lead is delivered in full as it comes in.' },
-    { n: '04', h: 'Then pay per lead', p: 'After your first 5, you pay per lead: £85 for a verified enquiry or £125 for a booked appointment. You see a redacted preview first and only pay for the leads you accept.' },
+    { n: '03', h: 'Your first 5 leads', p: 'Start with a pack of 5 verified enquiries for £425, paid up front. Each lead is delivered in full as it comes in.' },
+    { n: '04', h: 'Then pay per lead', p: 'After your first 5, it is £85 per verified enquiry. You see a redacted preview first and only pay for the leads you accept.' },
   ];
 
   return (
@@ -181,16 +181,16 @@ export default function VslPage({
         <div className="container">
           <h2 style={{ fontSize: '1.6rem', marginBottom: 16 }}>Questions installers ask</h2>
           <details>
-            <summary>What is the difference between a verified enquiry and a booked appointment?</summary>
-            <p>
-              A verified enquiry is a checked homeowner enquiry: you get the full contact details and arrange the visit
-              yourself. A booked appointment is the same checked enquiry with a time and date already arranged with the
-              homeowner for you.
-            </p>
-          </details>
-          <details>
             <summary>Why a starter pack?</summary>
             <p>It gets your first 5 leads to you straight away, so you can judge the quality before moving to pay per lead.</p>
+          </details>
+          <details>
+            <summary>What if I don&rsquo;t use all 5?</summary>
+            <p>
+              Starter-pack credits last six months. Any you have not used by then are refunded at £85 each, and so are
+              unused credits if you decide to stop. See section 6A of the{' '}
+              <Link href="/buyer-terms">Buyer Terms</Link>.
+            </p>
           </details>
           <details>
             <summary>Are the leads exclusive?</summary>

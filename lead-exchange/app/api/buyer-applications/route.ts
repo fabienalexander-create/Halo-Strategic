@@ -11,7 +11,7 @@ import { autoAuthoriseContactFromApplication } from '../../../lib/buyerProspectA
 // describes Halo's admin-mediated process generally (applications, payment-before-release, data
 // protection, liability) and isn't Spray-Foam-specific. Bump whenever its content changes, so
 // historical agreements stay tied to the wording actually shown at the time (Phase 1 §10/§7).
-const BUYER_TERMS_VERSION = '2026-11-04-v0.1';
+const BUYER_TERMS_VERSION = '2026-11-26-v0.2';
 
 interface BuyerApplicationPayload {
   industry_slug?: string;

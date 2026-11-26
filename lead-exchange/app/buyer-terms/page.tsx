@@ -13,7 +13,7 @@ export default function BuyerTermsPage() {
       <div className="container">
         <div className="eyebrow">Legal</div>
         <h1 style={{ fontSize: '1.8rem', marginBottom: 20 }}>Buyer Terms</h1>
-        <p className="form-note" style={{ marginBottom: 24 }}>DRAFT amendment (starter packs and booked appointments), proposed 26 November 2026. Not yet approved or reviewed by a legal adviser. Replaces version 2026-11-04-v0.1 once approved.</p>
+        <p className="form-note" style={{ marginBottom: 24 }}>Version 2026-11-26-v0.2. Last updated 26 November 2026. Applies to Buyers who join from that date; existing Buyers are notified by email at least 30 days before it applies to them (section 14.1).</p>
 
         <h2 style={{ fontSize: '1.2rem', margin: '24px 0 10px' }}>1. About these terms</h2>
         <p>1.1 These terms govern how approved businesses buy homeowner enquiries through the Halo Lead Exchange at halostrategic.com/leads-exchange.</p>
@@ -34,8 +34,8 @@ export default function BuyerTermsPage() {
             <tr><td style={{ padding: '4px 8px' }}>Delivery</td><td style={{ padding: '4px 8px' }}>Release of the Homeowner&rsquo;s full contact details to the Buyer, recorded with a timestamp</td></tr>
             <tr><td style={{ padding: '4px 8px' }}>Territory</td><td style={{ padding: '4px 8px' }}>The service areas (postcodes or counties) agreed with a Buyer at onboarding</td></tr>
             <tr><td style={{ padding: '4px 8px' }}>Verified enquiry</td><td style={{ padding: '4px 8px' }}>A Lead that has passed the applicable checks and meets the agreed service and Territory criteria. You receive the Homeowner&rsquo;s contact details and are responsible for making contact, arranging any visit and managing the opportunity</td></tr>
-            <tr><td style={{ padding: '4px 8px' }}>Booked appointment</td><td style={{ padding: '4px 8px' }}>A Lead where a specific date and time has already been arranged with the Homeowner for you. It is not a guarantee of attendance, a quotation, a sale or a contract</td></tr>
-            <tr><td style={{ padding: '4px 8px' }}>Starter pack</td><td style={{ padding: '4px 8px' }}>Five Leads of one type (verified enquiries or booked appointments), paid for in advance</td></tr>
+            <tr><td style={{ padding: '4px 8px' }}>Starter pack</td><td style={{ padding: '4px 8px' }}>Five verified enquiries, paid for in advance</td></tr>
+
             <tr><td style={{ padding: '4px 8px' }}>Replacement</td><td style={{ padding: '4px 8px' }}>An equivalent Lead supplied at no extra charge under the Refund &amp; Replacement Policy</td></tr>
           </tbody>
         </table>
@@ -71,19 +71,19 @@ export default function BuyerTermsPage() {
         <p>5.5 Exclusivity does not stop the Homeowner from contacting other businesses independently.</p>
 
         <h2 style={{ fontSize: '1.2rem', margin: '24px 0 10px' }}>6. Price and payment</h2>
-        <p>6.1 Our standard prices are £85 per verified enquiry and £125 per booked appointment, for Solar &amp; Battery, Roofing and Spray Foam Removal. The price that applies to you, including any trade-specific arrangement, is confirmed in your commercial terms before you commit to purchase. Prices are not subject to VAT, as Halo Strategic is not currently VAT-registered.</p>
+        <p>6.1 Our standard price is £85 per verified enquiry, for Solar &amp; Battery, Roofing and Spray Foam Removal. The price that applies to you, including any trade-specific arrangement, is confirmed in your commercial terms before you commit to purchase. Prices are not subject to VAT, as Halo Strategic is not currently VAT-registered.</p>
         <p>6.2 <strong>Payment before release.</strong> We never release a Homeowner&rsquo;s contact details until payment for that Lead has been received and independently verified by us. A remittance advice or your confirmation alone is not proof of payment.</p>
         <p>6.3 Your payment method and timing (for example, payment per Lead, or in agreed batches) are set out in your commercial terms, confirmed when your account is activated.</p>
         <p>6.4 We will confirm each payment and each Lead by email.</p>
 
         <h2 style={{ fontSize: '1.2rem', margin: '24px 0 10px' }}>6A. Starter packs</h2>
-        <p>6A.1 New Buyers start with one of two starter packs: five verified enquiries for £425, or five booked appointments for £625.</p>
-        <p>6A.2 A starter pack is a prepaid balance of five lead credits of the type you choose. One credit is used each time a Lead is Delivered to you under the pack. Starter-pack Leads are Delivered in full as they become available, rather than through the preview-and-accept process in section 4.5.</p>
-        <p>6A.3 Once all five credits have been used, you move to the standard pay-per-lead arrangement: £85 per accepted verified enquiry or £125 per accepted booked appointment, unless your commercial terms say otherwise. For those Leads you receive a redacted preview before deciding whether to accept, payment is requested after acceptance, and full Homeowner details are released only once payment has been verified (section 6.2).</p>
+        <p>6A.1 New Buyers start with a starter pack of five verified enquiries for £425.</p>
+        <p>6A.2 A starter pack is a prepaid balance of five lead credits. One credit is used each time a Lead is Delivered to you under the pack. Starter-pack Leads are Delivered in full as they become available, rather than through the preview-and-accept process in section 4.5.</p>
+        <p>6A.3 Once all five credits have been used, you move to the standard pay-per-lead arrangement: £85 per accepted verified enquiry, unless your commercial terms say otherwise. For those Leads you receive a redacted preview before deciding whether to accept, payment is requested after acceptance, and full Homeowner details are released only once payment has been verified (section 6.2).</p>
         <p>6A.4 Replacements: if a starter-pack Lead qualifies for a Replacement under the applicable replacement policy, the credit used for that Lead is restored. The Replacement does not use another credit and you are not charged again. If no Replacement is provided within 30 days, section 9.4 applies instead.</p>
-        <p>6A.5 Validity: starter-pack credits expire six months after the date we verify your payment for the pack. <strong>[TO CONFIRM: whether credits that expire unused after six months are refunded or lapse]</strong></p>
+        <p>6A.5 Validity: starter-pack credits expire six months after the date we verify your payment for the pack. Any credits still unused when they expire are refunded under section 6A.7.</p>
         <p>6A.6 Stopping the service: if you stop using the Lead Exchange or your account is closed, we will refund any unused credits, meaning credits for Leads that have not been Delivered to you.</p>
-        <p>6A.7 Refund amount: refunds of unused credits are calculated at the per-lead price paid in the pack, which is £85 per verified-enquiry credit or £125 per booked-appointment credit.</p>
+        <p>6A.7 Refund amount: refunds of unused credits are calculated at the per-lead price paid in the pack, which is £85 per unused credit. We pay refunds by bank transfer and record each one against your pack.</p>
 
         <h2 style={{ fontSize: '1.2rem', margin: '24px 0 10px' }}>7. Delivery</h2>
         <p>7.1 Once payment is verified, we Deliver the Homeowner&rsquo;s full contact details and qualification information to you by email to the address you provide.</p>
@@ -109,8 +109,7 @@ export default function BuyerTermsPage() {
         <p>9.1 Replacements are governed by the <Link href="/lead-replacement-policy" style={{ color: 'var(--bronze)' }}>Lead Replacement Policy</Link> for Solar &amp; Battery and Roofing, and by the <Link href="/refund-policy" style={{ color: 'var(--bronze)' }}>Refund &amp; Replacement Policy</Link> for Spray Foam Removal. In summary, for Spray Foam Removal: an equivalent Replacement at no extra charge if you cannot reach the Homeowner despite reasonable, documented attempts within 3 calendar days of Delivery, or if the Lead is invalid or materially inaccurate. Non-conversion to a sale, or a Homeowner who changes their mind after being reached, does not on its own qualify.</p>
         <p>9.2 The remedy is a Replacement, not a cash refund, except as set out in 9.3.</p>
         <p>9.3 To claim, send us the Lead reference and your dated contact evidence within 5 calendar days of Delivery. A Halo administrator reviews every disputed claim and records the outcome against the Lead.</p>
-        <p>9.4 If no equivalent Lead is available within 30 days of an accepted Replacement claim, we will refund the price you paid for that Lead instead. This applies to verified enquiries, booked appointments (where no replacement appointment can be provided) and starter-pack Leads. For a starter-pack Lead, the refund is the per-lead price paid in the pack (£85 or £125), and the credit is not also restored.</p>
-        <p>9.5 Booked appointments: where a Homeowner cancels or does not attend and the appointment cannot be rearranged, a replacement appointment may be available under section 7 of the <Link href="/lead-replacement-policy" style={{ color: 'var(--bronze)' }}>Lead Replacement Policy</Link>, which applies to booked appointments in every live service. Issues must be reported within 48 hours of the scheduled appointment.</p>
+        <p>9.4 If no equivalent Lead is available within 30 days of an accepted Replacement claim, we will refund the price you paid for that Lead instead. This applies to pay-per-lead and starter-pack Leads. For a starter-pack Lead, the refund is the per-lead price paid in the pack (£85), and the credit is not also restored.</p>
 
         <h2 style={{ fontSize: '1.2rem', margin: '24px 0 10px' }}>10. Data protection</h2>
         <p>10.1 When we Deliver a Lead, we share the Homeowner&rsquo;s personal data with you so you can respond to their enquiry. From Delivery, you are an independent controller of that data and responsible for your own compliance.</p>
