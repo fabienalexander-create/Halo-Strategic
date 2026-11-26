@@ -98,7 +98,7 @@ export default function LeadReplacementPolicyPage() {
         </p>
         <p>
           7.3 If a homeowner cancels or does not attend, the buyer should first allow a reasonable opportunity
-          for the appointment to be rearranged.
+          for the appointment to be rearranged, and Halo Lead Exchange will also try to rearrange it.
         </p>
         <p>7.4 Where the appointment cannot be rearranged, the buyer may request a replacement appointment, provided that:</p>
         <ul style={{ color: 'var(--slate)', paddingLeft: 20 }}>
@@ -110,7 +110,11 @@ export default function LeadReplacementPolicyPage() {
         </ul>
         <p>
           7.5 If the request is approved, Halo Lead Exchange will arrange a replacement appointment without an
-          additional lead charge. <strong>[TO CONFIRM: whether a replacement is offered for every genuine homeowner cancellation or no-show that cannot be rearranged (recommended), or only some]</strong>
+          additional lead charge. This applies to every genuine homeowner cancellation or failure to attend that
+          cannot reasonably be rearranged, where the conditions in 7.4 are met. If the appointment was part of a
+          starter pack, the credit used for it is restored (Buyer Terms, section 6A.4). If no replacement
+          appointment can be provided within 30 days of an approved request, the refund in Buyer Terms section
+          9.4 applies.
         </p>
         <p>
           7.6 A replacement is not automatically available where the buyer cancels, does not attend, changes the
