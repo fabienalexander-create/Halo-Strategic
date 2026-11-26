@@ -1,3 +1,5 @@
+import { LEAD_REPLACEMENT_POLICY_URL, detailRows, leadEmailLayout, link, paragraph, primaryButton, smallNote } from './leadEmailLayout';
+
 function escapeHtml(value: string): string {
   return value
     .replace(/&/g, '&amp;')
@@ -164,15 +166,17 @@ Please quote payment reference ${params.paymentReference} with your payment so w
 We'll confirm by email once your payment is verified.`
       : `Price: ${params.currency} ${formatPrice(params.price)}
 To release the homeowner's contact details, pay by bank transfer and quote reference ${params.paymentReference} so we can match your payment. We'll confirm by email once it's verified.`;
+  const priceHtml = params.packageCovered
+    ? 'Covered by your package'
+    : `<strong>${escapeHtml(params.currency)} ${escapeHtml(formatPrice(params.price))}</strong>`;
+  const paymentReferenceHtml = `<strong>${escapeHtml(params.paymentReference ?? '')}</strong>`;
   const paymentHtml = params.packageCovered
-    ? `<p>This lead is covered by your package, so no payment is needed. We'll confirm once it's released.</p>`
+    ? paragraph(`This lead is covered by your package, so no payment is needed. We'll email the homeowner's details once it's released.`)
     : params.paymentLink
-      ? `<p>Price: ${escapeHtml(params.currency)} ${escapeHtml(formatPrice(params.price))}<br>
-To release the homeowner's contact details, pay using this link: <a href="${escapeHtml(params.paymentLink)}">${escapeHtml(params.paymentLink)}</a><br>
-Please quote payment reference <strong>${escapeHtml(params.paymentReference ?? '')}</strong> with your payment so we can match it to this lead.<br>
-We'll confirm by email once your payment is verified.</p>`
-      : `<p>Price: ${escapeHtml(params.currency)} ${escapeHtml(formatPrice(params.price))}<br>
-To release the homeowner's contact details, pay by bank transfer and quote reference <strong>${escapeHtml(params.paymentReference ?? '')}</strong> so we can match your payment. We'll confirm by email once it's verified.</p>`;
+      ? `${primaryButton(escapeHtml(params.paymentLink), 'Pay &amp; unlock this lead')}
+${paragraph(`Please quote payment reference ${paymentReferenceHtml} with your payment so we can match it to this lead. We'll email the homeowner's full details as soon as your payment is verified.`)}
+${smallNote(`Button not working? Use this link: ${link(escapeHtml(params.paymentLink), escapeHtml(params.paymentLink))}`)}`
+      : paragraph(`To release the homeowner's contact details, pay by bank transfer and quote reference ${paymentReferenceHtml} so we can match your payment. We'll email the details as soon as it's verified.`);
 
   return {
     subject: `New ${params.industryLabel} lead available: ${params.leadReference}`,
@@ -190,17 +194,24 @@ ${paymentText}
 
 Kind regards,
 Halo Strategic`,
-    html: `<p>Hi,</p>
-<p>A new lead is available for you.</p>
-<p>
-Reference: ${reference}<br>
-Industry: ${industry}<br>
-Area: ${area}<br>
-Property type: ${propertyType}<br>
-Service required: ${serviceRequirement}
-</p>
-${paymentHtml}
-<p>Kind regards,<br>Halo Strategic</p>`,
+    html: leadEmailLayout({
+      title: `New ${industry} lead available`,
+      preheader: `${industry} lead in ${area}. See the preview and unlock the homeowner's details.`,
+      eyebrow: 'New lead available',
+      headline: industry,
+      badgeText: `Ref ${reference}`,
+      bodyHtml: `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-top:8px;">
+${detailRows([
+  { label: 'Area', valueHtml: area },
+  { label: 'Property type', valueHtml: propertyType },
+  { label: 'Service required', valueHtml: serviceRequirement },
+  { label: 'Contact', valueHtml: '•••• •••• · 07•••', mono: true },
+  { label: 'Price', valueHtml: priceHtml },
+])}
+</table>
+${smallNote('Contact details are released once the lead is paid for and verified.')}
+${paymentHtml}`,
+    }),
   };
 }
 
@@ -270,19 +281,25 @@ Please contact the homeowner promptly. If you're unable to reach them, see the L
 
 Kind regards,
 Halo Strategic`,
-    html: `<p>Hi,</p>
-<p>Lead ${reference} is now unlocked. Here are the homeowner's details:</p>
-<p>
-Name: ${name}<br>
-Phone: ${phone}<br>
-Email: ${email}<br>
-Postcode: ${postcode}<br>
-Property type: ${propertyType}<br>
-Service required: ${serviceRequirement}<br>
-Industry: ${industry}
-</p>
-<p>Please contact the homeowner promptly. If you're unable to reach them, see the Lead Replacement Policy for what to do next.</p>
-<p>Kind regards,<br>Halo Strategic</p>`,
+    html: leadEmailLayout({
+      title: `Lead ${reference} unlocked`,
+      preheader: `Your ${industry} lead is unlocked. The homeowner's contact details are inside.`,
+      eyebrow: 'Lead unlocked',
+      headline: industry,
+      badgeText: `Ref ${reference}`,
+      bodyHtml: `${paragraph("Here are the homeowner's details. Please contact them promptly.")}
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-top:12px;">
+${detailRows([
+  { label: 'Name', valueHtml: `<strong>${name}</strong>` },
+  { label: 'Phone', valueHtml: link(`tel:${escapeHtml(params.phone.replace(/[^\d+]/g, ''))}`, phone) },
+  { label: 'Email', valueHtml: link(`mailto:${email}`, email) },
+  { label: 'Postcode', valueHtml: postcode },
+  { label: 'Property type', valueHtml: propertyType },
+  { label: 'Service required', valueHtml: serviceRequirement },
+])}
+</table>
+${smallNote(`Can't reach them? See the ${link(LEAD_REPLACEMENT_POLICY_URL, 'Lead Replacement Policy')} for what to do next.`)}`,
+    }),
   };
 }
 
