@@ -833,3 +833,17 @@ nav.main-nav a:hover {
 .preview-sample dd {
   margin: 0;
 }
+
+.pricing-summary .price .per {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.95rem;
+  color: var(--slate);
+}
+
+.pricing-summary p.starter {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid var(--border);
+  color: var(--navy-deep);
+  font-weight: 600;
+}
