@@ -75,7 +75,7 @@ export async function POST(req: NextRequest) {
           ${body.buyer_id}, ${body.package_definition_id ?? null}, ${body.amount_paid}, ${body.currency ?? 'GBP'},
           ${body.leads_included}, ${body.transaction_reference}, ${body.paid_at}, ${auth.session.email}
         )
-        RETURNING id
+        RETURNING id, expires_at
       `;
     } catch (err) {
       // uq on transaction_reference -- a Tide reference already recorded against another package
@@ -93,11 +93,13 @@ export async function POST(req: NextRequest) {
       INSERT INTO audit_log (actor, action, entity_type, entity_id, new_state)
       VALUES (
         ${auth.session.email}, 'BUYER_PACKAGE_RECORDED', 'buyer_package', ${packageId},
-        ${JSON.stringify({ buyer_id: body.buyer_id, amount_paid: body.amount_paid, leads_included: body.leads_included })}
+        ${JSON.stringify({ buyer_id: body.buyer_id, amount_paid: body.amount_paid, leads_included: body.leads_included, expires_at: inserted[0].expires_at })}
       )
     `;
 
-    return NextResponse.json({ id: packageId }, { status: 201 });
+    // expires_at is set by the database: six months (or the package definition's validity) after
+    // verification (credits ledger, 2026-11-26).
+    return NextResponse.json({ id: packageId, expires_at: inserted[0].expires_at }, { status: 201 });
   } catch (err) {
     console.error('Recording buyer package failed', err);
     return NextResponse.json({ error: 'Failed to record package.' }, { status: 500 });
