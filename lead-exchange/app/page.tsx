@@ -45,11 +45,11 @@ export default function HomePage() {
               playsInline
               preload="none"
               poster={`${BASE_PATH}/media/how-it-works-poster.jpg`}
-              aria-label="How Halo Lead Exchange works, a 70-second video with captions"
+              aria-label="How Halo Lead Exchange works, a video of just over a minute, with captions"
             >
               <source src={`${BASE_PATH}/media/how-it-works.mp4`} type="video/mp4" />
             </video>
-            <figcaption>How it works in 70 seconds: the enquiry, the checks, the preview and the delivery.</figcaption>
+            <figcaption>How it works in just over a minute: the enquiry, the checks, the preview and the delivery.</figcaption>
           </figure>
         </div>
       </section>
