@@ -1,6 +1,6 @@
 # Halo Strategic — Evergreen SEO Content Engine
 
-Status: Living document, governs the Insights pipeline going forward. Owner: Claude Code. Written 2026-07-31/08-04 from a brief Fabien provided, adjusted in one material way before approval (cadence) — see ADR-021 for the full reasoning. **Superseded in part on 2026-11-24** — see "Cadence update, 2026-11-24" below: a single daily engine now covers both businesses and publishes everything to Insights; Lead Guides (docs/LEAD_GUIDES_CONTENT_ENGINE.md) is closed to new content.
+Status: Living document, governs the Insights pipeline going forward. Owner: Claude Code. Written 2026-07-31/08-04 from a brief Fabien provided, adjusted in one material way before approval (cadence) — see ADR-021 for the full reasoning. **Superseded in part on 2026-11-24** — see "Cadence update, 2026-11-24" below: a single daily engine now covers both businesses and publishes everything to Insights; Lead Guides (docs/LEAD_GUIDES_CONTENT_ENGINE.md) is closed to new content. **Further updated on 2026-11-26** — see "Cadence update, 2026-11-26" below: normal days are unchanged, but one designated day a week (currently Wednesday) now produces four articles instead of two.
 
 ## Cadence update, 2026-11-24
 
@@ -14,6 +14,23 @@ Both runs publish to `/insights/<slug>` and both are gated the same way: draft t
 The evidence discipline is unchanged in substance: never invent statistics, clients, case studies, quotes or prices; outside figures only from real, named, verified sources; worked numbers labelled illustrative. What has changed is the volume ceiling — daily cadence for both businesses means most articles will now draw on outside research and general commercial reasoning rather than Halo's own six case studies, since the case-study base cannot support two articles a day. The "2–3/week, evidence-gated" reasoning directly below this note explains why that ceiling existed in the first place; it's kept for the record, but the ceiling itself no longer applies.
 
 Lead Guides (`/lead-guides/`) stopped receiving new guides on 2026-11-24. Its existing approved backlog finishes publishing via its own daily task, then that task is disabled. See docs/LEAD_GUIDES_CONTENT_ENGINE.md.
+
+## Cadence update, 2026-11-26
+
+As of 2026-11-26, the twice-daily engine described above produces a variable number of articles depending on the day:
+
+- **Normal day** (every day except the designated high-output day): unchanged from the 2026-11-24 model above. The morning firing writes one Halo Strategic article; the afternoon firing writes one Lead Exchange article. Two articles a day.
+- **High-output day:** currently **Wednesday** (Asia/Ho_Chi_Minh). On this one day, each of the two firings (morning and afternoon) writes one Halo Strategic article *and* one Lead Exchange article, instead of just one business each. That is four articles that day: two Halo Strategic, two Lead Exchange.
+- **Weekly total:** 6 normal days × 2 + 1 high-output day × 4 = **16 articles/week** (up from roughly 14/week under the 2026-11-24 model, assuming every slot finds a genuine topic).
+
+This is a volume change only. Nothing else about the pipeline moved:
+
+- The underlying schedule is untouched: the scheduled task still fires at the same two times, every day (`CRON_TZ=Asia/Ho_Chi_Minh 58 8,15 * * *`). The variable output is entirely prompt logic inside that one task, not a second schedule.
+- Every article, on a normal day or the high-output day, still gets its own full pipeline from scratch: its own research, its own branch and slug, its own `tools/insights-articles.json` entry, its own pull request, its own featured image, and its own register row. The two articles produced in a single high-output firing are never combined into one PR or one register row.
+- Between the two articles in a high-output firing, the task re-reads the register and `tools/insights-articles.json` before choosing the second topic, so the two don't repeat each other's pillar, trade, keyword or category — on top of the existing rule that Halo Strategic and Lead Exchange keyword strategies never overlap.
+- Quality over volume (above) still overrides the count on every single article: a weak second topic on the high-output day gets a "Skipped" register row and no PR, exactly as a weak topic would on any other day. The high-output day is a ceiling, not a quota.
+- Publishing stays PR-approval-only: more articles means more pull requests waiting for Fabien's review, never more automatic publishing. The "merging is the approval" rule applies identically to every one of the four articles on a high-output day.
+- The designated high-output day is named explicitly in the scheduled task's own prompt (currently just Wednesday) and is only ever changed there, on Fabien's direct instruction. Fabien may add a second high-output day later once satisfied with quality and PR review load; that would raise the weekly total to roughly 18 (two high-output days, one normal-day article count unchanged).
 
 ## Objective
 
@@ -66,12 +83,12 @@ Before drafting the next article, check the current category distribution and fa
 
 Every article: unique title, meta description, H1, H2 structure, internal links (Commercial Diagnostic, Commercial Audit, About, Contact, plus 2–5 related Insights articles), a soft CTA (never a hard sell — the existing pattern already in every published article, e.g. "If that gap sounds familiar, a Commercial Diagnostic is a free, 45-minute way to find out where it actually sits in your business," is the template to keep reusing). FAQ sections are a new addition this document introduces — use the existing `.faq details/summary` CSS pattern already built into `tools/insights-article-template.html` (shared with Commercial Audit's FAQ) rather than inventing new markup. Article/FAQPage JSON-LD schema per Insights article remains an open, not-yet-decided item (see Pending Decisions in docs/ARCHITECTURAL_DECISIONS.md) — do not add schema markup speculatively without a separate decision to do so.
 
-## Workflow (current, as of 2026-11-24)
+## Workflow (current, as of 2026-11-26)
 
-1. A single scheduled task ("Halo Strategic – Daily SEO & Editorial Engine") fires twice a day. Before 12:00 Asia/Ho_Chi_Minh it writes the Halo Strategic (morning) article; after, the Lead Exchange (afternoon) article. Each run reads this document, `tools/insights-articles.json`, `tools/lead-guides.json` and two recent Insights pages for context and category balance.
-2. In the same run, the task adds the entry to `tools/insights-articles.json`, runs `node tools/build-insights.js`, confirms the only changed paths are `tools/insights-articles.json`, `insights/index.html` and the new article page (anything else changing means stop and report drift, not push), updates `sitemap.xml` and `_redirects`, commits to a new branch, pushes, and opens a pull request into `main`.
-3. Fabien reviews the pull request and merges it. **Merging is the approval** — it is also what puts the article live via Netlify's auto-deploy from `main`.
-4. If the task cannot push or open a PR in a given run, it saves a Google Doc draft plus the JSON entry to the Drive folder instead and reports that plainly, rather than silently failing.
+1. A single scheduled task ("Halo Strategic – Daily SEO & Editorial Engine") fires twice a day, every day. On a normal day (see "Cadence update, 2026-11-26" above), before 12:00 Asia/Ho_Chi_Minh it writes one Halo Strategic article; after, one Lead Exchange article. On the designated high-output day (currently Wednesday), each of the two firings writes one Halo Strategic article *and* one Lead Exchange article. Each run reads this document, `tools/insights-articles.json`, `tools/lead-guides.json` and two recent Insights pages for context and category balance, re-reading them between the two articles on a high-output firing.
+2. For each article, the task adds its entry to `tools/insights-articles.json`, runs `node tools/build-insights.js`, confirms the only changed paths are `tools/insights-articles.json`, `insights/index.html` and the new article page (anything else changing means stop and report drift, not push), updates `sitemap.xml` and `_redirects`, commits to its own new branch, pushes, and opens its own pull request into `main`. On a high-output day this happens twice, independently, producing two separate branches, commits and pull requests, never one combined PR.
+3. Fabien reviews each pull request and merges it. **Merging is the approval** — it is also what puts that article live via Netlify's auto-deploy from `main`. This is unchanged by the volume increase: more articles means more pull requests awaiting review, never automatic publishing.
+4. If the task cannot push or open a PR for a given article, it saves a Google Doc draft plus the JSON entry to the Drive folder instead and reports that plainly, rather than silently failing.
 
 ### Workflow (superseded, kept for reference)
 
