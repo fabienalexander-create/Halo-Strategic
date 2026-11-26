@@ -36,25 +36,73 @@ No existing row is modified. Packages that already exist keep `expires_at = NULL
 
 ## When a rollback is safe
 
-- **Safe:** before any credit has been restored or refunded through the new screens (no
-  `package_refunds` rows, no `replacement_requests` with a `resolution`).
-- **Not safe without reconciling first:** after a credit has been restored or refunded. A restore
-  lowers `leads_used`; a refund is held in `credits_refunded`, which the rollback drops, so the
-  old schema would show refunded credits as spendable again. Export the records first (below) and
-  agree how each package should be represented before rolling back.
-- The rollback re-adds the original status check on `replacement_requests`. If any row has status
-  `APPROVED`, that step fails and the transaction rolls back: resolve or deny those requests first.
+The rollback is written to be safe **after** real replacement and refund records exist, not only
+before go-live. It is tested in both states (`lib/creditsLedger.integration.test.ts`).
+
+What it guarantees:
+- **Nothing is lost:** step 0 copies packages' ledger figures, every refund, every replacement
+  request and every free replacement allocation into `credits_ledger_backup_*` tables in the same
+  transaction, before anything is dropped. `audit_log` also keeps every ledger action.
+- **No one is over-credited:** the old schema has no refund column and no expiry, so step 1 folds
+  refunded credits into `leads_used` and marks expired packages fully used. After rollback, every
+  package's old-style balance (`leads_included - leads_used`) equals what the ledger allowed to be
+  spent, or is lower, never higher.
+- **The old status check can be restored:** step 2 maps `APPROVED` requests onto the old statuses.
+
+What it cannot preserve in the old schema (all kept in the backup tables, to be handled by hand):
+- expiry dates on packages that have not yet expired (they stop expiring);
+- refunds still due on expired packages (the package shows as used up; the amount owed is in
+  `credits_ledger_backup_buyer_packages`);
+- the difference between a credit restore, a free replacement and a 9.4 refund on a request
+  (all show as `APPROVED_REPLACED`); approved-but-unresolved requests return to review;
+- free replacement allocations keep their price of 0, and the old payment guard would no longer
+  stop a payment being recorded against one (none should be).
+
+Because of these, **after go-live a fix forward (a new migration) is preferred to a rollback**.
+Use the rollback only if the ledger itself is causing harm, and reconcile from the backup tables
+afterwards.
 
 ## Rollback SQL (run in one transaction, only with approval)
 
 <!-- rollback-sql:start -->
 ```sql
 BEGIN;
+-- 0. Keep every ledger record, whatever happens next. Not optional.
+CREATE TABLE credits_ledger_backup_buyer_packages AS
+  SELECT id, leads_included, leads_used, credits_restored, credits_refunded, expires_at, now() AS backed_up_at FROM buyer_packages;
+CREATE TABLE credits_ledger_backup_package_refunds AS SELECT * FROM package_refunds;
+CREATE TABLE credits_ledger_backup_replacement_requests AS SELECT * FROM replacement_requests;
+CREATE TABLE credits_ledger_backup_replacement_allocations AS
+  SELECT id, lead_id, buyer_id, replacement_request_id FROM lead_allocations WHERE replacement_request_id IS NOT NULL;
+
 DROP VIEW IF EXISTS package_balances;
 DROP TRIGGER IF EXISTS trg_package_refunds_guard ON package_refunds;
 DROP FUNCTION IF EXISTS package_refunds_guard();
 DROP TRIGGER IF EXISTS trg_replacement_requests_guard ON replacement_requests;
 DROP FUNCTION IF EXISTS replacement_requests_guard();
+
+-- 1. Reconcile, so the old schema (balance = leads_included - leads_used, no expiry) can never
+--    show a credit as spendable that the ledger says is gone:
+--    * refunded credits are folded into leads_used;
+--    * an expired package is marked fully used (any refund still due is in the backup above).
+--    Credits restored by replacements stay restored: they were genuinely given back.
+ALTER TABLE buyer_packages DROP CONSTRAINT IF EXISTS buyer_packages_credit_balance_check;
+SELECT set_config('hlx.package_slot', 'on', true);
+UPDATE buyer_packages
+   SET leads_used = CASE WHEN expires_at IS NOT NULL AND now() >= expires_at THEN leads_included
+                         ELSE leads_used + credits_refunded END
+ WHERE credits_refunded > 0 OR (expires_at IS NOT NULL AND now() >= expires_at);
+SELECT set_config('hlx.package_slot', 'off', true);
+
+-- 2. Map the new request statuses onto the old set (the full detail is in the backup):
+--    resolved -> APPROVED_REPLACED (with the replacement lead where one was supplied);
+--    approved but unresolved -> PENDING_ADMIN_REVIEW (to be decided again).
+ALTER TABLE replacement_requests DROP CONSTRAINT IF EXISTS replacement_requests_resolution_rules_check;
+UPDATE replacement_requests r
+   SET status = CASE WHEN r.resolution IS NOT NULL THEN 'APPROVED_REPLACED' ELSE 'PENDING_ADMIN_REVIEW' END,
+       replacement_lead_id = coalesce(r.replacement_lead_id,
+                                      (SELECT la.lead_id FROM lead_allocations la WHERE la.id = r.replacement_allocation_id))
+ WHERE r.status = 'APPROVED';
 
 -- Previous definitions, exactly as in 20261118100000_multi_buyer_distribution_model.sql
 -- (lead_allocations_guard) and 20261110100000_pay_to_unlock.sql (the other three).

@@ -3,6 +3,7 @@ import { createRequire } from 'node:module';
 import { readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { NextRequest } from 'next/server';
+import { requireAdmin } from './requireAdmin';
 import {
   decideReplacementRequest, recordPackageRefund, recordReplacementRequest, resolveReplacementRequest,
 } from './creditsLedger';
@@ -435,6 +436,57 @@ describe.skipIf(!adminUrl)('credits ledger (real Postgres)', () => {
     });
   });
 
+  describe('audit trail and permissions', () => {
+    it('keeps a credit restore, a free replacement and a Tide refund distinct in the audit log', async () => {
+      const before = (await one(`SELECT coalesce(max(id), 0) AS m FROM audit_log`)).m;
+      // 1. Restore a starter-pack credit.
+      const pkg = await newPackage();
+      const restoreReq = await approvedRequest(await deliveredPackageLead(pkg));
+      await resolveReplacementRequest(pool, ADMIN, restoreReq, { resolution: 'CREDIT_RESTORED' });
+      // 2. Free replacement for a pay-per-lead lead.
+      const { allocationId: paid } = await deliveredPaidLead();
+      const freeReq = await approvedRequest(paid);
+      const { POST } = await import('../app/api/admin/leads/[id]/allocate/route');
+      const freeLead = await newLead();
+      const res = await POST(new NextRequest(`http://localhost/x`, { method: 'POST', body: JSON.stringify({ buyer_id: buyerId, homeowner_confirmation_id: await confirm(freeLead), replacement_request_id: freeReq }) }), { params: { id: String(freeLead) } });
+      expect(res.status).toBe(200);
+      // 3a. 9.4 refund through Tide; 3b. unused-credit refund through Tide.
+      const refundReq = await approvedRequest((await deliveredPaidLead()).allocationId);
+      await resolveReplacementRequest(pool, ADMIN, refundReq, { resolution: 'REFUNDED', refundTransactionReference: 'TIDE-94-AUDIT', refundedAt: new Date().toISOString() });
+      await recordPackageRefund(pool, ADMIN, { buyerPackageId: pkg, credits: 1, reason: 'BUYER_STOPPED', transactionReference: 'TIDE-PKG-AUDIT', refundedAt: new Date().toISOString() });
+
+      const rows = await q(`SELECT action, entity_type, entity_id, new_state FROM audit_log WHERE id > $1 ORDER BY id`, [before]);
+      const find = (action: string, id?: number) => rows.filter((r: { action: string; entity_id: number }) => r.action === action && (id === undefined || r.entity_id === id));
+      expect(find('PACKAGE_CREDIT_RESTORED', restoreReq)).toHaveLength(1);
+      expect(find('REPLACEMENT_SUPPLIED', freeReq)).toHaveLength(1);
+      expect(find('REPLACEMENT_REFUNDED', refundReq)).toHaveLength(1);
+      expect(find('REPLACEMENT_REFUNDED', refundReq)[0].new_state.refund_transaction_reference).toBe('TIDE-94-AUDIT');
+      const pkgRefund = find('PACKAGE_CREDITS_REFUNDED', pkg);
+      expect(pkgRefund).toHaveLength(1);
+      expect(pkgRefund[0].entity_type).toBe('buyer_package');
+      expect(pkgRefund[0].new_state.transaction_reference).toBe('TIDE-PKG-AUDIT');
+      // A restore and a free replacement never carry a Tide reference; only the two refunds do.
+      expect(find('PACKAGE_CREDIT_RESTORED', restoreReq)[0].new_state).not.toHaveProperty('refund_transaction_reference');
+      expect(find('REPLACEMENT_SUPPLIED', freeReq)[0].new_state).not.toHaveProperty('refund_transaction_reference');
+      // And the free lead's own allocation record says it is a zero-price replacement.
+      const alloc = find('LEAD_ALLOCATED').find((r: { new_state: { replacement_request_id: number | null } }) => r.new_state.replacement_request_id === freeReq);
+      expect(alloc.new_state.agreed_price).toBe(0);
+      // The three outcomes are also distinct on the requests themselves.
+      const res3 = await q(`SELECT id, resolution FROM replacement_requests WHERE id = ANY($1) ORDER BY id`, [[restoreReq, freeReq, refundReq]]);
+      expect(res3.map((r: { resolution: string }) => r.resolution)).toEqual(['CREDIT_RESTORED', 'REPLACEMENT_SUPPLIED', 'REFUNDED']);
+    });
+
+    it('refuses a free replacement lead from a non-owner admin', async () => {
+      const req = await approvedRequest((await deliveredPaidLead()).allocationId);
+      vi.mocked(requireAdmin).mockResolvedValueOnce({ session: { adminId: 2, email: 'reviewer@halostrategic.com', role: 'reviewer' } } as never);
+      const { POST } = await import('../app/api/admin/leads/[id]/allocate/route');
+      const l = await newLead();
+      const res = await POST(new NextRequest(`http://localhost/x`, { method: 'POST', body: JSON.stringify({ buyer_id: buyerId, homeowner_confirmation_id: await confirm(l), replacement_request_id: req }) }), { params: { id: String(l) } });
+      expect(res.status).toBe(403);
+      expect((await one(`SELECT resolution FROM replacement_requests WHERE id = $1`, [req])).resolution).toBeNull();
+    });
+  });
+
   describe('concurrency', () => {
     it('lets only as many simultaneous allocations through as there are credits', async () => {
       const id = await newPackage();
@@ -524,6 +576,69 @@ describe.skipIf(!adminUrl)('credits ledger (real Postgres)', () => {
         const again = (await p2.query(`SELECT expires_at, credits_refunded FROM buyer_packages WHERE id = $1`, [pkg.id])).rows[0];
         expect(again.expires_at).toBeNull();
         expect(again.credits_refunded).toBe(0);
+      } finally {
+        await p2.end();
+        await admin.query(`DROP DATABASE IF EXISTS ${rdb}`);
+      }
+    });
+
+    it('is safe after real restores, refunds and replacements: backs up, never over-credits, re-applies', async () => {
+      const rdb = `${dbName}_rb2`;
+      await admin.query(`CREATE DATABASE ${rdb}`);
+      const url = new URL(adminUrl!);
+      url.pathname = `/${rdb}`;
+      const { Pool } = require('pg');
+      const p2 = new Pool({ connectionString: url.toString(), max: 4 });
+      const q2 = async (t: string, v: unknown[] = []) => (await p2.query(t, v)).rows;
+      try {
+        for (const f of readdirSync(migrationsDir).filter((n) => n.endsWith('.sql')).sort()) await p2.query(readFileSync(join(migrationsDir, f), 'utf8'));
+        await q2(`INSERT INTO industries (slug, name, is_enabled) VALUES ('spray_foam_removal','Spray Foam Removal',true) ON CONFLICT (slug) DO NOTHING`);
+        const ind = (await q2(`SELECT id FROM industries WHERE slug = 'spray_foam_removal'`))[0].id;
+        const b = (await q2(`INSERT INTO buyers (company_name, contact_name, contact_email, telephone, industry_id, application_status, agreed_price_per_lead, exclusivity_arrangement, agreed_weekly_capacity, coverage_type, onboarding_call_completed_at, onboarding_call_conducted_by, application_reference)
+                             VALUES ('RB2', 'RB2', 'rb2@example.test', '1', $1, 'ACTIVE', 85, 'shared', 40, 'national', now(), 'x', 'RB2-1') RETURNING id`, [ind]))[0].id;
+        const pkg = async (ago?: string) => (await q2(`INSERT INTO buyer_packages (buyer_id, amount_paid, leads_included, transaction_reference, paid_at, verified_by, verified_at)
+                             VALUES ($1, 425, 5, $2, now(), 'x', ${ago ? `now() - interval '${ago}'` : 'now()'}) RETURNING id`, [b, uniq('RB2')]))[0].id;
+        const lead = async () => (await q2(`INSERT INTO leads (industry_id, homeowner_name, homeowner_contact, postcode, property_type, service_requirement, status) VALUES ($1, 'H', '{}'::jsonb, 'MK1 1AA', 'House', 'x', 'NEW') RETURNING id`, [ind]))[0].id;
+        const conf = async (l: number) => (await q2(`INSERT INTO homeowner_confirmations (lead_id, buyer_id, named_business, purpose, wording_used, homeowner_response, method, confirmed_at, recorded_by, notes) VALUES ($1, $2, 'RB2', 'p', 'w', 'Yes', 'ADMIN_AFTER_CALL', now(), 'x', 'n') RETURNING id`, [l, b]))[0].id;
+        const useCredit = async (pk: number) => { const l = await lead(); const a = (await q2(`INSERT INTO lead_allocations (lead_id, buyer_id, allocation_type, status, package_id, homeowner_confirmation_id) VALUES ($1, $2, 'SHARED', 'PURCHASED', $3, $4) RETURNING id`, [l, b, pk, await conf(l)]))[0].id; await q2(`INSERT INTO deliveries (lead_allocation_id, delivered_at, status) VALUES ($1, now(), 'SENT')`, [a]); return a; };
+
+        // Live package: 2 used, 1 restored by a replacement, 2 refunded -> ledger remaining = 5 - 1 - 2 = 2.
+        const live = await pkg();
+        const a1 = await useCredit(live);
+        await useCredit(live);
+        const r1 = await recordReplacementRequest(p2, 'x', { leadAllocationId: a1, reasonCode: 'INVALID_CONTACT', reason: 'x', reportedAt: new Date().toISOString() });
+        await decideReplacementRequest(p2, 'x', r1.id, 'APPROVED');
+        await resolveReplacementRequest(p2, 'x', r1.id, { resolution: 'CREDIT_RESTORED' });
+        await recordPackageRefund(p2, 'x', { buyerPackageId: live, credits: 2, reason: 'BUYER_STOPPED', transactionReference: uniq('RF'), refundedAt: new Date().toISOString() });
+        // Expired package with 4 unused credits (refund due), and an approved-but-unresolved request.
+        const old = await pkg('7 months');
+        const a2 = await useCredit(live);
+        const r2 = await recordReplacementRequest(p2, 'x', { leadAllocationId: a2, reasonCode: 'OTHER', reason: 'y', reportedAt: new Date().toISOString() });
+        await decideReplacementRequest(p2, 'x', r2.id, 'APPROVED');
+        const ledgerRemaining = (await q2(`SELECT credits_remaining FROM package_balances WHERE buyer_package_id = $1`, [live]))[0].credits_remaining;
+        expect(ledgerRemaining).toBe(1);
+
+        const doc = readFileSync(join(__dirname, '..', 'docs', 'CREDITS_LEDGER_ROLLBACK.md'), 'utf8');
+        await p2.query(doc.split('<!-- rollback-sql:start -->')[1].split('<!-- rollback-sql:end -->')[0].replace(/```sql|```/g, ''));
+
+        // Never over-credits: old-style balance equals the ledger's for the live package, 0 for the expired one.
+        const after = async (id: number) => (await q2(`SELECT leads_included - leads_used AS remaining FROM buyer_packages WHERE id = $1`, [id]))[0].remaining;
+        expect(await after(live)).toBe(ledgerRemaining);
+        expect(await after(old)).toBe(0);
+        // Nothing lost: every ledger record is in the backup tables.
+        expect((await q2(`SELECT count(*)::int AS n FROM credits_ledger_backup_package_refunds`))[0].n).toBe(1);
+        expect((await q2(`SELECT credits_refunded, credits_restored FROM credits_ledger_backup_buyer_packages WHERE id = $1`, [live]))[0]).toEqual({ credits_refunded: 2, credits_restored: 1 });
+        expect((await q2(`SELECT resolution FROM credits_ledger_backup_replacement_requests WHERE id = $1`, [r1.id]))[0].resolution).toBe('CREDIT_RESTORED');
+        expect((await q2(`SELECT expires_at IS NOT NULL AS has FROM credits_ledger_backup_buyer_packages WHERE id = $1`, [old]))[0].has).toBe(true);
+        // Statuses mapped onto the old set.
+        expect((await q2(`SELECT status FROM replacement_requests WHERE id = $1`, [r1.id]))[0].status).toBe('APPROVED_REPLACED');
+        expect((await q2(`SELECT status FROM replacement_requests WHERE id = $1`, [r2.id]))[0].status).toBe('PENDING_ADMIN_REVIEW');
+        // The old guard is back.
+        await expect(q2(`UPDATE buyer_packages SET leads_used = 0 WHERE id = $1`, [live])).rejects.toThrow(/maintained automatically/);
+
+        // And the migration re-applies on top of the rolled-back data.
+        await p2.query(readFileSync(join(migrationsDir, LEDGER), 'utf8'));
+        expect((await q2(`SELECT credits_remaining FROM package_balances WHERE buyer_package_id = $1`, [live]))[0].credits_remaining).toBe(ledgerRemaining);
       } finally {
         await p2.end();
         await admin.query(`DROP DATABASE IF EXISTS ${rdb}`);

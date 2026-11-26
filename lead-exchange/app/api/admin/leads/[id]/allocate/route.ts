@@ -62,6 +62,11 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
   if (!body.buyer_id) {
     return NextResponse.json({ error: 'buyer_id is required.' }, { status: 400 });
   }
+  // Issuing a free replacement lead is a financial operation (it gives a lead away at no charge),
+  // so like approving a claim, restoring a credit and recording a refund it is owner-only.
+  if (body.replacement_request_id && auth.session.role !== 'owner') {
+    return NextResponse.json({ error: 'Only an owner can issue a free replacement lead.' }, { status: 403 });
+  }
   if (!body.homeowner_confirmation_id) {
     return NextResponse.json({ error: 'homeowner_confirmation_id is required.' }, { status: 400 });
   }
