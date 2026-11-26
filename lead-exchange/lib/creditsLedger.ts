@@ -14,6 +14,9 @@ type Pool = { connect: () => Promise<Client> };
 export const REPLACEMENT_REASON_CODES = [
   'INVALID_CONTACT', 'INCORRECT_INDIVIDUAL', 'NO_GENUINE_INTEREST', 'INCORRECT_SERVICE',
   'DUPLICATE', 'UNREACHABLE_DOCUMENTED', 'INACCURATE_DETAILS', 'OTHER',
+  // Booked appointments only (2026-11-26); the database requires the matching outcome to have
+  // been recorded on the appointment first.
+  'HOMEOWNER_NO_SHOW', 'APPOINTMENT_CANCELLED_BY_HOMEOWNER',
 ] as const;
 export type ReplacementReasonCode = (typeof REPLACEMENT_REASON_CODES)[number];
 

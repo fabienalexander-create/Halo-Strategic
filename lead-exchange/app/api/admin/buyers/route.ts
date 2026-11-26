@@ -15,7 +15,7 @@ export async function GET(req: NextRequest) {
     const rows = statusFilter
       ? await db.sql`
           SELECT b.id, b.company_name, b.contact_name, b.contact_email, b.application_status,
-                 b.application_reference, b.agreed_price_per_lead, b.exclusivity_arrangement,
+                 b.application_reference, b.agreed_price_per_lead, b.agreed_price_per_appointment, b.exclusivity_arrangement,
                  i.slug AS industry_slug, i.name AS industry_name
           FROM buyers b JOIN industries i ON i.id = b.industry_id
           WHERE b.application_status = ${statusFilter}
@@ -23,7 +23,7 @@ export async function GET(req: NextRequest) {
         `
       : await db.sql`
           SELECT b.id, b.company_name, b.contact_name, b.contact_email, b.application_status,
-                 b.application_reference, b.agreed_price_per_lead, b.exclusivity_arrangement,
+                 b.application_reference, b.agreed_price_per_lead, b.agreed_price_per_appointment, b.exclusivity_arrangement,
                  i.slug AS industry_slug, i.name AS industry_name
           FROM buyers b JOIN industries i ON i.id = b.industry_id
           ORDER BY b.created_at DESC LIMIT 200

@@ -20,6 +20,7 @@ export interface BuyerCandidate {
   application_status: string;
   industry_id: number;
   agreed_price_per_lead: number | null;
+  agreed_price_per_appointment?: number | null;
   exclusivity_arrangement: 'exclusive' | 'shared' | null;
   coverage_type: string | null;
   counties_covered: string[];
@@ -121,7 +122,7 @@ export async function getEligibleBuyers(
 ): Promise<EligibleBuyer[]> {
   const rows = await db.sql`
     SELECT b.id, b.company_name, b.application_status, b.industry_id, b.agreed_price_per_lead,
-           b.exclusivity_arrangement, b.coverage_type, b.counties_covered, b.postcodes_covered,
+           b.agreed_price_per_appointment, b.exclusivity_arrangement, b.coverage_type, b.counties_covered, b.postcodes_covered,
            b.weekly_lead_capacity,
            (SELECT count(*) FROM lead_allocations a
             WHERE a.buyer_id = b.id AND a.status IN ('OFFERED', 'ACCEPTED', 'PURCHASED')
@@ -140,6 +141,7 @@ export async function getEligibleBuyers(
       application_status: r.application_status as string,
       industry_id: r.industry_id as number,
       agreed_price_per_lead: r.agreed_price_per_lead as number | null,
+      agreed_price_per_appointment: (r.agreed_price_per_appointment as number | null | undefined) ?? null,
       exclusivity_arrangement: r.exclusivity_arrangement as 'exclusive' | 'shared' | null,
       coverage_type: r.coverage_type as string | null,
       counties_covered: (r.counties_covered as string[] | null) ?? [],

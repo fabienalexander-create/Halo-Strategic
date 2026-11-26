@@ -4,6 +4,7 @@ import { requireAdmin } from '../../../../../../lib/requireAdmin';
 
 interface CommercialsPayload {
   agreed_price_per_lead?: number;
+  agreed_price_per_appointment?: number; // booked appointments (2026-11-26); optional
   agreed_currency?: string;
   exclusivity_arrangement?: 'exclusive' | 'shared';
   agreed_weekly_capacity?: number;
@@ -46,9 +47,15 @@ export async function POST(req: NextRequest, { params }: { params: { reference: 
       return NextResponse.json({ error: 'exclusivity_arrangement must be "exclusive" or "shared".' }, { status: 400 });
     }
 
+    if (body.agreed_price_per_appointment !== undefined &&
+        (typeof body.agreed_price_per_appointment !== 'number' || !(body.agreed_price_per_appointment > 0))) {
+      return NextResponse.json({ error: 'agreed_price_per_appointment must be a positive number.' }, { status: 400 });
+    }
+
     await db.sql`
       UPDATE buyers SET
         agreed_price_per_lead = COALESCE(${body.agreed_price_per_lead ?? null}, agreed_price_per_lead),
+        agreed_price_per_appointment = COALESCE(${body.agreed_price_per_appointment ?? null}, agreed_price_per_appointment),
         agreed_currency = COALESCE(${body.agreed_currency ?? null}, agreed_currency),
         exclusivity_arrangement = COALESCE(${body.exclusivity_arrangement ?? null}, exclusivity_arrangement),
         agreed_weekly_capacity = COALESCE(${body.agreed_weekly_capacity ?? null}, agreed_weekly_capacity),

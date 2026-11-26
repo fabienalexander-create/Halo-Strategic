@@ -10,6 +10,9 @@ interface Body {
   leads_included?: number;
   transaction_reference?: string;
   paid_at?: string;
+  // Booked appointments (2026-11-26): what the package's credits can be spent on. Taken from the
+  // package definition when one is given; the database refuses a mismatch.
+  lead_type?: 'VERIFIED_ENQUIRY' | 'BOOKED_APPOINTMENT';
 }
 
 // Records a buyer package an admin has already verified against Tide -- amount_paid,
@@ -58,11 +61,19 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    if (body.lead_type !== undefined && body.lead_type !== 'VERIFIED_ENQUIRY' && body.lead_type !== 'BOOKED_APPOINTMENT') {
+      return NextResponse.json({ error: "lead_type must be 'VERIFIED_ENQUIRY' or 'BOOKED_APPOINTMENT'." }, { status: 400 });
+    }
+    let leadType: string = body.lead_type ?? 'VERIFIED_ENQUIRY';
     if (body.package_definition_id) {
-      const defs = await db.sql`SELECT id, active FROM package_definitions WHERE id = ${body.package_definition_id}`;
+      const defs = await db.sql`SELECT id, active, lead_type FROM package_definitions WHERE id = ${body.package_definition_id}`;
       if (defs.length === 0) {
         return NextResponse.json({ error: 'No matching package definition found.' }, { status: 404 });
       }
+      if (body.lead_type && body.lead_type !== defs[0].lead_type) {
+        return NextResponse.json({ error: `That package definition is for ${defs[0].lead_type} leads.` }, { status: 400 });
+      }
+      leadType = defs[0].lead_type as string;
     }
 
     let inserted;
@@ -70,10 +81,10 @@ export async function POST(req: NextRequest) {
       inserted = await db.sql`
         INSERT INTO buyer_packages (
           buyer_id, package_definition_id, amount_paid, currency, leads_included,
-          transaction_reference, paid_at, verified_by
+          transaction_reference, paid_at, verified_by, lead_type
         ) VALUES (
           ${body.buyer_id}, ${body.package_definition_id ?? null}, ${body.amount_paid}, ${body.currency ?? 'GBP'},
-          ${body.leads_included}, ${body.transaction_reference}, ${body.paid_at}, ${auth.session.email}
+          ${body.leads_included}, ${body.transaction_reference}, ${body.paid_at}, ${auth.session.email}, ${leadType}
         )
         RETURNING id, expires_at
       `;
@@ -93,13 +104,13 @@ export async function POST(req: NextRequest) {
       INSERT INTO audit_log (actor, action, entity_type, entity_id, new_state)
       VALUES (
         ${auth.session.email}, 'BUYER_PACKAGE_RECORDED', 'buyer_package', ${packageId},
-        ${JSON.stringify({ buyer_id: body.buyer_id, amount_paid: body.amount_paid, leads_included: body.leads_included, expires_at: inserted[0].expires_at })}
+        ${JSON.stringify({ buyer_id: body.buyer_id, amount_paid: body.amount_paid, leads_included: body.leads_included, lead_type: leadType, expires_at: inserted[0].expires_at })}
       )
     `;
 
     // expires_at is set by the database: six months (or the package definition's validity) after
     // verification (credits ledger, 2026-11-26).
-    return NextResponse.json({ id: packageId, expires_at: inserted[0].expires_at }, { status: 201 });
+    return NextResponse.json({ id: packageId, lead_type: leadType, expires_at: inserted[0].expires_at }, { status: 201 });
   } catch (err) {
     console.error('Recording buyer package failed', err);
     return NextResponse.json({ error: 'Failed to record package.' }, { status: 500 });

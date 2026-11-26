@@ -13,7 +13,11 @@ interface Body {
   service_requirement?: string;
   source?: string;
   meta_lead_id?: string;
+  // Booked appointments (2026-11-26). Defaults to a verified enquiry.
+  lead_type?: 'VERIFIED_ENQUIRY' | 'BOOKED_APPOINTMENT';
 }
+
+const LEAD_TYPES = ['VERIFIED_ENQUIRY', 'BOOKED_APPOINTMENT'] as const;
 
 const REQUIRED_FIELDS: (keyof Body)[] = ['industry_slug', 'homeowner_name', 'postcode'];
 
@@ -45,6 +49,10 @@ export async function POST(req: NextRequest) {
   if (!body.mobile && !body.email) {
     return NextResponse.json({ error: 'At least one of mobile or email is required.' }, { status: 400 });
   }
+  if (body.lead_type !== undefined && !LEAD_TYPES.includes(body.lead_type)) {
+    return NextResponse.json({ error: "lead_type must be 'VERIFIED_ENQUIRY' or 'BOOKED_APPOINTMENT'." }, { status: 400 });
+  }
+  const leadType = body.lead_type ?? 'VERIFIED_ENQUIRY';
   if (!isConfiguredIndustrySlug(body.industry_slug)) {
     return NextResponse.json({ error: 'Unknown or unsupported industry.' }, { status: 400 });
   }
@@ -67,11 +75,11 @@ export async function POST(req: NextRequest) {
     const inserted = await db.sql`
       INSERT INTO leads (
         industry_id, service_requirement, homeowner_name, homeowner_contact, property_type,
-        postcode, qualification_answers, source, meta_lead_id, status
+        postcode, qualification_answers, source, meta_lead_id, status, lead_type
       ) VALUES (
         ${industryId}, ${body.service_requirement ?? null}, ${body.homeowner_name},
         ${homeownerContact}::jsonb, ${body.property_type ?? null}, ${body.postcode},
-        ${qualificationAnswers}::jsonb, ${body.source ?? null}, ${body.meta_lead_id ?? null}, 'QUALIFIED'
+        ${qualificationAnswers}::jsonb, ${body.source ?? null}, ${body.meta_lead_id ?? null}, 'QUALIFIED', ${leadType}
       )
       RETURNING id
     `;
@@ -81,11 +89,11 @@ export async function POST(req: NextRequest) {
       INSERT INTO audit_log (actor, action, entity_type, entity_id, new_state)
       VALUES (
         ${auth.session.email}, 'LEAD_ENTERED_MANUALLY', 'lead', ${leadId},
-        ${JSON.stringify({ industry_slug: body.industry_slug, postcode: body.postcode, source: body.source ?? null, meta_lead_id: body.meta_lead_id ?? null })}
+        ${JSON.stringify({ industry_slug: body.industry_slug, postcode: body.postcode, source: body.source ?? null, meta_lead_id: body.meta_lead_id ?? null, lead_type: leadType })}
       )
     `;
 
-    return NextResponse.json({ lead_id: leadId, reference: `HLX-LEAD-${String(leadId).padStart(6, '0')}`, status: 'QUALIFIED' }, { status: 201 });
+    return NextResponse.json({ lead_id: leadId, reference: `HLX-LEAD-${String(leadId).padStart(6, '0')}`, status: 'QUALIFIED', lead_type: leadType }, { status: 201 });
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);
     if (message.includes('uq_leads_meta_lead_id')) {
@@ -112,7 +120,7 @@ export async function GET(req: NextRequest) {
     const rows = statusFilter
       ? await db.sql`
           SELECT l.id, l.status, l.homeowner_name, l.property_type, l.postcode, l.service_requirement,
-                 l.source, l.qualification_answers, l.created_at, i.slug AS industry_slug, i.name AS industry_name,
+                 l.source, l.qualification_answers, l.created_at, l.lead_type, i.slug AS industry_slug, i.name AS industry_name,
                  (SELECT json_agg(json_build_object('buyer_id', a.buyer_id, 'company_name', b.company_name, 'allocation_type', a.allocation_type) ORDER BY a.id)
                   FROM lead_allocations a JOIN buyers b ON b.id = a.buyer_id
                   WHERE a.lead_id = l.id AND a.status IN ('OFFERED','ACCEPTED','PURCHASED')) AS live_allocations
@@ -122,7 +130,7 @@ export async function GET(req: NextRequest) {
         `
       : await db.sql`
           SELECT l.id, l.status, l.homeowner_name, l.property_type, l.postcode, l.service_requirement,
-                 l.source, l.qualification_answers, l.created_at, i.slug AS industry_slug, i.name AS industry_name,
+                 l.source, l.qualification_answers, l.created_at, l.lead_type, i.slug AS industry_slug, i.name AS industry_name,
                  (SELECT json_agg(json_build_object('buyer_id', a.buyer_id, 'company_name', b.company_name, 'allocation_type', a.allocation_type) ORDER BY a.id)
                   FROM lead_allocations a JOIN buyers b ON b.id = a.buyer_id
                   WHERE a.lead_id = l.id AND a.status IN ('OFFERED','ACCEPTED','PURCHASED')) AS live_allocations
