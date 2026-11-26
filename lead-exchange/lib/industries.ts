@@ -157,8 +157,8 @@ export const NOT_YET_PUBLISHED_REPLACEMENT_POLICY = 'NOT_YET_PUBLISHED';
 // is a deliberate future decision, not something this change makes silently.
 export const BUYER_REPLACEMENT_POLICY_CONFIG: Record<IndustrySlug, BuyerReplacementPolicyConfig> = {
   spray_foam_removal: { version: '2026-11-04-v0.1', hasPublishedPolicy: true, policyUrl: '/refund-policy' },
-  solar_battery: { version: '2027-01-01-v1.0', hasPublishedPolicy: true, policyUrl: '/lead-replacement-policy' },
-  roofing: { version: '2027-01-01-v1.0', hasPublishedPolicy: true, policyUrl: '/lead-replacement-policy' },
+  solar_battery: { version: '2026-11-26-v1.1', hasPublishedPolicy: true, policyUrl: '/lead-replacement-policy' },
+  roofing: { version: '2026-11-26-v1.1', hasPublishedPolicy: true, policyUrl: '/lead-replacement-policy' },
 };
 
 // True only for LIVE categories. Every intake and creation path (homeowner forms, Meta intake,

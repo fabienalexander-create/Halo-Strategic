@@ -7,7 +7,7 @@ export default function LeadReplacementPolicyPage() {
         <div className="eyebrow">Solar &amp; Battery and Roofing &mdash; Standard Policy</div>
         <h1 style={{ fontSize: '1.8rem', marginBottom: 20 }}>Lead Replacement Policy</h1>
 
-        <p className="form-note" style={{ marginBottom: 24 }}>Version 2027-01-01-v1.0. Effective 1 January 2027.</p>
+        <p className="form-note" style={{ marginBottom: 24 }}>Version 2026-11-26-v1.1. Effective 26 November 2026 for buyers joining from that date; for existing buyers, 30 days after we notify them by email.</p>
 
         <h2 style={{ fontSize: '1.2rem', margin: '24px 0 10px' }}>1. Our commitment</h2>
         <p>
@@ -19,7 +19,7 @@ export default function LeadReplacementPolicyPage() {
           buyers may request a replacement under this policy.
         </p>
         <p>
-          Our standard replacement request window is <strong>three calendar days from the date and time
+          Our standard replacement request window is <strong>five calendar days from the date and time
           the full lead details are released to the buyer</strong>.
         </p>
 
@@ -54,12 +54,12 @@ export default function LeadReplacementPolicyPage() {
         <h2 style={{ fontSize: '1.2rem', margin: '24px 0 10px' }}>4. How to request a replacement</h2>
         <p>Buyers must:</p>
         <ol style={{ color: 'var(--slate)', paddingLeft: 20 }}>
-          <li>Contact Halo Lead Exchange within three calendar days of receiving the full lead details.</li>
+          <li>Contact Halo Lead Exchange within five calendar days of receiving the full lead details.</li>
           <li>Provide the relevant lead reference.</li>
           <li>Explain the reason for the replacement request.</li>
           <li>Provide reasonable supporting information, such as call notes or confirmation from the homeowner.</li>
         </ol>
-        <p>Requests submitted outside the three-day period will not normally qualify.</p>
+        <p>Requests submitted outside the five-day period will not normally qualify.</p>
 
         <h2 style={{ fontSize: '1.2rem', margin: '24px 0 10px' }}>5. Review and resolution</h2>
         <p>
@@ -78,7 +78,7 @@ export default function LeadReplacementPolicyPage() {
 
         <h2 style={{ fontSize: '1.2rem', margin: '24px 0 10px' }}>6. Important conditions</h2>
         <ul style={{ color: 'var(--slate)', paddingLeft: 20 }}>
-          <li>The three-calendar-day period (including weekends) begins when the buyer receives the full homeowner contact details.</li>
+          <li>The five-calendar-day period (including weekends) begins when the buyer receives the full homeowner contact details.</li>
           <li>Buyers should review and report issues promptly.</li>
           <li>Replacement approval is based on the validity of the original enquiry, not the contractor&rsquo;s eventual sales outcome.</li>
           <li>Industry-specific qualification criteria and agreed commercial terms remain relevant.</li>

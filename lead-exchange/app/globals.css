@@ -744,3 +744,106 @@ nav.main-nav a:hover {
     transform: none;
   }
 }
+
+/* ------------------------------------------------------------------------------------------
+   /vsl (paid-traffic landing page): pricing summary and the illustrative preview card.
+   ------------------------------------------------------------------------------------------ */
+.pricing-summary {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 16px;
+  margin-top: 28px;
+}
+
+.pricing-summary > div {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 20px 22px;
+}
+
+.pricing-summary .k,
+.preview-sample .k {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #7a5f33;
+}
+
+.pricing-summary .price {
+  font-family: 'Fraunces', serif;
+  font-size: 2rem;
+  color: var(--navy-deep);
+  margin: 6px 0 4px;
+}
+
+.pricing-summary p {
+  margin: 0;
+  color: var(--slate);
+  font-size: 0.95rem;
+}
+
+.preview-sample {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 22px 24px;
+  max-width: 520px;
+  box-shadow: 0 12px 32px rgba(16, 26, 48, 0.08);
+}
+
+.preview-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.sample-badge {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  border: 1px solid #c9a36a;
+  background: #fbf6ec;
+  color: #7a5f33;
+  border-radius: 999px;
+  padding: 3px 10px;
+}
+
+.preview-sample h3 {
+  margin: 12px 0 10px;
+  font-size: 1.4rem;
+}
+
+.preview-sample dl {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.5fr);
+  gap: 8px 16px;
+  margin: 0;
+  font-size: 0.98rem;
+}
+
+.preview-sample dt {
+  color: var(--slate);
+}
+
+.preview-sample dd {
+  margin: 0;
+}
+
+.pricing-summary .price .per {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.95rem;
+  color: var(--slate);
+}
+
+.pricing-summary p.starter {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid var(--border);
+  color: var(--navy-deep);
+  font-weight: 600;
+}
