@@ -11,6 +11,10 @@ interface Body {
   package_id?: number;
   payment_link?: string;
   allocation_type?: 'EXCLUSIVE_WINDOW' | 'SHARED';
+  // A free replacement for an APPROVED, unresolved replacement request on a pay-per-lead lead
+  // (credits ledger, 2026-11-26): no price, no payment, released immediately, and the request is
+  // resolved as REPLACEMENT_SUPPLIED in the same transaction. The database enforces every rule.
+  replacement_request_id?: number;
 }
 
 // Offers a lead to a buyer -- the first and only place a lead_allocations row is ever created.
@@ -164,19 +168,54 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
     }
 
     let agreedPrice: number | null = null;
-    if (body.package_id) {
+    let replacementForReference: string | null = null;
+    if (body.replacement_request_id) {
+      if (body.package_id) {
+        return NextResponse.json({ error: 'A free replacement cannot also use a package.' }, { status: 400 });
+      }
+      const requests = await db.sql`
+        SELECT r.id, r.status, r.resolution, la.buyer_id, la.lead_id, la.package_id
+        FROM replacement_requests r
+        JOIN deliveries d ON d.id = r.delivery_id
+        JOIN lead_allocations la ON la.id = d.lead_allocation_id
+        WHERE r.id = ${body.replacement_request_id}
+      `;
+      if (requests.length === 0) {
+        return NextResponse.json({ error: 'No matching replacement request found.' }, { status: 404 });
+      }
+      const rr = requests[0] as { status: string; resolution: string | null; buyer_id: number; lead_id: number; package_id: number | null };
+      if (rr.status !== 'APPROVED' || rr.resolution) {
+        return NextResponse.json({ error: 'That replacement request is not approved and awaiting a replacement.' }, { status: 409 });
+      }
+      if (rr.buyer_id !== body.buyer_id) {
+        return NextResponse.json({ error: 'That replacement request belongs to a different buyer.' }, { status: 400 });
+      }
+      if (rr.package_id) {
+        return NextResponse.json({ error: 'That lead came from a package: restore the credit instead of supplying a free lead.' }, { status: 409 });
+      }
+      if (rr.lead_id === leadId) {
+        return NextResponse.json({ error: 'A replacement must be a different lead from the one it replaces.' }, { status: 400 });
+      }
+      agreedPrice = 0;
+      replacementForReference = `HLX-LEAD-${String(rr.lead_id).padStart(6, '0')}`;
+    } else if (body.package_id) {
       const packages = await db.sql`
-        SELECT id, buyer_id, leads_used, leads_included FROM buyer_packages WHERE id = ${body.package_id}
+        SELECT id, buyer_id, leads_used, leads_included, credits_refunded, expires_at FROM buyer_packages WHERE id = ${body.package_id}
       `;
       if (packages.length === 0) {
         return NextResponse.json({ error: 'No matching buyer package found.' }, { status: 404 });
       }
-      const pkg = packages[0] as { id: number; buyer_id: number; leads_used: number; leads_included: number };
+      const pkg = packages[0] as {
+        id: number; buyer_id: number; leads_used: number; leads_included: number; credits_refunded: number; expires_at: string | null;
+      };
       if (pkg.buyer_id !== body.buyer_id) {
         return NextResponse.json({ error: 'This package belongs to a different buyer.' }, { status: 400 });
       }
-      if (pkg.leads_used >= pkg.leads_included) {
+      if (pkg.leads_used + pkg.credits_refunded >= pkg.leads_included) {
         return NextResponse.json({ error: 'This package has no remaining leads.' }, { status: 409 });
+      }
+      if (pkg.expires_at && new Date(pkg.expires_at).getTime() <= Date.now()) {
+        return NextResponse.json({ error: 'This package has expired; its unused credits are due a refund.' }, { status: 409 });
       }
     } else {
       if (buyer.agreed_price_per_lead === null) {
@@ -190,6 +229,9 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
     const industryLabel = categoryLabel(lead.industry_slug);
     const leadReference = `HLX-LEAD-${String(leadId).padStart(6, '0')}`;
     const packageCovered = Boolean(body.package_id);
+    const isReplacement = Boolean(body.replacement_request_id);
+    // Released without a payment: package-covered, or a free replacement.
+    const coveredWithoutPayment = packageCovered || isReplacement;
 
     // One allocation is one business transaction (Fabien, 2026-11-19): the allocation row, the
     // lead's status, its audit entry and its payment row are committed together or not at all, so
@@ -228,12 +270,27 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
       const inserted = await client.query(
         `INSERT INTO lead_allocations (
           lead_id, buyer_id, allocation_type, allocation_sequence, status,
-          notified_at, decided_at, agreed_price, package_id, homeowner_confirmation_id
-        ) VALUES ($1, $2, $3, $4, 'PURCHASED', now(), now(), $5, $6, $7)
+          notified_at, decided_at, agreed_price, package_id, homeowner_confirmation_id, replacement_request_id
+        ) VALUES ($1, $2, $3, $4, 'PURCHASED', now(), now(), $5, $6, $7, $8)
         RETURNING id`,
-        [leadId, body.buyer_id, allocationType, allocationSequence, agreedPrice, body.package_id ?? null, body.homeowner_confirmation_id]
+        [leadId, body.buyer_id, allocationType, allocationSequence, agreedPrice, body.package_id ?? null, body.homeowner_confirmation_id,
+          body.replacement_request_id ?? null]
       );
       allocationId = inserted.rows[0].id as number;
+
+      if (isReplacement) {
+        await client.query(
+          `UPDATE replacement_requests SET resolution = 'REPLACEMENT_SUPPLIED', replacement_allocation_id = $2,
+                  resolved_by = $3, resolved_at = now()
+            WHERE id = $1`,
+          [body.replacement_request_id, allocationId, auth.session.email]
+        );
+        await client.query(
+          `INSERT INTO audit_log (actor, action, entity_type, entity_id, new_state)
+           VALUES ($1, 'REPLACEMENT_SUPPLIED', 'replacement_request', $2, $3)`,
+          [auth.session.email, body.replacement_request_id, JSON.stringify({ replacement_allocation_id: allocationId, lead_id: leadId })]
+        );
+      }
 
       await client.query(`UPDATE leads SET status = 'RESERVED' WHERE id = $1`, [leadId]);
 
@@ -242,11 +299,12 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
          VALUES ($1, 'LEAD_ALLOCATED', 'lead_allocation', $2, $3)`,
         [auth.session.email, allocationId, JSON.stringify({
           lead_id: leadId, buyer_id: body.buyer_id, agreed_price: agreedPrice, package_id: body.package_id ?? null,
+          replacement_request_id: body.replacement_request_id ?? null,
           allocation_type: allocationType, other_live_buyer_ids: liveBuyerIdsAtCommit,
         })]
       );
 
-      if (!packageCovered) {
+      if (!coveredWithoutPayment) {
         const paymentInserted = await client.query(
           `INSERT INTO payments (lead_allocation_id, expected_amount, status, payment_link)
            VALUES ($1, $2, 'PENDING', $3) RETURNING id`,
@@ -264,7 +322,7 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
       // final backstop behind the checks above; its refusals are a business answer, not a crash.
       const message = err instanceof Error ? err.message : '';
       const code = (err as { code?: string }).code;
-      if (code === '23505' || /live allocation|exclusive|withdrawn|different lead or buyer|package/i.test(message)) {
+      if (code === '23505' || /live allocation|exclusive|withdrawn|different lead or buyer|package|replacement|expired/i.test(message)) {
         return NextResponse.json({ error: 'This allocation conflicts with an existing one and was not recorded.' }, { status: 409 });
       }
       throw err;
@@ -285,7 +343,7 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
       ...leadOfferEmail({
         leadReference, industryLabel, postcode: lead.postcode, propertyType: lead.property_type,
         serviceRequirement: lead.service_requirement, currency: 'GBP', price: agreedPrice,
-        packageCovered, paymentReference, paymentLink: body.payment_link ?? null,
+        packageCovered, paymentReference, paymentLink: body.payment_link ?? null, replacementForReference,
       }),
     });
     if (adminEmails) {
@@ -295,13 +353,13 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
         to: adminEmails,
         ...internalOfferCopyEmail({
           leadReference, companyName: buyer.company_name, industryLabel, postcode: lead.postcode,
-          price: agreedPrice, packageCovered,
+          price: agreedPrice, packageCovered, replacementForReference,
         }),
       });
     }
 
     let released = false;
-    if (packageCovered) {
+    if (coveredWithoutPayment) {
       // Package-covered allocations need no payment: release (a delivery record, then the unlock
       // emails) can happen immediately. allocation_release_check still runs as the database's own
       // gate on the deliveries INSERT below -- this isn't trusted blindly.
@@ -335,14 +393,17 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
             ...internalReleaseCopyEmail({
               leadReference, companyName: buyer.company_name, homeownerName: lead.homeowner_name,
               phone: lead.homeowner_contact?.mobile ?? '', email: lead.homeowner_contact?.email ?? '',
-              postcode: lead.postcode, packageCovered: true,
+              postcode: lead.postcode, packageCovered: true, replacementForReference,
             }),
           });
         }
       }
     }
 
-    return NextResponse.json({ allocation_id: allocationId, status: 'PURCHASED', package_covered: packageCovered, payment_reference: paymentReference, released });
+    return NextResponse.json({
+      allocation_id: allocationId, status: 'PURCHASED', package_covered: packageCovered,
+      replacement_request_id: body.replacement_request_id ?? null, payment_reference: paymentReference, released,
+    });
   } catch (err) {
     console.error('Allocating lead failed', err);
     return NextResponse.json({ error: 'Failed to allocate lead.' }, { status: 500 });

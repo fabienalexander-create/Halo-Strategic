@@ -149,6 +149,7 @@ export function leadOfferEmail(params: {
   price: number | string | null; // null when packageCovered
   packageCovered: boolean;
   paymentReference: string | null; // quote this when paying; null when packageCovered
+  replacementForReference?: string | null; // set when this lead is a free replacement for an earlier one
   paymentLink?: string | null; // a Tide payment link, possibly shared across a buyer's leads, so the reference is always shown with it (2026-11-19); falls back to bank transfer + reference
 }): EmailContent {
   const reference = escapeHtml(params.leadReference);
@@ -157,7 +158,10 @@ export function leadOfferEmail(params: {
   const propertyType = escapeHtml(params.propertyType);
   const serviceRequirement = escapeHtml(params.serviceRequirement);
 
-  const paymentText = params.packageCovered
+  const replacementFor = params.replacementForReference ?? null;
+  const paymentText = replacementFor
+    ? `This lead is a free replacement for ${replacementFor}, so no payment is needed. We'll confirm once it's released.`
+    : params.packageCovered
     ? `This lead is covered by your package, so no payment is needed. We'll confirm once it's released.`
     : params.paymentLink
       ? `Price: ${params.currency} ${formatPrice(params.price)}
@@ -166,11 +170,15 @@ Please quote payment reference ${params.paymentReference} with your payment so w
 We'll confirm by email once your payment is verified.`
       : `Price: ${params.currency} ${formatPrice(params.price)}
 To release the homeowner's contact details, pay by bank transfer and quote reference ${params.paymentReference} so we can match your payment. We'll confirm by email once it's verified.`;
-  const priceHtml = params.packageCovered
+  const priceHtml = replacementFor
+    ? `Free replacement for ${escapeHtml(replacementFor)}`
+    : params.packageCovered
     ? 'Covered by your package'
     : `<strong>${escapeHtml(params.currency)} ${escapeHtml(formatPrice(params.price))}</strong>`;
   const paymentReferenceHtml = `<strong>${escapeHtml(params.paymentReference ?? '')}</strong>`;
-  const paymentHtml = params.packageCovered
+  const paymentHtml = replacementFor
+    ? paragraph(`This lead replaces ${escapeHtml(replacementFor)} at no charge. We'll email the homeowner's details once it's released.`)
+    : params.packageCovered
     ? paragraph(`This lead is covered by your package, so no payment is needed. We'll email the homeowner's details once it's released.`)
     : params.paymentLink
       ? `${primaryButton(escapeHtml(params.paymentLink), 'Pay &amp; unlock this lead')}
@@ -225,12 +233,15 @@ export function internalOfferCopyEmail(params: {
   postcode: string;
   price: number | string | null;
   packageCovered: boolean;
+  replacementForReference?: string | null;
 }): EmailContent {
   const reference = escapeHtml(params.leadReference);
   const company = escapeHtml(params.companyName);
   const industry = escapeHtml(params.industryLabel);
   const area = escapeHtml(outwardPostcode(params.postcode));
-  const priceLine = params.packageCovered ? 'Package-covered (no payment due)' : `${formatPrice(params.price)} (awaiting verified payment)`;
+  const priceLine = params.replacementForReference
+    ? `Free replacement for ${params.replacementForReference} (no payment due)`
+    : params.packageCovered ? 'Package-covered (no payment due)' : `${formatPrice(params.price)} (awaiting verified payment)`;
   return {
     subject: `[Internal] Lead ${params.leadReference} offered to ${params.companyName}`,
     text: `Lead ${params.leadReference} (${params.industryLabel}, ${outwardPostcode(params.postcode)}) was offered to ${params.companyName}.
@@ -313,6 +324,7 @@ export function internalReleaseCopyEmail(params: {
   email: string;
   postcode: string;
   packageCovered: boolean;
+  replacementForReference?: string | null;
 }): EmailContent {
   const reference = escapeHtml(params.leadReference);
   const company = escapeHtml(params.companyName);
@@ -320,7 +332,9 @@ export function internalReleaseCopyEmail(params: {
   const phone = escapeHtml(params.phone);
   const email = escapeHtml(params.email);
   const postcode = escapeHtml(params.postcode);
-  const releaseBasis = params.packageCovered ? 'package-covered' : 'verified payment';
+  const releaseBasis = params.replacementForReference
+    ? `free replacement for ${params.replacementForReference}`
+    : params.packageCovered ? 'package-covered' : 'verified payment';
   return {
     subject: `[Internal] Lead ${params.leadReference} released to ${params.companyName}`,
     text: `Lead ${params.leadReference} was released to ${params.companyName} (${releaseBasis}).

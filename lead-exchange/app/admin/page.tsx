@@ -52,6 +52,11 @@ export default function AdminHomePage() {
           </Link>
         </p>
         <p style={{ marginTop: 12 }}>
+          <Link href="/admin/credits" className="btn btn-bronze">
+            Credits &amp; Replacements
+          </Link>
+        </p>
+        <p style={{ marginTop: 12 }}>
           <Link href="/admin/buyers/new" className="btn btn-bronze">
             Add Buyer Directly
           </Link>

@@ -189,6 +189,7 @@ function LeadRowItem({
 
   const [allocBuyerId, setAllocBuyerId] = useState('');
   const [paymentLink, setPaymentLink] = useState('');
+  const [replacementRequestId, setReplacementRequestId] = useState('');
   const [allocationType, setAllocationType] = useState<'EXCLUSIVE_WINDOW' | 'SHARED'>('SHARED');
   const [allocationTypeTouched, setAllocationTypeTouched] = useState(false);
   const [eligibleBuyers, setEligibleBuyers] = useState<EligibleBuyer[] | null>(null);
@@ -255,7 +256,8 @@ function LeadRowItem({
         method: 'POST', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           buyer_id: Number(allocBuyerId), homeowner_confirmation_id: lastConfirmationId,
-          payment_link: paymentLink || undefined, allocation_type: allocationType,
+          payment_link: replacementRequestId ? undefined : paymentLink || undefined, allocation_type: allocationType,
+          replacement_request_id: replacementRequestId ? Number(replacementRequestId) : undefined,
         }),
       });
       const data = await res.json();
@@ -381,9 +383,19 @@ function LeadRowItem({
                 </p>
               </div>
               <div className="form-row">
-                <label>Unique payment link for this lead</label>
-                <input value={paymentLink} onChange={(e) => setPaymentLink(e.target.value)} placeholder="https://pay.tide.co/products/..." />
+                <label>Free replacement for request # (optional)</label>
+                <input value={replacementRequestId} inputMode="numeric" onChange={(e) => setReplacementRequestId(e.target.value.replace(/\D/g, ''))} placeholder="Leave blank for a normal sale" />
+                <p className="form-note" style={{ marginTop: 4 }}>
+                  Only for an approved replacement request on a pay-per-lead lead (see Credits &amp; Replacements). No
+                  payment is taken and the lead is released straight away.
+                </p>
               </div>
+              {!replacementRequestId && (
+                <div className="form-row">
+                  <label>Unique payment link for this lead</label>
+                  <input value={paymentLink} onChange={(e) => setPaymentLink(e.target.value)} placeholder="https://pay.tide.co/products/..." />
+                </div>
+              )}
               <button className="btn btn-bronze" type="submit" disabled={submitting || !allocBuyerId || !lastConfirmationId}>
                 Allocate &amp; send preview
               </button>
