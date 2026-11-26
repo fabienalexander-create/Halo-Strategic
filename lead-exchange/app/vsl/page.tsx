@@ -19,8 +19,10 @@ export const metadata: Metadata = {
   robots: 'noindex, nofollow',
 };
 
-// TODO(Fabien): confirm both figures before this page goes live.
-const STARTER_PACK_PRICE = '[£ starter pack price]';
+// Starter pack confirmed by Fabien 2026-11-26: 5 leads at £125 each, £625 paid up front.
+// TODO(Fabien): confirm the pay-per-lead price before this page goes live.
+const STARTER_PACK_PRICE = '£625';
+const STARTER_PACK_PER_LEAD = '£125';
 const PRICE_PER_LEAD = '[£ per lead]';
 
 const promises = [
@@ -48,7 +50,7 @@ export default function VslPage({
   const steps = [
     { n: '01', h: 'Apply', p: 'A short application: your business, your trade and the areas you cover. Every application is reviewed by a person.' },
     { n: '02', h: 'Onboarding call', p: 'We confirm your territory and how many jobs you can take on, and set out your terms in a buyer agreement.' },
-    { n: '03', h: 'Your first 5 leads', p: `Start with a 5-lead starter pack for ${STARTER_PACK_PRICE}, paid up front. Each lead is delivered in full as it comes in.` },
+    { n: '03', h: 'Your first 5 leads', p: `Start with a 5-lead starter pack: ${STARTER_PACK_PER_LEAD} per lead, ${STARTER_PACK_PRICE} paid up front. Each lead is delivered in full as it comes in.` },
     { n: '04', h: 'Then pay per lead', p: `After your first 5, it is pay per lead at ${PRICE_PER_LEAD}. You see a redacted preview first and only pay for the leads you accept.` },
   ];
 
@@ -119,7 +121,7 @@ export default function VslPage({
             <div>
               <div className="k">FIRST 5 LEADS</div>
               <div className="price">{STARTER_PACK_PRICE}</div>
-              <p>Starter pack, paid once up front.</p>
+              <p>5 leads at {STARTER_PACK_PER_LEAD} each, paid once up front.</p>
             </div>
             <div>
               <div className="k">EVERY LEAD AFTER</div>
