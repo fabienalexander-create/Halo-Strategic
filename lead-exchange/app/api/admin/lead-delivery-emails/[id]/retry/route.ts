@@ -4,6 +4,7 @@ import { requireAdmin } from '../../../../../../lib/requireAdmin';
 import { attemptSendLeadDeliveryEmail } from '../../../../../../lib/leadDeliveryEmail';
 import { leadOfferEmail, internalOfferCopyEmail, leadUnlockedEmail, internalReleaseCopyEmail } from '../../../../../../lib/emailTemplates';
 import { categoryLabel } from '../../../../../../lib/industries';
+import { appointmentFromRow } from '../../../../../../lib/appointments';
 
 // Retries a FAILED (or still-PENDING) lead_delivery_emails row. Never resends one that went out,
 // bounced or was superseded, and claims the row first so concurrent retries cannot duplicate a
@@ -34,13 +35,15 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
     SELECT e.id AS email_id, e.email_type, e.recipient, e.status AS email_status,
            a.id AS allocation_id, a.agreed_price, a.package_id,
            l.id AS lead_id, l.homeowner_name, l.homeowner_contact, l.postcode, l.property_type, l.service_requirement,
-           i.slug AS industry_slug, b.company_name, p.payment_reference, p.payment_link
+           i.slug AS industry_slug, b.company_name, p.payment_reference, p.payment_link,
+           ap.scheduled_at AS appt_scheduled_at, ap.appointment_kind AS appt_kind, ap.location_notes AS appt_location_notes
     FROM lead_delivery_emails e
     JOIN lead_allocations a ON a.id = e.lead_allocation_id
     JOIN leads l ON l.id = a.lead_id
     JOIN industries i ON i.id = l.industry_id
     JOIN buyers b ON b.id = a.buyer_id
     LEFT JOIN payments p ON p.lead_allocation_id = a.id
+    LEFT JOIN lead_appointments ap ON ap.lead_allocation_id = a.id
     WHERE e.id = ${id}
   `;
   if (rows.length === 0) {
@@ -52,6 +55,7 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
     homeowner_name: string; homeowner_contact: { email?: string; mobile?: string };
     postcode: string; property_type: string; service_requirement: string;
     industry_slug: string; company_name: string; payment_reference: string | null; payment_link: string | null;
+    appt_scheduled_at: string | null; appt_kind: string | null; appt_location_notes: string | null;
   };
 
   if (row.email_status === 'SUPERSEDED') {
@@ -64,6 +68,7 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
   const industryLabel = categoryLabel(row.industry_slug);
   const leadReference = `HLX-LEAD-${String(row.lead_id).padStart(6, '0')}`;
   const packageCovered = row.package_id !== null;
+  const appointment = appointmentFromRow(row);
 
   let content;
   switch (row.email_type) {
@@ -71,13 +76,13 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
       content = leadOfferEmail({
         leadReference, industryLabel, postcode: row.postcode, propertyType: row.property_type,
         serviceRequirement: row.service_requirement, currency: 'GBP', price: row.agreed_price,
-        packageCovered, paymentReference: row.payment_reference, paymentLink: row.payment_link,
+        packageCovered, paymentReference: row.payment_reference, paymentLink: row.payment_link, appointment,
       });
       break;
     case 'INTERNAL_OFFER_COPY':
       content = internalOfferCopyEmail({
         leadReference, companyName: row.company_name, industryLabel, postcode: row.postcode,
-        price: row.agreed_price, packageCovered,
+        price: row.agreed_price, packageCovered, appointment,
       });
       break;
     case 'LEAD_UNLOCKED':
@@ -85,13 +90,14 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
         leadReference, industryLabel, homeownerName: row.homeowner_name,
         phone: row.homeowner_contact?.mobile ?? '', email: row.homeowner_contact?.email ?? '',
         postcode: row.postcode, propertyType: row.property_type, serviceRequirement: row.service_requirement,
+        appointment,
       });
       break;
     case 'INTERNAL_RELEASE_COPY':
       content = internalReleaseCopyEmail({
         leadReference, companyName: row.company_name, homeownerName: row.homeowner_name,
         phone: row.homeowner_contact?.mobile ?? '', email: row.homeowner_contact?.email ?? '',
-        postcode: row.postcode, packageCovered,
+        postcode: row.postcode, packageCovered, appointment,
       });
       break;
     default:

@@ -22,6 +22,7 @@ interface LeadRow {
   industry_slug: string;
   industry_name: string;
   live_allocations: { buyer_id: number; company_name: string; allocation_type: string }[] | null;
+  lead_type?: 'VERIFIED_ENQUIRY' | 'BOOKED_APPOINTMENT';
 }
 
 interface BuyerOption {
@@ -29,6 +30,7 @@ interface BuyerOption {
   company_name: string;
   application_status: string;
   agreed_price_per_lead: number | null;
+  agreed_price_per_appointment?: number | null;
   industry_slug?: string;
   exclusivity_arrangement?: 'exclusive' | 'shared' | null;
 }
@@ -37,6 +39,7 @@ interface EligibleBuyer {
   id: number;
   company_name: string;
   agreed_price_per_lead: number | null;
+  agreed_price_per_appointment?: number | null;
   exclusivity_arrangement: 'exclusive' | 'shared' | null;
 }
 
@@ -50,7 +53,7 @@ export default function LeadsQueue() {
 
   const [newLead, setNewLead] = useState({
     industry_slug: 'spray_foam_removal', homeowner_name: '', mobile: '', email: '',
-    property_type: '', postcode: '', service_requirement: '', source: '', meta_lead_id: '',
+    property_type: '', postcode: '', service_requirement: '', source: '', meta_lead_id: '', lead_type: 'VERIFIED_ENQUIRY',
   });
 
   function load() {
@@ -76,7 +79,7 @@ export default function LeadsQueue() {
         body: JSON.stringify(newLead),
       });
       if (!res.ok) throw new Error((await res.json()).error ?? 'Failed to add lead.');
-      setNewLead({ industry_slug: 'spray_foam_removal', homeowner_name: '', mobile: '', email: '', property_type: '', postcode: '', service_requirement: '', source: '', meta_lead_id: '' });
+      setNewLead({ industry_slug: 'spray_foam_removal', homeowner_name: '', mobile: '', email: '', property_type: '', postcode: '', service_requirement: '', source: '', meta_lead_id: '', lead_type: 'VERIFIED_ENQUIRY' });
       load();
     } catch (e) {
       setError(e instanceof Error ? e.message : String(e));
@@ -100,6 +103,13 @@ export default function LeadsQueue() {
             <label htmlFor="industry">Industry</label>
             <select id="industry" value={newLead.industry_slug} onChange={(e) => setNewLead({ ...newLead, industry_slug: e.target.value })}>
               {INDUSTRIES.map((i) => <option key={i.slug} value={i.slug}>{i.label}</option>)}
+            </select>
+          </div>
+          <div className="form-row">
+            <label htmlFor="lead_type">Lead type</label>
+            <select id="lead_type" value={newLead.lead_type} onChange={(e) => setNewLead({ ...newLead, lead_type: e.target.value })}>
+              <option value="VERIFIED_ENQUIRY">Verified enquiry</option>
+              <option value="BOOKED_APPOINTMENT">Booked appointment (one buyer only; date and time recorded at allocation)</option>
             </select>
           </div>
           <div className="form-row">
@@ -194,6 +204,11 @@ function LeadRowItem({
   const [allocationTypeTouched, setAllocationTypeTouched] = useState(false);
   const [eligibleBuyers, setEligibleBuyers] = useState<EligibleBuyer[] | null>(null);
   const [showAllBuyers, setShowAllBuyers] = useState(false);
+  const isAppointment = lead.lead_type === 'BOOKED_APPOINTMENT';
+  const [apptAt, setApptAt] = useState('');
+  const [apptKind, setApptKind] = useState<'IN_PERSON' | 'PHONE' | 'VIDEO'>('IN_PERSON');
+  const [apptWhere, setApptWhere] = useState('');
+  const [apptConfirmedAt, setApptConfirmedAt] = useState('');
 
   // Only buyers in the lead's own industry, ever -- the admin dropdowns used to list every
   // ACTIVE buyer regardless of industry, which meant nothing stopped a roofing lead being offered
@@ -209,7 +224,7 @@ function LeadRowItem({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [expanded, lead.id]);
 
-  const allocOptions: { id: number; company_name: string; agreed_price_per_lead: number | null }[] =
+  const allocOptions: { id: number; company_name: string; agreed_price_per_lead: number | null; agreed_price_per_appointment?: number | null }[] =
     showAllBuyers || eligibleBuyers === null || eligibleBuyers.length === 0 ? industryBuyers : eligibleBuyers;
 
   function onAllocBuyerChange(id: string) {
@@ -258,10 +273,34 @@ function LeadRowItem({
           buyer_id: Number(allocBuyerId), homeowner_confirmation_id: lastConfirmationId,
           payment_link: replacementRequestId ? undefined : paymentLink || undefined, allocation_type: allocationType,
           replacement_request_id: replacementRequestId ? Number(replacementRequestId) : undefined,
+          // datetime-local values are the admin's own local (UK) time; sent as an exact instant.
+          appointment: isAppointment ? {
+            scheduled_at: apptAt ? new Date(apptAt).toISOString() : undefined, kind: apptKind,
+            location_notes: apptWhere || undefined,
+            homeowner_confirmed_at: apptConfirmedAt ? new Date(apptConfirmedAt).toISOString() : undefined,
+          } : undefined,
         }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error ?? 'Failed to allocate.');
+      onChanged();
+    } catch (e) {
+      setError(e instanceof Error ? e.message : String(e));
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
+  async function changeLeadType() {
+    const next = isAppointment ? 'VERIFIED_ENQUIRY' : 'BOOKED_APPOINTMENT';
+    setSubmitting(true);
+    setError(null);
+    try {
+      const res = await fetch(apiPath(`/api/admin/leads/${lead.id}/lead-type`), {
+        method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ lead_type: next }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error ?? 'Failed to change the lead type.');
       onChanged();
     } catch (e) {
       setError(e instanceof Error ? e.message : String(e));
@@ -280,6 +319,11 @@ function LeadRowItem({
       <tr style={{ borderBottom: '1px solid var(--border)' }}>
         <td style={{ padding: '10px 8px' }}>
           HLX-LEAD-{String(lead.id).padStart(6, '0')}
+          {isAppointment && (
+            <span style={{ marginLeft: 6, fontSize: '0.72rem', fontWeight: 600, color: '#5a3d1e', background: '#f3e7d7', borderRadius: 4, padding: '1px 6px' }}>
+              Booked appointment
+            </span>
+          )}
           <div style={{ color: 'var(--slate)', fontSize: '0.8rem' }}>
             {lead.homeowner_name} &middot; {lead.postcode}
             {metaLeadId && <><br />Meta ID: {metaLeadId}</>}
@@ -310,6 +354,17 @@ function LeadRowItem({
         <tr>
           <td colSpan={5} style={{ padding: '14px 8px', background: 'var(--off-white, #faf9f7)' }}>
             {error && <div className="disclaimer-box" style={{ marginBottom: 12 }}>{error}</div>}
+
+            {(!lead.live_allocations || lead.live_allocations.length === 0) && (
+              <p className="form-note" style={{ marginBottom: 14 }}>
+                {isAppointment ? 'This is a booked appointment.' : 'This is a verified enquiry.'}{' '}
+                <button type="button" onClick={changeLeadType} disabled={submitting}
+                  style={{ background: 'none', border: 'none', padding: 0, color: 'var(--bronze)', textDecoration: 'underline', cursor: 'pointer', font: 'inherit' }}>
+                  {isAppointment ? 'Change to a verified enquiry' : 'Change to a booked appointment'}
+                </button>{' '}
+                (only possible before it has been allocated).
+              </p>
+            )}
 
             <h4 style={{ fontSize: '0.95rem', marginBottom: 8 }}>
               Step 1 &mdash; Record homeowner confirmation {lastConfirmationId && <span style={{ color: '#2f4a33' }}>(recorded, confirmation #{lastConfirmationId})</span>}
@@ -364,13 +419,45 @@ function LeadRowItem({
                 <label>Buyer</label>
                 <select value={allocBuyerId} onChange={(e) => onAllocBuyerChange(e.target.value)} required>
                   <option value="">Select buyer</option>
-                  {allocOptions.map((b) => <option key={b.id} value={b.id}>{b.company_name} (£{b.agreed_price_per_lead ?? '?'}/lead)</option>)}
+                  {allocOptions.map((b) => (
+                    <option key={b.id} value={b.id}>
+                      {b.company_name} ({isAppointment ? `£${b.agreed_price_per_appointment ?? '?'}/appointment` : `£${b.agreed_price_per_lead ?? '?'}/lead`})
+                    </option>
+                  ))}
                 </select>
               </div>
               <label style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: '0.82rem', color: 'var(--slate)', marginBottom: 12 }}>
                 <input type="checkbox" checked={showAllBuyers} onChange={(e) => setShowAllBuyers(e.target.checked)} style={{ width: 'auto' }} />
                 Not seeing who you expected? Show all ACTIVE buyers in this industry, matched or not.
               </label>
+              {isAppointment ? (
+                <>
+                  <p className="form-note">
+                    A booked appointment goes to this one buyer only. Record the date and time the homeowner
+                    agreed on the phone; the buyer sees it in their emails.
+                  </p>
+                  <div className="form-row">
+                    <label>Appointment date and time (UK time)</label>
+                    <input type="datetime-local" value={apptAt} onChange={(e) => setApptAt(e.target.value)} required />
+                  </div>
+                  <div className="form-row">
+                    <label>How</label>
+                    <select value={apptKind} onChange={(e) => setApptKind(e.target.value as typeof apptKind)}>
+                      <option value="IN_PERSON">In person at the property</option>
+                      <option value="PHONE">Phone call</option>
+                      <option value="VIDEO">Video call</option>
+                    </select>
+                  </div>
+                  <div className="form-row">
+                    <label>Where / notes for the buyer (optional, no homeowner contact details here)</label>
+                    <input value={apptWhere} onChange={(e) => setApptWhere(e.target.value)} placeholder="e.g. at the property; side gate" />
+                  </div>
+                  <div className="form-row">
+                    <label>When the homeowner agreed this time</label>
+                    <input type="datetime-local" value={apptConfirmedAt} onChange={(e) => setApptConfirmedAt(e.target.value)} required />
+                  </div>
+                </>
+              ) : (
               <div className="form-row">
                 <label>Allocation type</label>
                 <select value={allocationType} onChange={(e) => { setAllocationTypeTouched(true); setAllocationType(e.target.value as typeof allocationType); }}>
@@ -382,6 +469,7 @@ function LeadRowItem({
                   if you're deliberately going against what's on file for them.
                 </p>
               </div>
+              )}
               <div className="form-row">
                 <label>Free replacement for request # (optional)</label>
                 <input value={replacementRequestId} inputMode="numeric" onChange={(e) => setReplacementRequestId(e.target.value.replace(/\D/g, ''))} placeholder="Leave blank for a normal sale" />
@@ -396,7 +484,7 @@ function LeadRowItem({
                   <input value={paymentLink} onChange={(e) => setPaymentLink(e.target.value)} placeholder="https://pay.tide.co/products/..." />
                 </div>
               )}
-              <button className="btn btn-bronze" type="submit" disabled={submitting || !allocBuyerId || !lastConfirmationId}>
+              <button className="btn btn-bronze" type="submit" disabled={submitting || !allocBuyerId || !lastConfirmationId || (isAppointment && (!apptAt || !apptConfirmedAt))}>
                 Allocate &amp; send preview
               </button>
               {!lastConfirmationId && <p className="form-note">Record the homeowner confirmation above first.</p>}

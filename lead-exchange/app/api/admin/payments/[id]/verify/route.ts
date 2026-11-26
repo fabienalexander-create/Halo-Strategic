@@ -4,6 +4,7 @@ import { requireAdmin } from '../../../../../../lib/requireAdmin';
 import { sendLeadDeliveryEmail } from '../../../../../../lib/leadDeliveryEmail';
 import { leadUnlockedEmail, internalReleaseCopyEmail } from '../../../../../../lib/emailTemplates';
 import { categoryLabel } from '../../../../../../lib/industries';
+import { appointmentFromRow } from '../../../../../../lib/appointments';
 
 interface Body {
   transaction_reference?: string;
@@ -47,12 +48,14 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
       SELECT p.id, p.status AS payment_status, p.lead_allocation_id,
              a.status AS allocation_status, a.agreed_price, a.package_id, a.lead_id, a.buyer_id,
              l.homeowner_name, l.homeowner_contact, l.postcode, l.property_type, l.service_requirement,
-             i.slug AS industry_slug, b.company_name, b.contact_email
+             i.slug AS industry_slug, b.company_name, b.contact_email,
+             ap.scheduled_at AS appt_scheduled_at, ap.appointment_kind AS appt_kind, ap.location_notes AS appt_location_notes
       FROM payments p
       JOIN lead_allocations a ON a.id = p.lead_allocation_id
       JOIN leads l ON l.id = a.lead_id
       JOIN industries i ON i.id = l.industry_id
       JOIN buyers b ON b.id = a.buyer_id
+      LEFT JOIN lead_appointments ap ON ap.lead_allocation_id = a.id
       WHERE p.id = ${paymentId}
     `;
     if (rows.length === 0) {
@@ -64,6 +67,7 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
       homeowner_name: string; homeowner_contact: { email?: string; mobile?: string };
       postcode: string; property_type: string; service_requirement: string;
       industry_slug: string; company_name: string; contact_email: string;
+      appt_scheduled_at: string | null; appt_kind: string | null; appt_location_notes: string | null;
     };
 
     // Duplicate-verification guard: already PAID/SETTLED is reported back as-is, never re-verified
@@ -137,6 +141,7 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
     if (released) {
       const industryLabel = categoryLabel(row.industry_slug);
       const leadReference = `HLX-LEAD-${String(row.lead_id).padStart(6, '0')}`;
+      const appointment = appointmentFromRow(row);
 
       await sendLeadDeliveryEmail(db, {
         leadAllocationId: row.lead_allocation_id,
@@ -146,6 +151,7 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
           leadReference, industryLabel, homeownerName: row.homeowner_name,
           phone: row.homeowner_contact?.mobile ?? '', email: row.homeowner_contact?.email ?? '',
           postcode: row.postcode, propertyType: row.property_type, serviceRequirement: row.service_requirement,
+          appointment,
         }),
       });
 
@@ -159,7 +165,7 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
           ...internalReleaseCopyEmail({
             leadReference, companyName: row.company_name, homeownerName: row.homeowner_name,
             phone: row.homeowner_contact?.mobile ?? '', email: row.homeowner_contact?.email ?? '',
-            postcode: row.postcode, packageCovered: false,
+            postcode: row.postcode, packageCovered: false, appointment,
           }),
         });
       }

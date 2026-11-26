@@ -9,6 +9,22 @@ function escapeHtml(value: string): string {
     .replace(/'/g, '&#39;');
 }
 
+export interface AppointmentDetails {
+  scheduledAt: string | Date;
+  kind: 'IN_PERSON' | 'PHONE' | 'VIDEO';
+  locationNotes?: string | null;
+}
+
+const APPOINTMENT_KIND: Record<AppointmentDetails['kind'], string> = { IN_PERSON: 'in person', PHONE: 'by phone', VIDEO: 'by video call' };
+
+// "Tuesday 2 December 2026, 10:00 (in person)" in UK time, whatever the server's own clock zone.
+export function formatAppointment(a: AppointmentDetails): string {
+  const when = new Date(a.scheduledAt).toLocaleString('en-GB', {
+    weekday: 'long', day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit', timeZone: 'Europe/London',
+  }).replace(' at ', ', ');
+  return `${when} (${APPOINTMENT_KIND[a.kind]})`;
+}
+
 export interface EmailContent {
   subject: string;
   html: string;
@@ -150,6 +166,7 @@ export function leadOfferEmail(params: {
   packageCovered: boolean;
   paymentReference: string | null; // quote this when paying; null when packageCovered
   replacementForReference?: string | null; // set when this lead is a free replacement for an earlier one
+  appointment?: AppointmentDetails | null; // set for a booked-appointment lead
   paymentLink?: string | null; // a Tide payment link, possibly shared across a buyer's leads, so the reference is always shown with it (2026-11-19); falls back to bank transfer + reference
 }): EmailContent {
   const reference = escapeHtml(params.leadReference);
@@ -187,16 +204,19 @@ ${smallNote(`Button not working? Use this link: ${link(escapeHtml(params.payment
       : paragraph(`To release the homeowner's contact details, pay by bank transfer and quote reference ${paymentReferenceHtml} so we can match your payment. We'll email the details as soon as it's verified.`);
 
   return {
-    subject: `New ${params.industryLabel} lead available: ${params.leadReference}`,
+    subject: params.appointment
+      ? `New ${params.industryLabel} booked appointment available: ${params.leadReference}`
+      : `New ${params.industryLabel} lead available: ${params.leadReference}`,
     text: `Hi,
 
-A new lead is available for you.
+${params.appointment ? 'A new booked appointment is available for you.' : 'A new lead is available for you.'}
 
 Reference: ${params.leadReference}
 Industry: ${params.industryLabel}
 Area: ${outwardPostcode(params.postcode)}
 Property type: ${params.propertyType}
-Service required: ${params.serviceRequirement}
+Service required: ${params.serviceRequirement}${params.appointment ? `
+Appointment: ${formatAppointment(params.appointment)}` : ''}
 
 ${paymentText}
 
@@ -205,7 +225,7 @@ Halo Strategic`,
     html: leadEmailLayout({
       title: `New ${industry} lead available`,
       preheader: `${industry} lead in ${area}. See the preview and unlock the homeowner's details.`,
-      eyebrow: 'New lead available',
+      eyebrow: params.appointment ? 'New booked appointment' : 'New lead available',
       headline: industry,
       badgeText: `Ref ${reference}`,
       bodyHtml: `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-top:8px;">
@@ -213,6 +233,7 @@ ${detailRows([
   { label: 'Area', valueHtml: area },
   { label: 'Property type', valueHtml: propertyType },
   { label: 'Service required', valueHtml: serviceRequirement },
+  ...(params.appointment ? [{ label: 'Appointment', valueHtml: `<strong>${escapeHtml(formatAppointment(params.appointment))}</strong>` }] : []),
   { label: 'Contact', valueHtml: '•••• •••• · 07•••', mono: true },
   { label: 'Price', valueHtml: priceHtml },
 ])}
@@ -234,10 +255,12 @@ export function internalOfferCopyEmail(params: {
   price: number | string | null;
   packageCovered: boolean;
   replacementForReference?: string | null;
+  appointment?: AppointmentDetails | null;
 }): EmailContent {
   const reference = escapeHtml(params.leadReference);
   const company = escapeHtml(params.companyName);
   const industry = escapeHtml(params.industryLabel);
+  const appointmentLine = params.appointment ? formatAppointment(params.appointment) : null;
   const area = escapeHtml(outwardPostcode(params.postcode));
   const priceLine = params.replacementForReference
     ? `Free replacement for ${params.replacementForReference} (no payment due)`
@@ -246,9 +269,11 @@ export function internalOfferCopyEmail(params: {
     subject: `[Internal] Lead ${params.leadReference} offered to ${params.companyName}`,
     text: `Lead ${params.leadReference} (${params.industryLabel}, ${outwardPostcode(params.postcode)}) was offered to ${params.companyName}.
 
-Price: ${priceLine}`,
+Price: ${priceLine}${appointmentLine ? `
+Appointment: ${appointmentLine}` : ''}`,
     html: `<p>Lead ${reference} (${industry}, ${area}) was offered to ${company}.</p>
-<p>Price: ${escapeHtml(priceLine)}</p>`,
+<p>Price: ${escapeHtml(priceLine)}</p>${appointmentLine ? `
+<p>Appointment: ${escapeHtml(appointmentLine)}</p>` : ''}`,
   };
 }
 
@@ -265,6 +290,7 @@ export function leadUnlockedEmail(params: {
   postcode: string;
   propertyType: string;
   serviceRequirement: string;
+  appointment?: AppointmentDetails | null;
 }): EmailContent {
   const reference = escapeHtml(params.leadReference);
   const industry = escapeHtml(params.industryLabel);
@@ -286,9 +312,12 @@ Email: ${params.email}
 Postcode: ${params.postcode}
 Property type: ${params.propertyType}
 Service required: ${params.serviceRequirement}
-Industry: ${params.industryLabel}
+Industry: ${params.industryLabel}${params.appointment ? `
+Appointment: ${formatAppointment(params.appointment)}${params.appointment.locationNotes ? ` -- ${params.appointment.locationNotes}` : ''}` : ''}
 
-Please contact the homeowner promptly. If you're unable to reach them, see the Lead Replacement Policy for what to do next.
+${params.appointment
+  ? "The homeowner is expecting you at the time above. If they cancel or don't attend and it can't be rearranged, tell us within 48 hours: see the Lead Replacement Policy."
+  : "Please contact the homeowner promptly. If you're unable to reach them, see the Lead Replacement Policy for what to do next."}
 
 Kind regards,
 Halo Strategic`,
@@ -298,7 +327,7 @@ Halo Strategic`,
       eyebrow: 'Lead unlocked',
       headline: industry,
       badgeText: `Ref ${reference}`,
-      bodyHtml: `${paragraph("Here are the homeowner's details. Please contact them promptly.")}
+      bodyHtml: `${paragraph(params.appointment ? "Here are the homeowner's details and your appointment." : "Here are the homeowner's details. Please contact them promptly.")}
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-top:12px;">
 ${detailRows([
   { label: 'Name', valueHtml: `<strong>${name}</strong>` },
@@ -307,9 +336,15 @@ ${detailRows([
   { label: 'Postcode', valueHtml: postcode },
   { label: 'Property type', valueHtml: propertyType },
   { label: 'Service required', valueHtml: serviceRequirement },
+  ...(params.appointment ? [
+    { label: 'Appointment', valueHtml: `<strong>${escapeHtml(formatAppointment(params.appointment))}</strong>` },
+    ...(params.appointment.locationNotes ? [{ label: 'Where', valueHtml: escapeHtml(params.appointment.locationNotes) }] : []),
+  ] : []),
 ])}
 </table>
-${smallNote(`Can't reach them? See the ${link(LEAD_REPLACEMENT_POLICY_URL, 'Lead Replacement Policy')} for what to do next.`)}`,
+${params.appointment
+  ? smallNote(`If the homeowner cancels or doesn't attend and it can't be rearranged, tell us within 48 hours. See the ${link(LEAD_REPLACEMENT_POLICY_URL, 'Lead Replacement Policy')}.`)
+  : smallNote(`Can't reach them? See the ${link(LEAD_REPLACEMENT_POLICY_URL, 'Lead Replacement Policy')} for what to do next.`)}`,
     }),
   };
 }
@@ -325,10 +360,12 @@ export function internalReleaseCopyEmail(params: {
   postcode: string;
   packageCovered: boolean;
   replacementForReference?: string | null;
+  appointment?: AppointmentDetails | null;
 }): EmailContent {
   const reference = escapeHtml(params.leadReference);
   const company = escapeHtml(params.companyName);
   const name = escapeHtml(params.homeownerName);
+  const appointmentLine = params.appointment ? formatAppointment(params.appointment) : null;
   const phone = escapeHtml(params.phone);
   const email = escapeHtml(params.email);
   const postcode = escapeHtml(params.postcode);
@@ -342,13 +379,15 @@ export function internalReleaseCopyEmail(params: {
 Homeowner: ${params.homeownerName}
 Phone: ${params.phone}
 Email: ${params.email}
-Postcode: ${params.postcode}`,
+Postcode: ${params.postcode}${appointmentLine ? `
+Appointment: ${appointmentLine}` : ''}`,
     html: `<p>Lead ${reference} was released to ${company} (${escapeHtml(releaseBasis)}).</p>
 <p>
 Homeowner: ${name}<br>
 Phone: ${phone}<br>
 Email: ${email}<br>
-Postcode: ${postcode}
+Postcode: ${postcode}${appointmentLine ? `<br>
+Appointment: ${escapeHtml(appointmentLine)}` : ''}
 </p>`,
   };
 }

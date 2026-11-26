@@ -2,7 +2,7 @@ import { getDatabase } from '@netlify/database';
 import { NextRequest, NextResponse } from 'next/server';
 import { requireAdmin } from '../../../../../../lib/requireAdmin';
 import { sendLeadDeliveryEmail } from '../../../../../../lib/leadDeliveryEmail';
-import { leadOfferEmail, internalOfferCopyEmail, leadUnlockedEmail, internalReleaseCopyEmail } from '../../../../../../lib/emailTemplates';
+import { leadOfferEmail, internalOfferCopyEmail, leadUnlockedEmail, internalReleaseCopyEmail, type AppointmentDetails } from '../../../../../../lib/emailTemplates';
 import { categoryLabel, isConfiguredIndustrySlug } from '../../../../../../lib/industries';
 
 interface Body {
@@ -15,7 +15,19 @@ interface Body {
   // (credits ledger, 2026-11-26): no price, no payment, released immediately, and the request is
   // resolved as REPLACEMENT_SUPPLIED in the same transaction. The database enforces every rule.
   replacement_request_id?: number;
+  // Required for a BOOKED_APPOINTMENT lead (booked appointments, 2026-11-26), refused otherwise.
+  // Halo records the date and time the homeowner agreed by phone; there is no calendar
+  // integration. The lead_appointments row is written in the same transaction as the allocation,
+  // and a deferred database trigger refuses the commit if it is missing.
+  appointment?: {
+    scheduled_at?: string;
+    kind?: 'IN_PERSON' | 'PHONE' | 'VIDEO';
+    location_notes?: string;
+    homeowner_confirmed_at?: string;
+  };
 }
+
+const APPOINTMENT_KINDS = ['IN_PERSON', 'PHONE', 'VIDEO'] as const;
 
 // Offers a lead to a buyer -- the first and only place a lead_allocations row is ever created.
 // This models the whole deal as already agreed over the phone (price, or package, already settled
@@ -79,7 +91,7 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
 
     const leads = await db.sql`
       SELECT l.id, l.status, l.homeowner_name, l.homeowner_contact, l.property_type, l.postcode,
-             l.service_requirement, i.slug AS industry_slug, i.id AS industry_id
+             l.service_requirement, l.lead_type, i.slug AS industry_slug, i.id AS industry_id
       FROM leads l JOIN industries i ON i.id = l.industry_id
       WHERE l.id = ${leadId}
     `;
@@ -89,7 +101,35 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
     const lead = leads[0] as {
       id: number; status: string; homeowner_name: string; homeowner_contact: { email?: string; mobile?: string };
       property_type: string; postcode: string; service_requirement: string; industry_slug: string; industry_id: number;
+      lead_type: 'VERIFIED_ENQUIRY' | 'BOOKED_APPOINTMENT';
     };
+    const isAppointment = lead.lead_type === 'BOOKED_APPOINTMENT';
+
+    // A booked appointment needs the agreed date and time, and goes to one buyer only.
+    let appointment: (AppointmentDetails & { homeownerConfirmedAt: string }) | null = null;
+    if (isAppointment) {
+      const a = body.appointment ?? {};
+      const scheduled = a.scheduled_at ? new Date(a.scheduled_at) : null;
+      const confirmed = a.homeowner_confirmed_at ? new Date(a.homeowner_confirmed_at) : null;
+      if (!scheduled || Number.isNaN(scheduled.getTime()) || scheduled.getTime() <= Date.now()) {
+        return NextResponse.json({ error: 'A booked appointment needs a date and time in the future (appointment.scheduled_at).' }, { status: 400 });
+      }
+      if (!a.kind || !APPOINTMENT_KINDS.includes(a.kind)) {
+        return NextResponse.json({ error: "appointment.kind must be 'IN_PERSON', 'PHONE' or 'VIDEO'." }, { status: 400 });
+      }
+      if (!confirmed || Number.isNaN(confirmed.getTime()) || confirmed.getTime() > Date.now()) {
+        return NextResponse.json({ error: 'Record when the homeowner agreed the appointment (appointment.homeowner_confirmed_at, not in the future).' }, { status: 400 });
+      }
+      if (body.allocation_type === 'SHARED') {
+        return NextResponse.json({ error: 'A booked appointment goes to one buyer only; it cannot be SHARED.' }, { status: 409 });
+      }
+      appointment = {
+        scheduledAt: scheduled.toISOString(), kind: a.kind,
+        locationNotes: a.location_notes?.trim() || null, homeownerConfirmedAt: confirmed.toISOString(),
+      };
+    } else if (body.appointment) {
+      return NextResponse.json({ error: 'This lead is a verified enquiry, not a booked appointment.' }, { status: 400 });
+    }
 
     // Allocation only ever happens in a live category (lib/industries.ts CATEGORIES). Prepared and
     // future categories cannot take enquiries anyway; this is the backstop at the point of sale.
@@ -124,7 +164,8 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
     }
 
     const buyers = await db.sql`
-      SELECT id, industry_id, application_status, company_name, contact_email, agreed_price_per_lead, exclusivity_arrangement
+      SELECT id, industry_id, application_status, company_name, contact_email, agreed_price_per_lead,
+             agreed_price_per_appointment, exclusivity_arrangement
       FROM buyers WHERE id = ${body.buyer_id}
     `;
     if (buyers.length === 0) {
@@ -132,7 +173,8 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
     }
     const buyer = buyers[0] as {
       id: number; industry_id: number; application_status: string; company_name: string;
-      contact_email: string; agreed_price_per_lead: number | string | null; exclusivity_arrangement: 'exclusive' | 'shared' | null;
+      contact_email: string; agreed_price_per_lead: number | string | null;
+      agreed_price_per_appointment: number | string | null; exclusivity_arrangement: 'exclusive' | 'shared' | null;
     };
     if (buyer.application_status !== 'ACTIVE') {
       return NextResponse.json({ error: `Buyer is not ACTIVE (currently ${buyer.application_status}).` }, { status: 409 });
@@ -147,8 +189,13 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
     // sensible default that ignores the buyer's own contract. A buyer with no arrangement
     // recorded yet defaults to SHARED, the new baseline. An admin can still request a specific
     // type explicitly, but not one that contradicts the buyer's recorded contract.
-    const allocationType = body.allocation_type ?? (buyer.exclusivity_arrangement === 'exclusive' ? 'EXCLUSIVE_WINDOW' : 'SHARED');
-    if (buyer.exclusivity_arrangement === 'shared' && allocationType === 'EXCLUSIVE_WINDOW') {
+    // A booked appointment is always EXCLUSIVE_WINDOW (Fabien, 2026-11-26: one buyer only, never
+    // shared), whatever the buyer's arrangement for enquiries: one homeowner cannot keep the same
+    // appointment with two businesses.
+    const allocationType = isAppointment
+      ? 'EXCLUSIVE_WINDOW'
+      : body.allocation_type ?? (buyer.exclusivity_arrangement === 'exclusive' ? 'EXCLUSIVE_WINDOW' : 'SHARED');
+    if (!isAppointment && buyer.exclusivity_arrangement === 'shared' && allocationType === 'EXCLUSIVE_WINDOW') {
       return NextResponse.json({ error: 'This buyer is contracted for shared leads only; cannot allocate EXCLUSIVE_WINDOW.' }, { status: 409 });
     }
     if (buyer.exclusivity_arrangement === 'exclusive' && allocationType === 'SHARED') {
@@ -205,14 +252,20 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
       replacementForReference = `HLX-LEAD-${String(rr.lead_id).padStart(6, '0')}`;
     } else if (body.package_id) {
       const packages = await db.sql`
-        SELECT id, buyer_id, leads_used, leads_included, credits_refunded, expires_at FROM buyer_packages WHERE id = ${body.package_id}
+        SELECT id, buyer_id, leads_used, leads_included, credits_refunded, expires_at, lead_type FROM buyer_packages WHERE id = ${body.package_id}
       `;
       if (packages.length === 0) {
         return NextResponse.json({ error: 'No matching buyer package found.' }, { status: 404 });
       }
       const pkg = packages[0] as {
         id: number; buyer_id: number; leads_used: number; leads_included: number; credits_refunded: number; expires_at: string | null;
+        lead_type: string;
       };
+      if (pkg.lead_type !== lead.lead_type) {
+        return NextResponse.json({
+          error: isAppointment ? 'This package is for verified enquiries, not booked appointments.' : 'This package is for booked appointments, not verified enquiries.',
+        }, { status: 409 });
+      }
       if (pkg.buyer_id !== body.buyer_id) {
         return NextResponse.json({ error: 'This package belongs to a different buyer.' }, { status: 400 });
       }
@@ -222,6 +275,11 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
       if (pkg.expires_at && new Date(pkg.expires_at).getTime() <= Date.now()) {
         return NextResponse.json({ error: 'This package has expired; its unused credits are due a refund.' }, { status: 409 });
       }
+    } else if (isAppointment) {
+      if (buyer.agreed_price_per_appointment === null) {
+        return NextResponse.json({ error: 'Buyer has no agreed price per booked appointment set; cannot snapshot a price without a package.' }, { status: 422 });
+      }
+      agreedPrice = Number(buyer.agreed_price_per_appointment);
     } else {
       if (buyer.agreed_price_per_lead === null) {
         return NextResponse.json({ error: 'Buyer has no agreed_price_per_lead set; cannot snapshot a price without a package.' }, { status: 422 });
@@ -283,6 +341,16 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
       );
       allocationId = inserted.rows[0].id as number;
 
+      if (appointment) {
+        await client.query(
+          `INSERT INTO lead_appointments (lead_allocation_id, scheduled_at, appointment_kind, location_notes,
+                                          homeowner_confirmed_at, arranged_by, updated_by)
+           VALUES ($1, $2, $3, $4, $5, $6, $6)`,
+          [allocationId, appointment.scheduledAt, appointment.kind, appointment.locationNotes, appointment.homeownerConfirmedAt,
+            auth.session.email]
+        );
+      }
+
       if (isReplacement) {
         await client.query(
           `UPDATE replacement_requests SET resolution = 'REPLACEMENT_SUPPLIED', replacement_allocation_id = $2,
@@ -304,7 +372,8 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
          VALUES ($1, 'LEAD_ALLOCATED', 'lead_allocation', $2, $3)`,
         [auth.session.email, allocationId, JSON.stringify({
           lead_id: leadId, buyer_id: body.buyer_id, agreed_price: agreedPrice, package_id: body.package_id ?? null,
-          replacement_request_id: body.replacement_request_id ?? null,
+          replacement_request_id: body.replacement_request_id ?? null, lead_type: lead.lead_type,
+          appointment_scheduled_at: appointment?.scheduledAt ?? null,
           allocation_type: allocationType, other_live_buyer_ids: liveBuyerIdsAtCommit,
         })]
       );
@@ -327,7 +396,10 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
       // final backstop behind the checks above; its refusals are a business answer, not a crash.
       const message = err instanceof Error ? err.message : '';
       const code = (err as { code?: string }).code;
-      if (code === '23505' || /live allocation|exclusive|withdrawn|different lead or buyer|package|replacement|expired/i.test(message)) {
+      if (/no future appointment|appointment time must be|homeowner confirmation time/i.test(message)) {
+        return NextResponse.json({ error: 'The appointment details were refused: check the time is in the future and try again.' }, { status: 409 });
+      }
+      if (code === '23505' || /live allocation|exclusive|one buyer|withdrawn|different lead or buyer|package|replacement|expired|lead type/i.test(message)) {
         return NextResponse.json({ error: 'This allocation conflicts with an existing one and was not recorded.' }, { status: 409 });
       }
       throw err;
@@ -348,7 +420,7 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
       ...leadOfferEmail({
         leadReference, industryLabel, postcode: lead.postcode, propertyType: lead.property_type,
         serviceRequirement: lead.service_requirement, currency: 'GBP', price: agreedPrice,
-        packageCovered, paymentReference, paymentLink: body.payment_link ?? null, replacementForReference,
+        packageCovered, paymentReference, paymentLink: body.payment_link ?? null, replacementForReference, appointment,
       }),
     });
     if (adminEmails) {
@@ -358,7 +430,7 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
         to: adminEmails,
         ...internalOfferCopyEmail({
           leadReference, companyName: buyer.company_name, industryLabel, postcode: lead.postcode,
-          price: agreedPrice, packageCovered, replacementForReference,
+          price: agreedPrice, packageCovered, replacementForReference, appointment,
         }),
       });
     }
@@ -388,6 +460,7 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
             leadReference, industryLabel, homeownerName: lead.homeowner_name,
             phone: lead.homeowner_contact?.mobile ?? '', email: lead.homeowner_contact?.email ?? '',
             postcode: lead.postcode, propertyType: lead.property_type, serviceRequirement: lead.service_requirement,
+            appointment,
           }),
         });
         if (adminEmails) {
@@ -398,7 +471,7 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
             ...internalReleaseCopyEmail({
               leadReference, companyName: buyer.company_name, homeownerName: lead.homeowner_name,
               phone: lead.homeowner_contact?.mobile ?? '', email: lead.homeowner_contact?.email ?? '',
-              postcode: lead.postcode, packageCovered: true, replacementForReference,
+              postcode: lead.postcode, packageCovered: true, replacementForReference, appointment,
             }),
           });
         }
@@ -406,7 +479,8 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
     }
 
     return NextResponse.json({
-      allocation_id: allocationId, status: 'PURCHASED', package_covered: packageCovered,
+      allocation_id: allocationId, status: 'PURCHASED', package_covered: packageCovered, lead_type: lead.lead_type,
+      appointment_scheduled_at: appointment?.scheduledAt ?? null,
       replacement_request_id: body.replacement_request_id ?? null, payment_reference: paymentReference, released,
     });
   } catch (err) {

@@ -103,7 +103,8 @@ const FIELD_GROUPS: { title: string; fields: [string, string][] }[] = [
   {
     title: 'Commercial configuration',
     fields: [
-      ['agreed_price_per_lead', 'Agreed price per lead'], ['agreed_currency', 'Currency'],
+      ['agreed_price_per_lead', 'Agreed price per lead'], ['agreed_price_per_appointment', 'Agreed price per booked appointment'],
+      ['agreed_currency', 'Currency'],
       ['exclusivity_arrangement', 'Exclusivity arrangement'], ['agreed_weekly_capacity', 'Agreed weekly capacity'],
       ['payment_arrangement_notes', 'Payment arrangement notes'], ['agreed_pricing_notes', 'Pricing notes'],
       ['commercials_configured_by', 'Commercials configured by'], ['commercials_configured_at', 'Commercials configured at'],
@@ -133,7 +134,7 @@ export default function ApplicationDetail({ reference }: { reference: string }) 
   const [coverageReason, setCoverageReason] = useState('');
   const [coverageConfirmed, setCoverageConfirmed] = useState(false);
   const [commercials, setCommercials] = useState({
-    agreed_price_per_lead: '', agreed_currency: 'GBP', exclusivity_arrangement: '',
+    agreed_price_per_lead: '', agreed_price_per_appointment: '', agreed_currency: 'GBP', exclusivity_arrangement: '',
     agreed_weekly_capacity: '', payment_arrangement_notes: '', agreed_pricing_notes: '',
   });
 
@@ -187,6 +188,7 @@ export default function ApplicationDetail({ reference }: { reference: string }) 
     setActionMessage(null);
     const payload: Record<string, unknown> = {};
     if (commercials.agreed_price_per_lead) payload.agreed_price_per_lead = Number(commercials.agreed_price_per_lead);
+    if (commercials.agreed_price_per_appointment) payload.agreed_price_per_appointment = Number(commercials.agreed_price_per_appointment);
     if (commercials.agreed_currency) payload.agreed_currency = commercials.agreed_currency;
     if (commercials.exclusivity_arrangement) payload.exclusivity_arrangement = commercials.exclusivity_arrangement;
     if (commercials.agreed_weekly_capacity) payload.agreed_weekly_capacity = Number(commercials.agreed_weekly_capacity);
@@ -285,6 +287,11 @@ export default function ApplicationDetail({ reference }: { reference: string }) 
             <label>Agreed price per lead</label>
             <input type="number" value={commercials.agreed_price_per_lead}
               onChange={(e) => setCommercials({ ...commercials, agreed_price_per_lead: e.target.value })} />
+          </div>
+          <div className="form-row">
+            <label>Agreed price per booked appointment (optional)</label>
+            <input type="number" value={commercials.agreed_price_per_appointment}
+              onChange={(e) => setCommercials({ ...commercials, agreed_price_per_appointment: e.target.value })} />
           </div>
           <div className="form-row">
             <label>Currency</label>

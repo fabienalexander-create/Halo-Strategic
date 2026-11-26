@@ -53,7 +53,7 @@ interface RequestRow {
   admin_decision_notes: string | null;
 }
 
-const REASONS = ['INVALID_CONTACT', 'INCORRECT_INDIVIDUAL', 'NO_GENUINE_INTEREST', 'INCORRECT_SERVICE', 'DUPLICATE', 'UNREACHABLE_DOCUMENTED', 'INACCURATE_DETAILS', 'OTHER'];
+const REASONS = ['INVALID_CONTACT', 'INCORRECT_INDIVIDUAL', 'NO_GENUINE_INTEREST', 'INCORRECT_SERVICE', 'DUPLICATE', 'UNREACHABLE_DOCUMENTED', 'INACCURATE_DETAILS', 'OTHER', 'HOMEOWNER_NO_SHOW', 'APPOINTMENT_CANCELLED_BY_HOMEOWNER'];
 const leadRef = (id: number) => `HLX-LEAD-${String(id).padStart(6, '0')}`;
 const fmtDate = (d: string | null) => (d ? new Date(d).toLocaleDateString('en-GB') : 'No expiry');
 const cell = { padding: '8px 6px', verticalAlign: 'top' as const };
