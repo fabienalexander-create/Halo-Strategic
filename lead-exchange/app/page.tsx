@@ -5,6 +5,7 @@ import RoofingIllustration from './components/RoofingIllustration';
 import ProcessSteps from './components/ProcessSteps';
 import Reveal from './components/Reveal';
 import { indexablePage } from '../lib/seo';
+import { BASE_PATH } from '../lib/basePath';
 
 export const metadata = indexablePage({
   path: '/',
@@ -38,9 +39,18 @@ export default function HomePage() {
             </a>
           </div>
           </div>
-          <div className="hero-art" data-reveal>
-            <LoftCrossSection />
-          </div>
+          <figure className="hero-video" data-reveal>
+            <video
+              controls
+              playsInline
+              preload="none"
+              poster={`${BASE_PATH}/media/how-it-works-poster.jpg`}
+              aria-label="How Halo Lead Exchange works, a video of just over a minute, with captions"
+            >
+              <source src={`${BASE_PATH}/media/how-it-works.mp4`} type="video/mp4" />
+            </video>
+            <figcaption>How it works in just over a minute: the enquiry, the checks, the preview and the delivery.</figcaption>
+          </figure>
         </div>
       </section>
 
