@@ -50,6 +50,30 @@ for (const a of articles) {
   if (!/^[a-z0-9-]+$/.test(a.slug)) throw new Error(`Article slug "${a.slug}" must be lowercase letters, numbers, and hyphens only`);
 }
 
+// House style check: no em dashes or en dashes anywhere in the copy (see
+// docs/SEO_CONTENT_ENGINE.md, Tone, and .claude/skills/halo-house-style/SKILL.md).
+// Long dashes are one of the more obvious "this was written by AI" tells, so this
+// is a hard build failure, not a warning a run can forget to act on. Use a comma,
+// a period, or a colon instead. If a real en-dash number range is ever needed
+// (e.g. "3-4"), write it with a plain hyphen, matching every existing article.
+const LONG_DASH_FIELDS = ['title', 'h1', 'metaDescription', 'teaser', 'category', 'bodyHtml'];
+const longDashHits = [];
+for (const a of articles) {
+  for (const field of LONG_DASH_FIELDS) {
+    const value = a[field];
+    if (typeof value !== 'string') continue;
+    if (value.includes('—') || value.includes('–')) {
+      longDashHits.push(`  ${a.slug || '(no slug)'} -> ${field}`);
+    }
+  }
+}
+if (longDashHits.length > 0) {
+  throw new Error(
+    `House style violation: found an em dash (—) or en dash (–) in:\n${longDashHits.join('\n')}\n` +
+    `Replace it with a comma, a period, or a colon, then rebuild.`
+  );
+}
+
 // JSON string literal safe to drop inside a <script type="application/ld+json"> block.
 function jsonLdString(str) {
   return JSON.stringify(str).split('</').join('<\\/');
