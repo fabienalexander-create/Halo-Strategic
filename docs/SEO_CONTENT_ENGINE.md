@@ -31,7 +31,9 @@ Every article reinforces Halo's founding belief: most businesses don't have a ma
 
 ## Tone
 
-Write like a trusted commercial adviser, not an SEO writer, not ChatGPT, not a generic agency. Use evidence, frameworks, observations, practical examples, strategic thinking. Avoid hype, buzzwords, fake urgency, clickbait, AI clichés. This is not a new rule — it's the same voice check already running on every page (see [[feedback_halo_voice_check]]).
+Write like a trusted commercial adviser, not an SEO writer, not ChatGPT, not a generic agency. Use evidence, frameworks, observations, practical examples, strategic thinking. Avoid hype, buzzwords, fake urgency, clickbait, AI clichés. This is not a new rule: it's the same voice check already running on every page (see [[feedback_halo_voice_check]]).
+
+**No em dashes or en dashes anywhere, in anything published** (Fabien, 2026-11-27, elevated from a line item to its own rule after an em dash turned up in an already-published meta description). Use a comma, a period, or a colon instead, and a plain hyphen for genuine ranges and compounds. This is the single most recognisable "an LLM wrote this" tell, and it is checked mechanically: `node tools/build-insights.js` now fails the build if either character appears anywhere in `tools/insights-articles.json`. The fuller house-style rule, including the broader "does this read as AI-generated" checklist (AI-sounding openers, empty corporate language, padding, over-hedging, suspiciously even paragraph rhythm), lives in `.claude/skills/halo-house-style/SKILL.md`. Read it before drafting or editing anything that will be published, the same way this document already gets read every run.
 
 ## Cadence: 2–3 articles a week, evidence-gated — not daily
 

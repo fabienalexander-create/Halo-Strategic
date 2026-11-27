@@ -149,8 +149,12 @@ describe.skipIf(!adminUrl)('credits ledger (real Postgres)', () => {
       snapshot[t] = await q(`SELECT * FROM ${t} ORDER BY id`);
     }
 
-    // 3. The migration under test.
+    // 3. The migration under test, then any later migrations (the application code always runs
+    //    against the full schema).
     await pool.query(readFileSync(join(migrationsDir, LEDGER), 'utf8'));
+    for (const f of readdirSync(migrationsDir).filter((n) => n.endsWith('.sql') && n > LEDGER).sort()) {
+      await pool.query(readFileSync(join(migrationsDir, f), 'utf8'));
+    }
   });
 
   afterAll(async () => {
@@ -550,7 +554,7 @@ describe.skipIf(!adminUrl)('credits ledger (real Postgres)', () => {
       const { Pool } = require('pg');
       const p2 = new Pool({ connectionString: url.toString(), max: 2 });
       try {
-        for (const f of readdirSync(migrationsDir).filter((n) => n.endsWith('.sql')).sort()) {
+        for (const f of readdirSync(migrationsDir).filter((n) => n.endsWith('.sql') && n <= LEDGER).sort()) {
           await p2.query(readFileSync(join(migrationsDir, f), 'utf8'));
         }
         await p2.query(`INSERT INTO industries (slug, name, is_enabled) VALUES ('solar_battery','Solar',true) ON CONFLICT (slug) DO NOTHING`);
@@ -591,7 +595,7 @@ describe.skipIf(!adminUrl)('credits ledger (real Postgres)', () => {
       const p2 = new Pool({ connectionString: url.toString(), max: 4 });
       const q2 = async (t: string, v: unknown[] = []) => (await p2.query(t, v)).rows;
       try {
-        for (const f of readdirSync(migrationsDir).filter((n) => n.endsWith('.sql')).sort()) await p2.query(readFileSync(join(migrationsDir, f), 'utf8'));
+        for (const f of readdirSync(migrationsDir).filter((n) => n.endsWith('.sql') && n <= LEDGER).sort()) await p2.query(readFileSync(join(migrationsDir, f), 'utf8'));
         await q2(`INSERT INTO industries (slug, name, is_enabled) VALUES ('spray_foam_removal','Spray Foam Removal',true) ON CONFLICT (slug) DO NOTHING`);
         const ind = (await q2(`SELECT id FROM industries WHERE slug = 'spray_foam_removal'`))[0].id;
         const b = (await q2(`INSERT INTO buyers (company_name, contact_name, contact_email, telephone, industry_id, application_status, agreed_price_per_lead, exclusivity_arrangement, agreed_weekly_capacity, coverage_type, onboarding_call_completed_at, onboarding_call_conducted_by, application_reference)
